@@ -2,12 +2,11 @@ package it.unibo.dcs.commons
 
 import io.vertx.core.{AsyncResult, Handler}
 import io.vertx.lang.scala.HandlerOps.handlerForAsyncResultWithConversion
-import it.unibo.dcs.commons.VertxUtils.Implicits.handlerToFunction
+import it.unibo.dcs.commons.VertxHelper.Implicits.handlerToFunction
 
 import scala.concurrent.Future
-import scala.language.implicitConversions
 
-object VertxUtils {
+object VertxHelper {
 
   def toFuture[T](action: (AsyncResult[T] => Unit) => Unit): Future[T] = toFuture[T, T](identity)(action)
 

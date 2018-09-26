@@ -12,8 +12,8 @@ import io.vertx.scala.ext.web.Router
 import io.vertx.scala.ext.web.client.WebClient
 import io.vertx.servicediscovery.types.HttpEndpoint
 import io.vertx.servicediscovery.{Record, ServiceDiscovery}
-import it.unibo.dcs.commons.VertxUtils
-import it.unibo.dcs.commons.VertxUtils.Implicits._
+import it.unibo.dcs.commons.VertxHelper
+import it.unibo.dcs.commons.VertxHelper.Implicits._
 import it.unibo.dcs.commons.service.ServiceVerticle._
 
 import scala.collection.mutable.ListBuffer
@@ -62,7 +62,7 @@ abstract class ServiceVerticle extends ScalaVerticle {
                                     port: Int = DEFAULT_PORT,
                                     root: String = DEFAULT_ROOT,
                                     metadata: JsonObject = DEFAULT_METADATA): Future[Record] = {
-    VertxUtils.toFuture[Record] { handler =>
+    VertxHelper.toFuture[Record] { handler =>
       val record = HttpEndpoint.createRecord(name, ssl, host, port, root, metadata)
       discovery.publish(record, { ar =>
         if (ar.succeeded) {
@@ -78,7 +78,7 @@ abstract class ServiceVerticle extends ScalaVerticle {
   protected final def getWebClient(name: String): Future[WebClient] =
     getWebClientOrFail(name)
       .recoverWith {
-        case _ => VertxUtils.toFuture[JWebClient, WebClient](WebClient(_)) { handler =>
+        case _ => VertxHelper.toFuture[JWebClient, WebClient](WebClient(_)) { handler =>
           val consumer = eventBus.consumer[Record](PUBLISH_CHANNEL)
           consumer.handler { message =>
             val record = message.body
@@ -92,7 +92,7 @@ abstract class ServiceVerticle extends ScalaVerticle {
       }
 
   protected final def getWebClientOrFail(name: String): Future[WebClient] =
-    VertxUtils.toFuture[JWebClient, WebClient](WebClient(_)) { handler =>
+    VertxHelper.toFuture[JWebClient, WebClient](WebClient(_)) { handler =>
       HttpEndpoint.getWebClient(
         discovery,
         new JsonObject()

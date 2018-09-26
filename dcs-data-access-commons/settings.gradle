@@ -5,9 +5,4 @@
  * in the user guide at https://docs.gradle.org/4.7/userguide/multi_project_builds.html
  */
 
-rootProject.name = 'distributed-chat-service'
-
-include 'dcs-commons'
-include 'dcs-data-access-commons'
-include 'dcs-service-commons'
-include 'dcs-use-case-commons'
+rootProject.name = 'data-access-commons'

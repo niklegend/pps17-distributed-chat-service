@@ -11,3 +11,8 @@ include 'dcs-commons'
 include 'dcs-data-access-commons'
 include 'dcs-service-commons'
 include 'dcs-use-case-commons'
+
+include 'dcs-authentication-service'
+include 'dcs-room-service'
+include 'dcs-user-service'
+include 'dcs-webapp-service'

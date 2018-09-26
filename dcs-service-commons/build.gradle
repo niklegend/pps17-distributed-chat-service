@@ -4,4 +4,9 @@
  */
 dependencies {
     compile project(':dcs-commons')
+
+    compile group: 'io.vertx', name: 'vertx-web-scala_2.12', version: vertxVersion
+    compile group: 'io.vertx', name: 'vertx-web-client-scala_2.12', version: vertxVersion
+
+    compile group: 'io.vertx', name: 'vertx-service-discovery', version: vertxVersion
 }

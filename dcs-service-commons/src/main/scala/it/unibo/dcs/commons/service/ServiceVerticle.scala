@@ -5,18 +5,14 @@ import io.vertx.lang.scala.ScalaVerticle
 import io.vertx.scala.core.eventbus.EventBus
 import io.vertx.scala.core.http.{HttpServer, HttpServerOptions}
 import io.vertx.scala.ext.web.Router
-import io.vertx.servicediscovery.Record
 import it.unibo.dcs.commons.service.ServiceVerticle._
 
-import scala.collection.mutable.ListBuffer
 import scala.concurrent.Future
 
 abstract class ServiceVerticle extends ScalaVerticle {
 
   private[this] var _eventBus: EventBus = _
   private[this] var _router: Router = _
-
-  private[this] val records: ListBuffer[Record] = ListBuffer()
 
   override def init(jVertx: Vertx, context: Context, verticle: AbstractVerticle): Unit = {
     super.init(jVertx, context, verticle)

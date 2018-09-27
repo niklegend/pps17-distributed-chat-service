@@ -9,8 +9,8 @@ import io.vertx.servicediscovery.types.HttpEndpoint
 import io.vertx.servicediscovery.{Record, ServiceDiscovery}
 import it.unibo.dcs.commons.VertxHelper
 import it.unibo.dcs.commons.VertxHelper.Implicits._
-import it.unibo.dcs.commons.service.HttpEndpointDiscoveryImpl.RECORD_TYPE
 import it.unibo.dcs.commons.service.Constants.PUBLISH_CHANNEL
+import it.unibo.dcs.commons.service.HttpEndpointDiscoveryImpl.RECORD_TYPE
 
 import scala.concurrent.{ExecutionContext, Future}
 

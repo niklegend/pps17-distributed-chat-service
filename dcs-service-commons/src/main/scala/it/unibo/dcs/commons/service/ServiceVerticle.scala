@@ -1,15 +1,11 @@
 package it.unibo.dcs.commons.service
 
-import io.vertx.core.json.JsonObject
 import io.vertx.core.{AbstractVerticle, Context, Vertx}
 import io.vertx.lang.scala.ScalaVerticle
 import io.vertx.scala.core.eventbus.EventBus
 import io.vertx.scala.core.http.{HttpServer, HttpServerOptions}
 import io.vertx.scala.ext.web.Router
-import io.vertx.servicediscovery.types.HttpEndpoint
-import io.vertx.servicediscovery.{Record, ServiceDiscovery}
-import it.unibo.dcs.commons.VertxHelper
-import it.unibo.dcs.commons.service.Constants._
+import io.vertx.servicediscovery.Record
 import it.unibo.dcs.commons.service.ServiceVerticle._
 
 import scala.collection.mutable.ListBuffer

@@ -10,7 +10,6 @@ import it.unibo.dcs.commons.service.Constants.{PUBLISH_CHANNEL, UNPUBLISH_CHANNE
 
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.{ExecutionContext, Future}
-import scala.concurrent.Future.unit
 
 class HttpEndpointPublisherImpl(private[this] val discovery: ServiceDiscovery, private[this] val eventBus: EventBus) extends HttpEndpointPublisher {
 
@@ -32,7 +31,8 @@ class HttpEndpointPublisherImpl(private[this] val discovery: ServiceDiscovery, p
   override def unpublish(record: Record): Future[Record] =
     VertxHelper.toFuture[Record] { handler =>
       discovery.unpublish(record.getRegistration, {
-        _ => eventBus.publish(UNPUBLISH_CHANNEL, record)
+        _ =>
+          eventBus.publish(UNPUBLISH_CHANNEL, record)
           records -= record
           handler(VFuture.succeededFuture(record))
       })

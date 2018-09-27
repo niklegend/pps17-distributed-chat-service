@@ -15,7 +15,7 @@ abstract class AbstractApi(private[this] val discovery: HttpEndpointDiscovery,
   private[this] def discoverClient(): Unit = {
     discovery.getWebClient(serviceName).onComplete {
       case Success(c) => clientOption = Some(c)
-      case Failure(t) => ()
+      case Failure(_) => ()
     }
   }
 

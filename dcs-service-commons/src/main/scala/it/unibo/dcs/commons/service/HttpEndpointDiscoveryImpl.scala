@@ -14,10 +14,10 @@ import it.unibo.dcs.commons.service.HttpEndpointDiscoveryImpl.RECORD_TYPE
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class HttpEndpointDiscoveryImpl(private[this] val discovery: ServiceDiscovery,
-                                private[this] val eventBus: EventBus) extends HttpEndpointDiscovery {
+final class HttpEndpointDiscoveryImpl(private[this] val discovery: ServiceDiscovery,
+                                      private[this] val eventBus: EventBus) extends HttpEndpointDiscovery {
 
-  override final def getWebClient(name: String)(implicit executor: ExecutionContext): Future[WebClient] =
+  override def getWebClient(name: String)(implicit executor: ExecutionContext): Future[WebClient] =
     getWebClientOrFail(name)
       .recoverWith {
         case _ => VertxHelper.toFuture[JWebClient, WebClient](WebClient(_)) { handler =>
@@ -33,7 +33,7 @@ class HttpEndpointDiscoveryImpl(private[this] val discovery: ServiceDiscovery,
         }
       }
 
-  override final def getWebClientOrFail(name: String)(implicit executor: ExecutionContext): Future[WebClient] =
+  override def getWebClientOrFail(name: String)(implicit executor: ExecutionContext): Future[WebClient] =
     VertxHelper.toFuture[JWebClient, WebClient](WebClient(_)) { handler =>
       HttpEndpoint.getWebClient(
         discovery,
@@ -42,6 +42,7 @@ class HttpEndpointDiscoveryImpl(private[this] val discovery: ServiceDiscovery,
           .put("type", RECORD_TYPE),
         handler)
     }
+
 }
 
 object HttpEndpointDiscoveryImpl {

@@ -11,7 +11,7 @@ import it.unibo.dcs.commons.service.Constants.{PUBLISH_CHANNEL, UNPUBLISH_CHANNE
 import scala.collection.mutable.ListBuffer
 import scala.concurrent.{ExecutionContext, Future}
 
-class HttpEndpointPublisherImpl(private[this] val discovery: ServiceDiscovery, private[this] val eventBus: EventBus) extends HttpEndpointPublisher {
+final class HttpEndpointPublisherImpl(private[this] val discovery: ServiceDiscovery, private[this] val eventBus: EventBus) extends HttpEndpointPublisher {
 
   private[this] val records: ListBuffer[Record] = ListBuffer()
 

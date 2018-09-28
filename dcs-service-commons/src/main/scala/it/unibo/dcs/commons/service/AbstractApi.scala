@@ -1,6 +1,10 @@
 package it.unibo.dcs.commons.service
 
+import io.vertx.core.buffer.Buffer
+import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.ext.web.client.{HttpResponse, WebClient}
+import it.unibo.dcs.commons.VertxHelper
+import it.unibo.dcs.commons.VertxHelper.Implicits._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
@@ -30,5 +34,23 @@ abstract class AbstractApi(private[this] val discovery: HttpEndpointDiscovery,
       // TODO: replace with a more meaningful exception
       case _ => throw new RuntimeException
     }
+/*
+  def getUserByUsername(username: String): Future[User] =
+    request {
+      client =>
+        VertxHelper.toFuture[HttpResponse[Buffer]] {
+          client.get(s"/api/users/$username")
+            .send(_)
+        }
+    }
+      .map(_.bodyAsJsonObject())
+      .flatten
+      .map(UserMapper)
 
+  final case class User()
+
+  final object UserMapper extends Function[JsonObject, User] {
+    def apply(json: JsonObject): User = User()
+  }
+*/
 }

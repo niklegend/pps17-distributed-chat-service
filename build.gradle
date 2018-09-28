@@ -1,0 +1,25 @@
+/*
+ * This is a general purpose Gradle build.
+ * Learn how to create Gradle builds at https://guides.gradle.org/creating-new-gradle-builds/
+ */
+allprojects {
+    repositories {
+        jcenter()
+    }
+}
+
+subprojects {
+    version = '1.0'
+    apply plugin: 'scala'
+
+    dependencies {
+        compile group: 'org.scala-lang', name: 'scala-library', version: scalaVersion
+    }
+}
+
+task stage(type: Copy) {
+    into buildDir
+    subprojects {
+        from tasks.withType(Jar)
+    }
+}

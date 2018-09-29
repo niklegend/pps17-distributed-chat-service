@@ -1,7 +1,7 @@
-package it.unibo.dcs.commons.use_case
+package it.unibo.dcs.commons.interactor
 
-import it.unibo.dcs.commons.use_case.executor.Implicits._
-import it.unibo.dcs.commons.use_case.executor.{PostExecutionThread, ThreadExecutor}
+import it.unibo.dcs.commons.interactor.executor.Implicits._
+import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
 import rx.lang.scala.{Observable, Subscriber}
 
 abstract class UseCase[T, P](private[this] val threadExecutor: ThreadExecutor,

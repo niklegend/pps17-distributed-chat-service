@@ -3,10 +3,8 @@ package it.unibo.dcs.commons.service
 import io.vertx.scala.ext.web.client.{HttpResponse, WebClient}
 import rx.lang.scala.Observable
 
-import scala.concurrent.ExecutionContext
-
 abstract class AbstractApi(private[this] val discovery: HttpEndpointDiscovery,
-                           private[this] val serviceName: String)(implicit executor: ExecutionContext) {
+                           private[this] val serviceName: String) {
 
   private[this] var clientOption: Option[WebClient] = None
 

@@ -26,7 +26,7 @@ abstract class ServiceVerticle extends ScalaVerticle {
   protected final def startHttpServer(host: String,
                                       port: Int,
                                       options: HttpServerOptions = DEFAULT_OPTIONS): Observable[HttpServer] =
-    VertxHelper.toObservable { handler =>
+    VertxHelper.toObservable[HttpServer] { handler =>
       vertx.createHttpServer(options)
         .requestHandler(_router accept _)
         .listen(port, host, handler)

@@ -1,8 +1,8 @@
 package it.unibo.dcs.commons
 
 import io.vertx.core.{AsyncResult, Handler}
+import it.unibo.dcs.commons.RxHelper.Implicits.RxObservable
 import it.unibo.dcs.commons.VertxHelper.Implicits._
-import RxHelper.Implicits.RxObservable
 import rx.lang.scala.Observable
 
 object VertxHelper {

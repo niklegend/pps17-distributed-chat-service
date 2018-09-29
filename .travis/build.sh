@@ -1,3 +1,3 @@
-#/bin/bash
-./gradlew check clean test build
+#!/bin/bash
+./gradlew clean check test stage
 

@@ -1,19 +1,18 @@
 package it.unibo.dcs.commons
 
 import io.vertx.core.{AsyncResult, Handler}
-import io.vertx.lang.scala.HandlerOps.handlerForAsyncResultWithConversion
-import it.unibo.dcs.commons.VertxHelper.Implicits.handlerToFunction
-
-import scala.concurrent.Future
+import it.unibo.dcs.commons.RxHelper.Implicits.RxObservable
+import it.unibo.dcs.commons.VertxHelper.Implicits._
+import rx.lang.scala.Observable
 
 object VertxHelper {
 
-  def toFuture[T](action: (AsyncResult[T] => Unit) => Unit): Future[T] = toFuture[T, T](identity)(action)
+  def toObservable[T](action: (AsyncResult[T] => Unit) => Unit): Observable[T] = toObservable[T, T](identity)(action)
 
-  def toFuture[J, S](converter: J => S)(action: (AsyncResult[J] => Unit) => Unit): Future[S] = {
-    val (handler, promise) = handlerForAsyncResultWithConversion[J, S](converter)
-    action(handler)
-    promise.future
+  def toObservable[J, S](converter: J => S)(action: (AsyncResult[J] => Unit) => Unit): Observable[S] = {
+    val javaObservable = io.vertx.rx.java.RxHelper.observableFuture[J]()
+    action(javaObservable.toHandler())
+    RxObservable[J](javaObservable).map[S](converter)
   }
 
   object Implicits {

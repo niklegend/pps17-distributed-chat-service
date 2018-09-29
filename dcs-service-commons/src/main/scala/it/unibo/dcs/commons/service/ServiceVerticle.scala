@@ -5,9 +5,10 @@ import io.vertx.lang.scala.ScalaVerticle
 import io.vertx.scala.core.eventbus.EventBus
 import io.vertx.scala.core.http.{HttpServer, HttpServerOptions}
 import io.vertx.scala.ext.web.Router
+import it.unibo.dcs.commons.VertxHelper
+import it.unibo.dcs.commons.VertxHelper.Implicits._
 import it.unibo.dcs.commons.service.ServiceVerticle._
-
-import scala.concurrent.Future
+import rx.lang.scala.Observable
 
 abstract class ServiceVerticle extends ScalaVerticle {
 
@@ -24,10 +25,13 @@ abstract class ServiceVerticle extends ScalaVerticle {
 
   protected final def startHttpServer(host: String,
                                       port: Int,
-                                      options: HttpServerOptions = DEFAULT_OPTIONS): Future[HttpServer] =
-    vertx.createHttpServer(options)
-      .requestHandler(_router accept _)
-      .listenFuture(port, host)
+                                      options: HttpServerOptions = DEFAULT_OPTIONS): Observable[HttpServer] =
+    VertxHelper.toObservable { handler =>
+      vertx.createHttpServer(options)
+        .requestHandler(_router accept _)
+        .listen(port, host, handler)
+    }
+
 
   protected def initializeRouter(router: Router): Unit
 

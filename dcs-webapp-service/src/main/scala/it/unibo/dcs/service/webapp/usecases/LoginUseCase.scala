@@ -12,5 +12,5 @@ final class LoginUseCase(private[this] val threadExecutor: ThreadExecutor,
                          private[this] val authRepository: AuthenticationRepository)
   extends UseCase[User, LoginUserRequest](threadExecutor, postExecutionThread) {
 
-  override protected[this] def createObservable(parameters: LoginUserRequest): Observable[User] = ???
+  override protected[this] def createObservable(loginRequest: LoginUserRequest): Observable[User] = ???
 }

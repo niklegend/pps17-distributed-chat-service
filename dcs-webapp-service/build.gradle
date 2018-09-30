@@ -7,4 +7,7 @@ dependencies {
 
     compile project(':dcs-data-access-commons')
     compile project(':dcs-interactor-commons')
+
+    testCompile 'org.scalatest:scalatest_2.11:3.0.1'
+    testRuntime 'org.pegdown:pegdown:1.4.2'
 }

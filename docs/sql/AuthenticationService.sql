@@ -22,13 +22,13 @@ drop table if exists invalid_tokens;
 create table invalid_tokens (
      token varchar(2048) not null,
      expirationDate date not null,
-     constraint IDInvalidToken primary key (token));
+     constraint id_invalid_token primary key (token));
 
 drop table if exists users;
 create table users (
      username varchar(20) not null,
      password char(64) not null,
-     constraint IDUser primary key (username));
+     constraint id_user primary key (username));
 
 
 -- Constraints Section

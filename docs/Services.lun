@@ -1,12 +1,12 @@
-DBLUN8
+DBLUN10
 *SYSTEM
 object_id double
 flag int
 name char[100]
 short_name char[12]
 creation_date char[10]
-semantics_desc text
-technical_desc text
+semantics_desc desc
+technical_desc desc
 sys_mo rel
 sys_sch rel
 link rel
@@ -21,7 +21,7 @@ object_id double
 flag int
 name char[100]
 type short
-semantics_desc text
+semantics_desc desc
 mo_mp rel
 concept_mo rel
 *META_PROPERTY
@@ -30,7 +30,7 @@ flag int
 name char[100]
 type short
 funct int
-semantics_desc text
+semantics_desc desc
 *SCHEMA
 object_id double
 flag int
@@ -41,8 +41,8 @@ creation_date char[10]
 last_update char[10]
 lock char
 type char
-semantics_desc text
-technical_desc text
+semantics_desc desc
+technical_desc desc
 trace_on int
 from rel
 to rel
@@ -62,8 +62,8 @@ object_id double
 flag int
 name char[100]
 short_name char[12]
-semantics_desc text
-technical_desc text
+semantics_desc desc
+technical_desc desc
 owner_att rel
 owner_group rel
 col_do2 rel
@@ -81,8 +81,8 @@ object_id double
 flag int
 name char[100]
 short_name char[12]
-semantics_desc text
-technical_desc text
+semantics_desc desc
+technical_desc desc
 owner_att rel
 owner_group rel
 col_do2 rel
@@ -97,8 +97,8 @@ object_id double
 flag int
 name char[100]
 short_name char[12]
-semantics_desc text
-technical_desc text
+semantics_desc desc
+technical_desc desc
 min_rep unsigned int
 max_rep unsigned int
 set_type char
@@ -106,7 +106,7 @@ owner_att rel
 owner_group rel
 col_do2 rel
 domain rel
-at_ro_gr
+at_ro_gr rel
 go_uo rel
 go_st rel
 act_arg rel
@@ -116,8 +116,8 @@ object_id double
 flag int
 name char[100]
 short_name char[12]
-semantics_desc text
-technical_desc text
+semantics_desc desc
+technical_desc desc
 min_rep unsigned int
 max_rep unsigned int
 set_type char
@@ -141,8 +141,8 @@ name char[100]
 min_con unsigned int
 max_con unsigned int
 aggregation char
-semantics_desc text
-technical_desc text
+semantics_desc desc
+technical_desc desc
 at_ro_gr
 et_role2 rel
 go_uo rel
@@ -160,8 +160,8 @@ type char
 funct int
 min_rep unsigned int
 max_rep unsigned int
-semantics_desc text
-technical_desc text
+semantics_desc desc
+technical_desc desc
 at_ro_gr
 gr_comp rel
 member_gr rel
@@ -187,8 +187,8 @@ object_id double
 flag int
 name char[100]
 short_name char[12]
-semantics_desc text
-technical_desc text
+semantics_desc desc
+technical_desc desc
 col_do1 rel
 go_uo rel
 go_st rel
@@ -244,14 +244,14 @@ object_id double
 flag int
 name char[100]
 version char[16]
-path char[255]
+path char[260]
 creation_date char[10]
 last_update char[10]
 type_of_file char[10]
 num_line int
 lock char
-sem_desc text
-tech_desc text
+sem_desc desc
+tech_desc desc
 from rel
 to rel
 is_in rel
@@ -267,7 +267,7 @@ go_nn_note rel
 object_id double
 flag int
 num int
-description text
+description desc
 go_uo rel
 *PROD_SET
 object_id double
@@ -277,8 +277,8 @@ version char[16]
 creation_date char[10]
 last_update char[10]
 lock char
-sem_desc text
-tech_desc text
+sem_desc desc
+tech_desc desc
 from rel
 to rel
 is_in rel
@@ -293,8 +293,8 @@ object_id double
 flag int
 name char[100]
 short_name char[12]
-semantics_desc text
-technical_desc text
+semantics_desc desc
+technical_desc desc
 type char
 mode char
 owner_group rel
@@ -314,8 +314,8 @@ flag int
 name char[100]
 type char
 mode char
-semantics_desc text
-technical_desc text
+semantics_desc desc
+technical_desc desc
 go_nn_note rel
 go_uo rel
 *STATE
@@ -323,8 +323,8 @@ object_id double
 flag int
 name char[100]
 short_name char[12]
-semantics_desc text
-technical_desc text
+semantics_desc desc
+technical_desc desc
 owner_group rel
 col_do2 rel
 st_env rel
@@ -334,7 +334,7 @@ go_uo rel
 object_id double
 flag int
 type char
-description text
+description desc
 p_made_of rel
 p_part_of rel
 go_nn_note rel
@@ -345,8 +345,8 @@ flag int
 name char[100]
 type char
 mode char
-semantics_desc text
-technical_desc text
+semantics_desc desc
+technical_desc desc
 go_nn_note rel
 go_uo rel
 *P_EXPRESSION
@@ -354,7 +354,7 @@ object_id double
 flag int
 oper int
 constant char[255]
-description text
+description desc
 sub_expression rel
 go_uo rel
 *CONSUMPTION
@@ -362,8 +362,8 @@ object_id double
 flag int
 name char[100]
 short_name char[12]
-semantics_desc text
-technical_desc text
+semantics_desc desc
+technical_desc desc
 owner_group rel
 col_do2 rel
 cons_res rel
@@ -379,8 +379,8 @@ flag int
 name char[100]
 min_card int
 max_card int
-semantics_desc text
-technical_desc text
+semantics_desc desc
+technical_desc desc
 go_nn_note rel
 go_uo rel
 *CONS_RES
@@ -389,8 +389,8 @@ flag int
 name char[100]
 min_card int
 max_card int
-semantics_desc text
-technical_desc text
+semantics_desc desc
+technical_desc desc
 go_nn_note rel
 go_uo rel
 *CONS_ROLE
@@ -399,8 +399,8 @@ flag int
 name char[100]
 min_card int
 max_card int
-semantics_desc text
-technical_desc text
+semantics_desc desc
+technical_desc desc
 go_nn_note rel
 go_uo rel
 *RESOURCE
@@ -408,8 +408,8 @@ object_id double
 flag int
 name char[100]
 short_name char[12]
-semantics_desc text
-technical_desc text
+semantics_desc desc
+technical_desc desc
 type char
 owner_group rel
 col_do2 rel
@@ -426,8 +426,8 @@ object_id double
 flag int
 name char[100]
 short_name char[12]
-semantics_desc text
-technical_desc text
+semantics_desc desc
+technical_desc desc
 owner_group rel
 col_do2 rel
 cons_role rel
@@ -442,16 +442,16 @@ go_uo rel
 object_id double
 flag int
 name char[100]
-semantics_desc text
-technical_desc text
+semantics_desc desc
+technical_desc desc
 go_nn_note rel
 go_uo rel
 *RO_ISA
 object_id double
 flag int
 name char[100]
-semantics_desc text
-technical_desc text
+semantics_desc desc
+technical_desc desc
 go_nn_note rel
 go_uo rel
 *CAN_PLAY
@@ -470,7 +470,7 @@ version char[16]
 date char[10]
 author char[100]
 help_file char[255]
-semantics_desc text
+semantics_desc desc
 user_viewable rel
 viewable_note rel
 *STATEMENT
@@ -506,7 +506,7 @@ object_id double
 name char[100]
 title char[100]
 explain char[100]
-semantics_desc text
+semantics_desc desc
 perform rel
 form_arg rel
 invokes rel
@@ -515,7 +515,7 @@ object_id double
 name char[100]
 title char[100]
 functions list_int
-semantics_desc text
+semantics_desc desc
 uses rel
 *TEXT_TYPE
 object_id double
@@ -525,7 +525,7 @@ weak char
 min_mul int
 max_mul int
 usage char
-semantics_desc text
+semantics_desc desc
 act_arg rel
 ttext_inst rel
 *SCHEMA_TYPE
@@ -536,7 +536,7 @@ weak char
 min_mul int
 max_mul int
 usage char
-semantics_desc text
+semantics_desc desc
 act_arg rel
 tschema_inst rel
 *PROD_SET_TYPE
@@ -546,14 +546,14 @@ title char[100]
 min_mul int
 max_mul int
 usage char
-semantics_desc text
+semantics_desc desc
 actarg rel
 tset_inst rel
 *TEXT_MODEL
 object_id double
 name char[100]
 title char[100]
-semantics_desc text
+semantics_desc desc
 default_ext list_char[3]
 grammar char[255]
 model_expr rel
@@ -563,7 +563,7 @@ text_conform rel
 object_id double
 name char[100]
 title char[100]
-semantics_desc text
+semantics_desc desc
 constraints anallist
 model_expr rel
 specialization rel
@@ -582,7 +582,7 @@ start_time char[10]
 end_date char[10]
 end_time char[10]
 in_progress char
-semantics_desc text
+semantics_desc desc
 flag int
 io_proc rel
 made_of rel
@@ -600,7 +600,7 @@ end_date char[10]
 end_time char[10]
 in_progress char
 yes_no char
-semantics_desc text
+semantics_desc desc
 flag int
 io_proc rel
 go_uo rel
@@ -613,7 +613,7 @@ start_time char[10]
 end_date char[10]
 end_time char[10]
 in_progress char
-semantics_desc text
+semantics_desc desc
 flag int
 io_proc rel
 go_uo rel
@@ -627,7 +627,7 @@ end_date char[10]
 end_time char[10]
 in_progress char
 golist list_int
-semantics_desc text
+semantics_desc desc
 io_proc rel
 *SCHEMA_INSTANCE
 object_id double
@@ -650,16 +650,12 @@ go_nn_note rel
 *NOTE
 object_id double
 flag int
-description text
+description desc
 note_nn_note rel
 go_uo rel
 *NN_NOTE
 object_id double
 flag int
-*DESCRIPTIONS
-schema double
-length long
-text FILE
 *LOG
 schema double
 length long
@@ -671,8 +667,8 @@ text FILE
 Services
 
 20180925
-0
-0
+
+
 2
 3
 4
@@ -694,6 +690,8 @@ Services
 20
 21
 -
+662
+652
 607
 596
 585
@@ -725,7 +723,7 @@ Services
 0
 Project
 1
-0
+
 -
 -
 *1
@@ -733,7 +731,7 @@ Project
 0
 Schema
 2
-0
+
 22
 23
 372
@@ -744,7 +742,7 @@ Schema
 0
 Text
 31
-0
+
 24
 25
 -
@@ -754,7 +752,7 @@ Text
 0
 Product set
 41
-0
+
 26
 -
 -
@@ -763,7 +761,7 @@ Product set
 0
 Entity type
 11
-0
+
 28
 27
 373
@@ -774,7 +772,7 @@ Entity type
 0
 Rel-type
 12
-0
+
 30
 29
 -
@@ -784,7 +782,7 @@ Rel-type
 0
 Atomic attribute
 7
-0
+
 38
 37
 36
@@ -799,7 +797,7 @@ Atomic attribute
 0
 Compound attribute
 6
-0
+
 40
 39
 -
@@ -809,7 +807,7 @@ Compound attribute
 0
 Group
 16
-0
+
 44
 43
 376
@@ -820,7 +818,7 @@ Group
 0
 Role
 14
-0
+
 32
 31
 -
@@ -830,7 +828,7 @@ Role
 0
 Collection
 4
-0
+
 41
 42
 374
@@ -841,7 +839,7 @@ Collection
 0
 Processing unit
 40
-0
+
 46
 45
 -
@@ -851,7 +849,8 @@ Processing unit
 0
 Processing unit relation
 45
-0
+
+625
 54
 -
 -
@@ -860,7 +859,8 @@ Processing unit relation
 0
 Association
 47
-0
+
+621
 50
 -
 -
@@ -869,7 +869,8 @@ Association
 0
 Use case association role
 68
-0
+
+622
 51
 -
 -
@@ -878,7 +879,8 @@ Use case association role
 0
 Actor association role
 66
-0
+
+623
 52
 -
 -
@@ -887,7 +889,8 @@ Actor association role
 0
 Actor
 48
-0
+
+619
 48
 -
 -
@@ -896,7 +899,8 @@ Actor
 0
 Actor generalization
 62
-0
+
+620
 49
 -
 -
@@ -905,7 +909,8 @@ Actor generalization
 0
 State
 61
-0
+
+624
 53
 -
 -
@@ -914,7 +919,8 @@ State
 0
 In-out
 43
-0
+
+618
 47
 -
 -
@@ -924,266 +930,351 @@ In-out
 line
 86
 0
-0
+
 *2
 23
 0
 Stereotype
 86
 14
-0
+
 *2
 22
 0
 productType
 86
 6
-1
+#VALUES=
+COBOL
+CODASYL
+IMS
+Relational
+SQL
+XML
+C/C++
+Java
+#
 *2
 25
 0
 Stereotype
 86
 14
-0
+
 *2
 24
 0
 productType
 86
 6
-2
+#VALUES=
+COBOL
+CODASYL
+IMS
+Relational
+SQL
+XML
+C/C++
+Java
+#
 *2
 26
 0
 Stereotype
 86
 14
-0
+
 *2
 373
 0
 line
 86
 0
-0
+
 *2
 27
 0
 Stereotype
 86
 14
-0
+
 *2
 28
 0
 MappingOID
 78
 10
-0
+
 *2
 29
 0
 Stereotype
 86
 14
-0
+
 *2
 30
 0
 MappingOID
 78
 10
-0
+
 *2
 375
 0
 line
 86
 0
-0
+
 *2
 33
 0
 Value constraint
 86
 10
-0
+
 *2
 34
 0
 Stereotype
 86
 14
-0
+
 *2
 35
 0
 physType
 86
 2
-0
+
 *2
 36
 0
 physLen
 78
 2
-0
+
 *2
 37
 0
 MappingOID
 78
 10
-0
+
 *2
 38
 0
 Default value
 86
 2
-0
+
 *2
 39
 0
 Stereotype
 86
 14
-0
+
 *2
 40
 0
 MappingOID
 78
 10
-0
+
 *2
 376
 0
 line
 86
 0
-0
+
 *2
 43
 0
 User-constraint
 86
 1
-0
+
 *2
 44
 0
 MappingOID
 78
 10
-0
+
 *2
 31
 0
 Stereotype
 86
 14
-0
+
 *2
 32
 0
 MappingOID
 78
 10
-0
+
 *2
 374
 0
 line
 86
 0
-0
+
 *2
 42
 0
 MappingOID
 78
 10
-0
+
 *2
 41
 0
 Stereotype
 86
 14
-3
+#VALUES=
+Area
+DBD
+SQLSchema
+SubSchema
+TableSpace
+#
 *2
 45
 0
 Stereotype
 86
 14
-0
+
 *2
 46
 0
 MappingOID
 78
 10
-0
+
 *2
 54
 0
 Stereotype
 86
 14
+
+*2
+625
 0
+MappingOID
+78
+10
+
 *2
 50
 0
 Stereotype
 86
 14
+
+*2
+621
 0
+MappingOID
+78
+10
+
 *2
 51
 0
 Stereotype
 86
 14
+
+*2
+622
 0
+MappingOID
+78
+10
+
 *2
 52
 0
 Stereotype
 86
 14
+
+*2
+623
 0
+MappingOID
+78
+10
+
 *2
 48
 0
 Stereotype
 86
 14
+
+*2
+619
 0
+MappingOID
+78
+10
+
 *2
 49
 0
 Stereotype
 86
 14
+
+*2
+620
 0
+MappingOID
+78
+10
+
 *2
 53
 0
 Stereotype
 86
 14
-4
+#VALUES=
+ET
+RT
+Att
+Coll
+#
+*2
+624
+0
+MappingOID
+78
+10
+
 *2
 47
 0
 Stereotype
 86
 14
+
+*2
+618
 0
+MappingOID
+78
+10
+
 *3
 552
 256
@@ -1194,8 +1285,8 @@ UserServiceSQL
 20180925
 T
 E
-0
-0
+
+
 0
 -
 -
@@ -1234,8 +1325,8 @@ RoomServiceSQL
 20180925
 T
 E
-0
-0
+
+
 0
 -
 -
@@ -1278,16 +1369,19 @@ AuthenticationServiceSQL
 
 1
 20180925
-20180925
+20180930
 T
 E
-0
-0
+
+
 0
 -
 -
 -
+646
+641
 455
+643
 452
 450
 -
@@ -1296,6 +1390,7 @@ E
 437
 440
 590
+667
 -
 -
 436
@@ -1317,8 +1412,8 @@ RoomServiceNormalized
 20180925
 T
 E
-0
-0
+
+
 0
 -
 -
@@ -1364,8 +1459,8 @@ UserService
 20180925
 T
 E
-0
-0
+
+
 0
 -
 -
@@ -1403,16 +1498,19 @@ AuthenticationService
 
 1
 20180925
-20180925
+20180930
 T
 E
-0
-0
+
+
 0
 -
 -
 -
+632
+626
 99
+636
 93
 121
 -
@@ -1422,6 +1520,7 @@ E
 91
 379
 389
+657
 -
 -
 87
@@ -1443,8 +1542,8 @@ RoomService
 20180925
 F
 E
-0
-0
+
+
 0
 -
 -
@@ -1480,12 +1579,35 @@ E
 -
 -
 *4
+641
+0
+invalid_tokens
+
+
+
+643
+646
+-
+649
+-
+-
+-
+-
+-
+-
+-
+642
+-
+-
+-
+-
+*4
 560
 0
 users
 
-0
-0
+
+
 562
 565
 568
@@ -1511,8 +1633,8 @@ users
 0
 users
 
-0
-0
+
+
 509
 -
 512
@@ -1533,8 +1655,8 @@ users
 0
 rooms
 
-0
-0
+
+
 501
 504
 -
@@ -1557,8 +1679,8 @@ rooms
 0
 participations
 
-0
-0
+
+
 490
 493
 496
@@ -1583,8 +1705,8 @@ participations
 0
 messages
 
-0
-0
+
+
 476
 479
 482
@@ -1609,8 +1731,8 @@ messages
 0
 users
 
-0
-0
+
+
 452
 455
 -
@@ -1632,8 +1754,8 @@ users
 0
 User
 
-0
-0
+
+
 271
 -
 309
@@ -1654,8 +1776,8 @@ User
 0
 Room
 
-0
-0
+
+
 266
 346
 -
@@ -1678,8 +1800,8 @@ Room
 0
 Participation
 
-0
-0
+
+
 332
 323
 261
@@ -1704,8 +1826,8 @@ Participation
 0
 Message
 
-0
-0
+
+
 354
 356
 251
@@ -1730,8 +1852,8 @@ Message
 0
 User
 
-0
-0
+
+
 75
 77
 367
@@ -1757,8 +1879,8 @@ User
 0
 User
 
-0
-0
+
+
 121
 99
 -
@@ -1780,8 +1902,8 @@ User
 0
 User
 
-0
-0
+
+
 129
 -
 216
@@ -1804,8 +1926,8 @@ User
 0
 Room
 
-0
-0
+
+
 133
 -
 219
@@ -1828,8 +1950,8 @@ Room
 0
 Message
 
-0
-0
+
+
 214
 212
 -
@@ -1852,8 +1974,8 @@ Message
 0
 Participation
 
-0
-0
+
+
 185
 -
 233
@@ -1877,8 +1999,8 @@ Participation
 0
 Owner
 
-0
-0
+
+
 -
 -
 -
@@ -1894,13 +2016,36 @@ Owner
 -
 -
 -
+*4
+626
+0
+InvalidToken
+
+
+
+636
+632
+-
+638
+-
+-
+-
+-
+-
+-
+-
+627
+-
+-
+-
+-
 *5
 161
 0
 UP
 
-0
-0
+
+
 -
 -
 -
@@ -1918,8 +2063,8 @@ UP
 0
 PR
 
-0
-0
+
+
 -
 -
 -
@@ -1937,8 +2082,8 @@ PR
 0
 PM
 
-0
-0
+
+
 -
 -
 -
@@ -1956,8 +2101,8 @@ PM
 0
 OR
 
-0
-0
+
+
 -
 -
 -
@@ -1971,12 +2116,63 @@ OR
 -
 -
 *7
+646
+0
+expirationDate
+
+
+
+1
+1
+ 
+F
+T
+D
+1
+0
+-
+-
+-
+-
+648
+647
+-
+-
+-
+-
+*7
+643
+0
+token
+
+
+
+1
+1
+ 
+F
+T
+V
+2048
+0
+-
+-
+-
+651
+-
+645
+644
+-
+-
+-
+-
+*7
 577
 0
 last_seen
 
-0
-0
+
+
 1
 1
  
@@ -2000,8 +2196,8 @@ D
 0
 visible
 
-0
-0
+
+
 1
 1
  
@@ -2025,8 +2221,8 @@ B
 0
 bio
 
-0
-0
+
+
 1
 1
  
@@ -2050,8 +2246,8 @@ V
 0
 last_name
 
-0
-0
+
+
 1
 1
  
@@ -2075,8 +2271,8 @@ V
 0
 first_name
 
-0
-0
+
+
 1
 1
  
@@ -2100,8 +2296,8 @@ V
 0
 username
 
-0
-0
+
+
 1
 1
  
@@ -2126,8 +2322,8 @@ V
 0
 username
 
-0
-0
+
+
 1
 1
  
@@ -2152,8 +2348,8 @@ V
 0
 owner_name
 
-0
-0
+
+
 1
 1
  
@@ -2178,8 +2374,8 @@ V
 0
 name
 
-0
-0
+
+
 1
 1
  
@@ -2204,8 +2400,8 @@ V
 0
 join_date
 
-0
-0
+
+
 1
 1
  
@@ -2229,8 +2425,8 @@ D
 0
 room_name
 
-0
-0
+
+
 1
 1
  
@@ -2256,8 +2452,8 @@ V
 0
 user_name
 
-0
-0
+
+
 1
 1
  
@@ -2283,8 +2479,8 @@ V
 0
 content
 
-0
-0
+
+
 1
 1
  
@@ -2308,8 +2504,8 @@ V
 0
 timestamp
 
-0
-0
+
+
 1
 1
  
@@ -2334,8 +2530,8 @@ D
 0
 room_name
 
-0
-0
+
+
 1
 1
  
@@ -2361,8 +2557,8 @@ V
 0
 user_name
 
-0
-0
+
+
 1
 1
  
@@ -2388,8 +2584,8 @@ V
 0
 password
 
-0
-0
+
+
 1
 1
  
@@ -2413,8 +2609,8 @@ A
 0
 username
 
-0
-0
+
+
 1
 1
  
@@ -2439,8 +2635,8 @@ V
 0
 username
 
-0
-0
+
+
 1
 1
  
@@ -2465,8 +2661,8 @@ V
 0
 roomName
 
-0
-0
+
+
 1
 1
  
@@ -2491,8 +2687,8 @@ V
 0
 username
 
-0
-0
+
+
 1
 1
  
@@ -2517,8 +2713,8 @@ V
 0
 name
 
-0
-0
+
+
 1
 1
  
@@ -2543,8 +2739,8 @@ V
 0
 joinDate
 
-0
-0
+
+
 1
 1
  
@@ -2568,8 +2764,8 @@ D
 0
 content
 
-0
-0
+
+
 1
 1
  
@@ -2593,8 +2789,8 @@ V
 0
 timestamp
 
-0
-0
+
+
 1
 1
  
@@ -2619,8 +2815,8 @@ D
 0
 timestamp
 
-0
-0
+
+
 1
 1
  
@@ -2644,8 +2840,8 @@ A
 0
 content
 
-0
-0
+
+
 1
 1
  
@@ -2668,8 +2864,8 @@ A
 0
 username
 
-0
-0
+
+
 1
 1
  
@@ -2693,8 +2889,8 @@ V
 0
 firstName
 
-0
-0
+
+
 1
 1
  
@@ -2717,8 +2913,8 @@ V
 0
 bio
 
-0
-0
+
+
 1
 1
  
@@ -2741,8 +2937,8 @@ V
 0
 visible
 
-0
-0
+
+
 1
 1
  
@@ -2765,8 +2961,8 @@ B
 0
 lastSeen
 
-0
-0
+
+
 1
 1
  
@@ -2789,8 +2985,8 @@ D
 0
 password
 
-0
-0
+
+
 1
 1
  
@@ -2813,8 +3009,8 @@ A
 0
 username
 
-0
-0
+
+
 1
 1
  
@@ -2838,8 +3034,8 @@ V
 0
 username
 
-0
-0
+
+
 1
 1
  
@@ -2863,8 +3059,8 @@ A
 0
 name
 
-0
-0
+
+
 1
 1
  
@@ -2888,8 +3084,8 @@ A
 0
 joinDate
 
-0
-0
+
+
 1
 1
  
@@ -2912,8 +3108,8 @@ A
 0
 ownername
 
-0
-0
+
+
 1
 1
  
@@ -2937,8 +3133,8 @@ V
 0
 username
 
-0
-0
+
+
 1
 1
  
@@ -2963,8 +3159,8 @@ V
 0
 roomName
 
-0
-0
+
+
 1
 1
  
@@ -2989,8 +3185,8 @@ V
 0
 lastName
 
-0
-0
+
+
 1
 1
  
@@ -3008,6 +3204,55 @@ V
 -
 -
 -
+*7
+632
+0
+expirationDate
+
+
+
+1
+1
+ 
+F
+T
+D
+1
+0
+-
+-
+-
+-
+633
+-
+-
+-
+-
+*7
+636
+0
+token
+
+
+
+1
+1
+ 
+F
+T
+V
+2048
+0
+-
+-
+-
+639
+-
+637
+-
+-
+-
+-
 *8
 174
 0
@@ -3015,8 +3260,8 @@ V
 0
 N
  
-0
-0
+
+
 234
 -
 175
@@ -3033,8 +3278,8 @@ N
 1
 1
  
-0
-0
+
+
 -
 172
 -
@@ -3050,8 +3295,8 @@ N
 1
 1
  
-0
-0
+
+
 -
 169
 -
@@ -3067,8 +3312,8 @@ N
 0
 N
  
-0
-0
+
+
 235
 -
 166
@@ -3085,8 +3330,8 @@ N
 1
 1
  
-0
-0
+
+
 -
 181
 -
@@ -3102,8 +3347,8 @@ N
 0
 N
  
-0
-0
+
+
 239
 -
 179
@@ -3120,8 +3365,8 @@ N
 1
 1
  
-0
-0
+
+
 -
 208
 -
@@ -3137,8 +3382,8 @@ N
 0
 N
  
-0
-0
+
+
 -
 205
 -
@@ -3172,6 +3417,25 @@ N
 205
 0
 *10
+649
+0
+IDInvalidToken
+A
+1
+0
+N
+
+
+-
+651
+-
+-
+650
+-
+-
+-
+-
+*10
 580
 0
 IDUser
@@ -3179,8 +3443,8 @@ A
 1
 0
 N
-0
-0
+
+
 -
 582
 -
@@ -3198,8 +3462,8 @@ A
 1
 0
 N
-0
-0
+
+
 -
 514
 -
@@ -3219,8 +3483,8 @@ A
 0
 0
 N
-0
-0
+
+
 -
 517
 -
@@ -3239,8 +3503,8 @@ A
 1
 0
 N
-0
-0
+
+
 -
 520
 -
@@ -3259,8 +3523,8 @@ A
 0
 0
 N
-0
-0
+
+
 -
 523
 -
@@ -3279,8 +3543,8 @@ A
 0
 0
 N
-0
-0
+
+
 -
 526
 -
@@ -3299,8 +3563,8 @@ A
 1
 0
 N
-0
-0
+
+
 -
 530
 529
@@ -3320,8 +3584,8 @@ A
 0
 0
 N
-0
-0
+
+
 -
 534
 533
@@ -3341,8 +3605,8 @@ A
 1
 0
 N
-0
-0
+
+
 -
 539
 538
@@ -3362,8 +3626,8 @@ A
 1
 0
 N
-0
-0
+
+
 -
 463
 -
@@ -3381,8 +3645,8 @@ A
 1
 0
 N
-0
-0
+
+
 -
 311
 -
@@ -3402,8 +3666,8 @@ A
 0
 0
 N
-0
-0
+
+
 -
 349
 -
@@ -3422,8 +3686,8 @@ A
 1
 0
 N
-0
-0
+
+
 -
 314
 -
@@ -3442,8 +3706,8 @@ A
 0
 0
 N
-0
-0
+
+
 -
 335
 -
@@ -3462,8 +3726,8 @@ A
 0
 0
 N
-0
-0
+
+
 -
 326
 -
@@ -3482,8 +3746,8 @@ A
 1
 0
 N
-0
-0
+
+
 -
 336
 327
@@ -3503,8 +3767,8 @@ A
 0
 0
 N
-0
-0
+
+
 -
 359
 360
@@ -3524,8 +3788,8 @@ A
 1
 0
 N
-0
-0
+
+
 -
 361
 362
@@ -3545,8 +3809,8 @@ A
 1
 0
 N
-0
-0
+
+
 -
 226
 -
@@ -3564,8 +3828,8 @@ A
 1
 0
 N
-0
-0
+
+
 -
 223
 -
@@ -3583,8 +3847,8 @@ A
 1
 0
 N
-0
-0
+
+
 -
 217
 -
@@ -3602,8 +3866,8 @@ A
 1
 0
 N
-0
-0
+
+
 -
 220
 -
@@ -3621,8 +3885,8 @@ A
 1
 0
 N
-0
-0
+
+
 -
 239
 238
@@ -3641,8 +3905,8 @@ A
 1
 0
 N
-0
-0
+
+
 -
 234
 235
@@ -3653,6 +3917,28 @@ N
 -
 -
 -
+*10
+638
+0
+IDInvalidToken
+A
+1
+0
+N
+
+
+-
+639
+-
+-
+640
+-
+-
+-
+-
+*11
+651
+0
 *11
 234
 0
@@ -3754,6 +4040,9 @@ N
 0
 *11
 362
+0
+*11
+639
 0
 *12
 542
@@ -3900,6 +4189,36 @@ User
 192
 0
 
+-
+*18
+664
+0
+
+0
+100
+100
+0
+0
+0
+
+0
+
+1
+-
+*18
+654
+0
+
+0
+100
+100
+0
+0
+0
+
+0
+
+1
 -
 *18
 598
@@ -4083,6 +4402,8 @@ User
 606
 616
 617
+661
+671
 -
 *18
 609
@@ -4180,6 +4501,10 @@ User
 453
 456
 462
+642
+644
+647
+650
 -
 *18
 243
@@ -4280,6 +4605,12 @@ User
 224
 454
 457
+627
+633
+637
+640
+645
+648
 -
 *18
 109
@@ -4352,12 +4683,68 @@ User
 593
 604
 615
+660
+670
 -
 *19
-617
+671
 0
 30000
-244000
+201000
+0
+*19
+670
+0
+0
+20000
+0
+*19
+661
+0
+30000
+59000
+0
+*19
+660
+0
+0
+20000
+0
+*19
+650
+0
+0
+0
+0
+*19
+648
+0
+0
+0
+0
+*19
+647
+0
+0
+0
+0
+*19
+645
+0
+0
+0
+0
+*19
+644
+0
+0
+0
+0
+*19
+642
+0
+153000
+69700
 0
 *19
 615
@@ -4412,6 +4799,12 @@ User
 0
 0
 20000
+0
+*19
+617
+0
+30000
+244000
 0
 *19
 616
@@ -4709,6 +5102,12 @@ User
 0
 *19
 236
+0
+0
+0
+0
+*19
+640
 0
 0
 0
@@ -5146,6 +5545,18 @@ User
 0
 0
 *19
+633
+0
+0
+0
+0
+*19
+637
+0
+0
+0
+0
+*19
 162
 0
 91183
@@ -5272,6 +5683,12 @@ User
 95700
 0
 *19
+627
+0
+97700
+26000
+0
+*19
 583
 0
 30000
@@ -5356,6 +5773,66 @@ User
 4600
 0
 *21
+662
+0
+AuthenticationService.sql
+1_2
+D:\Users\Alessandro\Desktop\DesktopNew\Universita\Paradigmi di Programmazione e Sviluppo\Progetto\Repo\pps17-distributed-chat-service\docs\sql
+20180930
+20180930
+G_MYSQL
+40
+T
+
+
+-
+-
+-
+663
+668
+669
+-
+-
+664
+-
+-
+671
+670
+-
+-
+-
+-
+*21
+652
+0
+AuthenticationService.sql
+1_1
+D:\Users\Alessandro\Desktop\DesktopNew\Universita\Paradigmi di Programmazione e Sviluppo\Progetto\Repo\pps17-distributed-chat-service\docs\sql
+20180930
+20180930
+G_MYSQL
+35
+T
+
+
+-
+-
+-
+653
+658
+659
+-
+-
+654
+-
+-
+661
+660
+-
+-
+-
+-
+*21
 596
 0
 RoomService.sql
@@ -5366,8 +5843,8 @@ RoomService.sql
 G_MYSQL
 0
 T
-0
-0
+
+
 -
 -
 -
@@ -5396,8 +5873,8 @@ AuthenticationService.sql
 G_MYSQL
 35
 T
-0
-0
+
+
 -
 -
 -
@@ -5426,8 +5903,8 @@ RoomService.ddl
 G_MYSQL
 39
 T
-0
-0
+
+
 -
 -
 -
@@ -5456,8 +5933,8 @@ RoomService.ddl
 G_MYSQL
 0
 T
-0
-0
+
+
 -
 -
 -
@@ -5486,8 +5963,8 @@ RoomService.ddl
 G_MYSQL
 36
 T
-0
-0
+
+
 -
 -
 -
@@ -5516,8 +5993,8 @@ UserService.ddl
 G_MYSQL
 0
 T
-0
-0
+
+
 -
 -
 -
@@ -5546,8 +6023,8 @@ RoomService.ddl
 G_MYSQL
 0
 T
-0
-0
+
+
 -
 -
 -
@@ -5576,8 +6053,8 @@ Services.ddl
 G_MYSQL
 0
 T
-0
-0
+
+
 -
 -
 -
@@ -5606,8 +6083,8 @@ UserService.sql
 G_MYSQL
 3
 T
-0
-0
+
+
 -
 -
 -
@@ -5636,7 +6113,7 @@ T
 *40
 372
 434
-585:266
+585:266,662:54
 *40
 372
 241
@@ -5648,7 +6125,15 @@ T
 *40
 372
 85
-369:15,384:50
+369:15,384:50,652:15
+*40
+28
+641
+626
+*40
+373
+641
+662:61
 *40
 28
 560
@@ -5696,7 +6181,7 @@ T
 *40
 373
 450
-369:22,384:57,585:273
+369:22,384:57,585:273,662:66
 *40
 28
 269
@@ -5744,7 +6229,7 @@ T
 *40
 373
 93
-369:22,384:57
+369:22,384:57,652:27
 *40
 28
 123
@@ -5766,6 +6251,14 @@ T
 189
 189
 *40
+28
+626
+626
+*40
+373
+626
+652:22
+*40
 30
 161
 161
@@ -5781,6 +6274,22 @@ T
 30
 202
 202
+*40
+37
+646
+632
+*40
+375
+646
+662:63
+*40
+37
+643
+632
+*40
+375
+643
+662:62
 *40
 37
 577
@@ -5916,7 +6425,7 @@ T
 *40
 375
 455
-369:24,384:59,585:275
+369:24,384:59,585:275,662:68
 *40
 37
 452
@@ -5924,7 +6433,7 @@ T
 *40
 375
 452
-369:23,384:58,585:274
+369:23,384:58,585:274,662:67
 *40
 37
 332
@@ -6036,7 +6545,7 @@ T
 *40
 375
 99
-369:24,384:59
+369:24,384:59,652:29
 *40
 37
 121
@@ -6044,7 +6553,7 @@ T
 *40
 375
 121
-369:23,384:58
+369:23,384:58,652:28
 *40
 37
 129
@@ -6089,6 +6598,30 @@ T
 375
 367
 394:95,404:133,414:171
+*40
+37
+632
+632
+*40
+375
+632
+652:24
+*40
+37
+636
+632
+*40
+375
+636
+652:23
+*40
+44
+649
+638
+*40
+376
+649
+662:64
 *40
 44
 580
@@ -6168,7 +6701,7 @@ T
 *40
 376
 461
-369:26,384:61,585:276
+369:26,384:61,585:276,662:69
 *40
 44
 309
@@ -6248,7 +6781,7 @@ T
 *40
 376
 222
-369:26,384:61
+369:26,384:61,652:30
 *40
 44
 216
@@ -6265,6 +6798,14 @@ T
 44
 233
 233
+*40
+44
+638
+638
+*40
+376
+638
+652:25
 *40
 32
 174
@@ -6304,8 +6845,34 @@ T
 20180925
 
 
-0
+
 56
+-
+-
+*42
+665
+17
+0
+-
+-
+-
+-
+-
+666
+-
+-
+-
+*42
+655
+17
+0
+-
+-
+-
+-
+-
+656
+-
 -
 -
 *42
@@ -6534,7 +7101,7 @@ T
 No_method
 No method
 
-0
+
 55
 -
 -
@@ -6545,7 +7112,7 @@ Everything
 Do whatever you want
 14001
 -
-0
+
 58
 -
 *53
@@ -6556,7 +7123,7 @@ Services
 
 
 T
-0
+
 0
 64
 66
@@ -6590,6 +7157,10 @@ T
 603
 608
 614
+653
+659
+663
+669
 -
 68
 90
@@ -6607,6 +7178,8 @@ T
 589
 600
 611
+656
+666
 -
 55
 -
@@ -6617,6 +7190,36 @@ T
 -
 -
 *55
+666
+Generate SQL
+20180930
+164034
+20180930
+164034
+F
+
+0
+667
+668
+-
+-
+-
+*55
+656
+Generate SQL
+20180930
+163734
+20180930
+163734
+F
+
+0
+657
+658
+-
+-
+-
+*55
 600
 Generate SQL
 20180925
@@ -6624,7 +7227,7 @@ Generate SQL
 20180925
 142512
 F
-0
+
 0
 601
 602
@@ -6640,7 +7243,7 @@ Generate SQL
 20180925
 142302
 F
-0
+
 0
 590
 591
@@ -6656,7 +7259,7 @@ New schema
 20180925
 140916
 F
-0
+
 0
 558
 -
@@ -6671,7 +7274,7 @@ New schema
 20180925
 140836
 F
-0
+
 0
 470
 -
@@ -6686,7 +7289,7 @@ New schema
 20180925
 140751
 F
-0
+
 0
 440
 -
@@ -6701,7 +7304,7 @@ Generate SQL
 20180925
 114510
 F
-0
+
 0
 429
 430
@@ -6717,7 +7320,7 @@ Generate SQL
 20180925
 114438
 F
-0
+
 0
 419
 420
@@ -6733,7 +7336,7 @@ Generate SQL
 20180925
 114311
 F
-0
+
 0
 409
 410
@@ -6749,7 +7352,7 @@ Generate SQL
 20180925
 114124
 F
-0
+
 0
 399
 400
@@ -6765,7 +7368,7 @@ Generate SQL
 20180925
 114038
 F
-0
+
 0
 389
 390
@@ -6781,7 +7384,7 @@ Generate SQL
 20180925
 113912
 F
-0
+
 0
 379
 380
@@ -6797,7 +7400,7 @@ New schema
 20180925
 110835
 F
-0
+
 0
 247
 -
@@ -6812,7 +7415,7 @@ New schema
 20180925
 095625
 F
-0
+
 0
 69
 -
@@ -6827,7 +7430,7 @@ New schema
 20180925
 095956
 F
-0
+
 0
 91
 -
@@ -6842,7 +7445,7 @@ New schema
 20180925
 100603
 F
-0
+
 0
 113
 -
@@ -6857,13 +7460,25 @@ Generate SQL
 20180925
 144356
 F
-0
+
 0
 612
 613
 -
 617
 -
+-
+*57
+667
+i
+
+0
+-
+*57
+657
+i
+
+0
 -
 *57
 601
@@ -7046,6 +7661,42 @@ i
 0
 -
 *58
+669
+n
+
+0
+-
+*58
+668
+o
+
+0
+-
+*58
+663
+C
+
+0
+-
+*58
+659
+n
+
+0
+-
+*58
+658
+o
+
+0
+-
+*58
+653
+C
+
+0
+-
+*58
 603
 n
 
@@ -7208,133 +7859,36 @@ n
 0
 -
 *62
-0
-420
-    #VALUES=
-COBOL
-CODASYL
-IMS
-Relational
-SQL
-XML
-C/C++
-Java
-#                                     #VALUES=
-COBOL
-CODASYL
-IMS
-Relational
-SQL
-XML
-C/C++
-Java
-#                                     #VALUES=
-Area
-DBD
-SQLSchema
-SubSchema
-TableSpace
-#                                                #VALUES=
-ET
-RT
-Att
-Coll
-#                                                                          
-*62
-552
-4
-    
-*62
-464
-4
-    
-*62
-434
-4
-    
-*62
-241
-4
-    
-*62
-63
-4
-    
-*62
-85
-4
-    
-*62
-107
-4
-    
-*62
-596
-4
-    
-*62
-585
-4
-    
-*62
-424
-4
-    
-*62
-414
-4
-    
-*62
-404
-4
-    
-*62
-394
-4
-    
-*62
-384
-4
-    
-*62
-369
-4
-    
-*62
-607
-4
-    
-*63
 552
 19
 *POT "begin-file"
 
-*63
+*62
 464
 19
 *POT "begin-file"
 
-*63
+*62
 434
 19
 *POT "begin-file"
 
-*63
+*62
 241
 19
 *POT "begin-file"
 
-*63
+*62
 63
 19
 *POT "begin-file"
 
-*63
+*62
 85
 19
 *POT "begin-file"
 
-*63
+*62
 107
 19
 *POT "begin-file"

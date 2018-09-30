@@ -8,7 +8,7 @@ use authservice;
 
 drop table if exists invalid_tokens;
 create table invalid_tokens (
-     token varchar(2048) not null,
+     token varchar(1024) not null,
      expiration_date timestamp not null default CURRENT_TIMESTAMP,
      constraint id_invalid_token primary key (token));
 

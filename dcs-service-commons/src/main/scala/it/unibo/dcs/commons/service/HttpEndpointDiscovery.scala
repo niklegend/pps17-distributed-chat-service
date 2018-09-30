@@ -1,13 +1,12 @@
 package it.unibo.dcs.commons.service
 
 import io.vertx.scala.ext.web.client.WebClient
-
-import scala.concurrent.{ExecutionContext, Future}
+import rx.lang.scala.Observable
 
 trait HttpEndpointDiscovery {
 
-  def getWebClient(name: String)(implicit executor: ExecutionContext): Future[WebClient]
+  def getWebClient(name: String): Observable[WebClient]
 
-  def getWebClientOrFail(name: String)(implicit executor: ExecutionContext): Future[WebClient]
+  def getWebClientOrFail(name: String): Observable[WebClient]
 
 }

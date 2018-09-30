@@ -1,4 +1,4 @@
-package it.unibo.dcs.commons.use_case
+package it.unibo.dcs.commons.interactor
 
 import rx.lang.scala.{Observable, Subscriber}
 

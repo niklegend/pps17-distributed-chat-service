@@ -5,10 +5,8 @@ import it.unibo.dcs.commons.service.ServiceVerticle
 
 final class UserVerticle extends ServiceVerticle {
 
-  override protected def initializeRouter(router: Router): Unit = {
+  override protected def initializeRouter(router: Router): Unit = ???
 
-  }
-
-  override def start(): Unit = super.start()
+  override def start(): Unit = ???
 
 }

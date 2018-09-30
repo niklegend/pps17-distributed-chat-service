@@ -1,4 +1,4 @@
-package it.unibo.dcs.commons.use_case
+package it.unibo.dcs.commons.interactor
 
 import rx.lang.scala.Scheduler
 import rx.lang.scala.schedulers.ExecutionContextScheduler
@@ -11,7 +11,7 @@ package object executor {
 
   final case class PostExecutionThread(private[executor] val scheduler: Scheduler)
 
-  object Implicits {
+  private[interactor] object Implicits {
 
     implicit def executionContextToScheduler(te: ThreadExecutor): Scheduler = ExecutionContextScheduler(te)
 

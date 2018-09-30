@@ -4,7 +4,7 @@ import io.vertx.core.{Context => JContext, Vertx => JVertx}
 import io.vertx.rx.java.{RxHelper => JRxHelper}
 import io.vertx.scala.core.{Context, Vertx}
 import it.unibo.dcs.commons.RxHelper.Implicits._
-import rx.lang.scala.Scheduler
+import rx.lang.scala.{Observable, Scheduler}
 
 object RxHelper {
 
@@ -23,6 +23,8 @@ object RxHelper {
     implicit def contextToJContext(context: Context): JContext = context.asJava.asInstanceOf[JContext]
 
     implicit final class RxScheduler(val asJavaScheduler: rx.Scheduler) extends Scheduler
+
+    implicit final class RxObservable[T](val asJavaObservable: rx.Observable[T]) extends Observable[T]
 
   }
 

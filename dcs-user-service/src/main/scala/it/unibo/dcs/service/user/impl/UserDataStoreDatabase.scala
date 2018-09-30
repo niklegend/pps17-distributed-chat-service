@@ -1,10 +1,10 @@
 package it.unibo.dcs.service.user.impl
 
-import io.vertx.scala.ext.sql.SQLClient
+import io.vertx.scala.ext.sql.{SQLClient, SQLConnection}
 import it.unibo.dcs.service.user.{CreateUserRequest, User, UserDataStore}
 import rx.lang.scala.Observable
 
-class UserDataStoreDatabase(private[this] val client: SQLClient) extends UserDataStore {
+final class UserDataStoreDatabase(private[this] val connection: SQLConnection) extends UserDataStore {
 
   override def getUserByUsername(username: String): Observable[User] = ???
 

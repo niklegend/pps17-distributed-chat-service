@@ -3,8 +3,7 @@ package it.unibo.dcs.commons.service
 import io.vertx.core.json.JsonObject
 import io.vertx.servicediscovery.Record
 import it.unibo.dcs.commons.service.HttpEndpointPublisher._
-
-import scala.concurrent.{ExecutionContext, Future}
+import rx.lang.scala.Observable
 
 trait HttpEndpointPublisher {
 
@@ -13,11 +12,11 @@ trait HttpEndpointPublisher {
               host: String = DEFAULT_HOST,
               port: Int = DEFAULT_PORT,
               root: String = DEFAULT_ROOT,
-              metadata: JsonObject = DEFAULT_METADATA): Future[Record]
+              metadata: JsonObject = DEFAULT_METADATA): Observable[Record]
 
-  def unpublish(record: Record): Future[Record]
+  def unpublish(record: Record): Observable[Record]
 
-  def clear()(implicit executor: ExecutionContext): Future[Unit]
+  def clear(): Observable[Unit]
 
 }
 

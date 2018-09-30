@@ -5,6 +5,8 @@ import it.unibo.dcs.commons.RxHelper.Implicits.RxObservable
 import it.unibo.dcs.commons.VertxHelper.Implicits._
 import rx.lang.scala.Observable
 
+import scala.util.{Failure, Success, Try}
+
 object VertxHelper {
 
   def toObservable[T](action: (AsyncResult[T] => Unit) => Unit): Observable[T] = toObservable[T, T](identity)(action)
@@ -21,6 +23,13 @@ object VertxHelper {
 
     implicit def functionToHandler[T](handler: Function[T, Any]): Handler[T] = (event: T) => handler(event)
 
+    implicit def asyncResultToTry[T](ar: AsyncResult[T]): Try[T] =
+      if (ar.succeeded)
+        Success(ar.result)
+      else if (ar.failed)
+        Failure(ar.cause)
+      else
+        Failure(new IllegalStateException("Async result is neither succeeded or failed"))
   }
 
 }

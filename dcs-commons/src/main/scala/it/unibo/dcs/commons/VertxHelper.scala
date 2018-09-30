@@ -23,13 +23,16 @@ object VertxHelper {
 
     implicit def functionToHandler[T](handler: Function[T, Any]): Handler[T] = (event: T) => handler(event)
 
-    implicit def asyncResultToTry[T](ar: AsyncResult[T]): Try[T] =
-      if (ar.succeeded)
-        Success(ar.result)
-      else if (ar.failed)
-        Failure(ar.cause)
-      else
-        Failure(new IllegalStateException("Async result is neither succeeded or failed"))
+    implicit class RichAsyncResult[T](ar: AsyncResult[T]) {
+      final def toTry: Try[T] =
+        if (ar.succeeded)
+          Success(ar.result)
+        else if (ar.failed)
+          Failure(ar.cause)
+        else
+          Failure(new IllegalStateException("Async result is neither succeeded or failed"))
+    }
+
   }
 
 }

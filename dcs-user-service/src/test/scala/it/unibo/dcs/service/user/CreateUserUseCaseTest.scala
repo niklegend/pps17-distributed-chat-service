@@ -12,24 +12,30 @@ class CreateUserUseCaseTest extends FlatSpec with MockFactory {
   val request = CreateUserRequest("martynha", "Martina", "Magnani")
   val expectedUser = User("martynha", "Martina", "Magnani", "", true, new Date())
 
-  val threadExecutor = mock[ThreadExecutor]
-  val postExecutionThread = mock[PostExecutionThread]
-  val userRepository = mock[UserRepository]
-  val subscriber = mock[Subscriber[User]]
+
+  val threadExecutor: ThreadExecutor = mock[ThreadExecutor]
+  val postExecutionThread: PostExecutionThread = mock[PostExecutionThread]
+  val userRepository: UserRepository = mock[UserRepository]
+
+  val subscriber: Subscriber[User] = stub[Subscriber[User]]
 
   val createUserUseCase = new CreateUserUseCase(threadExecutor, postExecutionThread, userRepository)
 
-  "CreateUserUseCase" should "call UserRepository.createUser with 'request' ad parameter, and it returns an Observable of User equal to 'expectedUser'" in  {
+  it should "create a new user when the use case is executed" in {
+    // Given
+    // userRepository is called with `request` as parameter returns an observable that contains only `user`
+    (userRepository createUser _) expects request returns (Observable just expectedUser)
 
-    //given
-    //expectations
-    (userRepository createUser _).expects(request).returning(Observable.just(expectedUser))
+    // When
+    // createUserUseCase is executed with argument `request`
+    createUserUseCase(request).subscribe(subscriber)
 
-    //when
-    createUserUseCase(request, Subscriber())
+    // Then
+    // Verify that `subscriber.onNext` has been called once with `user` as argument
+    (subscriber onNext _) verify expectedUser once()
 
-    //then
-    // UserRepository should be called with 'request' as parameter and returns an Observable of User equal to 'expectedUser'
-    (subscriber onNext _ ).verify(expectedUser).once
+    // Verify that `subscriber.onCompleted` has been called once
+    (subscriber onCompleted: () => Unit) verify() once()
   }
+
 }

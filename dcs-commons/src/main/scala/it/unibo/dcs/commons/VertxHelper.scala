@@ -36,7 +36,7 @@ object VertxHelper {
         else
           Failure(new IllegalStateException("Async result is neither succeeded or failed"))
     }
-    
+
   }
 
 }

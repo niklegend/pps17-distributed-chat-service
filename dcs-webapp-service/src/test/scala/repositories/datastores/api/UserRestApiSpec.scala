@@ -1,5 +1,7 @@
 package repositories.datastores.api
 
-class UserRestApiSpec {
+import org.scalatest.FlatSpec
+
+class UserRestApiSpec extends FlatSpec {
 
 }

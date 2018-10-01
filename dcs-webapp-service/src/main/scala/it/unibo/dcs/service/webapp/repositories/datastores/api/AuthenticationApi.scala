@@ -1,4 +1,4 @@
-package it.unibo.dcs.service.webapp.repositories
+package it.unibo.dcs.service.webapp.repositories.datastores.api
 
 import it.unibo.dcs.service.webapp.repositories.Requests.RegisterUserRequest
 import rx.Single

@@ -3,11 +3,11 @@ package it.unibo.dcs.service.webapp
 import io.vertx.scala.ext.web.Router
 import io.vertx.servicediscovery.ServiceDiscovery
 import it.unibo.dcs.commons.service.{HttpEndpointDiscovery, HttpEndpointDiscoveryImpl, ServiceVerticle}
-import it.unibo.dcs.service.webapp.repositories.AuthenticationRestApi
+import it.unibo.dcs.service.webapp.repositories.datastores.api.AuthenticationRestApi
 
 final class WebappVerticle extends ServiceVerticle {
 
-  private def discovery: HttpEndpointDiscovery = new HttpEndpointDiscoveryImpl(ServiceDiscovery.create(), eventBus = eventBus)
+  //private def discovery: HttpEndpointDiscovery = new HttpEndpointDiscoveryImpl(ServiceDiscovery.create(this.vertx), eventBus = eventBus)
 
   override protected def initializeRouter(router: Router): Unit = ???
 

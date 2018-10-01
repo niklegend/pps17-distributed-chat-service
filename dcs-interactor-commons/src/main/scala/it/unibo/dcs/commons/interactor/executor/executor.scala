@@ -11,7 +11,7 @@ package object executor {
 
   trait PostExecutionThread {
 
-    private[interactor] def scheduler: Scheduler
+    def scheduler: Scheduler
 
   }
 

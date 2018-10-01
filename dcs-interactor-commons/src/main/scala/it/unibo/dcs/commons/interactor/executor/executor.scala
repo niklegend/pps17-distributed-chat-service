@@ -9,7 +9,19 @@ package object executor {
 
   trait ThreadExecutor extends ExecutionContext
 
-  final case class PostExecutionThread(private[executor] val scheduler: Scheduler)
+  trait PostExecutionThread {
+
+    private[interactor] def scheduler: Scheduler
+
+  }
+
+  object PostExecutionThread {
+
+    def apply(scheduler: Scheduler): PostExecutionThread = DefaultPostExecutionThread(scheduler)
+
+    private final case class DefaultPostExecutionThread(override val scheduler: Scheduler) extends PostExecutionThread
+
+  }
 
   private[interactor] object Implicits {
 

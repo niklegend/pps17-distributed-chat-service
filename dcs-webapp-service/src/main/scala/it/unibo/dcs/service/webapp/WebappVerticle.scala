@@ -7,8 +7,6 @@ import it.unibo.dcs.service.webapp.repositories.datastores.api.AuthenticationRes
 
 final class WebappVerticle extends ServiceVerticle {
 
-  //private def discovery: HttpEndpointDiscovery = new HttpEndpointDiscoveryImpl(ServiceDiscovery.create(this.vertx), eventBus = eventBus)
-
   override protected def initializeRouter(router: Router): Unit = ???
 
   override def start(): Unit = {

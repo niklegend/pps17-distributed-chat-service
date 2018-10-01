@@ -23,7 +23,7 @@ class AuthenticationDataStoreSpec extends FlatSpec with MockFactory with OneInst
       val registeredSubscriber: Subscriber[Boolean] = stub[Subscriber[Boolean]]
     }
 
-  /*
+
   it should "register a new user if it doesn't exist" in {
     // Given
     (fixture.authApi registerUser _) expects fixture.registerRequest returns (Single just true)
@@ -37,7 +37,7 @@ class AuthenticationDataStoreSpec extends FlatSpec with MockFactory with OneInst
     // Verify that `subscriber.onCompleted` has been called once
     (fixture.registeredSubscriber onCompleted: () => Unit) verify() once()
   }
-  */
+
 
   /*
   it should "authenticate a registered user" in {

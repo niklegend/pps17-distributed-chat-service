@@ -9,6 +9,6 @@ final class CreateUserUseCase(private[this] val threadExecutor: ThreadExecutor,
                               private[this] val userRepository: UserRepository)
   extends UseCase[User, CreateUserRequest](threadExecutor, postExecutionThread) {
 
-  override protected[this] def createObservable(request: CreateUserRequest): Observable[User] = ???
+  override protected[this] def createObservable(request: CreateUserRequest): Observable[User] = userRepository.createUser(request)
 
 }

@@ -1,19 +1,7 @@
--- *********************************************
--- * SQL MySQL generation                      
--- *--------------------------------------------
--- * DB-MAIN version: 9.2.0_32              
--- * Generator date: Apr 23 2015              
--- * Generation date: Tue Sep 25 14:25:12 2018 
--- * LUN file: /Users/mattiavandi/Development/Courses/PPS/pps17-distributed-chat-service/docs/Services.lun 
--- * Schema: RoomServiceSQL/1 
--- ********************************************* 
-
-
 -- Database Section
 -- ________________ 
 
-use RoomService;
-
+use roomservice;
 
 -- Tables Section
 -- _____________ 
@@ -22,7 +10,7 @@ drop table if exists messages;
 create table messages (
      user_name varchar(20) not null,
      room_name varchar(50) not null,
-     timestamp date not null,
+     `timestamp` timestamp not null,
      content varchar(1024) not null,
      constraint id_message primary key (user_name, room_name, timestamp));
 
@@ -44,7 +32,6 @@ create table users (
      username varchar(20) not null,
      constraint id_user primary key (username));
 
-
 -- Constraints Section
 -- ___________________ 
 
@@ -64,7 +51,5 @@ alter table rooms add constraint FKOR
      foreign key (owner_name)
      references users (username);
 
-
 -- Index Section
 -- _____________ 
-

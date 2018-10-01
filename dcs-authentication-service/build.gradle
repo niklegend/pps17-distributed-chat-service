@@ -3,9 +3,10 @@
  * Learn how to create Gradle builds at https://guides.gradle.org/creating-new-gradle-builds/
  */
 
-compile project(':commons')
-
 dependencies {
+    compile project(':dcs-commons')
+    compile project(':dcs-service-commons')
+
     compile group: 'io.vertx', name: 'vertx-lang-scala_2.12', version: vertxVersion
     compile group: 'io.vertx', name: 'vertx-web-scala_2.12', version: vertxVersion
     compile group: 'io.vertx', name: 'vertx-auth-jwt-scala_2.12', version: vertxVersion

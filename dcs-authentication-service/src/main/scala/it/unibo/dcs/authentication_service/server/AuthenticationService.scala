@@ -1,23 +1,29 @@
 package it.unibo.dcs.authentication_service.server
 
 import io.vertx.core.http.HttpMethod
-import io.vertx.lang.scala.ScalaVerticle
 import io.vertx.scala.core.Vertx
 import io.vertx.scala.ext.auth.{AuthProvider, KeyStoreOptions}
 import io.vertx.scala.ext.auth.jwt.{JWTAuth, JWTAuthOptions}
 import io.vertx.scala.ext.web.Router
 import io.vertx.scala.ext.web.handler.{BodyHandler, RedirectAuthHandler}
+import it.unibo.dcs.commons.service.ServiceVerticle
 import scala.concurrent.{ExecutionContext, Future}
 import scala.io.Source
 
 class AuthenticationService extends ServiceVerticle {
 
+  private var router: Router = _
+
+  override protected def initializeRouter(router: Router): Unit = {
+    this.router = router
+  }
+
   override def startFuture(): Future[_] = {
     val authProvider = createJwtAuthProvider()
-    _router.route().handler(BodyHandler.create())
-    setupRedirects(_router, authProvider)
-    setupRoutes(_router)
-    createServer(_router, vertx)
+    router.route().handler(BodyHandler.create())
+    setupRedirects(router, authProvider)
+    setupRoutes(router)
+    createServer(router, vertx)
   }
 
   private def createJwtAuthProvider(): AuthProvider = {

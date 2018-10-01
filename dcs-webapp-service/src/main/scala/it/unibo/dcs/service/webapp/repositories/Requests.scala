@@ -6,6 +6,6 @@ object Requests {
 
   final case class RegisterUserRequest(username: String, password: String,
                                        firstName: String, lastName: String,
-                                       bio: String, visible: String)
+                                       bio: String, visible: Boolean)
 
 }

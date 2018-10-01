@@ -1,6 +1,6 @@
 package it.unibo.dcs.commons
 
-import io.vertx.core.{AsyncResult, Handler}
+import io.vertx.core.{AsyncResult, Future, Handler}
 import it.unibo.dcs.commons.RxHelper.Implicits.RxObservable
 import it.unibo.dcs.commons.VertxHelper.Implicits._
 import rx.lang.scala.Observable
@@ -20,6 +20,10 @@ object VertxHelper {
     implicit def handlerToFunction[T](handler: Handler[T]): Function[T, Unit] = handler.handle
 
     implicit def functionToHandler[T](handler: Function[T, Any]): Handler[T] = (event: T) => handler(event)
+
+    implicit def toSucceededFuture[T] (result: T): AsyncResult[T] = Future.succeededFuture(result)
+
+    implicit def toFailedFuture[T] (causeFailure: Throwable): AsyncResult[T] = Future.failedFuture(causeFailure)
 
   }
 

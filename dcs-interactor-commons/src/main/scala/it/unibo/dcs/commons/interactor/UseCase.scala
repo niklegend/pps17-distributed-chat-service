@@ -8,10 +8,10 @@ abstract class UseCase[T, P](private[this] val threadExecutor: ThreadExecutor,
                              private[this] val postExecutionThread: PostExecutionThread)
   extends Interactor[T, P] {
 
-  override final def apply(parameters: P, observer: Subscriber[T]): Unit = createObservable(parameters)
+  override final def apply(parameters: P, subscriber: Subscriber[T]): Unit = createObservable(parameters)
     .subscribeOn(threadExecutor)
     .observeOn(postExecutionThread)
-    .subscribe(observer)
+    .subscribe(subscriber)
 
   override final def apply(parameters: P): Observable[T] = createObservable(parameters)
 

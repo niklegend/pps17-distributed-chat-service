@@ -1,0 +1,29 @@
+/*
+ * This is a general purpose Gradle build.
+ * Learn how to create Gradle builds at https://guides.gradle.org/creating-new-gradle-builds/
+ */
+allprojects {
+    repositories {
+        jcenter()
+    }
+}
+
+subprojects {
+    version = '1.0'
+    apply plugin: 'scala'
+
+    dependencies {
+        compile group: 'org.scala-lang', name: 'scala-library', version: scalaVersion
+
+        testCompile group: 'org.scalacheck', name: 'scalacheck_2.12', version: scalaCheckVersion
+        testCompile group: 'org.scalatest', name: 'scalatest_2.12', version: scalaTestVersion
+        testCompile group: 'org.scalamock', name: 'scalamock_2.12', version: scalaMockVersion
+    }
+}
+
+task stage(type: Copy) {
+    into buildDir
+    subprojects {
+        from tasks.withType(Jar)
+    }
+}

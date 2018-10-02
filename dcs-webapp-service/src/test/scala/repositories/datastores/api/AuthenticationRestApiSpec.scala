@@ -14,18 +14,19 @@ import rx.lang.scala.Observable
 class AuthenticationRestApiSpec extends FlatSpec with MockFactory with OneInstancePerTest {
   val user = User("niklegend", "nicola", "piscaglia", "bla", visible = true, new Date())
   val registerRequest = RegisterUserRequest(user.username, "password", user.firstName,
-    user.lastName, user.bio, visible = true)
+    user.lastName)
   //val registeredSubscriber: Subscriber[Boolean] = (result: Boolean) => assert(result)
   val discovery: HttpEndpointDiscovery = mock[HttpEndpointDiscovery]
   val authClient: WebClient = mock[WebClient]
   val authRestApi = new AuthenticationRestApi(discovery)
+  val token: String = "token"
 
   it should "register a new user" in {
     // Given
     discovery.getWebClient _ expects "AuthenticationService" returns Observable.just(authClient)
 
     // When
-    authRestApi.registerUser(registerRequest).subscribe((result: Boolean) => assert(result))
+    authRestApi.registerUser(registerRequest).subscribe((result: String) => assert(result equals token))
 
     // Then
     // Verify that `subscriber.onNext` has been called once with `user` as argument

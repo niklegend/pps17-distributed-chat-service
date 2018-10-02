@@ -8,32 +8,33 @@ import it.unibo.dcs.service.webapp.repositories.datastores.AuthenticationDataSto
 import it.unibo.dcs.service.webapp.repositories.datastores.api.AuthenticationApi
 import it.unibo.dcs.service.webapp.repositories.datastores.impl.AuthenticationDataStoreNetwork
 import org.scalamock.scalatest.MockFactory
-import org.scalatest.{FlatSpec, OneInstancePerTest}
-import rx.{Single, Subscriber}
+import org.scalatest.FlatSpec
+import rx.lang.scala.{Observable, Subscriber}
 
-class AuthenticationDataStoreSpec extends FlatSpec with MockFactory with OneInstancePerTest {
+class AuthenticationDataStoreSpec extends FlatSpec with MockFactory {
 
-  def fixture =
+  val fixture =
     new {
       val authApi: AuthenticationApi = mock[AuthenticationApi]
       val dataStore: AuthenticationDataStore = new AuthenticationDataStoreNetwork(authApi)
       val user = User("niklegend", "nicola", "piscaglia", "bla", visible = true, new Date())
       val registerRequest = RegisterUserRequest(user.username, "password", user.firstName,
-        user.lastName, user.bio, visible = true)
-      val registeredSubscriber: Subscriber[Boolean] = stub[Subscriber[Boolean]]
+        user.lastName)
+      val registeredSubscriber: Subscriber[String] = stub[Subscriber[String]]
+      val token = "token"
     }
 
 
-  it should "register a new user if it doesn't exist" in {
+  it should "register a new user" in {
     // Given
-    (fixture.authApi registerUser _) expects fixture.registerRequest returns (Single just true)
+    (fixture.authApi registerUser _) expects fixture.registerRequest returns (Observable just fixture.token)
 
     // When
-    registerNewUser().subscribe(fixture.registeredSubscriber)
+    fixture.dataStore.registerUser(fixture.registerRequest).subscribe(fixture.registeredSubscriber)
 
     // Then
     // Verify that `subscriber.onNext` has been called once with `user` as argument
-    (fixture.registeredSubscriber onNext _) verify true once()
+    (fixture.registeredSubscriber onNext _) verify fixture.token once()
     // Verify that `subscriber.onCompleted` has been called once
     (fixture.registeredSubscriber onCompleted: () => Unit) verify() once()
   }
@@ -49,8 +50,4 @@ class AuthenticationDataStoreSpec extends FlatSpec with MockFactory with OneInst
     })
   }*/
 
-  private def registerNewUser(): Single[Boolean] = {
-    val dataStore = fixture.dataStore
-    dataStore.registerUser(fixture.registerRequest)
-  }
 }

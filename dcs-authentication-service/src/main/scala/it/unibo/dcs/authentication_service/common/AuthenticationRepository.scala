@@ -4,9 +4,9 @@ import rx.lang.scala.Observable
 
 trait AuthenticationRepository {
 
-  def createUser(username: String, password: String): Observable[String]
+  def createUser(username: String, password: String): Observable[Unit]
 
-  def loginUser(username: String, password: String): Observable[String]
+  def loginUser(username: String, password: String): Observable[Unit]
 
   def logoutUser(username: String): Observable[Unit]
 

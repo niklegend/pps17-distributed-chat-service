@@ -11,3 +11,16 @@ dependencies {
 
     compile group: 'io.vertx', name: 'vertx-auth-jwt-scala_2.12', version: vertxVersion
 }
+
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "gradle.plugin.cz.augi:gradle-wartremover:0.9.4"
+    }
+}
+
+apply plugin: "cz.augi.gradle.wartremover"

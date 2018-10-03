@@ -23,7 +23,7 @@ final class CreateUserUseCaseSpec extends FlatSpec with MockFactory with OneInst
     (roomRepository createUser _) expects request returns Observable.just()
 
     // When
-    createUserUseCase(request)
+    createUserUseCase(request).subscribe(subscriber)
 
     // Then
     (subscriber onNext _) verify * once()

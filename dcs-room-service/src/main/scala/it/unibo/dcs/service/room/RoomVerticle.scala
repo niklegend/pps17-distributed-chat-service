@@ -11,7 +11,7 @@ import it.unibo.dcs.service.room.repository.RoomRepository
 import it.unibo.dcs.service.room.request.CreateUserRequest
 import it.unibo.dcs.service.room.subscriber.CreateUserSubscriber
 
-final class RoomService(private[this] val roomRepository: RoomRepository, val httpEndpointPublisher: HttpEndpointPublisher) extends ServiceVerticle {
+final class RoomVerticle(private[this] val roomRepository: RoomRepository, val publisher: HttpEndpointPublisher) extends ServiceVerticle {
 
   private var createUserUseCase: CreateUserUseCase = _
 
@@ -44,7 +44,7 @@ final class RoomService(private[this] val roomRepository: RoomRepository, val ht
 
   override def start(): Unit = startHttpServer(host, port)
     .doOnCompleted(
-      httpEndpointPublisher.publish(name = "room-service", host = host, port = port)
+      publisher.publish(name = "room-service", host = host, port = port)
         .subscribe(_ => println("Record published!"),
                    cause => println(s"Could not publish record: ${cause.getMessage}")))
     .subscribe(server => println(s"Server started at http://$host:${server.actualPort}"),

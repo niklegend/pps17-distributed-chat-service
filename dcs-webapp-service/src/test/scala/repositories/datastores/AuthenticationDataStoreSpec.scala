@@ -8,46 +8,71 @@ import it.unibo.dcs.service.webapp.repositories.datastores.AuthenticationDataSto
 import it.unibo.dcs.service.webapp.repositories.datastores.api.AuthenticationApi
 import it.unibo.dcs.service.webapp.repositories.datastores.impl.AuthenticationDataStoreNetwork
 import org.scalamock.scalatest.MockFactory
-import org.scalatest.FlatSpec
+import org.scalatest.{FlatSpec, OneInstancePerTest}
 import rx.lang.scala.{Observable, Subscriber}
 
-class AuthenticationDataStoreSpec extends FlatSpec with MockFactory {
+import scala.language.postfixOps
 
-  val fixture =
-    new {
-      val authApi: AuthenticationApi = mock[AuthenticationApi]
-      val dataStore: AuthenticationDataStore = new AuthenticationDataStoreNetwork(authApi)
-      val user = User("niklegend", "nicola", "piscaglia", "bla", visible = true, new Date())
-      val registerRequest = RegisterUserRequest(user.username, "password", user.firstName,
-        user.lastName)
-      val registeredSubscriber: Subscriber[String] = stub[Subscriber[String]]
-      val token = "token"
-    }
+class AuthenticationDataStoreSpec extends FlatSpec with MockFactory with OneInstancePerTest {
+
+  val authApi: AuthenticationApi = mock[AuthenticationApi]
+  val dataStore: AuthenticationDataStore = new AuthenticationDataStoreNetwork(authApi)
+  val user = User("niklegend", "nicola", "piscaglia", "bla", visible = true, new Date())
+  val registerRequest = RegisterUserRequest(user.username, "password", user.firstName,
+    user.lastName)
+  val registeredSubscriber: Subscriber[String] = stub[Subscriber[String]]
+  val loginSubscriber: Subscriber[String] = stub[Subscriber[String]]
+  val logoutSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
+  val token = "token"
 
 
   it should "register a new user" in {
     // Given
-    (fixture.authApi registerUser _) expects fixture.registerRequest returns (Observable just fixture.token)
+    (authApi registerUser _) expects registerRequest returns (Observable just token)
 
     // When
-    fixture.dataStore.registerUser(fixture.registerRequest).subscribe(fixture.registeredSubscriber)
+    dataStore.registerUser(registerRequest).subscribe(registeredSubscriber)
 
     // Then
-    // Verify that `subscriber.onNext` has been called once with `user` as argument
-    (fixture.registeredSubscriber onNext _) verify fixture.token once()
+    // Verify that `subscriber.onNext` has been called once with `token` as argument
+    (registeredSubscriber onNext _) verify token once()
     // Verify that `subscriber.onCompleted` has been called once
-    (fixture.registeredSubscriber onCompleted: () => Unit) verify() once()
+    (registeredSubscriber onCompleted: () => Unit) verify() once()
   }
 
 
-  /*
   it should "authenticate a registered user" in {
-    val user = fixture.user
-    val dataStore = fixture.dataStore
-    registerNewUser().subscribe(_ => {
-      dataStore.loginUser(user.username, "password")
-        .subscribe(logged => assert(logged))
+    // Given
+    (authApi registerUser _) expects registerRequest returns (Observable just token)
+    (authApi loginUser(_, _)) expects(user.username, "password") returns (Observable just token)
+
+    // When
+    dataStore.registerUser(registerRequest).subscribe(_ => {
+      dataStore.loginUser(user.username, "password").subscribe(loginSubscriber)
     })
-  }*/
+
+    // Then
+    // Verify that `subscriber.onNext` has been called once with `token` as argument
+    (loginSubscriber onNext _) verify token once()
+    // Verify that `subscriber.onCompleted` has been called once
+    (loginSubscriber onCompleted: () => Unit) verify() once()
+  }
+
+
+  it should "logout a logged user" in {
+    // Given
+    (authApi loginUser(_, _)) expects(user.username, "password") returns (Observable just token)
+    (authApi logoutUser _) expects user.username returns Observable.empty
+
+    // When
+    dataStore.loginUser(user.username, "password").subscribe(_ => {
+      dataStore.logoutUser(user.username).subscribe(logoutSubscriber)
+    })
+
+    // Then
+    // Verify that `subscriber.onCompleted` has been called once
+    (logoutSubscriber onCompleted: () => Unit) verify() once()
+  }
+
 
 }

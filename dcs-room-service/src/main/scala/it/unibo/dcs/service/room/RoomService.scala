@@ -2,9 +2,9 @@ package it.unibo.dcs.service.room
 
 import io.vertx.core.{AbstractVerticle, Context, Vertx}
 import io.vertx.scala.ext.web.Router
-import it.unibo.dcs.commons.service.{ServiceVerticle, VertxLogging}
+import it.unibo.dcs.commons.service.ServiceVerticle
 
-final class RoomService extends ServiceVerticle with VertxLogging {
+final class RoomService extends ServiceVerticle {
 
   private var host: String = _
   private var port: Int = _
@@ -24,7 +24,7 @@ final class RoomService extends ServiceVerticle with VertxLogging {
   }
 
   override def start(): Unit = startHttpServer(host, port)
-    .subscribe(server => log.info(s"Server started at http://$host:${server.actualPort}"),
-               cause => log.error(s"Could not start server ar http://$host:$port, ${cause.getMessage}"))
+    .subscribe(server => println(s"Server started at http://$host:${server.actualPort}"),
+               cause => println(s"Could not start server ar http://$host:$port, ${cause.getMessage}"))
 
 }

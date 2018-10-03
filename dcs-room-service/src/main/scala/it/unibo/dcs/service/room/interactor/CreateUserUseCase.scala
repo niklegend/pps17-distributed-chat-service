@@ -9,6 +9,6 @@ import rx.lang.scala.Observable
 final class CreateUserUseCase(threadExecutor: ThreadExecutor, postExecutionThread: PostExecutionThread, private[this] val roomRepository: RoomRepository)
   extends UseCase[Unit, CreateUserRequest](threadExecutor, postExecutionThread) {
 
-  override protected[this] def createObservable(request: CreateUserRequest): Observable[Unit] = ???
+  override protected[this] def createObservable(request: CreateUserRequest): Observable[Unit] = roomRepository.createUser(request)
 
 }

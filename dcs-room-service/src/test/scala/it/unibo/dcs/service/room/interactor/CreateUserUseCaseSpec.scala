@@ -26,7 +26,6 @@ final class CreateUserUseCaseSpec extends FlatSpec with MockFactory with OneInst
     createUserUseCase(request).subscribe(subscriber)
 
     // Then
-    (subscriber onNext _) verify * once()
     (subscriber.onCompleted: () => Unit) verify() once()
   }
 

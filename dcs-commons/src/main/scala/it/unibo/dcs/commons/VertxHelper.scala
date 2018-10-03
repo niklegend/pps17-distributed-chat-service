@@ -1,6 +1,8 @@
 package it.unibo.dcs.commons
 
+import io.vertx.core.{Context => JContext, Vertx => JVertx}
 import io.vertx.core.{AsyncResult, Future, Handler}
+import io.vertx.scala.core.{Context, Vertx}
 import it.unibo.dcs.commons.RxHelper.Implicits.RxObservable
 import it.unibo.dcs.commons.VertxHelper.Implicits._
 import rx.lang.scala.Observable
@@ -18,6 +20,10 @@ object VertxHelper {
   }
 
   object Implicits {
+
+    implicit def vertxToJVertx(vertx: Vertx): JVertx = vertx.asJava.asInstanceOf[JVertx]
+
+    implicit def contextToJContext(context: Context): JContext = context.asJava.asInstanceOf[JContext]
 
     implicit def handlerToFunction[T](handler: Handler[T]): Function[T, Unit] = handler.handle
 

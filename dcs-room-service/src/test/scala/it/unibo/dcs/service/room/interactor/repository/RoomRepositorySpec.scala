@@ -7,7 +7,7 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, OneInstancePerTest}
 import rx.lang.scala.{Observable, Subscriber}
 
-final class UserRepositorySpec extends FlatSpec with MockFactory with OneInstancePerTest {
+final class RoomRepositorySpec extends FlatSpec with MockFactory with OneInstancePerTest {
 
   val roomDataStore = mock[RoomDataStore]
   val roomRepository = new RoomRepositoryImpl(roomDataStore)

@@ -1,10 +1,10 @@
 package it.unibo.dcs.service.room
 
 import io.vertx.core.{AbstractVerticle, Context, Vertx => JVertx}
-import io.vertx.scala.core.Vertx
 import io.vertx.scala.ext.web.Router
-import it.unibo.dcs.commons.{ExecuteBlockingExecutionContext, RxHelper}
-import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
+import it.unibo.dcs.commons.RxHelper
+import it.unibo.dcs.commons.interactor.ThreadExecutorExecutionContext
+import it.unibo.dcs.commons.interactor.executor.PostExecutionThread
 import it.unibo.dcs.commons.service.{HttpEndpointPublisher, ServiceVerticle}
 import it.unibo.dcs.service.room.interactor.CreateUserUseCase
 import it.unibo.dcs.service.room.repository.RoomRepository
@@ -24,9 +24,7 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
     host = config.getString("host")
     port = config.getInteger("port")
 
-    class ThreadExecutorExecutionContext(vertx: Vertx) extends ExecuteBlockingExecutionContext(vertx) with ThreadExecutor
-
-    val threadExecutor = new ThreadExecutorExecutionContext(vertx)
+    val threadExecutor = ThreadExecutorExecutionContext(vertx)
     val postExecutionThread = PostExecutionThread(RxHelper.scheduler(this.ctx))
     createUserUseCase = new CreateUserUseCase(threadExecutor, postExecutionThread, roomRepository)
   }

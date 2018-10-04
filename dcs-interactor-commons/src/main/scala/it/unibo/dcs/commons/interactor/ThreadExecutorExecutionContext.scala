@@ -1,14 +1,13 @@
-package it.unibo.dcs.commons
+package it.unibo.dcs.commons.interactor
 
 import io.vertx.lang.scala.ScalaLogger
 import io.vertx.scala.core.Vertx
-
-import scala.concurrent.ExecutionContext
-import scala.util.{Failure, Success}
+import it.unibo.dcs.commons.interactor.executor.ThreadExecutor
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.{Failure, Success}
 
-class ExecuteBlockingExecutionContext(vertx: Vertx) extends ExecutionContext {
+final class ThreadExecutorExecutionContext(vertx: Vertx) extends ThreadExecutor {
 
   private val logger = ScalaLogger.getLogger(getClass.getName)
 
@@ -23,8 +22,8 @@ class ExecuteBlockingExecutionContext(vertx: Vertx) extends ExecutionContext {
 
 }
 
-object ExecuteBlockingExecutionContext {
+object ThreadExecutorExecutionContext {
 
-  def apply(vertx: Vertx): ExecuteBlockingExecutionContext = new ExecuteBlockingExecutionContext(vertx)
+  def apply(vertx: Vertx): ThreadExecutorExecutionContext = new ThreadExecutorExecutionContext(vertx)
   
 }

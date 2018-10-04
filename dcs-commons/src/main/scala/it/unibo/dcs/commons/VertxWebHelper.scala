@@ -1,5 +1,7 @@
 package it.unibo.dcs.commons
 
+import io.vertx.core.http.HttpMethod.{DELETE, POST}
+import io.vertx.core.json.JsonObject
 import io.vertx.scala.ext.web.RoutingContext
 
 object VertxWebHelper {
@@ -12,6 +14,23 @@ object VertxWebHelper {
 
   def respondWithCode(statusCode: Int)(implicit context: RoutingContext): Unit =
     context.response.setStatusCode(statusCode).end
+
+  def respondOk(implicit context: RoutingContext): Unit = {
+    var response = context.response
+    context.request.method match {
+      case POST => response = response.setStatusCode(204).putHeader("Location", context.request.absoluteURI)
+      case DELETE => response = response.setStatusCode(204)
+      case _ => response.setStatusCode(200)
+    }
+    response.end
+  }
+
+  def respondOkWithJson(body: JsonObject)(implicit context: RoutingContext): Unit = {
+    context.response
+      .putHeader("content-type", "application/json")
+      .setStatusCode(200)
+      .end(body.encodePrettily())
+  }
 
   def isCodeSuccessful(statusCode: Int): Boolean = statusCode / 100 == 2
 

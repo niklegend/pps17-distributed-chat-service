@@ -15,7 +15,7 @@ class AuthenticationRepositoryTest extends FlatSpec with MockFactory {
 
   it should "login the user when the loginUser is called" in {
     val loginSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
-    (authDataStore loginUser(_, _)) expects (username, password) returns (Observable just expectedResult)
+    (authDataStore checkUserExistence(_, _)) expects (username, password) returns (Observable just expectedResult)
 
     authRepository loginUser(username, password) subscribe loginSubscriber
 
@@ -24,7 +24,7 @@ class AuthenticationRepositoryTest extends FlatSpec with MockFactory {
   }
 
   it should "logout the user when logoutUser is called" in {
-    (authDataStore logoutUser _) expects username returns (Observable just expectedResult)
+    (authDataStore invalidToken _) expects username returns (Observable just expectedResult)
 
     authRepository logoutUser username subscribe logoutSubscriber
 

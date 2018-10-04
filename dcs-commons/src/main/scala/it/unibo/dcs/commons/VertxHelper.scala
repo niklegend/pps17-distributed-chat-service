@@ -23,7 +23,7 @@ object VertxHelper {
   }
 
   def readJsonObject(file: String): JsonObject = {
-    val in = getClass.getResourceAsStream(in)
+    val in = getClass.getResourceAsStream(file)
     val str = IOUtils.toString(in, StandardCharsets.UTF_8)
     new JsonObject(str)
   }

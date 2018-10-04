@@ -35,4 +35,16 @@ final class ValidatorTest extends FlatSpec {
     validator.validate("mvandi")
   }
 
+  it should "not IllegalStateException since builder has already been built" in {
+    var builder: ValidatorBuilder[String] = null
+
+    Validator[String] { b =>
+      builder = b
+    }
+    val thrown = intercept[IllegalStateException] {
+      builder.build
+    }
+    assert(thrown.getMessage == "builder has already been built")
+  }
+
 }

@@ -6,11 +6,13 @@ import io.vertx.scala.core.Vertx
 import scala.concurrent.ExecutionContext
 import scala.util.{Failure, Success}
 
+import scala.concurrent.ExecutionContext.Implicits.global
+
 class ExecuteBlockingExecutionContext(vertx: Vertx) extends ExecutionContext {
 
   private val logger = ScalaLogger.getLogger(getClass.getName)
 
-  override def execute(runnable: Runnable): Unit = vertx.executeBlocking[Unit](runnable.run).onComplete {
+  override def execute(runnable: Runnable): Unit = vertx.executeBlocking[Unit](() => runnable.run()).onComplete {
     case Success(_) =>
     case Failure(cause) => reportFailure(cause)
   }

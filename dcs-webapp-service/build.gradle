@@ -2,6 +2,19 @@
  * This is a general purpose Gradle build.
  * Learn how to create Gradle builds at https://guides.gradle.org/creating-new-gradle-builds/
  */
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "gradle.plugin.cz.augi:gradle-wartremover:0.9.4"
+    }
+}
+
+apply plugin: "cz.augi.gradle.wartremover"
+
 dependencies {
     compile project(':dcs-service-commons')
     compile project(':dcs-data-access-commons')

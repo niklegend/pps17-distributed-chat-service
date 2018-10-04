@@ -1,12 +1,12 @@
 package it.unibo.dcs.service.webapp.repositories
 
-import it.unibo.dcs.service.webapp.repositories.Requests.RegisterUserRequest
-import rx.Single
+import it.unibo.dcs.service.webapp.repositories.Requests.{LoginUserRequest, RegisterUserRequest}
+import rx.lang.scala.Observable
 
 trait AuthenticationRepository {
-  def loginUser(username: String, password: String): Single[Boolean]
+  def loginUser(loginUserRequest: LoginUserRequest): Observable[String]
 
-  def registerUser(request: RegisterUserRequest): Single[Boolean]
+  def registerUser(request: RegisterUserRequest): Observable[String]
 
-  def logoutUser(username: String): Single[Boolean]
+  def logoutUser(username: String): Observable[Unit]
 }

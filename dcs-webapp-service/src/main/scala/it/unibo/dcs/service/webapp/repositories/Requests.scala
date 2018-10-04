@@ -5,6 +5,8 @@ import java.util.Date
 import io.vertx.lang.scala.json.{Json, JsonObject}
 import it.unibo.dcs.service.webapp.model.User
 
+import scala.language.implicitConversions
+
 object Requests {
 
   final case class LoginUserRequest(username: String, password: String)

@@ -11,15 +11,14 @@ import rx.lang.scala.Observable
 import scala.concurrent.ExecutionContext.Implicits.global
 
 
-class UserRestApi(private[this] val discovery: HttpEndpointDiscovery,
-                  val serviceName: String = "UserService")
-  extends AbstractApi(discovery, serviceName) with UserApi {
+class UserRestApi(private[this] val discovery: HttpEndpointDiscovery)
+  extends AbstractApi(discovery, "UserService") with UserApi {
 
   override def createUser(registrationRequest: RegisterUserRequest): Observable[User] = {
     request((userWebClient: WebClient) =>
       Observable.from(userWebClient.post("/register").sendJsonObjectFuture(registrationRequest)))
       .map(response => response.bodyAsJsonObject()
-        .getOrElse(throw new IllegalArgumentException(registrationRequest.username + " already exists"))
+        .getOrElse(throw new IllegalArgumentException(response.bodyAsString().get))
       )
   }
 
@@ -27,6 +26,6 @@ class UserRestApi(private[this] val discovery: HttpEndpointDiscovery,
     request((userWebClient: WebClient) =>
       Observable.from(userWebClient.post("/user/" + username).sendJsonObjectFuture(username)))
       .map(response => response.bodyAsJsonObject()
-        .getOrElse(throw new IllegalArgumentException("Username " + "doesn't exit"))
+        .getOrElse(throw new IllegalArgumentException(response.bodyAsString().get))
       )
 }

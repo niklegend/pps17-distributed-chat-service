@@ -10,20 +10,19 @@ import rx.lang.scala.Observable
 import scala.concurrent.ExecutionContext.Implicits.global
 
 
-class AuthenticationRestApi(private[this] val discovery: HttpEndpointDiscovery,
-                            val serviceName: String = "AuthenticationService")
-  extends AbstractApi(discovery, serviceName) with AuthenticationApi {
+class AuthenticationRestApi(private[this] val discovery: HttpEndpointDiscovery)
+  extends AbstractApi(discovery, "AuthenticationService") with AuthenticationApi {
 
   override def loginUser(loginUserRequest: LoginUserRequest): Observable[String] = {
     request(authWebClient =>
       Observable.from(authWebClient.post("/login").sendJsonObjectFuture(loginUserRequest)))
-      .map(response => response.bodyAsString().get)
+      .map(response => response.bodyAsString().getOrElse(throw new IllegalArgumentException(response.statusMessage())))
   }
 
   override def registerUser(registerRequest: Requests.RegisterUserRequest): Observable[String] = {
     request(authWebClient =>
       Observable.from(authWebClient.post("/register").sendJsonObjectFuture(registerRequest)))
-      .map(response => response.bodyAsString().get)
+      .map(response => response.bodyAsString().getOrElse(throw new IllegalArgumentException(response.statusMessage())))
   }
 
   override def logoutUser(username: String): Observable[Unit] = {

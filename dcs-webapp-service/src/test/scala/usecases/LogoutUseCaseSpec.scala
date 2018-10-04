@@ -1,7 +1,8 @@
 package usecases
 
-import org.scalatest.FlatSpec
+import org.scalamock.scalatest.MockFactory
+import org.scalatest.{FlatSpec, OneInstancePerTest}
 
-class LogoutUseCaseSpec extends FlatSpec {
+class LogoutUseCaseSpec extends FlatSpec with MockFactory with OneInstancePerTest {
 
 }

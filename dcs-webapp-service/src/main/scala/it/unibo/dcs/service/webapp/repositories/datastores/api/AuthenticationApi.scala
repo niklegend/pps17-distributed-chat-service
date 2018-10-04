@@ -1,10 +1,10 @@
 package it.unibo.dcs.service.webapp.repositories.datastores.api
 
-import it.unibo.dcs.service.webapp.repositories.Requests.RegisterUserRequest
+import it.unibo.dcs.service.webapp.repositories.Requests.{LoginUserRequest, RegisterUserRequest}
 import rx.lang.scala.Observable
 
 trait AuthenticationApi {
-  def loginUser(username: String, password: String): Observable[String]
+  def loginUser(loginUserRequest: LoginUserRequest): Observable[String]
 
   def registerUser(request: RegisterUserRequest): Observable[String]
 

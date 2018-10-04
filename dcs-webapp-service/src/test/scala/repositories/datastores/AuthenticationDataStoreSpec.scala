@@ -3,7 +3,7 @@ package repositories.datastores
 import java.util.Date
 
 import it.unibo.dcs.service.webapp.model.User
-import it.unibo.dcs.service.webapp.repositories.Requests.RegisterUserRequest
+import it.unibo.dcs.service.webapp.repositories.Requests.{LoginUserRequest, RegisterUserRequest}
 import it.unibo.dcs.service.webapp.repositories.datastores.AuthenticationDataStore
 import it.unibo.dcs.service.webapp.repositories.datastores.api.AuthenticationApi
 import it.unibo.dcs.service.webapp.repositories.datastores.impl.AuthenticationDataStoreNetwork
@@ -20,6 +20,7 @@ class AuthenticationDataStoreSpec extends FlatSpec with MockFactory with OneInst
   val user = User("niklegend", "nicola", "piscaglia", "bla", visible = true, new Date())
   val registerRequest = RegisterUserRequest(user.username, "password", user.firstName,
     user.lastName)
+  val loginUserRequest = LoginUserRequest(user.username, "password")
   val registeredSubscriber: Subscriber[String] = stub[Subscriber[String]]
   val loginSubscriber: Subscriber[String] = stub[Subscriber[String]]
   val logoutSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
@@ -44,11 +45,11 @@ class AuthenticationDataStoreSpec extends FlatSpec with MockFactory with OneInst
   it should "authenticate a registered user" in {
     // Given
     (authApi registerUser _) expects registerRequest returns (Observable just token)
-    (authApi loginUser(_, _)) expects(user.username, "password") returns (Observable just token)
+    (authApi loginUser _) expects loginUserRequest returns (Observable just token)
 
     // When
     dataStore.registerUser(registerRequest).subscribe(_ => {
-      dataStore.loginUser(user.username, "password").subscribe(loginSubscriber)
+      dataStore.loginUser(loginUserRequest).subscribe(loginSubscriber)
     })
 
     // Then
@@ -61,11 +62,11 @@ class AuthenticationDataStoreSpec extends FlatSpec with MockFactory with OneInst
 
   it should "logout a logged user" in {
     // Given
-    (authApi loginUser(_, _)) expects(user.username, "password") returns (Observable just token)
+    (authApi loginUser _) expects loginUserRequest returns (Observable just token)
     (authApi logoutUser _) expects user.username returns Observable.empty
 
     // When
-    dataStore.loginUser(user.username, "password").subscribe(_ => {
+    dataStore.loginUser(loginUserRequest).subscribe(_ => {
       dataStore.logoutUser(user.username).subscribe(logoutSubscriber)
     })
 

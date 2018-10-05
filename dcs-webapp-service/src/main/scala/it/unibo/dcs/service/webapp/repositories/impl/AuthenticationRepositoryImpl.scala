@@ -6,7 +6,8 @@ import it.unibo.dcs.service.webapp.repositories.datastores.AuthenticationDataSto
 import rx.lang.scala.Observable
 
 
-class AuthenticationRepositoryImpl(authenticationDataStore: AuthenticationDataStore) extends AuthenticationRepository {
+class AuthenticationRepositoryImpl(private val authenticationDataStore: AuthenticationDataStore)
+  extends AuthenticationRepository {
   override def loginUser(loginUserRequest: LoginUserRequest): Observable[String] =
     authenticationDataStore.loginUser(loginUserRequest)
 

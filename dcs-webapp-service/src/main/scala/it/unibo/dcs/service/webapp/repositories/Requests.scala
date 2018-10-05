@@ -3,6 +3,7 @@ package it.unibo.dcs.service.webapp.repositories
 import java.util.Date
 
 import io.vertx.lang.scala.json.{Json, JsonObject}
+
 import it.unibo.dcs.service.webapp.model.User
 
 import scala.language.implicitConversions
@@ -19,6 +20,11 @@ object Requests {
     implicit def registerRequestToJson(registerRequest: RegisterUserRequest): JsonObject = {
       Json.obj(("username", registerRequest.firstName), ("lastname", registerRequest.lastName),
         ("password", registerRequest.password), ("username", registerRequest.username))
+    }
+
+    implicit def JsonToRegisterRequest(json: JsonObject): RegisterUserRequest = {
+      RegisterUserRequest(json.getString("username"), json.getString("password"),
+        json.getString("firstname"), json.getString("lastname"))
     }
 
     implicit def usernameToJson(username: String): JsonObject = {

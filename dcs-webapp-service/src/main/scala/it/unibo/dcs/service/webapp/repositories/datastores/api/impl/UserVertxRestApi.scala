@@ -11,7 +11,7 @@ import rx.lang.scala.Observable
 import scala.concurrent.ExecutionContext.Implicits.global
 
 
-class UserRestApi(private[this] val discovery: HttpEndpointDiscovery)
+class UserVertxRestApi(private[this] val discovery: HttpEndpointDiscovery)
   extends AbstractApi(discovery, "UserService") with UserApi {
 
   override def createUser(registrationRequest: RegisterUserRequest): Observable[User] = {

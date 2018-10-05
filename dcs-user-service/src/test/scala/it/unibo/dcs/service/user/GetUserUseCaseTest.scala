@@ -33,6 +33,6 @@ class GetUserUseCaseTest extends FlatSpec with MockFactory {
     (subscriber onNext _) verify expectedUser once()
 
     // Verify that `subscriber.onCompleted` has been called once
-    (subscriber onCompleted: () => Unit) verify() once()
+    (() => subscriber onCompleted) verify() once()
   }
 }

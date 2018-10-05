@@ -10,7 +10,7 @@ import rx.lang.scala.Observable
 import scala.concurrent.ExecutionContext.Implicits.global
 
 
-class AuthenticationRestApi(private[this] val discovery: HttpEndpointDiscovery)
+class AuthenticationVertxRestApi(private[this] val discovery: HttpEndpointDiscovery)
   extends AbstractApi(discovery, "AuthenticationService") with AuthenticationApi {
 
   override def loginUser(loginUserRequest: LoginUserRequest): Observable[String] = {

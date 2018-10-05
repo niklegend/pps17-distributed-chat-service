@@ -1,4 +1,4 @@
-package it.unibo.dcs.service.webapp
+package it.unibo.dcs.service.webapp.requesthandler
 
 import io.vertx.scala.ext.web.RoutingContext
 

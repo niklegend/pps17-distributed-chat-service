@@ -3,9 +3,8 @@ package it.unibo.dcs.authentication_service.server
 import io.vertx.core.http.HttpHeaders
 import io.vertx.lang.scala.json.Json
 import io.vertx.scala.ext.web.RoutingContext
-import it.unibo.dcs.authentication_service.login.{LoginUserRequest, LoginUserUseCase}
-import it.unibo.dcs.authentication_service.logout.{LogoutUserRequest, LogoutUserUseCase}
-import it.unibo.dcs.authentication_service.register.{RegisterUserRequest, RegisterUserUseCase}
+import it.unibo.dcs.authentication_service.interactor.{LoginUserUseCase, LogoutUserUseCase, RegisterUserUseCase}
+import it.unibo.dcs.authentication_service.request.{LoginUserRequest, LogoutUserRequest, RegisterUserRequest}
 import it.unibo.dcs.commons.VertxWebHelper._
 import rx.lang.scala.Subscriber
 
@@ -15,13 +14,15 @@ class ServiceRequestHandlerImpl(loginUserUseCase: LoginUserUseCase, logoutUserUs
   override def handleRegistration(implicit context: RoutingContext): Unit = {
     val credentials = getCredentials
     doIfValidCredentials(credentials,
-      registerUserUseCase(RegisterUserRequest(credentials._1.get, credentials._2.get)).subscribe(new TokenSubscriber))
+      registerUserUseCase(RegisterUserRequest(credentials._1.get, credentials._2.get))
+        .subscribe(new TokenSubscriber("Username already taken")))
   }
 
-  override def handleLogin(implicit context: RoutingContext): Unit = {
+  override def handleLogin(implicit context: RoutingContext): Unit =  {
     val credentials = getCredentials
     doIfValidCredentials(credentials,
-      loginUserUseCase(LoginUserRequest(credentials._1.get, credentials._2.get)).subscribe(new TokenSubscriber))
+      loginUserUseCase(LoginUserRequest(credentials._1.get, credentials._2.get))
+        .subscribe(new TokenSubscriber("Wrong username or password")))
   }
 
   override def handleLogout(implicit context: RoutingContext): Unit = {
@@ -44,18 +45,20 @@ class ServiceRequestHandlerImpl(loginUserUseCase: LoginUserUseCase, logoutUserUs
                                   (implicit routingContext: RoutingContext): Unit = {
     if (credentials._1.isDefined && credentials._2.isDefined) {
       action
-    } else respondWithCode(400)
+    } else respond(401, "Credentials not present")
   }
 
-  private class TokenSubscriber(implicit routingContext: RoutingContext) extends Subscriber[String] {
+  private class TokenSubscriber(errorMessage: String)(implicit routingContext: RoutingContext)
+    extends Subscriber[String] {
     override def onNext(token: String): Unit = respondOkWithJson(Json.obj(("token", token)))
 
-    override def onError(error: Throwable): Unit = respondWithCode(400)
+    override def onError(error: Throwable): Unit = respond(401, errorMessage)
   }
 
   private class LogoutSubscriber(implicit routingContext: RoutingContext) extends Subscriber[Unit] {
     override def onNext(unit: Unit): Unit = respondOk
 
-    override def onError(error: Throwable): Unit = respondWithCode(400)
+    override def onError(error: Throwable): Unit =
+      respond(400, "invalid token or user not logged in")
   }
 }

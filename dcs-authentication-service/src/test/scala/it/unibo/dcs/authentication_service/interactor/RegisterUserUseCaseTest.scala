@@ -1,6 +1,8 @@
-package it.unibo.dcs.authentication_service.register
+package it.unibo.dcs.authentication_service.interactor
 
+import _root_.it.unibo.dcs.authentication_service.request.RegisterUserRequest
 import io.vertx.lang.scala.json.JsonObject
+import io.vertx.scala.ext.auth.jwt.JWTOptions
 import it.unibo.dcs.authentication_service.MocksForUseCases._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
@@ -17,7 +19,7 @@ class RegisterUserUseCaseTest extends FlatSpec with MockFactory {
 
   it should "register the user when the use case is executed" in {
     (authRepository createUser(_, _)) expects (request.username, request.password) returns (Observable just expectedResult)
-    (jwtAuth generateToken (_:JsonObject)) expects * returns expectedResult
+    (jwtAuth generateToken (_: JsonObject, _:JWTOptions)) expects (*, *) returns expectedResult
 
     registerUserUseCase(request).subscribe(subscriber)
 

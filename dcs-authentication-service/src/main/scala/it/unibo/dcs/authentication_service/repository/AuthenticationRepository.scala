@@ -1,4 +1,4 @@
-package it.unibo.dcs.authentication_service.common
+package it.unibo.dcs.authentication_service.repository
 
 import java.time.LocalDateTime
 
@@ -10,6 +10,6 @@ trait AuthenticationRepository {
 
   def loginUser(username: String, password: String): Observable[Unit]
 
-  def logoutUser(token: String, tokenExpirationDate: LocalDateTime): Observable[Unit]
+  def invalidToken(token: String, tokenExpirationDate: LocalDateTime): Observable[Unit]
 
 }

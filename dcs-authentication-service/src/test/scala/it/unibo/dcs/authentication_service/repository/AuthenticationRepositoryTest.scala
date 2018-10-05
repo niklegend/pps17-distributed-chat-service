@@ -1,5 +1,8 @@
-package it.unibo.dcs.authentication_service.common
+package it.unibo.dcs.authentication_service.repository
 
+import java.time.LocalDateTime
+
+import it.unibo.dcs.authentication_service.data.AuthenticationDataStore
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
 import rx.lang.scala.{Observable, Subscriber}
@@ -8,6 +11,8 @@ class AuthenticationRepositoryTest extends FlatSpec with MockFactory {
 
   val username = "ale"
   val password = "123"
+  val token = "token"
+  val tokenExpirationDate: LocalDateTime = LocalDateTime.now
   val expectedResult: Unit = Unit
   val authDataStore: AuthenticationDataStore = mock[AuthenticationDataStore]
   val authRepository = new AuthenticationRepositoryImpl(authDataStore)
@@ -23,10 +28,10 @@ class AuthenticationRepositoryTest extends FlatSpec with MockFactory {
     (() => loginSubscriber onCompleted) verify() once()
   }
 
-  it should "logout the user when logoutUser is called" in {
-    (authDataStore invalidToken _) expects username returns (Observable just expectedResult)
+  it should "logout the user when invalidToken is called" in {
+    (authDataStore invalidToken (_ ,_)) expects (token, tokenExpirationDate) returns (Observable just expectedResult)
 
-    authRepository logoutUser username subscribe logoutSubscriber
+    authRepository invalidToken(token, tokenExpirationDate) subscribe logoutSubscriber
 
     (logoutSubscriber onNext _) verify expectedResult once()
     (() => logoutSubscriber onCompleted) verify() once()

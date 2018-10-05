@@ -1,6 +1,7 @@
-package it.unibo.dcs.authentication_service.common
+package it.unibo.dcs.authentication_service.data
 
 import java.time.LocalDateTime
+
 import rx.lang.scala.Observable
 
 trait AuthenticationDataStore {

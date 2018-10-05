@@ -2,6 +2,7 @@ package it.unibo.dcs.commons
 
 import io.vertx.core.http.HttpMethod.{DELETE, POST}
 import io.vertx.core.json.JsonObject
+import io.vertx.lang.scala.json.Json
 import io.vertx.scala.ext.web.RoutingContext
 
 object VertxWebHelper {
@@ -14,6 +15,11 @@ object VertxWebHelper {
 
   def respondWithCode(statusCode: Int)(implicit context: RoutingContext): Unit =
     context.response.setStatusCode(statusCode).end
+
+  def respond(statusCode: Int, errorMessage: String)(implicit context: RoutingContext): Unit = {
+    val responseBody = Json.obj(("status", statusCode), ("message", errorMessage))
+    context.response.setStatusCode(statusCode).end(responseBody.encodePrettily())
+  }
 
   def respondOk(implicit context: RoutingContext): Unit = {
     var response = context.response

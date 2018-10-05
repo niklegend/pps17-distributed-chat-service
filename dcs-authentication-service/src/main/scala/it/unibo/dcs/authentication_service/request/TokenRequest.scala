@@ -1,4 +1,4 @@
-package it.unibo.dcs.authentication_service.common
+package it.unibo.dcs.authentication_service.request
 
 trait TokenRequest {
 

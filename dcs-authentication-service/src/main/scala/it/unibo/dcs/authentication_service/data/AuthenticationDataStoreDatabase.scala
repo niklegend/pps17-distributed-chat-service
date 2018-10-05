@@ -1,8 +1,7 @@
-package it.unibo.dcs.authentication_service.common
+package it.unibo.dcs.authentication_service.data
 
 import java.sql.Date
 import java.time.LocalDateTime
-
 import io.vertx.core.Future
 import io.vertx.lang.scala.json.Json
 import io.vertx.scala.ext.sql.SQLConnection

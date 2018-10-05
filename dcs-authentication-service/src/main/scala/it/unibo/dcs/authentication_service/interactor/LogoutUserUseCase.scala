@@ -1,8 +1,9 @@
-package it.unibo.dcs.authentication_service.logout
+package it.unibo.dcs.authentication_service.interactor
 
 import java.time.LocalDateTime
 
-import it.unibo.dcs.authentication_service.common.AuthenticationRepository
+import it.unibo.dcs.authentication_service.repository.AuthenticationRepository
+import it.unibo.dcs.authentication_service.request.LogoutUserRequest
 import it.unibo.dcs.commons.interactor.UseCase
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
 import rx.lang.scala.Observable
@@ -13,5 +14,5 @@ final class LogoutUserUseCase(private[this] val threadExecutor: ThreadExecutor,
   extends UseCase[Unit, LogoutUserRequest](threadExecutor, postExecutionThread) {
 
   override protected[this] def createObservable(request: LogoutUserRequest): Observable[Unit] =
-    authRepository.logoutUser(request.token, LocalDateTime.now())
+    authRepository.invalidToken(request.token, LocalDateTime.now())
 }

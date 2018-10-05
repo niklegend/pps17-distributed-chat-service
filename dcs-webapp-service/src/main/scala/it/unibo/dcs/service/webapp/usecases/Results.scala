@@ -6,8 +6,6 @@ object Results {
 
   final case class LoginResult(loggedUser: User, token: String)
 
-  final case class LogoutResult()
-
   final case class RegisterResult(registeredUser: User, token: String)
 
 }

@@ -8,10 +8,10 @@ import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, UserR
 import rx.lang.scala.Observable
 
 
-final class LoginUseCase(private[this] val threadExecutor: ThreadExecutor,
-                         private[this] val postExecutionThread: PostExecutionThread,
-                         private[this] val authRepository: AuthenticationRepository,
-                         private[this] val userRepository: UserRepository)
+final class LoginUserUseCase(private[this] val threadExecutor: ThreadExecutor,
+                          private[this] val postExecutionThread: PostExecutionThread,
+                          private[this] val authRepository: AuthenticationRepository,
+                          private[this] val userRepository: UserRepository)
   extends UseCase[LoginResult, LoginUserRequest](threadExecutor, postExecutionThread) {
 
   override protected[this] def createObservable(loginRequest: LoginUserRequest): Observable[LoginResult] = {

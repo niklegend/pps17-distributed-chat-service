@@ -6,7 +6,8 @@ import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExec
 import it.unibo.dcs.service.webapp.model.User
 import it.unibo.dcs.service.webapp.repositories.Requests.LoginUserRequest
 import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, UserRepository}
-import it.unibo.dcs.service.webapp.usecases.{LoginResult, LoginUseCase}
+import it.unibo.dcs.service.webapp.usecases.LoginUserUseCase
+import it.unibo.dcs.service.webapp.usecases.Results.LoginResult
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, OneInstancePerTest}
 import rx.lang.scala.{Observable, Subscriber}
@@ -20,12 +21,13 @@ class LoginUseCaseSpec extends FlatSpec with MockFactory with OneInstancePerTest
   val postExecutionThread: PostExecutionThread = mock[PostExecutionThread]
   val userRepository: UserRepository = mock[UserRepository]
   val authRepository: AuthenticationRepository = mock[AuthenticationRepository]
+
   val token: String = "token"
   val loginResult: LoginResult = LoginResult(user, token)
 
   val loginSubscriber: Subscriber[LoginResult] = stub[Subscriber[LoginResult]]
 
-  val loginUseCase = new LoginUseCase(threadExecutor, postExecutionThread, authRepository, userRepository)
+  val loginUseCase = new LoginUserUseCase(threadExecutor, postExecutionThread, authRepository, userRepository)
 
 
   it should "login the user when the use case is executed" in {
@@ -40,6 +42,6 @@ class LoginUseCaseSpec extends FlatSpec with MockFactory with OneInstancePerTest
 
     // Then
     (loginSubscriber onNext _) verify loginResult once()
-    (loginSubscriber onCompleted: () => Unit) verify() once()
+    (() => loginSubscriber onCompleted) verify() once()
   }
 }

@@ -4,7 +4,7 @@ import it.unibo.dcs.service.webapp.repositories.Requests.{LoginUserRequest, Regi
 import rx.lang.scala.Observable
 
 trait AuthenticationRepository {
-  def loginUser(loginUserRequest: LoginUserRequest): Observable[String]
+  def loginUser(request: LoginUserRequest): Observable[String]
 
   def registerUser(request: RegisterUserRequest): Observable[String]
 

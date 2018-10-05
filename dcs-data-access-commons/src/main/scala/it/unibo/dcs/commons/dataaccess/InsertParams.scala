@@ -1,4 +1,4 @@
-package it.unibo.dcs.dataacces.commons
+package it.unibo.dcs.commons.dataaccess
 
 import java.lang.Boolean
 
@@ -30,20 +30,5 @@ object InsertParams {
     case n: Number => n.toString
     case b: Boolean => b.toString.toUpperCase
   }
-
-}
-
-object Test extends App {
-
-  val params = InsertParams(new JsonObject()
-    .put("username", "vandao9")
-    .put("first_name", "Mattia")
-    .put("last_name", "Vandi")
-    .put("visible", true)
-    .put("count", 5)
-  )
-
-  println(params.columnNames)
-  println(params.values)
 
 }

@@ -10,5 +10,4 @@ dependencies {
     compile group: 'io.vertx', name: 'vertx-lang-scala_2.12', version: vertxVersion
     compile group: 'io.vertx', name: 'vertx-web-scala_2.12', version: vertxVersion
     compile group: 'io.vertx', name: 'vertx-auth-jwt-scala_2.12', version: vertxVersion
-    testCompile group: 'org.scalatest', name: 'scalatest_2.12', version: scalaTestVersion
 }

@@ -1,23 +1,17 @@
 package it.unibo.dcs.service.user
 
-import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.{AbstractVerticle, Context, Vertx}
-import io.vertx.core.json.JsonObject
-import io.vertx.scala.core.http.HttpServerResponse
-import io.vertx.scala.ext.web.{Router, RoutingContext}
+import io.vertx.scala.ext.web.Router
 import it.unibo.dcs.commons.RxHelper
+import it.unibo.dcs.commons.interactor.ThreadExecutorExecutionContext
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
-import it.unibo.dcs.commons.service.ServiceVerticle
+import it.unibo.dcs.commons.service.{HttpEndpointPublisher, ServiceVerticle}
 import it.unibo.dcs.service.user.interactor.{CreateUserUseCase, GetUserUseCase}
-import it.unibo.dcs.service.user.model.User
-import it.unibo.dcs.service.user.model.exception.UserNotFoundException
 import it.unibo.dcs.service.user.repository.UserRepository
 import it.unibo.dcs.service.user.request.{CreateUserRequest, GetUserRequest}
-import rx.lang.scala.Subscriber
+import it.unibo.dcs.service.user.subscriber.{CreateUserSubscriber, GetUserSubscriber}
 
-import UserVerticle.Implicits.httpResponseStatusToJsonObject
-
-final class UserVerticle(private[this] val userRepository: UserRepository) extends ServiceVerticle {
+final class UserVerticle(private[this] val userRepository: UserRepository, private[this] val publisher: HttpEndpointPublisher) extends ServiceVerticle {
 
   private var host: String = _
   private var port: Int = _
@@ -30,75 +24,41 @@ final class UserVerticle(private[this] val userRepository: UserRepository) exten
     host = config getString "host"
     port = config getInteger "port"
 
-    val threadExecutor: ThreadExecutor = ???
-
+    val threadExecutor: ThreadExecutor = ThreadExecutorExecutionContext(vertx)
     val postExecutionThread: PostExecutionThread = PostExecutionThread(RxHelper.scheduler(this.ctx))
 
     getUserUseCase = new GetUserUseCase(threadExecutor, postExecutionThread, userRepository)
-
     createUserUseCase = new CreateUserUseCase(threadExecutor, postExecutionThread, userRepository)
   }
 
   override def start(): Unit = {
-    startHttpServer(host, port).subscribe()
+    startHttpServer(host, port)
+      .doOnCompleted(
+        publisher.publish(name = "user-service", host = host, port = port)
+          .subscribe(_ => println("Record published!"),
+            cause => println(s"Could not publish record: ${cause.getMessage}")))
+      .subscribe(server => println(s"Server started at http://$host:${server.actualPort}"),
+        cause => println(s"Could not start server at http://$host:$port: ${cause.getMessage}"))
   }
 
   override protected def initializeRouter(router: Router): Unit = {
-    router.get("/users/:username").handler((routingContext: RoutingContext) => {
-      val username = routingContext.request().getParam("username").get
-      val subscriber: GetUserSubscriber = new GetUserSubscriber(routingContext.response())
-      getUserUseCase(GetUserRequest(username)).subscribe(subscriber)
+    router.get("/users/:username")
+      .handler(routingContext => {
+        val username = routingContext.request().getParam("username").get
+        val subscriber: GetUserSubscriber = new GetUserSubscriber(routingContext.response())
+        getUserUseCase(GetUserRequest(username)).subscribe(subscriber)
     })
 
-    router.post("/users").handler((routingContext: RoutingContext) => {
-      val user = routingContext.getBodyAsJson().get
-      val subscriber: CreateUserSubscriber = new CreateUserSubscriber(routingContext.response())
-      createUserUseCase(CreateUserRequest(user.getString("username"),
-        user.getString("first_name"), user.getString("last_name"))).subscribe(subscriber)
+    router.post("/users")
+      .consumes("application/json")
+      .produces("application/json")
+      .handler(routingContext => {
+        val user = routingContext.getBodyAsJson().get
+        val subscriber: CreateUserSubscriber = new CreateUserSubscriber(routingContext.response())
+        createUserUseCase(CreateUserRequest(user.getString("username"),
+          user.getString("first_name"), user.getString("last_name"))).subscribe(subscriber)
     })
   }
 
-  private final class GetUserSubscriber(private[this] val response: HttpServerResponse) extends Subscriber[User] {
-    override def onNext(user: User): Unit = {
-      val userJsonObject = JsonObject.mapFrom(user)
-      response.write(userJsonObject.toString)
-    }
-
-    override def onCompleted(): Unit = response.end()
-
-    override def onError(error: Throwable): Unit = error match {
-      case UserNotFoundException(username) =>
-        response.setStatusCode(HttpResponseStatus.NOT_FOUND.code())
-        response.write(setResponse(username, HttpResponseStatus.NOT_FOUND).toString)
-    }
-  }
-
-  private final class CreateUserSubscriber(private[this] val response: HttpServerResponse) extends Subscriber[User] {
-    override def onNext(user: User): Unit = {
-      val userJsonObject = JsonObject.mapFrom(user)
-      response.write(userJsonObject.toString)
-    }
-
-    override def onCompleted(): Unit = response.end()
-
-    override def onError(error: Throwable): Unit = error match {
-      case UserNotFoundException(username) =>
-        response.setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
-        response.write(setResponse(username, HttpResponseStatus.BAD_REQUEST).toString)
-    }
-  }
-
-  private def setResponse(username: String, status: HttpResponseStatus): JsonObject = {
-    val statusJson: JsonObject = status
-    val extras = new JsonObject().put("username", username)
-    new JsonObject().put("status", statusJson).put("extras", extras)
-  }
 }
 
-object UserVerticle {
-  object Implicits {
-    implicit def httpResponseStatusToJsonObject(status: HttpResponseStatus): JsonObject = {
-      new JsonObject().put("code", status.code()).put("reasonPhrase", status.reasonPhrase())
-    }
-  }
-}

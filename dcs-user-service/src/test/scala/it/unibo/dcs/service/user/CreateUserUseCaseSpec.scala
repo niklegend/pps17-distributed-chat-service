@@ -3,15 +3,18 @@ package it.unibo.dcs.service.user
 import java.util.Date
 
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
+import it.unibo.dcs.service.user.interactor.CreateUserUseCase
+import it.unibo.dcs.service.user.model.User
+import it.unibo.dcs.service.user.repository.{UserRepository}
+import it.unibo.dcs.service.user.request.CreateUserRequest
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
 import rx.lang.scala.{Observable, Subscriber}
 
-class CreateUserUseCaseTest extends FlatSpec with MockFactory {
+class CreateUserUseCaseSpec extends FlatSpec with MockFactory {
 
   val request = CreateUserRequest("martynha", "Martina", "Magnani")
   val expectedUser = User("martynha", "Martina", "Magnani", "", true, new Date())
-
 
   val threadExecutor: ThreadExecutor = mock[ThreadExecutor]
   val postExecutionThread: PostExecutionThread = mock[PostExecutionThread]

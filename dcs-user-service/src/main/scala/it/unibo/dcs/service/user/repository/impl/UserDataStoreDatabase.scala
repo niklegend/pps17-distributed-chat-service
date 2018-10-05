@@ -1,4 +1,4 @@
-package it.unibo.dcs.service.user.impl
+package it.unibo.dcs.service.user.repository.impl
 
 import io.vertx.lang.scala.json.{JsonArray, JsonObject}
 import io.vertx.scala.ext.sql.SQLConnection
@@ -6,21 +6,28 @@ import it.unibo.dcs.commons.VertxHelper
 import it.unibo.dcs.commons.VertxHelper.Implicits._
 import it.unibo.dcs.commons.dataaccess.Implicits._
 import it.unibo.dcs.commons.dataaccess.ResultSetHelper
-import it.unibo.dcs.service.user.{CreateUserRequest, User, UserDataStore}
+import it.unibo.dcs.service.user.interactor.GetUserUseCase
 import rx.lang.scala.Observable
-
-import it.unibo.dcs.service.user.impl.UserDataStoreDatabase.Implicits.jsonObjectToUser
+import it.unibo.dcs.service.user.repository.impl.UserDataStoreDatabase.Implicits.jsonObjectToUser
+import it.unibo.dcs.service.user.model.User
+import it.unibo.dcs.service.user.model.exception.UserNotFoundException
+import it.unibo.dcs.service.user.repository.UserDataStore
+import it.unibo.dcs.service.user.request.{CreateUserRequest, GetUserRequest}
 
 final class UserDataStoreDatabase(private[this] val connection: SQLConnection) extends UserDataStore {
 
-  override def getUserByUsername(username: String): Observable[User] = {
+  override def getUserByUsername(request: GetUserRequest): Observable[User] = {
     VertxHelper.toObservable[User] { handler =>
-      connection.queryWithParams("SELECT * FROM users WHERE username = ?", new JsonArray().add(username), ar => {
+      connection.queryWithParams("SELECT * FROM users WHERE username = ?", new JsonArray().add(request), ar => {
         if (ar.succeeded()) {
-          val resultSet = ar.result()
-          val userJsonObject = ResultSetHelper.getRows(resultSet).head
-          val user: User = userJsonObject
-          handler(user)
+          if (ar.result().getResults.isEmpty) {
+            handler(UserNotFoundException(request.username))
+          } else {
+            val resultSet = ar.result()
+            val userJsonObject = ResultSetHelper.getRows(resultSet).head
+            val user: User = userJsonObject
+            handler(user)
+          }
         } else handler(ar.cause())
       })
     }
@@ -33,7 +40,7 @@ final class UserDataStoreDatabase(private[this] val connection: SQLConnection) e
           s"'${user.firstName}', '${user.lastName}')", handler)
       }
     }
-    insertUser().flatMap(_ => getUserByUsername(user.username))
+    insertUser().flatMap(_ => getUserByUsername(GetUserRequest(user.username)))
   }
 
 }

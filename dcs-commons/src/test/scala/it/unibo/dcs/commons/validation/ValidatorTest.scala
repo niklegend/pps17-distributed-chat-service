@@ -6,9 +6,9 @@ final class ValidatorTest extends FlatSpec {
 
   val validator = Validator[String] {
     _
-      .addRule(_ != null, _ => new NullPointerException())
-      .addRule(_.length > 0, _ => new IllegalArgumentException("String is empty"))
-      .addRule(_.length < 15, _ => new IllegalArgumentException("Length is greater than 15"))
+      .addRule(_ != null)(_ => new NullPointerException())
+      .addRule(_.length > 0)( _ => new IllegalArgumentException("String is empty"))
+      .addRule(_.length < 15)(_ => new IllegalArgumentException("Length is greater than 15"))
   }
 
   it should "throw a NullPointerException" in {

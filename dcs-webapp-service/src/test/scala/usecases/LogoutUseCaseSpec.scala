@@ -10,6 +10,8 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, OneInstancePerTest}
 import rx.lang.scala.{Observable, Subscriber}
 
+import scala.language.postfixOps
+
 class LogoutUseCaseSpec extends FlatSpec with MockFactory with OneInstancePerTest {
 
   val user = User("niklegend", "Nicola", "Piscaglia", "bio", visible = true, new Date)

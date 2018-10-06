@@ -12,6 +12,8 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, OneInstancePerTest}
 import rx.lang.scala.{Observable, Subscriber}
 
+import scala.language.postfixOps
+
 class LoginUseCaseSpec extends FlatSpec with MockFactory with OneInstancePerTest {
 
   val loginRequest = LoginUserRequest("niklegend", "password")

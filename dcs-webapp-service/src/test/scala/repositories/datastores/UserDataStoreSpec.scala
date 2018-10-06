@@ -11,6 +11,8 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, OneInstancePerTest}
 import rx.lang.scala.{Observable, Subscriber}
 
+import scala.language.postfixOps
+
 class UserDataStoreSpec extends FlatSpec with MockFactory with OneInstancePerTest {
 
   private val userApi: UserApi = mock[UserApi]

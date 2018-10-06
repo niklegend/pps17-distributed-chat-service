@@ -11,6 +11,8 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, OneInstancePerTest}
 import rx.lang.scala.{Observable, Subscriber}
 
+import scala.language.postfixOps
+
 class UserRepositorySpec extends FlatSpec with MockFactory with OneInstancePerTest {
   private val userDataStore: UserDataStore = mock[UserDataStore]
   private val repository: UserRepository = new UserRepositoryImpl(userDataStore)

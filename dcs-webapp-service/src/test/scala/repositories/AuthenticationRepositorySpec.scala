@@ -11,6 +11,8 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, OneInstancePerTest}
 import rx.lang.scala.{Observable, Subscriber}
 
+import scala.language.postfixOps
+
 class AuthenticationRepositorySpec extends FlatSpec with MockFactory with OneInstancePerTest {
   val dataStore: AuthenticationDataStore = mock[AuthenticationDataStore]
   val repository: AuthenticationRepository = new AuthenticationRepositoryImpl(dataStore)
@@ -35,7 +37,7 @@ class AuthenticationRepositorySpec extends FlatSpec with MockFactory with OneIns
     // Verify that `subscriber.onNext` has been called once with `token` as argument
     (registeredSubscriber onNext _) verify token once()
     // Verify that `subscriber.onCompleted` has been called once
-    (registeredSubscriber onCompleted: () => Unit) verify() once()
+    (() => registeredSubscriber onCompleted) verify() once()
   }
 
 
@@ -53,7 +55,7 @@ class AuthenticationRepositorySpec extends FlatSpec with MockFactory with OneIns
     // Verify that `subscriber.onNext` has been called once with `token` as argument
     (loginSubscriber onNext _) verify token once()
     // Verify that `subscriber.onCompleted` has been called once
-    (loginSubscriber onCompleted: () => Unit) verify() once()
+    (() => loginSubscriber onCompleted) verify() once()
   }
 
 
@@ -69,6 +71,6 @@ class AuthenticationRepositorySpec extends FlatSpec with MockFactory with OneIns
 
     // Then
     // Verify that `subscriber.onCompleted` has been called once
-    (logoutSubscriber onCompleted: () => Unit) verify() once()
+    (() => logoutSubscriber onCompleted) verify() once()
   }
 }

@@ -1,7 +1,10 @@
 package it.unibo.dcs.service.webapp.usecases
 
-import it.unibo.dcs.commons.interactor.UseCase
+import io.vertx.scala.core.Context
+import io.vertx.scala.core.Vertx.vertx
+import it.unibo.dcs.commons.RxHelper
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
+import it.unibo.dcs.commons.interactor.{ThreadExecutorExecutionContext, UseCase}
 import it.unibo.dcs.service.webapp.repositories.Requests.RegisterUserRequest
 import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, UserRepository}
 import it.unibo.dcs.service.webapp.usecases.Results.RegisterResult
@@ -17,5 +20,13 @@ final class RegisterUserUseCase(private[this] val threadExecutor: ThreadExecutor
     authRepository.registerUser(registerRequest)
       .concatMap(token => userRepository.registerUser(registerRequest)
         .map(user => RegisterResult(user, token)))
+  }
+}
+
+object RegisterUserUseCase {
+  def create(implicit ctx: Context): RegisterUserUseCase = {
+    val threadExecutor: ThreadExecutor = ThreadExecutorExecutionContext(ctx.owner())
+    val postExecutionThread: PostExecutionThread = PostExecutionThread(RxHelper.scheduler(ctx))
+    new RegisterUserUseCase(threadExecutor, postExecutionThread, AuthenticationRepository(), UserRepository())
   }
 }

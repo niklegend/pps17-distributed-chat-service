@@ -6,6 +6,7 @@ import org.scalatest.{FlatSpec, Matchers}
 
 import scala.concurrent.Promise
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.language.postfixOps
 
 class WebappServiceSpec extends FlatSpec with Matchers {
 

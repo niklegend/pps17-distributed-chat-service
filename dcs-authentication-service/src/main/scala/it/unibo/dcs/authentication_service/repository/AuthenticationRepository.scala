@@ -12,4 +12,6 @@ trait AuthenticationRepository {
 
   def invalidToken(token: String, tokenExpirationDate: LocalDateTime): Observable[Unit]
 
+  def isTokenInvalid(token: String): Observable[Boolean]
+
 }

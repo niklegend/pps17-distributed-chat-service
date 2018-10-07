@@ -1,6 +1,6 @@
 package it.unibo.dcs.commons
 
-import io.vertx.core.http.HttpMethod.{DELETE, POST}
+import io.vertx.core.http.HttpHeaders
 import io.vertx.core.json.JsonObject
 import io.vertx.lang.scala.json.Json
 import io.vertx.scala.ext.web.RoutingContext
@@ -21,20 +21,10 @@ object VertxWebHelper {
     context.response.setStatusCode(statusCode).end(responseBody.encodePrettily())
   }
 
-  def respondOk(implicit context: RoutingContext): Unit = {
-    var response = context.response
-    context.request.method match {
-      case POST => response = response.setStatusCode(204).putHeader("Location", context.request.absoluteURI)
-      case DELETE => response = response.setStatusCode(204)
-      case _ => response.setStatusCode(200)
-    }
-    response.end
-  }
-
-  def respondOkWithJson(body: JsonObject)(implicit context: RoutingContext): Unit = {
+  def respondOkToPostWithJson(body: JsonObject)(implicit context: RoutingContext): Unit = {
     context.response
       .putHeader("content-type", "application/json")
-      .setStatusCode(200)
+      .setStatusCode(201)
       .end(body.encodePrettily())
   }
 
@@ -44,4 +34,8 @@ object VertxWebHelper {
     if (id.isDefined) {
       action
     } else respondWithCode(400)
+
+  def getTokenFromHeader(implicit context: RoutingContext): Option[String] = {
+    context.request().headers().get(HttpHeaders.AUTHORIZATION.toString).map(token => token.split(" ").last)
+  }
 }

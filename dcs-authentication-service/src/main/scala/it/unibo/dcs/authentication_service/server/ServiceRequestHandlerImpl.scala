@@ -1,6 +1,5 @@
 package it.unibo.dcs.authentication_service.server
 
-import io.vertx.core.http.HttpHeaders
 import io.vertx.lang.scala.json.Json
 import io.vertx.scala.ext.web.RoutingContext
 import it.unibo.dcs.authentication_service.interactor.{LoginUserUseCase, LogoutUserUseCase, RegisterUserUseCase}
@@ -26,12 +25,8 @@ class ServiceRequestHandlerImpl(loginUserUseCase: LoginUserUseCase, logoutUserUs
   }
 
   override def handleLogout(implicit context: RoutingContext): Unit = {
-    val token = getToken
+    val token = getTokenFromHeader
     doIfDefined(token, logoutUserUseCase(LogoutUserRequest(token.get)).subscribe(new LogoutSubscriber))
-  }
-
-  private def getToken(implicit context: RoutingContext): Option[String] = {
-    context.request().headers().get(HttpHeaders.AUTHORIZATION.toString)
   }
 
   private def getUsername(implicit context: RoutingContext): Option[String] = getJsonBodyData("username")
@@ -50,13 +45,13 @@ class ServiceRequestHandlerImpl(loginUserUseCase: LoginUserUseCase, logoutUserUs
 
   private class TokenSubscriber(errorMessage: String)(implicit routingContext: RoutingContext)
     extends Subscriber[String] {
-    override def onNext(token: String): Unit = respondOkWithJson(Json.obj(("token", token)))
+    override def onNext(token: String): Unit = respondOkToPostWithJson(Json.obj(("token", token)))
 
     override def onError(error: Throwable): Unit = respond(401, errorMessage)
   }
 
   private class LogoutSubscriber(implicit routingContext: RoutingContext) extends Subscriber[Unit] {
-    override def onNext(unit: Unit): Unit = respondOk
+    override def onNext(unit: Unit): Unit = respondWithCode(200)
 
     override def onError(error: Throwable): Unit =
       respond(400, "invalid token or user not logged in")

@@ -41,6 +41,14 @@ class AuthenticationDataStoreTest extends FlatSpec with MockFactory {
     assertSubscriber(registerSubscriber)
   }
 
+  it should "call sqlConnection and return a result when isTokenInvalid is called" in {
+    val subscriber: Subscriber[Boolean] = stub[Subscriber[Boolean]]
+    specifyConnectionExpectation()
+    authDataStore isTokenInvalid token subscribe subscriber
+
+    assertSubscriber(subscriber)
+  }
+
   private def specifyConnectionExpectation(): Unit = {
     (sqlConnection queryWithParams (_, _, _)) expects (*, *, *) returns sqlConnection
     (() => sqlConnection close) expects () returns Unit

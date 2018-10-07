@@ -12,4 +12,6 @@ trait AuthenticationDataStore {
 
   def invalidToken(token: String, expirationDate: LocalDateTime): Observable[Unit]
 
+  def isTokenInvalid(token: String): Observable[Boolean]
+
 }

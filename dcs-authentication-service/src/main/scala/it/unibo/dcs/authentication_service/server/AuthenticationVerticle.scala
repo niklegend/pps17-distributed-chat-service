@@ -2,17 +2,18 @@ package it.unibo.dcs.authentication_service.server
 
 import io.vertx.core
 import io.vertx.core.{AbstractVerticle, Context}
-import io.vertx.core.http.HttpMethod
-import io.vertx.scala.ext.auth.{AuthProvider, KeyStoreOptions}
+import io.vertx.lang.scala.json.Json
 import io.vertx.scala.ext.auth.jwt.{JWTAuth, JWTAuthOptions}
-import io.vertx.scala.ext.web.Router
-import io.vertx.scala.ext.web.handler.{BodyHandler, RedirectAuthHandler}
+import io.vertx.scala.ext.web.{Router, RoutingContext}
+import io.vertx.scala.ext.web.handler.{BodyHandler, JWTAuthHandler}
 import it.unibo.dcs.authentication_service.interactor.{LoginUserUseCase, LogoutUserUseCase, RegisterUserUseCase}
 import it.unibo.dcs.authentication_service.repository.AuthenticationRepository
-import it.unibo.dcs.commons.RxHelper
+import it.unibo.dcs.commons.{RxHelper, VertxWebHelper}
 import it.unibo.dcs.commons.interactor.ThreadExecutorExecutionContext
 import it.unibo.dcs.commons.interactor.executor.PostExecutionThread
 import it.unibo.dcs.commons.service.ServiceVerticle
+import it.unibo.dcs.commons.VertxWebHelper._
+import rx.lang.scala.Subscriber
 
 import scala.io.Source
 
@@ -39,20 +40,37 @@ class AuthenticationVerticle(authenticationRepository: AuthenticationRepository)
 
   private def createJwtAuthProvider(): JWTAuth = {
     val keyStoreSecret = Source.fromFile("keystore-secret.txt").getLines().next()
-    val authOptions = KeyStoreOptions().setPath("keystore.jceks").setPassword(keyStoreSecret)
-    val config = JWTAuthOptions().setKeyStore(authOptions)
-    JWTAuth.create(vertx, config)
+    val keyStoreOptions = Json.obj(("type", "jceks"), ("path", "keystore.jceks"), ("password", keyStoreSecret))
+    val authOptions = JWTAuthOptions.fromJson(Json.obj(("keyStore", keyStoreOptions)))
+    JWTAuth.create(vertx, authOptions)
   }
 
-  private def setupRedirects(router: Router, authProvider: AuthProvider): Unit = {
-    val handler = RedirectAuthHandler.create(authProvider, "/")
-    val route = router.route("/protected/*")
-    route.method(HttpMethod.GET).handler(handler)
-    route.method(HttpMethod.HEAD).handler(handler)
-    route.method(HttpMethod.PATCH).handler(handler)
-    route.method(HttpMethod.POST).handler(handler)
-    route.method(HttpMethod.PUT).handler(handler)
-    route.method(HttpMethod.DELETE).handler(handler)
+  private def setupRedirects(router: Router, authProvider: JWTAuth): Unit = {
+    router.route("/protected/*").handler(JWTAuthHandler.create(authProvider))
+    val filterRouter = Router.router(vertx)
+    setupFilterRouter(filterRouter)
+    filterRouter.mountSubRouter("/protected/*", router)
+  }
+
+  private def setupFilterRouter(filterRouter: Router): Unit = {
+    filterRouter.get.handler(context => {
+      val token = getTokenFromHeader(context)
+      if(token.isEmpty){
+        respondWithCode(401)(context)
+      }
+      authenticationRepository.isTokenInvalid(token.get).subscribe(getTokenSubscriber(context))
+    })
+  }
+
+  private def getTokenSubscriber(implicit context: RoutingContext): Subscriber[Boolean] = {
+    new Subscriber[Boolean]() {
+      override def onNext(value: Boolean): Unit = if (value) {
+        context.next()
+      } else {
+        respondWithCode(401)
+      }
+      override def onError(error: Throwable): Unit = respondWithCode(401)
+    }
   }
 
   private def setupRoutes(router: Router, jwtAuth: JWTAuth): Unit = {

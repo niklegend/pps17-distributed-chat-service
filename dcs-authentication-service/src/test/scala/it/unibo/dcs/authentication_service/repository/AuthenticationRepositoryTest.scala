@@ -14,6 +14,7 @@ class AuthenticationRepositoryTest extends FlatSpec with MockFactory {
   val token = "token"
   val tokenExpirationDate: LocalDateTime = LocalDateTime.now
   val expectedResult: Unit = Unit
+  val expectedTokenInvalidityResult = true
   val authDataStore: AuthenticationDataStore = mock[AuthenticationDataStore]
   val authRepository = new AuthenticationRepositoryImpl(authDataStore)
   val logoutSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
@@ -45,6 +46,16 @@ class AuthenticationRepositoryTest extends FlatSpec with MockFactory {
 
     (registerSubscriber onNext _) verify expectedResult once()
     (() => registerSubscriber onCompleted) verify() once()
+  }
+
+  it should "check the token validity when isTokenValid is called" in {
+    val subscriber: Subscriber[Boolean] = stub[Subscriber[Boolean]]
+    (authDataStore isTokenInvalid _) expects token returns Observable.just(expectedTokenInvalidityResult)
+
+    authRepository isTokenInvalid token subscribe subscriber
+
+    (subscriber onNext _) verify expectedTokenInvalidityResult once()
+    (() => subscriber onCompleted) verify() once()
   }
 
 }

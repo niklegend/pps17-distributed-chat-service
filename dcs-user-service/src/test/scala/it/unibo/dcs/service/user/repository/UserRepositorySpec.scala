@@ -30,7 +30,7 @@ class UserRepositorySpec extends FlatSpec with MockFactory with OneInstancePerTe
 
     //Then
     (subscriber onNext _) verify expectedUser once()
-    (subscriber onCompleted: () => Unit) verify() once()
+    (() => subscriber onCompleted) verify() once()
   }
 
   it should "get user by username" in {
@@ -42,6 +42,6 @@ class UserRepositorySpec extends FlatSpec with MockFactory with OneInstancePerTe
 
     //Then
     (subscriber onNext _) verify expectedUser once()
-    (subscriber onCompleted: () => Unit) verify() once()
+    (() => subscriber onCompleted) verify() once()
   }
 }

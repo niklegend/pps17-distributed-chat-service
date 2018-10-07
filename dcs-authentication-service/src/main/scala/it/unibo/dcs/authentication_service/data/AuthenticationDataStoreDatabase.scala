@@ -24,7 +24,7 @@ class AuthenticationDataStoreDatabase(protected val connection: SQLConnection)
       ("expiration_date", Date.valueOf(expirationDate.toLocalDate).toString))))
 
   override def isTokenInvalid(token: String): Observable[Boolean] =
-    runBooleanQuery("SELECT * FROM invalid_tokens WHERE token = ?", token)
+    checkAtLeastOneRecord("SELECT * FROM invalid_tokens WHERE token = " + token)
 
   private def checkRecordPresence(table: String, parameters: (String, String)*): Observable[Unit] = {
     VertxHelper.toObservable[Unit] { handler =>
@@ -44,9 +44,9 @@ class AuthenticationDataStoreDatabase(protected val connection: SQLConnection)
     }
   }
 
-  private def runBooleanQuery(query: String, parameters: String*): Observable[Boolean] = {
+  private def checkAtLeastOneRecord(query: String): Observable[Boolean] = {
     VertxHelper.toObservable[Boolean] { handler =>
-      connection.queryWithParams(query, Json.arr(parameters), ar => {
+      connection.query(query, ar => {
         val result: Future[Boolean] = Future.future()
         if (ar.succeeded()) {
           result.complete(ar.result().getResults.nonEmpty)

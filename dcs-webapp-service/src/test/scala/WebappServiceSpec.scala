@@ -1,7 +1,7 @@
 import io.vertx.ext.unit.TestSuite
 import io.vertx.lang.scala.ScalaVerticle.nameForVerticle
 import io.vertx.scala.core.Vertx
-import it.unibo.dcs.service.webapp.WebappVerticle
+import it.unibo.dcs.service.webapp.verticles.WebAppVerticle
 import org.scalatest.{FlatSpec, Matchers}
 
 import scala.concurrent.Promise
@@ -26,7 +26,7 @@ class WebappServiceSpec extends FlatSpec with Matchers {
   /* Vertx Unit style */
   val testSuite: TestSuite = TestSuite.create("WebappService Test Suite")
   testSuite.beforeEach(_ => {
-    Vertx vertx() deployVerticle nameForVerticle[WebappVerticle]
+    Vertx vertx() deployVerticle nameForVerticle[WebAppVerticle]
   }).test("first", context => {
     val async1 = context.async
     val client = Vertx vertx() createHttpClient

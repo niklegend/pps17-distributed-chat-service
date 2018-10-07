@@ -18,9 +18,9 @@ final class LogoutUserUseCase(private[this] val threadExecutor: ThreadExecutor,
 }
 
 object LogoutUserUseCase {
-  def create(implicit ctx: Context): LogoutUserUseCase = {
+  def create(authRepository: AuthenticationRepository)(implicit ctx: Context): LogoutUserUseCase = {
     val threadExecutor: ThreadExecutor = ThreadExecutorExecutionContext(ctx.owner())
     val postExecutionThread: PostExecutionThread = PostExecutionThread(RxHelper.scheduler(ctx))
-    new LogoutUserUseCase(threadExecutor, postExecutionThread, AuthenticationRepository())
+    new LogoutUserUseCase(threadExecutor, postExecutionThread, authRepository)
   }
 }

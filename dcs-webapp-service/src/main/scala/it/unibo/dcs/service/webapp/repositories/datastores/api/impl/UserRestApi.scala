@@ -6,19 +6,20 @@ import it.unibo.dcs.service.webapp.model.User
 import it.unibo.dcs.service.webapp.repositories.Requests.Implicits._
 import it.unibo.dcs.service.webapp.repositories.Requests.RegisterUserRequest
 import it.unibo.dcs.service.webapp.repositories.datastores.api.UserApi
+import it.unibo.dcs.service.webapp.repositories.datastores.api.exceptions.{GetUserResponseException, UserCreationResponseException}
 import rx.lang.scala.Observable
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 
-class UserVertxRestApi(private[this] val discovery: HttpEndpointDiscovery)
+class UserRestApi(private[this] val discovery: HttpEndpointDiscovery)
   extends AbstractApi(discovery, "UserService") with UserApi {
 
   override def createUser(registrationRequest: RegisterUserRequest): Observable[User] = {
     request((userWebClient: WebClient) =>
       Observable.from(userWebClient.post("/register").sendJsonObjectFuture(registrationRequest)))
       .map(response => response.bodyAsJsonObject()
-        .getOrElse(throw new IllegalArgumentException(response.bodyAsString().get))
+        .getOrElse(throw UserCreationResponseException())
       )
   }
 
@@ -26,6 +27,6 @@ class UserVertxRestApi(private[this] val discovery: HttpEndpointDiscovery)
     request((userWebClient: WebClient) =>
       Observable.from(userWebClient.post("/user/" + username).sendJsonObjectFuture(username)))
       .map(response => response.bodyAsJsonObject()
-        .getOrElse(throw new IllegalArgumentException(response.bodyAsString().get))
+        .getOrElse(throw GetUserResponseException())
       )
 }

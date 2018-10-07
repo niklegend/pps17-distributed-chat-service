@@ -19,6 +19,6 @@ trait AuthenticationDataStore {
 object AuthenticationDataStore {
 
   /* Factory method */
-  def authDataStoreNetwork: AuthenticationDataStore =
-    new AuthenticationDataStoreNetwork(AuthenticationApi.authVertxRestApi)
+  def authDataStoreNetwork(authApi: AuthenticationApi): AuthenticationDataStore =
+    new AuthenticationDataStoreNetwork(authApi)
 }

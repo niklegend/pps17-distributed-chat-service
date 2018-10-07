@@ -38,7 +38,7 @@ class AuthenticationDataStoreSpec extends FlatSpec with MockFactory with OneInst
     // Verify that `subscriber.onNext` has been called once with `token` as argument
     (registeredSubscriber onNext _) verify token once()
     // Verify that `subscriber.onCompleted` has been called once
-    (registeredSubscriber onCompleted: () => Unit) verify() once()
+    (() => registeredSubscriber onCompleted) verify() once()
   }
 
 
@@ -56,7 +56,7 @@ class AuthenticationDataStoreSpec extends FlatSpec with MockFactory with OneInst
     // Verify that `subscriber.onNext` has been called once with `token` as argument
     (loginSubscriber onNext _) verify token once()
     // Verify that `subscriber.onCompleted` has been called once
-    (loginSubscriber onCompleted: () => Unit) verify() once()
+    (() => loginSubscriber onCompleted) verify() once()
   }
 
 
@@ -72,7 +72,7 @@ class AuthenticationDataStoreSpec extends FlatSpec with MockFactory with OneInst
 
     // Then
     // Verify that `subscriber.onCompleted` has been called once
-    (logoutSubscriber onCompleted: () => Unit) verify() once()
+    (() => logoutSubscriber onCompleted) verify() once()
   }
 
 

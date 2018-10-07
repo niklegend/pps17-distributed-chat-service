@@ -34,7 +34,7 @@ class UserDataStoreSpec extends FlatSpec with MockFactory with OneInstancePerTes
     // Verify that `subscriber.onNext` has been called once with `token` as argument
     (createUserSubscriber onNext _) verify user once()
     // Verify that `subscriber.onCompleted` has been called once
-    (createUserSubscriber onCompleted: () => Unit) verify() once()
+    (() => createUserSubscriber onCompleted) verify() once()
   }
 
   it should "retrieve a user given its username" in {
@@ -48,6 +48,6 @@ class UserDataStoreSpec extends FlatSpec with MockFactory with OneInstancePerTes
     // Verify that `subscriber.onNext` has been called once with `token` as argument
     (getUserSubscriber onNext _) verify user once()
     // Verify that `subscriber.onCompleted` has been called once
-    (getUserSubscriber onCompleted: () => Unit) verify() once()
+    (() => getUserSubscriber onCompleted) verify() once()
   }
 }

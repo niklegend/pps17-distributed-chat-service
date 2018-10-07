@@ -24,7 +24,7 @@ final class RoomRepositorySpec extends FlatSpec with MockFactory with OneInstanc
     roomRepository.createUser(request).subscribe(subscriber)
 
     // Then
-    (subscriber.onCompleted: () => Unit) verify() once()
+    (() => subscriber.onCompleted) verify() once()
   }
 
 }

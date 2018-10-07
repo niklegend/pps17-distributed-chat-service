@@ -1,7 +1,6 @@
 package it.unibo.dcs.service.webapp.usecases
 
 import io.vertx.scala.core.Context
-import io.vertx.scala.core.Vertx.vertx
 import it.unibo.dcs.commons.RxHelper
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
 import it.unibo.dcs.commons.interactor.{ThreadExecutorExecutionContext, UseCase}
@@ -24,9 +23,10 @@ final class RegisterUserUseCase(private[this] val threadExecutor: ThreadExecutor
 }
 
 object RegisterUserUseCase {
-  def create(implicit ctx: Context): RegisterUserUseCase = {
+  def create(authRepository: AuthenticationRepository,
+             userRepository: UserRepository)(implicit ctx: Context): RegisterUserUseCase = {
     val threadExecutor: ThreadExecutor = ThreadExecutorExecutionContext(ctx.owner())
     val postExecutionThread: PostExecutionThread = PostExecutionThread(RxHelper.scheduler(ctx))
-    new RegisterUserUseCase(threadExecutor, postExecutionThread, AuthenticationRepository(), UserRepository())
+    new RegisterUserUseCase(threadExecutor, postExecutionThread, authRepository, userRepository)
   }
 }

@@ -16,5 +16,5 @@ trait UserDataStore {
 }
 
 object UserDataStore {
-  def userDataStoreNetwork: UserDataStore = new UserDataStoreNetwork(UserApi.userVertxRestApi)
+  def userDataStoreNetwork(userApi: UserApi): UserDataStore = new UserDataStoreNetwork(userApi)
 }

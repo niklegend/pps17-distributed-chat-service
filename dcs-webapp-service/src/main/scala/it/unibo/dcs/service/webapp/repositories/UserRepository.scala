@@ -13,5 +13,5 @@ trait UserRepository {
 }
 
 object UserRepository {
-  def apply(): UserRepository = new UserRepositoryImpl(UserDataStore.userDataStoreNetwork)
+  def apply(userDataStore: UserDataStore): UserRepository = new UserRepositoryImpl(userDataStore)
 }

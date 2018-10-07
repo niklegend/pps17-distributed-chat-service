@@ -14,5 +14,6 @@ trait AuthenticationRepository {
 }
 
 object AuthenticationRepository {
-  def apply(): AuthenticationRepository = new AuthenticationRepositoryImpl(AuthenticationDataStore.authDataStoreNetwork)
+  def apply(authenticationDataStore: AuthenticationDataStore): AuthenticationRepository =
+    new AuthenticationRepositoryImpl(authenticationDataStore)
 }

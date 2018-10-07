@@ -6,35 +6,41 @@ import io.vertx.core.Future
 import io.vertx.lang.scala.json.Json
 import io.vertx.scala.ext.sql.SQLConnection
 import it.unibo.dcs.commons.VertxHelper
+import it.unibo.dcs.commons.dataaccess.{DataStoreDatabase, InsertParams}
 import rx.lang.scala.Observable
 
-class AuthenticationDataStoreDatabase(private[this] val connection: SQLConnection) extends AuthenticationDataStore {
+class AuthenticationDataStoreDatabase(protected val connection: SQLConnection)
+  extends DataStoreDatabase with AuthenticationDataStore {
 
-  override def createUser(username: String, password: String): Observable[Unit] =
-    runUnitQuery("INSERT INTO users(username, password) VALUES(?, ?)", username, password)
+  override def createUser(username: String, password: String): Observable[Unit] = {
+    insert("users", InsertParams(Json.obj(("username", username), ("password", password))))
+  }
 
   override def checkUserExistence(username: String, password: String): Observable[Unit] =
-    runUnitQuery("SELECT FROM users WHERE username = ? AND password = ?)", username, password)
+    checkRecordPresence("users", ("username", username), ("password", password))
 
   override def invalidToken(token: String, expirationDate: LocalDateTime): Observable[Unit] =
-    runUnitQuery("INSERT INTO invalid_tokens(token, expiration_date) VALUES(?, ?)",
-      token, Date.valueOf(expirationDate.toLocalDate).toString)
+    insert("invalid_tokens", InsertParams(Json.obj(("token", token),
+      ("expiration_date", Date.valueOf(expirationDate.toLocalDate).toString))))
 
   override def isTokenInvalid(token: String): Observable[Boolean] =
-    runBooleanQuery("SELECT FROM invalid_tokens WHERE token = ?", token)
+    runBooleanQuery("SELECT * FROM invalid_tokens WHERE token = ?", token)
 
-  private def runUnitQuery(query: String, parameters: String*): Observable[Unit] = {
-    val isSelectQuery = query.startsWith("SELECT") || query.startsWith("select")
+  private def checkRecordPresence(table: String, parameters: (String, String)*): Observable[Unit] = {
     VertxHelper.toObservable[Unit] { handler =>
-      connection.queryWithParams(query, Json.arr(parameters), ar => {
+      val query = "SELECT * FROM " + table + " WHERE " +
+        parameters.map(param => param._1 + " = " + "'" + param._2 + "'")
+        .fold("")((param1, param2) => param1 + " AND " + param2)
+      val completeQuery = query.replaceFirst("AND", "")
+      connection.query(completeQuery, ar => {
         val result: Future[Unit] = Future.future()
-          if (ar.succeeded() && (!isSelectQuery || ar.result().getResults.nonEmpty)) {
+          if (ar.succeeded() && ar.result().getResults.nonEmpty) {
             result.complete()
           } else {
             result.fail(ar.cause())
           }
         handler(result)
-      }).close()
+      })
     }
   }
 
@@ -48,7 +54,7 @@ class AuthenticationDataStoreDatabase(private[this] val connection: SQLConnectio
           result.fail(ar.cause())
         }
         handler(result)
-      }).close()
+      })
     }
   }
 }

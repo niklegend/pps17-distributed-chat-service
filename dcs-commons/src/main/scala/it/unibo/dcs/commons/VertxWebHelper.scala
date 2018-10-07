@@ -11,7 +11,7 @@ object VertxWebHelper {
     context.request.getParam(urlParameter)
 
   def getJsonBodyData(fieldName: String)(implicit context: RoutingContext): Option[String] =
-    context.getBody().map(body => body.toJsonObject.getString(fieldName))
+    context.getBody().map(body => body.toJsonObject.getValue(fieldName)).map(value => value.toString)
 
   def respondWithCode(statusCode: Int)(implicit context: RoutingContext): Unit =
     context.response.setStatusCode(statusCode).end

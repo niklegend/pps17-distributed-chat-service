@@ -45,9 +45,20 @@ class ServiceRequestHandlerImpl(loginUserUseCase: LoginUserUseCase, logoutUserUs
 
   private class TokenSubscriber(errorMessage: String)(implicit routingContext: RoutingContext)
     extends Subscriber[String] {
-    override def onNext(token: String): Unit = respondOkToPostWithJson(Json.obj(("token", token)))
+    override def onNext(token: String): Unit = respondWithToken(token, getUsername(routingContext).get)
 
-    override def onError(error: Throwable): Unit = respond(401, errorMessage)
+    override def onError(error: Throwable): Unit = {
+      error.printStackTrace()
+      respond(401, errorMessage)
+    }
+
+    private def respondWithToken(token: String, username: String)(implicit context: RoutingContext): Unit = {
+      context.response
+        .putHeader("Authorization", "Bearer " + token)
+        .putHeader("content-type", "application/json")
+        .setStatusCode(201)
+        .end(Json.obj(("username", username)).encodePrettily())
+    }
   }
 
   private class LogoutSubscriber(implicit routingContext: RoutingContext) extends Subscriber[Unit] {

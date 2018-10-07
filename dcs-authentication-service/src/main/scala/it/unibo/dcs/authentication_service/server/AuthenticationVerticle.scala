@@ -8,7 +8,7 @@ import io.vertx.scala.ext.web.{Router, RoutingContext}
 import io.vertx.scala.ext.web.handler.{BodyHandler, JWTAuthHandler}
 import it.unibo.dcs.authentication_service.interactor.{LoginUserUseCase, LogoutUserUseCase, RegisterUserUseCase}
 import it.unibo.dcs.authentication_service.repository.AuthenticationRepository
-import it.unibo.dcs.commons.{RxHelper, VertxWebHelper}
+import it.unibo.dcs.commons.RxHelper
 import it.unibo.dcs.commons.interactor.ThreadExecutorExecutionContext
 import it.unibo.dcs.commons.interactor.executor.PostExecutionThread
 import it.unibo.dcs.commons.service.ServiceVerticle
@@ -19,8 +19,8 @@ import scala.io.Source
 
 class AuthenticationVerticle(authenticationRepository: AuthenticationRepository) extends ServiceVerticle {
 
-  private var host: String = "127.0.0.1" //will get overwritten when 'init' gets called
-  private var port: Int = 0 //will get overwritten when 'init' gets called
+  private var host: String = "127.0.0.1"
+  private var port: Int = 8080 //random port
 
   override protected def initializeRouter(router: Router): Unit = {
     val authProvider = createJwtAuthProvider()
@@ -31,15 +31,12 @@ class AuthenticationVerticle(authenticationRepository: AuthenticationRepository)
 
   override def init(jVertx: core.Vertx, context: Context, verticle: AbstractVerticle): Unit = {
     super.init(jVertx, context, verticle)
-    val config = context.config
-    host = config.getString("host")
-    port = config.getInteger("port")
   }
 
   override def start(): Unit = startHttpServer(host, port)
 
   private def createJwtAuthProvider(): JWTAuth = {
-    val keyStoreSecret = Source.fromFile("keystore-secret.txt").getLines().next()
+    val keyStoreSecret = Source.fromResource("keystore-secret.txt").getLines().next()
     val keyStoreOptions = Json.obj(("type", "jceks"), ("path", "keystore.jceks"), ("password", keyStoreSecret))
     val authOptions = JWTAuthOptions.fromJson(Json.obj(("keyStore", keyStoreOptions)))
     JWTAuth.create(vertx, authOptions)
@@ -49,7 +46,7 @@ class AuthenticationVerticle(authenticationRepository: AuthenticationRepository)
     router.route("/protected/*").handler(JWTAuthHandler.create(authProvider))
     val filterRouter = Router.router(vertx)
     setupFilterRouter(filterRouter)
-    filterRouter.mountSubRouter("/protected/*", router)
+    filterRouter.mountSubRouter("/protected/", router)
   }
 
   private def setupFilterRouter(filterRouter: Router): Unit = {

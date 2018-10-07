@@ -19,7 +19,7 @@ class AuthenticationDataStoreTest extends FlatSpec with MockFactory {
 
   it should "call sqlConnection and return a result when checkUserExistence is called" in {
     val loginSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
-    specifyConnectionExpectation()
+    specifyQueryExpectation()
     authDataStore checkUserExistence(username, password) subscribe loginSubscriber
 
     assertSubscriber(loginSubscriber)
@@ -27,7 +27,7 @@ class AuthenticationDataStoreTest extends FlatSpec with MockFactory {
 
   it should "call sqlConnection and return a result when invalidToken is called" in {
     val invalidateTokenSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
-    specifyConnectionExpectation()
+    specifyExecuteExpectation()
     authDataStore invalidToken (token, LocalDateTime.now()) subscribe invalidateTokenSubscriber
 
     assertSubscriber(invalidateTokenSubscriber)
@@ -35,7 +35,7 @@ class AuthenticationDataStoreTest extends FlatSpec with MockFactory {
 
   it should "call sqlConnection and return a result when createUser is called" in {
     val registerSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
-    specifyConnectionExpectation()
+    specifyExecuteExpectation()
     authDataStore createUser(username, password) subscribe registerSubscriber
 
     assertSubscriber(registerSubscriber)
@@ -43,19 +43,25 @@ class AuthenticationDataStoreTest extends FlatSpec with MockFactory {
 
   it should "call sqlConnection and return a result when isTokenInvalid is called" in {
     val subscriber: Subscriber[Boolean] = stub[Subscriber[Boolean]]
-    specifyConnectionExpectation()
+    specifyQueryWithParamsExpectation()
     authDataStore isTokenInvalid token subscribe subscriber
 
     assertSubscriber(subscriber)
   }
 
-  private def specifyConnectionExpectation(): Unit = {
+  private def specifyQueryWithParamsExpectation(): Unit = {
     (sqlConnection queryWithParams (_, _, _)) expects (*, *, *) returns sqlConnection
-    (() => sqlConnection close) expects () returns Unit
+  }
+
+  private def specifyQueryExpectation(): Unit = {
+    (sqlConnection query (_, _)) expects (*, *) returns sqlConnection
+  }
+
+  private def specifyExecuteExpectation(): Unit = {
+    (sqlConnection execute (_, _)) expects (*, *) returns sqlConnection
   }
 
   private def assertSubscriber(subscriber: Subscriber[_]): Unit = {
     (() => subscriber onStart) verify() once()
-    (() => subscriber onCompleted) verify() once()
   }
 }

@@ -17,9 +17,11 @@ final class LoginUserUseCase(private[this] val threadExecutor: ThreadExecutor,
   extends UseCase[LoginResult, LoginUserRequest](threadExecutor, postExecutionThread) {
 
   override protected[this] def createObservable(loginRequest: LoginUserRequest): Observable[LoginResult] = {
-    authRepository.loginUser(loginRequest)
-      .concatMap(token => userRepository.getUserByUsername(loginRequest.username)
-        .map(user => LoginResult(user, token)))
+    /* Monadic style */
+    for {
+      token <- authRepository.loginUser(loginRequest)
+      user <- userRepository.getUserByUsername(loginRequest.username)
+    } yield LoginResult(user, token)
   }
 
 }

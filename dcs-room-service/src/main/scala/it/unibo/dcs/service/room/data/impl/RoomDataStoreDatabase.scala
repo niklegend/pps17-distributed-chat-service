@@ -5,12 +5,14 @@ import io.vertx.scala.ext.sql.SQLConnection
 import it.unibo.dcs.commons.dataaccess.{DataStoreDatabase, InsertParams}
 import it.unibo.dcs.service.room.data.RoomDataStore
 import it.unibo.dcs.service.room.data.impl.RoomDataStoreDatabase.Implicits._
-import it.unibo.dcs.service.room.request.CreateUserRequest
+import it.unibo.dcs.service.room.request.{CreateUserRequest, DeleteRoomRequest}
 import rx.lang.scala.Observable
 
 class RoomDataStoreDatabase(protected override val connection: SQLConnection) extends DataStoreDatabase with RoomDataStore {
 
   override def createUser(request: CreateUserRequest): Observable[Unit] = insert("users", request)
+
+  override def deleteRoom(request: DeleteRoomRequest): Observable[Unit] = ???
 
 }
 

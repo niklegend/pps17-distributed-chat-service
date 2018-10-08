@@ -1,3 +1,5 @@
+package verticles
+
 import io.vertx.ext.unit.report.ReportOptions
 import io.vertx.ext.unit.{TestOptions, TestSuite}
 import io.vertx.lang.scala.ScalaVerticle.nameForVerticle

@@ -1,14 +1,21 @@
 $backgroundColor: #fff;
 $activeBackgroundColor: #f5f6f7;
+
 $borderColor: #ededed;
+
 $textColor: #000;
+
+$sentMessageColor: #0084ff;
+$receivedMessageColor: #f1f0f0;
+
+$successColor: $sentMessageColor;
+$successBorderColor: #0072ff;
+
+$inputShadowColor: #008cff;
 
 .send {
   border-top: 1px $borderColor solid;
   height: 48px;
-}
-.message-content {
-  border: 0;
 }
 .left_col {
   background: $backgroundColor;
@@ -47,7 +54,7 @@ $textColor: #000;
   margin: 13px 0 0 3px;
 }
 .site_title i {
-  border: 1px solid #eaeaea;
+  border: 1px solid $textColor;
   padding: 5px 6px;
   border-radius: 50%;
 }
@@ -317,7 +324,7 @@ body .container.body .right_col {
 .bg-white {
   background: #fff !important;
   border: 1px solid #fff !important;
-  color: #73879c;
+  color: $textColor;
 }
 .bg-green {
   background: #1abb9c !important;
@@ -366,7 +373,7 @@ body .container.body .right_col {
   background: $borderColor;
 }
 body {
-  color: #73879c;
+  color: $textColor;
   background: $backgroundColor;
   font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
   font-size: 13px;
@@ -528,7 +535,7 @@ h3,
   margin-bottom: 10px;
 }
 a {
-  color: #5a738e;
+  color: $textColor;
   text-decoration: none;
 }
 a,
@@ -545,10 +552,6 @@ a:active,
 .btn:active.focus,
 .btn.active.focus {
   outline: 0;
-}
-a:hover,
-a:focus {
-  text-decoration: none;
 }
 .navbar {
   margin-bottom: 0;
@@ -694,7 +697,7 @@ a:focus {
   font-weight: 400;
   font-size: 22px;
   width: 100%;
-  color: #ecf0f1 !important;
+  color: $textColor !important;
   margin-left: 0 !important;
   line-height: 59px;
   display: block;
@@ -1484,7 +1487,7 @@ ul.msg_list li a .message {
   border-top-right-radius: 0;
 }
 .dropdown-menu > li > a {
-  color: #5a738e;
+  color: $textColor;
 }
 .navbar-nav .open .dropdown-menu {
   position: absolute;
@@ -2391,15 +2394,16 @@ a.btn-danger {
   color: #fff;
 }
 .btn-success {
-  background: #26b99a;
-  border: 1px solid #169f85;
+  background: $successColor;
+  border: 1px solid $successBorderColor;
 }
 .btn-success:hover,
 .btn-success:focus,
-.btn-success:active,
 .btn-success.active,
+.btn-success:active,
+.btn-success:active:focus,
 .open .dropdown-toggle.btn-success {
-  background: #169f85;
+  background: $successBorderColor;
 }
 .btn-dark {
   color: #e9edef;
@@ -2669,7 +2673,10 @@ ul.bar_tabs.right {
 ul.bar_tabs.right li {
   float: right;
 }
+a:hover,
 a:focus {
+  color: $textColor;
+  text-decoration: none;
   outline: none;
 }
 /** /Tabs **/
@@ -3479,7 +3486,7 @@ ul.project_files li a i {
 .price {
   font-size: 40px;
   font-weight: 400;
-  color: #26b99a;
+  color: $sentMessageColor;
   margin: 0;
 }
 .prod_title {
@@ -3540,7 +3547,7 @@ ul.project_files li a i {
 
 /** login **/
 .login {
-  background: #f7f7f7;
+  background: $backgroundColor;
 }
 .login .fa-paw {
   font-size: 26px;
@@ -3815,13 +3822,13 @@ form:after {
 .login_content form input[type="text"]:focus,
 .login_content form input[type="email"]:focus,
 .login_content form input[type="password"]:focus {
-  -webkit-box-shadow: 0 0 2px #aa77b4 inset;
+  -webkit-box-shadow: 0 0 2px $inputShadowColor;
   -moz-box-shadow: 0 0 2px #ed1c24 inset;
   -ms-box-shadow: 0 0 2px #ed1c24 inset;
   -o-box-shadow: 0 0 2px #ed1c24 inset;
-  box-shadow: 0 0 2px #a97aad inset;
+  box-shadow: 0 0 2px $inputShadowColor;
   background-color: #fff;
-  border: 1px solid #a878af;
+  border: 1px solid $sentMessageColor;
   outline: none;
 }
 #username {
@@ -3985,7 +3992,7 @@ div[data-role="editor-toolbar"] {
 .select2-container--default
   .select2-selection--single
   .select2-selection__rendered {
-  color: #73879c;
+  color: $textColor;
   padding-top: 5px;
 }
 
@@ -4422,7 +4429,7 @@ fieldset {
 }
 
 .progress-bar-success {
-  background-color: #26b99a;
+  background-color: $sentMessageColor;
 }
 
 .progress_summary .progress {
@@ -4594,7 +4601,7 @@ ul.notifications {
 /** FullCalendar **/
 .fc-state-default {
   background: #f5f5f5;
-  color: #73879c;
+  color: $textColor;
 }
 
 .fc-state-down,

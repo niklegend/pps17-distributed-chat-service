@@ -1,10 +1,98 @@
+.daterangepicker .ranges li {
+  color: #73879C; }
+  .daterangepicker .ranges li.active, .daterangepicker .ranges li:hover {
+    background: #536A7F;
+    border: 1px solid #536A7F;
+    color: #fff; }
+.daterangepicker .input-mini {
+  background-color: #eee;
+  border: 1px solid #ccc;
+  box-shadow: none !important; }
+  .daterangepicker .input-mini.active {
+    border: 1px solid #ccc; }
+.daterangepicker select.monthselect, .daterangepicker select.yearselect, .daterangepicker select.hourselect, .daterangepicker select.minuteselect, .daterangepicker select.secondselect, .daterangepicker select.ampmselect {
+  font-size: 12px;
+  padding: 1px;
+  height: auto;
+  margin: 0;
+  cursor: default;
+  height: 30px;
+  border: 1px solid #ADB2B5;
+  line-height: 30px;
+  border-radius: 0px !important; }
+.daterangepicker select.monthselect {
+  margin-right: 2%; }
+.daterangepicker td.in-range {
+  background: #E4E7EA;
+  color: #73879C; }
+.daterangepicker td.active, .daterangepicker td.active:hover {
+  background-color: #536A7F;
+  color: #fff; }
+.daterangepicker th.available:hover {
+  background: #eee;
+  color: #34495E; }
+.daterangepicker:before, .daterangepicker:after {
+  content: none; }
+.daterangepicker .calendar.single {
+  margin: 0 0 4px 0; }
+  .daterangepicker .calendar.single .calendar-table {
+    width: 224px;
+    padding: 0 0 4px 0 !important; }
+    .daterangepicker .calendar.single .calendar-table thead tr:first-child th {
+      padding: 8px 5px; }
+    .daterangepicker .calendar.single .calendar-table thead th {
+      border-radius: 0; }
+.daterangepicker.picker_1 {
+  color: #fff;
+  background: #34495E; }
+  .daterangepicker.picker_1 .calendar-table {
+    background: #34495E; }
+    .daterangepicker.picker_1 .calendar-table thead tr {
+      background: #213345; }
+    .daterangepicker.picker_1 .calendar-table thead tr:first-child {
+      background: #1ABB9C; }
+    .daterangepicker.picker_1 .calendar-table td.off {
+      background: #34495E;
+      color: #999; }
+    .daterangepicker.picker_1 .calendar-table td.available:hover {
+      color: #34495E; }
+.daterangepicker.picker_2 .calendar-table thead tr {
+  color: #1ABB9C; }
+.daterangepicker.picker_2 .calendar-table thead tr:first-child {
+  color: #73879C; }
+.daterangepicker.picker_3 .calendar-table thead tr:first-child {
+  color: #fff;
+  background: #1ABB9C; }
+.daterangepicker.picker_4 .calendar-table thead tr:first-child {
+  color: #fff;
+  background: #34495E; }
+.daterangepicker.picker_4 .calendar-table td, .daterangepicker.picker_4 .calendar-table td.off {
+  background: #ECF0F1;
+  border: 1px solid #fff;
+  border-radius: 0; }
+.daterangepicker.picker_4 .calendar-table td.active {
+  background: #34495E; }
+
+.calendar-exibit .show-calendar {
+  float: none;
+  display: block;
+  position: relative;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  margin-bottom: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  overflow: hidden; }
+  .calendar-exibit .show-calendar .calendar {
+    margin: 0 0 4px 0; }
+  .calendar-exibit .show-calendar.picker_1 {
+    background: #34495E; }
+.calendar-exibit .calendar-table {
+  padding: 0 0 4px 0; }
+
 @charset "UTF-8";
 .send {
   border-top: 1px #ededed solid;
   height: 48px; }
-
-.message-content {
-  border: 0; }
 
 .left_col {
   background: #fff; }
@@ -43,7 +131,7 @@
   margin: 13px 0 0 3px; }
 
 .site_title i {
-  border: 1px solid #eaeaea;
+  border: 1px solid #000;
   padding: 5px 6px;
   border-radius: 50%; }
 
@@ -303,7 +391,7 @@ body .container.body .right_col {
 .bg-white {
   background: #fff !important;
   border: 1px solid #fff !important;
-  color: #73879c; }
+  color: #000; }
 
 .bg-green {
   background: #1abb9c !important;
@@ -352,7 +440,7 @@ body .container.body .right_col {
   background: #ededed; }
 
 body {
-  color: #73879c;
+  color: #000;
   background: #fff;
   font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif;
   font-size: 13px;
@@ -504,7 +592,7 @@ h3,
   margin-bottom: 10px; }
 
 a {
-  color: #5a738e;
+  color: #000;
   text-decoration: none; }
 
 a,
@@ -521,10 +609,6 @@ a:active,
 .btn:active.focus,
 .btn.active.focus {
   outline: 0; }
-
-a:hover,
-a:focus {
-  text-decoration: none; }
 
 .navbar {
   margin-bottom: 0; }
@@ -666,7 +750,7 @@ a:focus {
   font-weight: 400;
   font-size: 22px;
   width: 100%;
-  color: #ecf0f1 !important;
+  color: #000 !important;
   margin-left: 0 !important;
   line-height: 59px;
   display: block;
@@ -1366,7 +1450,7 @@ ul.msg_list li a .message {
   border-top-right-radius: 0; }
 
 .dropdown-menu > li > a {
-  color: #5a738e; }
+  color: #000; }
 
 .navbar-nav .open .dropdown-menu {
   position: absolute;
@@ -2183,15 +2267,16 @@ a.btn-danger {
   color: #fff; }
 
 .btn-success {
-  background: #26b99a;
-  border: 1px solid #169f85; }
+  background: #0084ff;
+  border: 1px solid #0072ff; }
 
 .btn-success:hover,
 .btn-success:focus,
-.btn-success:active,
 .btn-success.active,
+.btn-success:active,
+.btn-success:active:focus,
 .open .dropdown-toggle.btn-success {
-  background: #169f85; }
+  background: #0072ff; }
 
 .btn-dark {
   color: #e9edef;
@@ -2425,7 +2510,10 @@ ul.bar_tabs.right {
 ul.bar_tabs.right li {
   float: right; }
 
+a:hover,
 a:focus {
+  color: #000;
+  text-decoration: none;
   outline: none; }
 
 /** /Tabs **/
@@ -3078,7 +3166,7 @@ ul.project_files li a i {
  * bootstrap-vertical-tabs - v1.2.1
  * https://dbtek.github.io/bootstrap-vertical-tabs
  * 2014-11-07
- * Copyright (c) 2014 ─░smail Demirbilek
+ * Copyright (c) 2014 İsmail Demirbilek
  * License: MIT
  */
 .tabs-left,
@@ -3193,7 +3281,7 @@ ul.project_files li a i {
 .price {
   font-size: 40px;
   font-weight: 400;
-  color: #26b99a;
+  color: #0084ff;
   margin: 0; }
 
 .prod_title {
@@ -3252,7 +3340,7 @@ ul.project_files li a i {
 /* *********  /ecommerce  **************************** */
 /** login **/
 .login {
-  background: #f7f7f7; }
+  background: #fff; }
 
 .login .fa-paw {
   font-size: 26px; }
@@ -3414,9 +3502,9 @@ form:after {
 .login_content form input[type="password"]:focus {
   -ms-box-shadow: 0 0 2px #ed1c24 inset;
   -o-box-shadow: 0 0 2px #ed1c24 inset;
-  box-shadow: 0 0 2px #a97aad inset;
+  box-shadow: 0 0 2px #008cff;
   background-color: #fff;
-  border: 1px solid #a878af;
+  border: 1px solid #0084ff;
   outline: none; }
 
 #username {
@@ -3535,7 +3623,7 @@ div[data-role="editor-toolbar"] {
 .select2-container--default
 .select2-selection--single
 .select2-selection__rendered {
-  color: #73879c;
+  color: #000;
   padding-top: 5px; }
 
 .select2-container--default
@@ -3894,7 +3982,7 @@ fieldset {
   background-color: #3498db; }
 
 .progress-bar-success {
-  background-color: #26b99a; }
+  background-color: #0084ff; }
 
 .progress_summary .progress {
   margin: 5px 0 12px !important; }
@@ -4037,7 +4125,7 @@ ul.notifications {
 /** FullCalendar **/
 .fc-state-default {
   background: #f5f5f5;
-  color: #73879c; }
+  color: #000; }
 
 .fc-state-down,
 .fc-state-active {
@@ -4051,94 +4139,3 @@ ul.notifications {
   border: 1px solid #e5e5e5; }
 
 /** /Dropzone.js **/
-
-.daterangepicker .ranges li {
-  color: #73879C; }
-  .daterangepicker .ranges li.active, .daterangepicker .ranges li:hover {
-    background: #536A7F;
-    border: 1px solid #536A7F;
-    color: #fff; }
-.daterangepicker .input-mini {
-  background-color: #eee;
-  border: 1px solid #ccc;
-  box-shadow: none !important; }
-  .daterangepicker .input-mini.active {
-    border: 1px solid #ccc; }
-.daterangepicker select.monthselect, .daterangepicker select.yearselect, .daterangepicker select.hourselect, .daterangepicker select.minuteselect, .daterangepicker select.secondselect, .daterangepicker select.ampmselect {
-  font-size: 12px;
-  padding: 1px;
-  height: auto;
-  margin: 0;
-  cursor: default;
-  height: 30px;
-  border: 1px solid #ADB2B5;
-  line-height: 30px;
-  border-radius: 0px !important; }
-.daterangepicker select.monthselect {
-  margin-right: 2%; }
-.daterangepicker td.in-range {
-  background: #E4E7EA;
-  color: #73879C; }
-.daterangepicker td.active, .daterangepicker td.active:hover {
-  background-color: #536A7F;
-  color: #fff; }
-.daterangepicker th.available:hover {
-  background: #eee;
-  color: #34495E; }
-.daterangepicker:before, .daterangepicker:after {
-  content: none; }
-.daterangepicker .calendar.single {
-  margin: 0 0 4px 0; }
-  .daterangepicker .calendar.single .calendar-table {
-    width: 224px;
-    padding: 0 0 4px 0 !important; }
-    .daterangepicker .calendar.single .calendar-table thead tr:first-child th {
-      padding: 8px 5px; }
-    .daterangepicker .calendar.single .calendar-table thead th {
-      border-radius: 0; }
-.daterangepicker.picker_1 {
-  color: #fff;
-  background: #34495E; }
-  .daterangepicker.picker_1 .calendar-table {
-    background: #34495E; }
-    .daterangepicker.picker_1 .calendar-table thead tr {
-      background: #213345; }
-    .daterangepicker.picker_1 .calendar-table thead tr:first-child {
-      background: #1ABB9C; }
-    .daterangepicker.picker_1 .calendar-table td.off {
-      background: #34495E;
-      color: #999; }
-    .daterangepicker.picker_1 .calendar-table td.available:hover {
-      color: #34495E; }
-.daterangepicker.picker_2 .calendar-table thead tr {
-  color: #1ABB9C; }
-.daterangepicker.picker_2 .calendar-table thead tr:first-child {
-  color: #73879C; }
-.daterangepicker.picker_3 .calendar-table thead tr:first-child {
-  color: #fff;
-  background: #1ABB9C; }
-.daterangepicker.picker_4 .calendar-table thead tr:first-child {
-  color: #fff;
-  background: #34495E; }
-.daterangepicker.picker_4 .calendar-table td, .daterangepicker.picker_4 .calendar-table td.off {
-  background: #ECF0F1;
-  border: 1px solid #fff;
-  border-radius: 0; }
-.daterangepicker.picker_4 .calendar-table td.active {
-  background: #34495E; }
-
-.calendar-exibit .show-calendar {
-  float: none;
-  display: block;
-  position: relative;
-  background-color: #fff;
-  border: 1px solid #ccc;
-  margin-bottom: 20px;
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  overflow: hidden; }
-  .calendar-exibit .show-calendar .calendar {
-    margin: 0 0 4px 0; }
-  .calendar-exibit .show-calendar.picker_1 {
-    background: #34495E; }
-.calendar-exibit .calendar-table {
-  padding: 0 0 4px 0; }

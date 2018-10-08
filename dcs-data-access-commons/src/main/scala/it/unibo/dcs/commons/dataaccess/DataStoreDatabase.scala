@@ -11,7 +11,7 @@ trait DataStoreDatabase {
 
   final def insert(tableName: String, params: InsertParams): Observable[Unit] =
     VertxHelper.toObservable[Unit] {
-      connection.execute(s"INSERT INTO `$tableName`(${params.columnNames}) VALUES(${params.columnNames});", _)
+      connection.execute(s"INSERT INTO $tableName(${params.columnNames}) VALUES (${params.values});", _)
     }
 
 }

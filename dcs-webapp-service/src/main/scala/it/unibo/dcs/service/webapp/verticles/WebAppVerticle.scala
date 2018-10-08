@@ -64,6 +64,8 @@ final class WebAppVerticle extends ServiceVerticle {
     router.post("/protected/logout")
       .consumes("application/json")
       .handler(context => requestHandler handleLogout context)
+
+    router.mountSubRouter("/api", router)
   }
 
   override def start(): Unit = {

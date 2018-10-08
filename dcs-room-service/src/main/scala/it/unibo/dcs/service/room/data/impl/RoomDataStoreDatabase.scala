@@ -2,6 +2,9 @@ package it.unibo.dcs.service.room.data.impl
 
 import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.ext.sql.SQLConnection
+import it.unibo.dcs.commons.VertxHelper
+
+import it.unibo.dcs.commons.VertxHelper.Implicits._
 import it.unibo.dcs.commons.dataaccess.{DataStoreDatabase, InsertParams}
 import it.unibo.dcs.service.room.data.RoomDataStore
 import it.unibo.dcs.service.room.data.impl.RoomDataStoreDatabase.Implicits._
@@ -12,7 +15,10 @@ class RoomDataStoreDatabase(protected override val connection: SQLConnection) ex
 
   override def createUser(request: CreateUserRequest): Observable[Unit] = insert("users", request)
 
-  override def deleteRoom(request: DeleteRoomRequest): Observable[Unit] = ???
+  override def deleteRoom(request: DeleteRoomRequest): Observable[Unit] =
+    VertxHelper.toObservable[Unit] {
+      connection.execute(s"DELETE FROM `users` WHERE `name` = '${request.name}' AND `owner_name` = '${request.username}';", _)
+    }
 
 }
 

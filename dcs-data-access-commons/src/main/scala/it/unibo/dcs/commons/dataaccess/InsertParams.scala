@@ -28,7 +28,7 @@ object InsertParams {
   private[dataaccess] def toValue(value: Any): String = value match {
     case s: String => s"'$s'"
     case n: Number => n.toString
-    case b: Boolean => if (b) "1" else "0"
+    case b: Boolean => if (b) "'1'" else "'0'"
     case _ => throw new IllegalArgumentException("Expected value to ba a String, a Number or a Boolean.")
   }
 

@@ -15,9 +15,4 @@ trait DataStoreDatabase {
       connection.execute(s"INSERT INTO ${escape(tableName)}{params.columnNames}) VALUES (${params.values});", _)
     }
 
-  final def deleteOne(tableName: String, columnName: String, value: Any): Observable[Unit] =
-    VertxHelper.toObservable[Unit] {
-      connection.execute(s"DELETE FROM ${escape(tableName)} WHERE ${escape(columnName)} = ${toValue(value)};", _)
-    }
-
 }

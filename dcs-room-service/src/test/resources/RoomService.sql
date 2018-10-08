@@ -1,10 +1,5 @@
--- Database Section
--- ________________ 
-
-use roomservice;
-
 -- Tables Section
--- _____________ 
+-- _____________
 
 drop table if exists messages;
 create table messages (
@@ -33,7 +28,7 @@ create table users (
      constraint id_user primary key (username));
 
 -- Constraints Section
--- ___________________ 
+-- ___________________
 
 alter table messages add constraint FKPM
      foreign key (user_name, room_name)
@@ -56,4 +51,4 @@ alter table rooms add constraint FKOR
      on delete cascade;
 
 -- Index Section
--- _____________ 
+-- _____________

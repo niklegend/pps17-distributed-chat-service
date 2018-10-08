@@ -26,76 +26,47 @@ final class RoomDataStoreSpec extends FlatSpec {
 
         client = JDBCClient.createShared(vertx, config)
 
-        val connectionAsync = context.async
-        client.getConnection(ar => {
-          if (ar.succeeded) {
-            connection = ar.result
+        client.getConnection(context.asyncAssertSuccess(result => {
+            connection = result
             roomDataStore = new RoomDataStoreDatabase(connection)
-            connectionAsync.complete()
-          } else {
-            context.fail(ar.cause)
-          }
-        })
-        connectionAsync.await()
-      }) /*
-      .after(context => {
-        connection.close(_ => {
-          val closeAsync = context.async
-          client.close(ar => {
-            vertx.close()
-            if (ar.succeeded()) {
-              closeAsync.complete()
-            } else {
-              context.fail(ar.cause)
-            }
-          })
-        })
-      })*/
-      .test("Delete a room", context => {
-      val insertAsync = context.async
-
-      connection.execute("INSERT INTO `users` (`username`) VALUES ('mvandi');", ar => {
-        if (ar.succeeded) {
-          connection.execute("INSERT INTO `rooms` (`name`, `owner_username`) VALUES ('Test room', 'mvandi');", ar => {
-            if (ar.succeeded) {
-              connection.query("SELECT COUNT(*) FROM rooms", ar => {
-                if (ar.succeeded) {
-                  val result = ar.result
-                  context.assertEquals(1, result.getResults.size)
-                  println("insertAsync.complete()")
-                  insertAsync.complete()
-                } else {
-                  context.fail(ar.cause())
-                }
-              })
-            } else {
-              context.fail(ar.cause())
-            }
-          })
-        } else {
-          context.fail(ar.cause())
-        }
+        }))
       })
+      .after(context => {
+        connection.close(context.asyncAssertSuccess())
+        client.close(context.asyncAssertSuccess())
+        vertx.close(context.asyncAssertSuccess())
+      })
+      .test("Delete a room", context => {
+        println("Begin test")
 
-      insertAsync.await()
+        connection.execute("INSERT INTO `users` (`username`) VALUES ('mvandi');", context.asyncAssertSuccess())
 
-      val deleteAsync = context.async
-      roomDataStore.deleteRoom(DeleteRoomRequest("Test room", "mvandi"))
-        .subscribe(_ => {
-          connection.query("SELECT COUNT(*) FROM rooms", ar => {
-            if (ar.succeeded) {
-              val result = ar.result
-              context.assertEquals(0, result.getResults.head.getInteger(0))
-              println("deleteAsync.complete()")
-              deleteAsync.complete()
-            } else {
-              context.fail(ar.cause())
-            }
-          })
-        }, context.fail)
-      deleteAsync.await()
-      println("Finished test")
-    })
+        connection.execute("INSERT INTO `rooms` (`name`, `owner_username`) VALUES ('Test room', 'mvandi');", context.asyncAssertSuccess())
+
+        connection.query("SELECT COUNT(*) FROM rooms", context.asyncAssertSuccess(result => {
+            val count = result.getResults.head.getInteger(0)
+            context.assertEquals(1, count)
+            println("secondCountAsync.complete()")
+        }))
+
+        val secondCountAsync = context.async
+        roomDataStore.deleteRoom(DeleteRoomRequest("Test room", "mvandi"))
+          .subscribe(_ => {
+            connection.query("SELECT COUNT(*) FROM rooms", ar => {
+              if (ar.succeeded) {
+                val count = ar.result.getResults.head.getInteger(0)
+                context.assertEquals(0, count)
+                println("secondCountAsync.complete()")
+                secondCountAsync.complete()
+              } else {
+                context.fail(ar.cause())
+              }
+            })
+          }, context.fail)
+        secondCountAsync.await()
+
+        println("Finished test")
+      })
       .run(new TestOptions().addReporter(new ReportOptions().setTo("console")))
   }
 

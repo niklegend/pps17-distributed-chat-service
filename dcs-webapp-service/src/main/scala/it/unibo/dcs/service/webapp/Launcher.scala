@@ -1,7 +1,7 @@
 package it.unibo.dcs.service.webapp
 
 import io.vertx.scala.core.{DeploymentOptions, Vertx}
-import it.unibo.dcs.commons.VertxHelper
+import it.unibo.dcs.commons.{IoHelper, VertxHelper}
 import it.unibo.dcs.service.webapp.verticles.WebAppVerticle
 
 object Launcher extends App {
@@ -13,7 +13,7 @@ object Launcher extends App {
   }
 
   private def readServerConfiguration = {
-    VertxHelper.readJsonObject("/config.json")
+    IoHelper.readJsonObject("/config.json")
   }
 }
 

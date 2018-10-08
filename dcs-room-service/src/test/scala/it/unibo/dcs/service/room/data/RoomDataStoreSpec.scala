@@ -1,18 +1,18 @@
 package it.unibo.dcs.service.room.data
 
-import io.vertx.ext.unit.TestSuite
+import io.vertx.ext.unit.report.ReportOptions
+import io.vertx.ext.unit.{TestOptions, TestSuite}
 import io.vertx.scala.core.Vertx
 import io.vertx.scala.ext.jdbc.JDBCClient
-import io.vertx.scala.ext.sql.{ResultSet, SQLConnection}
-import it.unibo.dcs.commons.VertxHelper
+import io.vertx.scala.ext.sql.SQLConnection
+import it.unibo.dcs.commons.IoHelper
 import it.unibo.dcs.service.room.data.impl.RoomDataStoreDatabase
 import it.unibo.dcs.service.room.request.DeleteRoomRequest
 import org.scalatest.FlatSpec
 
-import scala.io.Source
-
 final class RoomDataStoreSpec extends FlatSpec {
 
+  private var vertx: Vertx = _
   private var roomDataStore: RoomDataStore = _
 
   private var client: JDBCClient = _
@@ -20,11 +20,11 @@ final class RoomDataStoreSpec extends FlatSpec {
 
   it should "" in {
     TestSuite.create("")
-      .beforeEach(context => {
-        val vertx = Vertx.vertx
-        val config = VertxHelper.readJsonObject("/test_db_config.json")
+      .before(context => {
+        vertx = Vertx.vertx
+        val config = IoHelper.readJsonObject("/db_config.json")
 
-        client = JDBCClient.createNonShared(vertx, config)
+        client = JDBCClient.createShared(vertx, config)
 
         val connectionAsync = context.async
         client.getConnection(ar => {
@@ -37,21 +37,12 @@ final class RoomDataStoreSpec extends FlatSpec {
           }
         })
         connectionAsync.await()
-
-        val executeAsync = context.async
-        connection.execute(Source.fromFile("/RoomService.sql", "UTF-8").toString, ar => {
-          if (ar.succeeded) {
-            executeAsync.complete()
-          } else {
-            context.fail(ar.cause)
-          }
-        })
-        executeAsync.await()
-      })
-      .afterEach(context => {
+      }) /*
+      .after(context => {
         connection.close(_ => {
           val closeAsync = context.async
           client.close(ar => {
+            vertx.close()
             if (ar.succeeded()) {
               closeAsync.complete()
             } else {
@@ -59,44 +50,53 @@ final class RoomDataStoreSpec extends FlatSpec {
             }
           })
         })
-      })
+      })*/
       .test("Delete a room", context => {
-        val insertAsync = context.async
+      val insertAsync = context.async
 
-        connection.execute("INSERT INTO users(username) VALUES('mvandi'); INSERT INTO rooms(name, owner_name) VALUES('Test room', 'mvandi')", ar => {
-          if (ar.succeeded) {
-            connection.query("SELECT COUNT(*) FROM rooms", ar => {
-              if (ar.succeeded) {
-                val result = ar.result
-                context.assertEquals(1, result.getResults.size)
-                insertAsync.complete()
-              } else {
-                context.fail(ar.cause())
-              }
-            })
-          } else {
-            context.fail(ar.cause())
-          }
-        })
-
-        insertAsync.await()
-
-        val deleteAsync = context.async
-        roomDataStore.deleteRoom(DeleteRoomRequest("Test room", "mvandi"))
-          .subscribe(_ => {
-            connection.query("SELECT COUNT(*) FROM rooms", ar => {
-              if (ar.succeeded) {
-                val result = ar.result
-                context.assertEquals(0, result.getResults.size)
-                deleteAsync.complete()
-              } else {
-                context.fail(ar.cause())
-              }
-            })
-          }, context.fail)
-        deleteAsync.await()
+      connection.execute("INSERT INTO `users` (`username`) VALUES ('mvandi');", ar => {
+        if (ar.succeeded) {
+          connection.execute("INSERT INTO `rooms` (`name`, `owner_username`) VALUES ('Test room', 'mvandi');", ar => {
+            if (ar.succeeded) {
+              connection.query("SELECT COUNT(*) FROM rooms", ar => {
+                if (ar.succeeded) {
+                  val result = ar.result
+                  context.assertEquals(1, result.getResults.size)
+                  println("insertAsync.complete()")
+                  insertAsync.complete()
+                } else {
+                  context.fail(ar.cause())
+                }
+              })
+            } else {
+              context.fail(ar.cause())
+            }
+          })
+        } else {
+          context.fail(ar.cause())
+        }
       })
-      .run()
+
+      insertAsync.await()
+
+      val deleteAsync = context.async
+      roomDataStore.deleteRoom(DeleteRoomRequest("Test room", "mvandi"))
+        .subscribe(_ => {
+          connection.query("SELECT COUNT(*) FROM rooms", ar => {
+            if (ar.succeeded) {
+              val result = ar.result
+              context.assertEquals(0, result.getResults.head.getInteger(0))
+              println("deleteAsync.complete()")
+              deleteAsync.complete()
+            } else {
+              context.fail(ar.cause())
+            }
+          })
+        }, context.fail)
+      deleteAsync.await()
+      println("Finished test")
+    })
+      .run(new TestOptions().addReporter(new ReportOptions().setTo("console")))
   }
 
 }

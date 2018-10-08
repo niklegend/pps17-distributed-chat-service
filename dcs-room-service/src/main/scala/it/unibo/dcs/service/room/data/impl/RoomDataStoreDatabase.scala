@@ -17,7 +17,7 @@ class RoomDataStoreDatabase(protected override val connection: SQLConnection) ex
 
   override def deleteRoom(request: DeleteRoomRequest): Observable[Unit] =
     VertxHelper.toObservable[Unit] {
-      connection.execute(s"DELETE FROM `users` WHERE `name` = '${request.name}' AND `owner_name` = '${request.username}';", _)
+      connection.execute(s"DELETE FROM `rooms` WHERE `name` = '${request.name}' AND `owner_username` = '${request.username}';", _)
     }
 
 }

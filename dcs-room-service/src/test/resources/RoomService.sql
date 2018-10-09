@@ -9,23 +9,23 @@ use roomservice;
 drop table if exists messages;
 create table messages (
      username varchar(20) not null,
-     name varchar(50) not null,
+     `name` varchar(50) not null,
      `timestamp` timestamp not null,
      content varchar(1024) not null,
-     constraint id_message primary key (username, name, timestamp));
+     constraint id_message primary key (username, `name`, `timestamp`));
 
 drop table if exists participations;
 create table participations (
      username varchar(20) not null,
-     name varchar(50) not null,
+     `name` varchar(50) not null,
      join_date date not null,
-     constraint id_participation primary key (username, name));
+     constraint id_participation primary key (username, `name`));
 
 drop table if exists rooms;
 create table rooms (
-     name varchar(50) not null,
+     `name` varchar(50) not null,
      owner_username varchar(20) not null,
-     constraint id_room primary key (name));
+     constraint id_room primary key (`name`));
 
 drop table if exists users;
 create table users (
@@ -36,13 +36,13 @@ create table users (
 -- ___________________
 
 alter table messages add constraint FKPM
-     foreign key (username, name)
-     references participations (username, name)
+     foreign key (username, `name`)
+     references participations (username, `name`)
      on delete cascade;
 
 alter table participations add constraint FKPR
-     foreign key (name)
-     references rooms (name)
+     foreign key (`name`)
+     references rooms (`name`)
      on delete cascade;
 
 alter table participations add constraint FKUP

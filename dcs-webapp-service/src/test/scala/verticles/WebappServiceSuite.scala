@@ -18,7 +18,7 @@ object WebappServiceSuite extends App with MockFactory with Matchers {
 
   private val logger = ScalaLogger.getLogger(getClass.getName)
 
-  val testSuite: TestSuite = TestSuite.create("WebappService Test Suite")
+  TestSuite.create("WebappService Test Suite")
     .test("WebApp Service is successfully deployed", context => {
 
       /* Verticle clustered deployment*/
@@ -26,6 +26,5 @@ object WebappServiceSuite extends App with MockFactory with Matchers {
         .subscribe(vertx => vertx.deployVerticle(nameForVerticle[WebAppVerticle], deploymentOptions,
           context.asyncAssertSuccess()), cause => logger.error("", cause))
     }).after(_ => System.exit(0))
-
-  testSuite.run(new TestOptions().addReporter(new ReportOptions().setTo("console")))
+    .run(new TestOptions().addReporter(new ReportOptions().setTo("console")))
 }

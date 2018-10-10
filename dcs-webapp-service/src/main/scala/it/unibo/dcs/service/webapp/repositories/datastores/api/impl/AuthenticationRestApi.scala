@@ -1,9 +1,9 @@
 package it.unibo.dcs.service.webapp.repositories.datastores.api.impl
 
 import it.unibo.dcs.commons.service.{AbstractApi, HttpEndpointDiscovery}
-import it.unibo.dcs.service.webapp.repositories.Requests
-import it.unibo.dcs.service.webapp.repositories.Requests.Implicits._
-import it.unibo.dcs.service.webapp.repositories.Requests.LoginUserRequest
+import it.unibo.dcs.service.webapp.interaction.Requests
+import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
+import it.unibo.dcs.service.webapp.interaction.Requests.LoginUserRequest
 import it.unibo.dcs.service.webapp.repositories.datastores.api.AuthenticationApi
 import it.unibo.dcs.service.webapp.repositories.datastores.api.exceptions.{LoginResponseException, RegistrationResponseException}
 import rx.lang.scala.Observable
@@ -31,6 +31,5 @@ class AuthenticationRestApi(private[this] val discovery: HttpEndpointDiscovery)
       Observable.from(authWebClient.post("/protected/logout").sendJsonObjectFuture(username)))
       .map(_.body())
   }
-
 
 }

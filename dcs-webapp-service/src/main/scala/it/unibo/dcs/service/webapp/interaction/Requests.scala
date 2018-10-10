@@ -1,9 +1,9 @@
-package it.unibo.dcs.service.webapp.repositories
+package it.unibo.dcs.service.webapp.interaction
 
 import java.util.Date
 
 import io.vertx.lang.scala.json.{Json, JsonObject}
-import it.unibo.dcs.service.webapp.model.User
+import it.unibo.dcs.service.webapp.model.{Room, User}
 
 import scala.language.implicitConversions
 
@@ -52,6 +52,14 @@ object Requests {
     implicit def jsonToUser(userJson: JsonObject): User = {
       User(userJson.getString("username"), userJson.getString("firstname"),
         userJson.getString("lastname"), "", visible = true, new Date)
+    }
+
+    implicit def jsonToRoom(roomJson: JsonObject): Room = {
+      Room(roomJson.getString("name"))
+    }
+
+    implicit def jsonToRoomCreationRequest(json: JsonObject): CreateRoomRequest = {
+      CreateRoomRequest(json.getString("name"), json.getJsonObject("user"))
     }
   }
 

@@ -9,12 +9,10 @@ import it.unibo.dcs.commons.VertxHelper
 import it.unibo.dcs.commons.VertxHelper.Implicits._
 import it.unibo.dcs.service.webapp.verticles.WebAppVerticle
 import it.unibo.dcs.service.webapp.verticles.utils.DeploymentUtils._
-import org.scalamock.matchers.Matchers
-import org.scalamock.scalatest.MockFactory
 
 import scala.language.postfixOps
 
-object WebappServiceSuite extends App with MockFactory with Matchers {
+object WebappServiceSuite extends App {
 
   private val logger = ScalaLogger.getLogger(getClass.getName)
 

@@ -1,7 +1,8 @@
 package it.unibo.dcs.service.webapp.repositories.impl
 
+import it.unibo.dcs.service.webapp.interaction.Requests
 import it.unibo.dcs.service.webapp.repositories.AuthenticationRepository
-import it.unibo.dcs.service.webapp.repositories.Requests.{LoginUserRequest, RegisterUserRequest}
+import it.unibo.dcs.service.webapp.interaction.Requests.{LoginUserRequest, RegisterUserRequest}
 import it.unibo.dcs.service.webapp.repositories.datastores.AuthenticationDataStore
 import rx.lang.scala.Observable
 
@@ -15,4 +16,6 @@ class AuthenticationRepositoryImpl(private val authenticationDataStore: Authenti
     authenticationDataStore.registerUser(request)
 
   override def logoutUser(username: String): Observable[Unit] = authenticationDataStore.logoutUser(username)
+
+  override def createRoom(request: Requests.CreateRoomRequest): Observable[String] = ???
 }

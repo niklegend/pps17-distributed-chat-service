@@ -3,7 +3,7 @@ package repositories.datastores
 import java.util.Date
 
 import it.unibo.dcs.service.webapp.model.User
-import it.unibo.dcs.service.webapp.repositories.Requests.{LoginUserRequest, RegisterUserRequest}
+import it.unibo.dcs.service.webapp.interaction.Requests.{LoginUserRequest, RegisterUserRequest}
 import it.unibo.dcs.service.webapp.repositories.datastores.AuthenticationDataStore
 import it.unibo.dcs.service.webapp.repositories.datastores.api.AuthenticationApi
 import it.unibo.dcs.service.webapp.repositories.datastores.impl.AuthenticationDataStoreNetwork
@@ -15,16 +15,16 @@ import scala.language.postfixOps
 
 class AuthenticationDataStoreSpec extends FlatSpec with MockFactory with OneInstancePerTest {
 
-  val authApi: AuthenticationApi = mock[AuthenticationApi]
-  val dataStore: AuthenticationDataStore = new AuthenticationDataStoreNetwork(authApi)
-  val user = User("niklegend", "nicola", "piscaglia", "bla", visible = true, new Date())
-  val registerRequest = RegisterUserRequest(user.username, "password", user.firstName,
+  private val authApi: AuthenticationApi = mock[AuthenticationApi]
+  private val dataStore: AuthenticationDataStore = new AuthenticationDataStoreNetwork(authApi)
+  private val user = User("niklegend", "nicola", "piscaglia", "bla", visible = true, new Date())
+  private val registerRequest = RegisterUserRequest(user.username, "password", user.firstName,
     user.lastName)
-  val loginUserRequest = LoginUserRequest(user.username, "password")
-  val registeredSubscriber: Subscriber[String] = stub[Subscriber[String]]
-  val loginSubscriber: Subscriber[String] = stub[Subscriber[String]]
-  val logoutSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
-  val token = "token"
+  private val loginUserRequest = LoginUserRequest(user.username, "password")
+  private val registeredSubscriber: Subscriber[String] = stub[Subscriber[String]]
+  private val loginSubscriber: Subscriber[String] = stub[Subscriber[String]]
+  private val logoutSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
+  private val token = "token"
 
 
   it should "register a new user" in {

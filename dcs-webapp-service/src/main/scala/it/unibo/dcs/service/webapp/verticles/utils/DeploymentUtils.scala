@@ -7,7 +7,7 @@ import it.unibo.dcs.commons.VertxHelper
 object DeploymentUtils {
 
   def deploymentOptions: DeploymentOptions = {
-    DeploymentOptions() setConfig readServerConfiguration
+    DeploymentOptions() setConfig serverConfiguration
   }
 
   def deploymentHost: String = {
@@ -18,7 +18,7 @@ object DeploymentUtils {
     deploymentOptions.getConfig.getInteger("port")
   }
 
-  def readServerConfiguration: JsonObject = {
+  def serverConfiguration: JsonObject = {
     VertxHelper.readJsonObject("/config.json")
   }
 }

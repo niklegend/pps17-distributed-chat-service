@@ -66,6 +66,12 @@ final class WebAppVerticle extends ServiceVerticle {
       .consumes("application/json")
       .handler(context => requestHandler handleLogout context)
 
+
+    apiRouter.post("/protected/room")
+      .consumes("application/json")
+      .produces("application/json")
+      .handler(context => requestHandler handleRoomCreation context)
+
     router.mountSubRouter("/api", apiRouter)
   }
 

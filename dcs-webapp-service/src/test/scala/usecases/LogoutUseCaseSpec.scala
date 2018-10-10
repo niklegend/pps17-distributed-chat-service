@@ -14,15 +14,15 @@ import scala.language.postfixOps
 
 class LogoutUseCaseSpec extends FlatSpec with MockFactory with OneInstancePerTest {
 
-  val user = User("niklegend", "Nicola", "Piscaglia", "bio", visible = true, new Date)
+  private val user = User("niklegend", "Nicola", "Piscaglia", "bio", visible = true, new Date)
 
-  val threadExecutor: ThreadExecutor = mock[ThreadExecutor]
-  val postExecutionThread: PostExecutionThread = mock[PostExecutionThread]
-  val authRepository: AuthenticationRepository = mock[AuthenticationRepository]
+  private val threadExecutor: ThreadExecutor = mock[ThreadExecutor]
+  private val postExecutionThread: PostExecutionThread = mock[PostExecutionThread]
+  private val authRepository: AuthenticationRepository = mock[AuthenticationRepository]
 
-  val logoutSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
+  private val logoutSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
 
-  val logoutUseCase = new LogoutUserUseCase(threadExecutor, postExecutionThread, authRepository)
+  private val logoutUseCase = new LogoutUserUseCase(threadExecutor, postExecutionThread, authRepository)
 
 
   it should "logout the user when the use case is executed" in {

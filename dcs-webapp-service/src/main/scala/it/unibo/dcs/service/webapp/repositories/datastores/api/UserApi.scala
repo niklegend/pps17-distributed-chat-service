@@ -1,6 +1,5 @@
 package it.unibo.dcs.service.webapp.repositories.datastores.api
 
-<<<<<<< HEAD
 import io.vertx.core.Vertx
 import io.vertx.scala.core.eventbus.EventBus
 import io.vertx.servicediscovery.ServiceDiscovery
@@ -22,8 +21,3 @@ object UserApi {
   def userRestApi(vertx: Vertx, eventBus: EventBus): UserApi = new UserRestApi(
     new HttpEndpointDiscoveryImpl(ServiceDiscovery.create(vertx), eventBus))
 }
-=======
-trait UserApi {
-
-}
->>>>>>> eb051361c76e4797646752817d00c27040a90d3f

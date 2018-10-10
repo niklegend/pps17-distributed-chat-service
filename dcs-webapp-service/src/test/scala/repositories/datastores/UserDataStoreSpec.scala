@@ -3,7 +3,6 @@ package repositories.datastores
 import java.util.Date
 
 import it.unibo.dcs.service.webapp.model.User
-<<<<<<< HEAD
 import it.unibo.dcs.service.webapp.interaction.Requests.RegisterUserRequest
 import it.unibo.dcs.service.webapp.repositories.datastores.UserDataStore
 import it.unibo.dcs.service.webapp.repositories.datastores.api.UserApi
@@ -51,22 +50,4 @@ class UserDataStoreSpec extends FlatSpec with MockFactory with OneInstancePerTes
     // Verify that `subscriber.onCompleted` has been called once
     (() => getUserSubscriber onCompleted) verify() once()
   }
-=======
-import it.unibo.dcs.service.webapp.repositories.Requests.RegisterUserRequest
-import it.unibo.dcs.service.webapp.repositories.datastores.UserDataStore
-import org.scalatest.FlatSpec
-import rx.lang.scala.Observable
-
-class UserDataStoreSpec extends FlatSpec{
-
-  def fixture =
-    new {
-      val dataStore: UserDataStore = new UserDataStore {
-        override def getUserByUsername(username: String): Observable[User] = ???
-
-        override def createUser(request: RegisterUserRequest): Observable[User] = ???
-      }
-      val user = User("niklegend", "nicola", "piscaglia", "bla", visible = true, new Date())
-    }
->>>>>>> eb051361c76e4797646752817d00c27040a90d3f
 }

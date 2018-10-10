@@ -1,6 +1,5 @@
 package repositories
 
-<<<<<<< HEAD
 import java.util.Date
 
 import it.unibo.dcs.service.webapp.model.User
@@ -74,10 +73,4 @@ class AuthenticationRepositorySpec extends FlatSpec with MockFactory with OneIns
     // Verify that `subscriber.onCompleted` has been called once
     (() => logoutSubscriber onCompleted) verify() once()
   }
-=======
-import org.scalatest.FlatSpec
-
-class AuthenticationRepositorySpec extends FlatSpec {
-
->>>>>>> eb051361c76e4797646752817d00c27040a90d3f
 }

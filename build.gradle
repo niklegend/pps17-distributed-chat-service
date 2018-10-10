@@ -20,6 +20,7 @@ subprojects {
         testCompile group: 'org.scalatest', name: 'scalatest_2.12', version: scalaTestVersion
         testCompile group: 'org.scalamock', name: 'scalamock_2.12', version: scalaMockVersion
         testCompile group: 'io.vertx', name: 'vertx-hazelcast', version: vertxVersion
+
     }
 }
 

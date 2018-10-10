@@ -1,5 +1,6 @@
 package repositories
 
+<<<<<<< HEAD
 import java.util.Date
 
 import it.unibo.dcs.service.webapp.model.User
@@ -49,4 +50,10 @@ class UserRepositorySpec extends FlatSpec with MockFactory with OneInstancePerTe
     // Verify that `subscriber.onCompleted` has been called once
     (() => getUserSubscriber onCompleted) verify() once()
   }
+=======
+import org.scalatest.FlatSpec
+
+class UserRepositorySpec extends FlatSpec {
+
+>>>>>>> eb051361c76e4797646752817d00c27040a90d3f
 }

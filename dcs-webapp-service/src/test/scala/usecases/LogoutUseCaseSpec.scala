@@ -1,5 +1,6 @@
 package usecases
 
+<<<<<<< HEAD
 import java.util.Date
 
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
@@ -35,4 +36,10 @@ class LogoutUseCaseSpec extends FlatSpec with MockFactory with OneInstancePerTes
     // Then
     (() => logoutSubscriber onCompleted) verify() once()
   }
+=======
+import org.scalatest.FlatSpec
+
+class LogoutUseCaseSpec extends FlatSpec {
+
+>>>>>>> eb051361c76e4797646752817d00c27040a90d3f
 }

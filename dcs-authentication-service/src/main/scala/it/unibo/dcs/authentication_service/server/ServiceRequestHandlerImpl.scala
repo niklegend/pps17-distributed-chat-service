@@ -1,4 +1,5 @@
 package it.unibo.dcs.authentication_service.server
+<<<<<<< HEAD
 
 import io.vertx.lang.scala.json.Json
 import io.vertx.scala.ext.web.RoutingContext
@@ -67,4 +68,18 @@ class ServiceRequestHandlerImpl(loginUserUseCase: LoginUserUseCase, logoutUserUs
     override def onError(error: Throwable): Unit =
       respond(400, "invalid token or user not logged in")
   }
+=======
+import io.vertx.scala.ext.web.RoutingContext
+import it.unibo.dcs.commons.VertxWebHelper
+
+class ServiceRequestHandlerImpl extends ServiceRequestHandler {
+
+  override def handleRegistration(context: RoutingContext): Unit = {
+    VertxWebHelper
+  }
+
+  override def handleLogin(context: RoutingContext): Unit = ???
+
+  override def handleLogout(context: RoutingContext): Unit = ???
+>>>>>>> eb051361c76e4797646752817d00c27040a90d3f
 }

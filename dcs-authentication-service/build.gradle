@@ -6,6 +6,7 @@
 dependencies {
     compile project(':dcs-commons')
     compile project(':dcs-service-commons')
+<<<<<<< HEAD
     compile project(':dcs-data-access-commons')
     compile project(':dcs-interactor-commons')
 
@@ -29,4 +30,11 @@ apply plugin: "cz.augi.gradle.wartremover"
 wartremover {
     warningWarts.remove("NonUnitStatements")
     warningWarts.remove("Var")
+=======
+
+    compile group: 'io.vertx', name: 'vertx-lang-scala_2.12', version: vertxVersion
+    compile group: 'io.vertx', name: 'vertx-web-scala_2.12', version: vertxVersion
+    compile group: 'io.vertx', name: 'vertx-auth-jwt-scala_2.12', version: vertxVersion
+    testCompile group: 'org.scalatest', name: 'scalatest_2.12', version: scalaTestVersion
+>>>>>>> eb051361c76e4797646752817d00c27040a90d3f
 }

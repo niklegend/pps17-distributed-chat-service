@@ -1,5 +1,6 @@
 package it.unibo.dcs.service.user
 
+<<<<<<< HEAD
 import io.vertx.core.{AbstractVerticle, Context, Vertx}
 import io.vertx.scala.ext.web.Router
 import it.unibo.dcs.commons.RxHelper
@@ -62,3 +63,15 @@ final class UserVerticle(private[this] val userRepository: UserRepository, priva
 
 }
 
+=======
+import io.vertx.scala.ext.web.Router
+import it.unibo.dcs.commons.service.ServiceVerticle
+
+final class UserVerticle extends ServiceVerticle {
+
+  override protected def initializeRouter(router: Router): Unit = ???
+
+  override def start(): Unit = ???
+
+}
+>>>>>>> eb051361c76e4797646752817d00c27040a90d3f

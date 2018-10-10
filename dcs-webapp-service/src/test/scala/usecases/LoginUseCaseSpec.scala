@@ -1,5 +1,6 @@
 package usecases
 
+<<<<<<< HEAD
 import java.util.Date
 
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
@@ -46,4 +47,10 @@ class LoginUseCaseSpec extends FlatSpec with MockFactory with OneInstancePerTest
     (loginSubscriber onNext _) verify loginResult once()
     (() => loginSubscriber onCompleted) verify() once()
   }
+=======
+import org.scalatest.FlatSpec
+
+class LoginUseCaseSpec extends FlatSpec {
+
+>>>>>>> eb051361c76e4797646752817d00c27040a90d3f
 }

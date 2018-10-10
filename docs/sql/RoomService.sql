@@ -36,6 +36,7 @@ create table users (
 -- ___________________ 
 
 alter table messages add constraint FKPM
+<<<<<<< HEAD
      foreign key (username, `name`)
      references participations (username, `name`)
      on delete cascade;
@@ -54,6 +55,22 @@ alter table rooms add constraint FKOR
      foreign key (owner_username)
      references users (username)
      on delete cascade;
+=======
+     foreign key (user_name, room_name)
+     references participations (user_name, room_name);
+
+alter table participations add constraint FKPR
+     foreign key (room_name)
+     references rooms (name);
+
+alter table participations add constraint FKUP
+     foreign key (user_name)
+     references users (username);
+
+alter table rooms add constraint FKOR
+     foreign key (owner_name)
+     references users (username);
+>>>>>>> eb051361c76e4797646752817d00c27040a90d3f
 
 -- Index Section
 -- _____________ 

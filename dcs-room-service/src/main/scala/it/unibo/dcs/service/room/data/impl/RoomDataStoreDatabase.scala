@@ -28,7 +28,7 @@ final class RoomDataStoreDatabase(private[this] val connection: SQLConnection) e
 
 object RoomDataStoreDatabase {
 
-  private[impl] val insertUserQuery = "INSERT INTO `users` (`username`) VALUES(?);"
+  private[impl] val insertUserQuery = "INSERT INTO `users` (`username`) VALUES (?);"
 
   private[impl] val deleteRoomQuery = "DELETE FROM `rooms` WHERE `name` = ? AND `owner_username` = ?;"
 

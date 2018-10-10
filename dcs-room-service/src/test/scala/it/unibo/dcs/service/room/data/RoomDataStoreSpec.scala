@@ -21,24 +21,57 @@ object RoomDataStoreSpec extends App {
   TestSuite.create("RoomDataStoreSpec")
     .before(context => {
       vertx = Vertx.vertx
+      vertx.exceptionHandler(context.exceptionHandler())
       val config = IoHelper.readJsonObject("/db_config.json")
 
       client = JDBCClient.createNonShared(vertx, config)
 
+      val async = context.async(1)
       client.getConnection(context.asyncAssertSuccess(result => {
         connection = result
         roomDataStore = new RoomDataStoreDatabase(connection)
+        async.countDown()
       }))
-    })/*
+      async.awaitSuccess()
+    })
     .after(context => {
-      connection.close(context.asyncAssertSuccess())
-      client.close(context.asyncAssertSuccess())
-      vertx.close(context.asyncAssertSuccess())
-    })*/
-    /*
+      val async = context.async(3)
+      connection.close(ar => {
+        if (ar.succeeded()) {
+          async.countDown()
+        } else {
+          context.fail(ar.cause())
+        }
+      })
+      client.close(ar => {
+        if (ar.succeeded()) {
+          async.countDown()
+        } else {
+          context.fail(ar.cause())
+        }
+      })
+      vertx.close(ar => {
+        if (ar.succeeded()) {
+          async.countDown()
+        } else {
+          context.fail(ar.cause())
+        }
+      })
+      async.awaitSuccess()
+    })
     .beforeEach(context => {
-      connection.execute(IoHelper.readString("/RoomService.sql"), context.asyncAssertSuccess())
-    })*/
+      println("Before each started")
+      val async = context.async(1)
+      connection.execute("DELETE FROM users; DELETE FROM rooms;", ar => {
+        if (ar.succeeded()) {
+          async.countDown()
+        } else {
+          context.fail(ar.cause())
+        }
+      })
+      async.awaitSuccess()
+      println("Before each ended")
+    })
     .test("Create a user", context => {
       val insertAsync = context.async
       roomDataStore.createUser(CreateUserRequest("mvandi"))

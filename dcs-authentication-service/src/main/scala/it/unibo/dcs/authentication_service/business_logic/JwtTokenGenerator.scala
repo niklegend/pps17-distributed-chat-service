@@ -5,9 +5,15 @@ import io.vertx.scala.ext.auth.jwt.{JWTAuth, JWTOptions}
 
 class JwtTokenGenerator(jwtAuth: JWTAuth) {
 
-  def generate(username: String): String ={
+  def generateToken(username: String): String = {
     jwtAuth.generateToken(Json.obj(("sub", username), ("iat", System.currentTimeMillis())),
       JWTOptions().setExpiresInMinutes(1440)) //expires after one day
   }
+
+}
+
+object JwtTokenGenerator{
+
+  def apply(jwtAuth: JWTAuth): JwtTokenGenerator = new JwtTokenGenerator(jwtAuth)
 
 }

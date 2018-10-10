@@ -8,7 +8,9 @@ trait AuthenticationDataStore {
 
   def createUser(username: String, password: String): Observable[Unit]
 
-  def checkUserExistence(username: String, password: String): Observable[Unit]
+  def checkUserExistence(username: String): Observable[Unit]
+
+  def checkUserCredentials(username: String, password: String) : Observable[Unit]
 
   def invalidToken(token: String, expirationDate: LocalDateTime): Observable[Unit]
 

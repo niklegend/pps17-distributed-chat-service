@@ -14,10 +14,10 @@ abstract class ReturningTokenUseCase(private[this] val threadExecutor: ThreadExe
                              private[this] val jwtAuth: JWTAuth)
   extends UseCase[String, TokenRequest](threadExecutor, postExecutionThread) {
 
-  val tokenGenerator = new JwtTokenGenerator(jwtAuth)
+  val tokenGenerator = JwtTokenGenerator(jwtAuth)
 
   override protected[this] def createObservable(request: TokenRequest): Observable[String] =
-    getMainObservable(request.username, request.password).map(_ => tokenGenerator.generate(request.username))
+    getMainObservable(request.username, request.password).map(_ => tokenGenerator.generateToken(request.username))
 
   protected def getMainObservable(username: String, password: String): Observable[Unit]
 }

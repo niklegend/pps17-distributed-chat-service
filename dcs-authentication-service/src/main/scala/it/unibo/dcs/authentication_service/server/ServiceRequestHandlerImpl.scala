@@ -68,3 +68,9 @@ class ServiceRequestHandlerImpl(loginUserUseCase: LoginUserUseCase, logoutUserUs
       respond(400, "invalid token or user not logged in")
   }
 }
+
+object ServiceRequestHandlerImpl{
+  def apply(loginUserUseCase: LoginUserUseCase, logoutUserUseCase: LogoutUserUseCase,
+            registerUserUseCase: RegisterUserUseCase) =
+    new ServiceRequestHandlerImpl(loginUserUseCase, logoutUserUseCase, registerUserUseCase)
+}

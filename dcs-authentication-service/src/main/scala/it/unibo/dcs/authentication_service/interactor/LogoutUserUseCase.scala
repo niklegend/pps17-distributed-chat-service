@@ -2,6 +2,7 @@ package it.unibo.dcs.authentication_service.interactor
 
 import java.time.LocalDateTime
 
+import it.unibo.dcs.authentication_service.business_logic.JwtTokenDecoder
 import it.unibo.dcs.authentication_service.repository.AuthenticationRepository
 import it.unibo.dcs.authentication_service.request.LogoutUserRequest
 import it.unibo.dcs.commons.interactor.UseCase
@@ -13,6 +14,15 @@ final class LogoutUserUseCase(private[this] val threadExecutor: ThreadExecutor,
                          private[this] val authRepository: AuthenticationRepository)
   extends UseCase[Unit, LogoutUserRequest](threadExecutor, postExecutionThread) {
 
+  val tokenDecoder = JwtTokenDecoder()
+
   override protected[this] def createObservable(request: LogoutUserRequest): Observable[Unit] =
-    authRepository.invalidToken(request.token, LocalDateTime.now())
+    authRepository.checkUserExistence(tokenDecoder.getUsernameFromToken(request.token))
+      .flatMap(_ => authRepository.invalidToken(request.token, LocalDateTime.now()))
+}
+
+object LogoutUserUseCase{
+  def apply(threadExecutor: ThreadExecutor, postExecutionThread: PostExecutionThread,
+            authRepository: AuthenticationRepository) =
+    new LogoutUserUseCase(threadExecutor, postExecutionThread, authRepository)
 }

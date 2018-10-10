@@ -12,7 +12,13 @@ final class LoginUserUseCase(private[this] val threadExecutor: ThreadExecutor,
   extends ReturningTokenUseCase(threadExecutor, postExecutionThread, authRepository, jwtAuth) {
 
   protected def getMainObservable(username: String, password: String): Observable[Unit] = {
-    authRepository.loginUser(username, password)
+    authRepository.checkUserCredentials(username, password)
   }
 
+}
+
+object LoginUserUseCase{
+  def apply(threadExecutor: ThreadExecutor, postExecutionThread: PostExecutionThread,
+            authRepository: AuthenticationRepository, jwtAuth: JWTAuth) =
+    new LoginUserUseCase(threadExecutor, postExecutionThread, authRepository, jwtAuth)
 }

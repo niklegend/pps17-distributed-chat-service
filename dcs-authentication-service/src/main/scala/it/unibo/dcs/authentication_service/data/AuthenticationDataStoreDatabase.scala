@@ -16,7 +16,10 @@ class AuthenticationDataStoreDatabase(protected val connection: SQLConnection)
     insert("users", InsertParams(Json.obj(("username", username), ("password", password))))
   }
 
-  override def checkUserExistence(username: String, password: String): Observable[Unit] =
+  override def checkUserExistence(username: String): Observable[Unit] =
+    checkRecordPresence("users", ("username", username))
+
+  override def checkUserCredentials(username: String, password: String): Observable[Unit] =
     checkRecordPresence("users", ("username", username), ("password", password))
 
   override def invalidToken(token: String, expirationDate: LocalDateTime): Observable[Unit] =
@@ -57,4 +60,8 @@ class AuthenticationDataStoreDatabase(protected val connection: SQLConnection)
       })
     }
   }
+}
+
+object AuthenticationDataStoreDatabase{
+  def apply(connection: SQLConnection) = new AuthenticationDataStoreDatabase(connection)
 }

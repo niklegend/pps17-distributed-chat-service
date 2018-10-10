@@ -444,3 +444,4 @@ gradle-app.setting
 
 /dcs-*/build/
 .~*.lun#
+bin/

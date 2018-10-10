@@ -119,6 +119,9 @@ $inputShadowColor: #008cff;
 .nav_menu>.navbar {
   border: 0;
 }
+.menu_section {
+  overflow-y: scroll;
+}
 .menu_section h3 {
   padding-left: 23px;
   color: #fff;

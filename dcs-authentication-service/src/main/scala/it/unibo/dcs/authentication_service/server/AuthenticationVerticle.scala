@@ -17,7 +17,7 @@ import rx.lang.scala.Subscriber
 
 import scala.io.Source
 
-class giAuthenticationVerticle(authenticationRepository: AuthenticationRepository) extends ServiceVerticle {
+class AuthenticationVerticle(authenticationRepository: AuthenticationRepository) extends ServiceVerticle {
 
   private var host: String = "127.0.0.1"
   private var port: Int = 8080 //random port

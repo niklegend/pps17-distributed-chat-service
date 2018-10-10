@@ -14,14 +14,14 @@ class ServiceRequestHandlerImpl(loginUserUseCase: LoginUserUseCase, logoutUserUs
     val credentials = getCredentials
     doIfValidCredentials(credentials,
       registerUserUseCase(RegisterUserRequest(credentials._1.get, credentials._2.get))
-        .subscribe(new TokenSubscriber("Username already taken")))
+        .subscribe(new TokenSubscriber("Username already taken", 409)))
   }
 
   override def handleLogin(implicit context: RoutingContext): Unit =  {
     val credentials = getCredentials
     doIfValidCredentials(credentials,
       loginUserUseCase(LoginUserRequest(credentials._1.get, credentials._2.get))
-        .subscribe(new TokenSubscriber("Wrong username or password")))
+        .subscribe(new TokenSubscriber("Wrong username or password", 401)))
   }
 
   override def handleLogout(implicit context: RoutingContext): Unit = {
@@ -43,13 +43,13 @@ class ServiceRequestHandlerImpl(loginUserUseCase: LoginUserUseCase, logoutUserUs
     } else respond(401, "Credentials not present")
   }
 
-  private class TokenSubscriber(errorMessage: String)(implicit routingContext: RoutingContext)
+  private class TokenSubscriber(errorMessage: String, errorCode: Int)(implicit routingContext: RoutingContext)
     extends Subscriber[String] {
     override def onNext(token: String): Unit = respondWithToken(token, getUsername(routingContext).get)
 
     override def onError(error: Throwable): Unit = {
       error.printStackTrace()
-      respond(401, errorMessage)
+      respond(errorCode, errorMessage)
     }
 
     private def respondWithToken(token: String, username: String)(implicit context: RoutingContext): Unit = {

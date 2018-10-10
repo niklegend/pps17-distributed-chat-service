@@ -20,7 +20,7 @@ class AuthenticationRepositoryImpl(private[this] val authDataStore: Authenticati
   override def invalidToken(token: String, tokenExpirationDate: LocalDateTime): Observable[Unit] =
     authDataStore.invalidToken(token, tokenExpirationDate)
 
-  override def isTokenInvalid(token: String): Observable[Boolean] = authDataStore.isTokenInvalid(token)
+  override def isTokenValid(token: String): Observable[Boolean] = authDataStore.isTokenValid(token)
 }
 
 object AuthenticationRepositoryImpl{

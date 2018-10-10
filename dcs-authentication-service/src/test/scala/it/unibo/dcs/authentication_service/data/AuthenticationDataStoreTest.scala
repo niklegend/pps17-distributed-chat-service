@@ -1,10 +1,7 @@
 package it.unibo.dcs.authentication_service.data
 
 import java.time.LocalDateTime
-import java.util.Date
-
 import io.vertx.scala.ext.sql.SQLConnection
-import it.unibo.dcs.authentication_service.data.{AuthenticationDataStore, AuthenticationDataStoreDatabase}
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
 import rx.lang.scala.Subscriber
@@ -20,7 +17,7 @@ class AuthenticationDataStoreTest extends FlatSpec with MockFactory {
   it should "call sqlConnection and return a result when checkUserExistence is called" in {
     val loginSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
     specifyQueryExpectation()
-    authDataStore checkUserExistence(username, password) subscribe loginSubscriber
+    authDataStore checkUserExistence username subscribe loginSubscriber
 
     assertSubscriber(loginSubscriber)
   }
@@ -44,7 +41,7 @@ class AuthenticationDataStoreTest extends FlatSpec with MockFactory {
   it should "call sqlConnection and return a result when isTokenInvalid is called" in {
     val subscriber: Subscriber[Boolean] = stub[Subscriber[Boolean]]
     specifyQueryExpectation()
-    authDataStore isTokenInvalid token subscribe subscriber
+    authDataStore isTokenValid token subscribe subscriber
 
     assertSubscriber(subscriber)
   }

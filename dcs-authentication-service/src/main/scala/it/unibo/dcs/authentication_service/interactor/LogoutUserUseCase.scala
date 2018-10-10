@@ -17,8 +17,7 @@ final class LogoutUserUseCase(private[this] val threadExecutor: ThreadExecutor,
   val tokenDecoder = JwtTokenDecoder()
 
   override protected[this] def createObservable(request: LogoutUserRequest): Observable[Unit] =
-    authRepository.checkUserExistence(tokenDecoder.getUsernameFromToken(request.token))
-      .flatMap(_ => authRepository.invalidToken(request.token, LocalDateTime.now()))
+    authRepository.invalidToken(request.token, LocalDateTime.now())
 }
 
 object LogoutUserUseCase{

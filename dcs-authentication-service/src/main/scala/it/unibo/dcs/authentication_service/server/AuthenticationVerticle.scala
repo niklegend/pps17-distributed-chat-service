@@ -15,6 +15,7 @@ import it.unibo.dcs.commons.service.{HttpEndpointPublisher, ServiceVerticle}
 import it.unibo.dcs.commons.VertxWebHelper._
 import rx.lang.scala.Subscriber
 import scala.io.Source
+import scala.util.{Failure, Success}
 
 class AuthenticationVerticle(authenticationRepository: AuthenticationRepository, val publisher: HttpEndpointPublisher)
   extends ServiceVerticle {
@@ -23,7 +24,7 @@ class AuthenticationVerticle(authenticationRepository: AuthenticationRepository,
   private var port: Int = 8080 //random port
 
   override protected def initializeRouter(router: Router): Unit = {
-    val authOptions = createJwtAutOptions()
+    val authOptions = createJwtAuthOptions()
     val authProvider = JWTAuth.create(vertx, authOptions)
     router.route().handler(BodyHandler.create())
     setupProtectedRoutes(router, authProvider)
@@ -41,37 +42,46 @@ class AuthenticationVerticle(authenticationRepository: AuthenticationRepository,
     .subscribe(server => println(s"Server started at http://$host:${server.actualPort}"),
       cause => println(s"Could not start server at http://$host:$port: ${cause.getMessage}"))
 
-  private def createJwtAutOptions(): JWTAuthOptions = {
+  private def createJwtAuthOptions(): JWTAuthOptions = {
     val keyStoreSecret = Source.fromResource("keystore-secret.txt").getLines().next()
     val keyStoreOptions = Json.obj(("type", "jceks"), ("path", "keystore.jceks"), ("password", keyStoreSecret))
     JWTAuthOptions.fromJson(Json.obj(("keyStore", keyStoreOptions)))
   }
 
-  private def setupProtectedRoutes(router: Router, authProvider: JWTAuth): Unit = {
-    val jwtAuthHandler = JWTAuthHandler.create(authProvider)
-    val router = Router.router(vertx)
-    setupProtectedRouter(router, jwtAuthHandler)
-    router.route("/protected/*").handler(_ => router)
-  }
-
-  private def setupProtectedRouter(filterRouter: Router, jwtAuthHandler: JWTAuthHandler): Unit = {
-    filterRouter.get.handler(context => {
+  private def setupProtectedRoutes(router: Router, jwtAuth: JWTAuth): Unit = {
+    val jwtAuthHandler = JWTAuthHandler.create(jwtAuth)
+    val protectedRouter = Router.router(vertx)
+    protectedRouter.route("/*").handler(context => {
       val token = getTokenFromHeader(context)
       if(token.isEmpty){
         respondWithCode(401)(context)
+      } else{
+        authenticationRepository.isTokenValid(token.get).subscribe(getTokenSubscriber(jwtAuthHandler, jwtAuth)(context))
       }
-      authenticationRepository.isTokenInvalid(token.get).subscribe(getTokenSubscriber(jwtAuthHandler)(context))
     })
+    router.mountSubRouter("/protected", protectedRouter)
   }
 
-  private def getTokenSubscriber(jwtAuthHandler: JWTAuthHandler)(implicit context: RoutingContext): Subscriber[Boolean] = {
+  private def getTokenSubscriber(jwtAuthHandler: JWTAuthHandler, jwtAuth: JWTAuth)
+                                (implicit context: RoutingContext): Subscriber[Boolean] = {
     new Subscriber[Boolean]() {
-      override def onNext(tokenInvalid: Boolean): Unit = if (tokenInvalid) {
-        respondWithCode(401)
-      } else {
-        jwtAuthHandler.handle(context)
+      override def onNext(tokenValid: Boolean): Unit = {
+        if (tokenValid) {
+          checkTokenValidity(jwtAuthHandler, jwtAuth)
+        } else {
+          respondWithCode(401)
+        }
       }
-      override def onError(error: Throwable): Unit = respondWithCode(401)
+      override def onError(error: Throwable): Unit =
+        respondWithCode(401)
+    }
+  }
+
+  private def checkTokenValidity(jwtAuthHandler: JWTAuthHandler, jwtAuth: JWTAuth)
+                                (implicit context: RoutingContext): Unit = {
+    jwtAuth.authenticateFuture(Json.obj(("jwt", getTokenFromHeader))).onComplete{ //TODO: solve the fact that the callback never gets called
+      case Success(_) => context.next()
+      case Failure(_) => respondWithCode(401)
     }
   }
 

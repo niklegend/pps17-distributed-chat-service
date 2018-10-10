@@ -6,16 +6,17 @@ import it.unibo.dcs.commons.VertxHelper
 import it.unibo.dcs.commons.VertxHelper.Implicits._
 import it.unibo.dcs.commons.dataaccess.Implicits._
 import it.unibo.dcs.commons.dataaccess.ResultSetHelper
-import it.unibo.dcs.service.user.{CreateUserRequest, User, UserDataStore}
 import rx.lang.scala.Observable
-
 import it.unibo.dcs.service.user.impl.UserDataStoreDatabase.Implicits.jsonObjectToUser
+import it.unibo.dcs.service.user.model.User
+import it.unibo.dcs.service.user.repository.UserDataStore
+import it.unibo.dcs.service.user.request.{CreateUserRequest, GetUserRequest}
 
 final class UserDataStoreDatabase(private[this] val connection: SQLConnection) extends UserDataStore {
 
-  override def getUserByUsername(username: String): Observable[User] = {
+  override def getUserByUsername(request: GetUserRequest): Observable[User] = {
     VertxHelper.toObservable[User] { handler =>
-      connection.queryWithParams("SELECT * FROM users WHERE username = ?", new JsonArray().add(username), ar => {
+      connection.queryWithParams("SELECT * FROM users WHERE username = ?", new JsonArray().add(request.username), ar => {
         if (ar.succeeded()) {
           val resultSet = ar.result()
           val userJsonObject = ResultSetHelper.getRows(resultSet).head
@@ -26,14 +27,14 @@ final class UserDataStoreDatabase(private[this] val connection: SQLConnection) e
     }
   }
 
-  override def createUser(user: CreateUserRequest): Observable[User] = {
+  override def createUser(request: CreateUserRequest): Observable[User] = {
     def insertUser(): Observable[Unit] = {
       VertxHelper.toObservable[Unit] { handler =>
-        connection.execute(s"INSERT INTO users(username, first_name, last_name) VALUES('${user.username}', " +
-          s"'${user.firstName}', '${user.lastName}')", handler)
+        connection.execute(s"INSERT INTO users(username, first_name, last_name) VALUES('${request.username}', " +
+          s"'${request.firstName}', '${request.lastName}')", handler)
       }
     }
-    insertUser().flatMap(_ => getUserByUsername(user.username))
+    insertUser().flatMap(_ => getUserByUsername(GetUserRequest(request.username)))
   }
 
 }

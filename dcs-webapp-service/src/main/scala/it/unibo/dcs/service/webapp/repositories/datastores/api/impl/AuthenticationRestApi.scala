@@ -1,11 +1,10 @@
 package it.unibo.dcs.service.webapp.repositories.datastores.api.impl
 
 import it.unibo.dcs.commons.service.{AbstractApi, HttpEndpointDiscovery}
-import it.unibo.dcs.service.webapp.interaction.Requests
 import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
-import it.unibo.dcs.service.webapp.interaction.Requests.LoginUserRequest
+import it.unibo.dcs.service.webapp.interaction.Requests.{CreateRoomRequest, LoginUserRequest, RegisterUserRequest}
 import it.unibo.dcs.service.webapp.repositories.datastores.api.AuthenticationApi
-import it.unibo.dcs.service.webapp.repositories.datastores.api.exceptions.{LoginResponseException, RegistrationResponseException}
+import it.unibo.dcs.service.webapp.repositories.datastores.api.exceptions.{RoomCreationException, LoginResponseException, RegistrationResponseException}
 import rx.lang.scala.Observable
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -20,7 +19,7 @@ class AuthenticationRestApi(private[this] val discovery: HttpEndpointDiscovery)
       .map(response => response.bodyAsString().getOrElse(throw LoginResponseException()))
   }
 
-  override def registerUser(registerRequest: Requests.RegisterUserRequest): Observable[String] = {
+  override def registerUser(registerRequest: RegisterUserRequest): Observable[String] = {
     request(authWebClient =>
       Observable.from(authWebClient.post("/register").sendJsonObjectFuture(registerRequest)))
       .map(response => response.bodyAsString().getOrElse(throw RegistrationResponseException()))
@@ -32,4 +31,8 @@ class AuthenticationRestApi(private[this] val discovery: HttpEndpointDiscovery)
       .map(_.body())
   }
 
+  override def createRoom(roomCreationRequest: CreateRoomRequest): Observable[String] =
+    request(roomWebClient =>
+      Observable.from(roomWebClient.post("/register").sendJsonObjectFuture(roomCreationRequest)))
+      .map(response => response.bodyAsString().getOrElse(throw RoomCreationException()))
 }

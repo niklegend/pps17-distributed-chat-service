@@ -8,9 +8,14 @@ import rx.lang.scala.Observable
 
 class AuthenticationDataStoreNetwork(private val authenticationApi: AuthenticationApi) extends AuthenticationDataStore {
 
-  override def loginUser(loginUserRequest: LoginUserRequest): Observable[String] = authenticationApi.loginUser(loginUserRequest)
+  override def loginUser(loginUserRequest: LoginUserRequest): Observable[String] =
+    authenticationApi.loginUser(loginUserRequest)
 
-  override def registerUser(request: Requests.RegisterUserRequest): Observable[String] = authenticationApi.registerUser(request)
+  override def registerUser(request: Requests.RegisterUserRequest): Observable[String] =
+    authenticationApi.registerUser(request)
 
   override def logoutUser(username: String): Observable[Unit] = authenticationApi.logoutUser(username)
+
+  override def createRoom(request: Requests.CreateRoomRequest): Observable[String] =
+    authenticationApi.createRoom(request)
 }

@@ -4,11 +4,14 @@ import io.vertx.core.Vertx
 import io.vertx.scala.core.eventbus.EventBus
 import io.vertx.servicediscovery.ServiceDiscovery
 import it.unibo.dcs.commons.service.HttpEndpointDiscoveryImpl
+import it.unibo.dcs.service.webapp.interaction.Requests
 import it.unibo.dcs.service.webapp.interaction.Requests.{LoginUserRequest, RegisterUserRequest}
 import it.unibo.dcs.service.webapp.repositories.datastores.api.impl.AuthenticationRestApi
 import rx.lang.scala.Observable
 
 trait AuthenticationApi {
+  def createRoom(request: Requests.CreateRoomRequest): Observable[String]
+
   def loginUser(loginUserRequest: LoginUserRequest): Observable[String]
 
   def registerUser(request: RegisterUserRequest): Observable[String]

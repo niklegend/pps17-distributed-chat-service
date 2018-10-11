@@ -105,15 +105,15 @@ object RoomDataStoreSpec extends App {
   }
 
   private def dropTables(connection: SQLConnection, context: TestContext): Unit =
-    executeQueries(connection, context, List(
+    executeQueries(connection, context,
       "drop table if exists messages",
       "drop table if exists participations",
       "drop table if exists rooms",
       "drop table if exists users"
-    ))
+    )
 
   private def createTables(connection: SQLConnection, context: TestContext) =
-    executeQueries(connection, context, List(
+    executeQueries(connection, context,
       "create table messages (" +
         "username varchar(20) not null," +
         "`name` varchar(50) not null," +
@@ -135,9 +135,9 @@ object RoomDataStoreSpec extends App {
         "constraint FKOR foreign key (owner_username) references users (username) on delete cascade)",
       "create table users (username varchar(20) not null," +
         "constraint id_user primary key (username))"
-    ))
+    )
 
-  private def executeQueries(connection: SQLConnection, context: TestContext, queries: Seq[String]) = {
+  private def executeQueries(connection: SQLConnection, context: TestContext, queries: String*) = {
     val async = context.async(queries.size)
     queries.foreach(connection.execute(_, resultHandler(context, async)))
     async.await()

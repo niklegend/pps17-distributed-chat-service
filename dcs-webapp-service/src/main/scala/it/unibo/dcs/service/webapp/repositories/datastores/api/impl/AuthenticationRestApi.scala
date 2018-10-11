@@ -13,28 +13,42 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class AuthenticationRestApi(private[this] val discovery: HttpEndpointDiscovery)
   extends AbstractApi(discovery, "AuthenticationService") with AuthenticationApi {
 
+  /* URIs */
+  private val loginUserURI = "/api/login"
+  private val registerUserURI = "/api/register"
+  private val logoutUserURI = "/protected/logout"
+  private val createRoomURI = "/protected/register"
+
+  /* JWT Token labels */
+  private val authenticationKeyLabel = "Authorization"
+  private val tokenPrefix = "Bearer "
+
+
   override def loginUser(loginUserRequest: LoginUserRequest): Observable[String] = {
     request(authWebClient =>
-      Observable.from(authWebClient.post("/login").sendJsonObjectFuture(loginUserRequest)))
+      Observable.from(authWebClient.post(loginUserURI).sendJsonObjectFuture(loginUserRequest)))
       .map(response => response.bodyAsString().getOrElse(throw LoginResponseException()))
   }
 
+
   override def registerUser(registerRequest: RegisterUserRequest): Observable[String] = {
     request(authWebClient =>
-      Observable.from(authWebClient.post("/register").sendJsonObjectFuture(registerRequest)))
+      Observable.from(authWebClient.post(registerUserURI).sendJsonObjectFuture(registerRequest)))
       .map(response => response.bodyAsString().getOrElse(throw RegistrationResponseException()))
   }
 
+
   override def logoutUser(logoutRequest: LogoutUserRequest): Observable[Unit] = {
     request(authWebClient =>
-      Observable.from(authWebClient.post("/protected/logout")
-        .putHeader("Authorization", "Bearer " + logoutRequest.token)
+      Observable.from(authWebClient.post(logoutUserURI)
+        .putHeader(authenticationKeyLabel, tokenPrefix + logoutRequest.token)
         .sendJsonObjectFuture(logoutRequest)))
       .map(_.body())
   }
 
+
   override def createRoom(roomCreationRequest: CreateRoomRequest): Observable[String] =
     request(roomWebClient =>
-      Observable.from(roomWebClient.post("/protected/register").sendJsonObjectFuture(roomCreationRequest)))
+      Observable.from(roomWebClient.post(createRoomURI).sendJsonObjectFuture(roomCreationRequest)))
       .map(response => response.bodyAsString().getOrElse(throw RoomCreationException()))
 }

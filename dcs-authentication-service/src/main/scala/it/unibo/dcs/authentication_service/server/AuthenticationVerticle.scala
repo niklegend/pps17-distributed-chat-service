@@ -6,7 +6,7 @@ import io.vertx.lang.scala.json.Json
 import io.vertx.scala.ext.auth.jwt.{JWTAuth, JWTAuthOptions}
 import io.vertx.scala.ext.web.{Router, RoutingContext}
 import io.vertx.scala.ext.web.handler.{BodyHandler, JWTAuthHandler}
-import it.unibo.dcs.authentication_service.interactor.{LoginUserUseCase, LogoutUserUseCase, RegisterUserUseCase}
+import it.unibo.dcs.authentication_service.interactor.{CheckTokenUseCase, LoginUserUseCase, LogoutUserUseCase, RegisterUserUseCase}
 import it.unibo.dcs.authentication_service.repository.AuthenticationRepository
 import it.unibo.dcs.commons.RxHelper
 import it.unibo.dcs.commons.interactor.ThreadExecutorExecutionContext
@@ -20,8 +20,8 @@ import scala.util.{Failure, Success}
 class AuthenticationVerticle(authenticationRepository: AuthenticationRepository, val publisher: HttpEndpointPublisher)
   extends ServiceVerticle {
 
-  private var host: String = "127.0.0.1"
-  private var port: Int = 8080 //random port
+  private val host: String = "127.0.0.1"
+  private val port: Int = 8080
 
   override protected def initializeRouter(router: Router): Unit = {
     val authOptions = createJwtAuthOptions()
@@ -90,6 +90,7 @@ class AuthenticationVerticle(authenticationRepository: AuthenticationRepository,
     router.post("/register").handler(requestHandler.handleRegistration(_))
     router.post("/login").handler(requestHandler.handleLogin(_))
     router.post("/protected/logout").handler(requestHandler.handleLogout(_))
+    router.get("/protected/tokenValidity").handler(requestHandler.handleTokenCheck(_))
   }
 
   private def getRequestHandler(jwtAuth: JWTAuth): ServiceRequestHandler = {
@@ -98,7 +99,8 @@ class AuthenticationVerticle(authenticationRepository: AuthenticationRepository,
     val loginUseCase = LoginUserUseCase(threadExecutor, postExecutionThread, authenticationRepository, jwtAuth)
     val logoutUseCase = LogoutUserUseCase(threadExecutor, postExecutionThread, authenticationRepository)
     val registerUseCase = RegisterUserUseCase(threadExecutor, postExecutionThread, authenticationRepository, jwtAuth)
-    ServiceRequestHandlerImpl(loginUseCase, logoutUseCase, registerUseCase)
+    val checkTokenUseCase = CheckTokenUseCase(threadExecutor, postExecutionThread, authenticationRepository)
+    ServiceRequestHandlerImpl(loginUseCase, logoutUseCase, registerUseCase, checkTokenUseCase)
   }
 }
 

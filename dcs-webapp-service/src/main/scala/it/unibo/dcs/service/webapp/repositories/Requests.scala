@@ -14,7 +14,17 @@ object Requests {
   final case class RegisterUserRequest(username: String, password: String,
                                        firstName: String, lastName: String)
 
+  final case class DeleteRoomRequest(roomName: String, username: String)
+
   object Implicits {
+
+    implicit def deleteRoomRequestToJson(request: DeleteRoomRequest): JsonObject = {
+      Json.obj(("name", request.roomName), ("username", request.username))
+    }
+
+    implicit def JsonToDeleteRoomRequest(json: JsonObject): DeleteRoomRequest = {
+      DeleteRoomRequest(json.getString("name"), json.getString("username"))
+    }
 
     implicit def registerRequestToJson(registerRequest: RegisterUserRequest): JsonObject = {
       Json.obj(("username", registerRequest.firstName), ("lastname", registerRequest.lastName),

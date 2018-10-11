@@ -17,7 +17,7 @@ final class RegisterUserUseCase(private[this] val threadExecutor: ThreadExecutor
 
 }
 
-object RegisterUserUseCase{
+object RegisterUserUseCase {
   def apply(threadExecutor: ThreadExecutor, postExecutionThread: PostExecutionThread,
             authRepository: AuthenticationRepository, jwtAuth: JWTAuth) =
     new RegisterUserUseCase(threadExecutor, postExecutionThread, authRepository, jwtAuth)

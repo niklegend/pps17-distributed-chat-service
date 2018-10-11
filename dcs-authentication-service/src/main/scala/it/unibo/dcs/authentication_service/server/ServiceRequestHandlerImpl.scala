@@ -2,13 +2,14 @@ package it.unibo.dcs.authentication_service.server
 
 import io.vertx.lang.scala.json.Json
 import io.vertx.scala.ext.web.RoutingContext
-import it.unibo.dcs.authentication_service.interactor.{LoginUserUseCase, LogoutUserUseCase, RegisterUserUseCase}
-import it.unibo.dcs.authentication_service.request.{LoginUserRequest, LogoutUserRequest, RegisterUserRequest}
+import it.unibo.dcs.authentication_service.interactor.{CheckTokenUseCase, LoginUserUseCase, LogoutUserUseCase, RegisterUserUseCase}
+import it.unibo.dcs.authentication_service.request.{CheckTokenRequest, LoginUserRequest, LogoutUserRequest, RegisterUserRequest}
 import it.unibo.dcs.commons.VertxWebHelper._
 import rx.lang.scala.Subscriber
 
 class ServiceRequestHandlerImpl(loginUserUseCase: LoginUserUseCase, logoutUserUseCase: LogoutUserUseCase,
-                                registerUserUseCase: RegisterUserUseCase) extends ServiceRequestHandler {
+                                registerUserUseCase: RegisterUserUseCase, checkTokenUseCase: CheckTokenUseCase)
+  extends ServiceRequestHandler {
 
   override def handleRegistration(implicit context: RoutingContext): Unit = {
     val credentials = getCredentials
@@ -27,6 +28,16 @@ class ServiceRequestHandlerImpl(loginUserUseCase: LoginUserUseCase, logoutUserUs
   override def handleLogout(implicit context: RoutingContext): Unit = {
     val token = getTokenFromHeader
     doIfDefined(token, logoutUserUseCase(LogoutUserRequest(token.get)).subscribe(new LogoutSubscriber))
+  }
+
+  override def handleTokenCheck(implicit context: RoutingContext): Unit = {
+    val token = getTokenFromHeader
+    doIfDefined(token, checkTokenUseCase(CheckTokenRequest(token.get))
+      .subscribe(tokenIsValid => if (tokenIsValid) {
+        respond(200, "Token is valid")
+      } else {
+        respond(401, "Token is invalid")
+      }))
   }
 
   private def getUsername(implicit context: RoutingContext): Option[String] = getJsonBodyData("username")
@@ -71,6 +82,6 @@ class ServiceRequestHandlerImpl(loginUserUseCase: LoginUserUseCase, logoutUserUs
 
 object ServiceRequestHandlerImpl{
   def apply(loginUserUseCase: LoginUserUseCase, logoutUserUseCase: LogoutUserUseCase,
-            registerUserUseCase: RegisterUserUseCase) =
-    new ServiceRequestHandlerImpl(loginUserUseCase, logoutUserUseCase, registerUserUseCase)
+            registerUserUseCase: RegisterUserUseCase, checkTokenUseCase: CheckTokenUseCase) =
+    new ServiceRequestHandlerImpl(loginUserUseCase, logoutUserUseCase, registerUserUseCase, checkTokenUseCase)
 }

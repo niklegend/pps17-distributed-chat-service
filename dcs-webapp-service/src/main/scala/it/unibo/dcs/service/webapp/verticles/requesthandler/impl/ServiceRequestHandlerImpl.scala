@@ -12,7 +12,8 @@ import it.unibo.dcs.service.webapp.verticles.requesthandler.ServiceRequestHandle
 import scala.language.postfixOps
 
 final class ServiceRequestHandlerImpl(private val userRepository: UserRepository,
-                                      private val authRepository: AuthenticationRepository)
+                                      private val authRepository: AuthenticationRepository,
+                                      private val roomRepository: RoomRepository)
   extends ServiceRequestHandler {
 
   override def handleRegistration(context: RoutingContext)(implicit ctx: Context): Unit = {
@@ -41,4 +42,10 @@ final class ServiceRequestHandlerImpl(private val userRepository: UserRepository
     }
   }
 
+  override def handleRoomDeletion(context: RoutingContext)(implicit ctx: Context): Unit = {
+    context.getBodyAsJson().fold(responseNotAcceptable(context, "Missing logout information")) {
+      val useCase = RoomDeletionUseCase.create(authRepository, roomRepository)
+      useCase(_) subscribe (result => context response() end result)
+    }
+  }
 }

@@ -28,22 +28,4 @@ object Launcher extends App {
         val authRepository = AuthenticationRepositoryImpl(authDataStore)
         vertx.deployVerticle(AuthenticationVerticle(authRepository, publisher))
     }, cause => System.err.println(cause))
-
-  /*
-  VertxHelper.toObservable[Vertx](Vertx.clusteredVertx(VertxOptions(), _))
-    .subscribe(vertx => {
-      implicit val executionContext: VertxExecutionContext = VertxExecutionContext(vertx.getOrCreateContext())
-      val jdbcClient = JDBCClient.createNonShared(vertx, VertxHelper.readJsonObject("/db_config.json"))
-      jdbcClient.getConnectionFuture().onComplete {
-        case Success(connection: SQLConnection) => deployVerticle(vertx, connection)
-        case Failure(cause) => println(s"$cause")
-      }
-    })
-
-  private def deployVerticle(vertx: Vertx, sqlConnection: SQLConnection): Unit = {
-    val authDataStore = new AuthenticationDataStoreDatabase(sqlConnection)
-    val authRepository = new AuthenticationRepositoryImpl(authDataStore)
-    vertx deployVerticle new AuthenticationVerticle(authRepository)
-  }
-  */
 }

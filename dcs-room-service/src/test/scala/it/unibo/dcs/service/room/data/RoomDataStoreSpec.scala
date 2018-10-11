@@ -23,8 +23,8 @@ object RoomDataStoreSpec extends App {
     .before(context => {
       vertx = Vertx.vertx
       vertx.exceptionHandler(context.exceptionHandler())
-      val config = IoHelper.readJsonObject("/test_db_config.json")
 
+      val config = IoHelper.readJsonObject("/test_db_config.json")
       client = JDBCClient.createNonShared(vertx, config)
 
       val async = context.async(1)
@@ -47,11 +47,7 @@ object RoomDataStoreSpec extends App {
     .beforeEach(context => {
       dropTables(connection, context)
 
-      println("Dropped tables")
-
       createTables(connection, context)
-
-      println("Created tables")
     })
     .test("Create a user", context => {
       val insertAsync = context.async(1)
@@ -70,14 +66,23 @@ object RoomDataStoreSpec extends App {
       insertAsync.await()
     })
     .test("Delete a room", context => {
-      connection.execute("INSERT INTO `users` (`username`) VALUES ('mvandi')", context.asyncAssertSuccess())
+      val insertAsync = context.async(2)
+      connection.execute("INSERT INTO `users` (`username`) VALUES ('mvandi')", context.asyncAssertSuccess(result => {
+        insertAsync.countDown()
+      }))
 
-      connection.execute("INSERT INTO `rooms` (`name`, `owner_username`) VALUES ('Test room', 'mvandi')", context.asyncAssertSuccess())
+      connection.execute("INSERT INTO `rooms` (`name`, `owner_username`) VALUES ('Test room', 'mvandi')", context.asyncAssertSuccess(result => {
+        insertAsync.countDown()
+      }))
+      insertAsync.await()
 
+      val verifyInsertionAsync = context.async(1)
       connection.query("SELECT COUNT(*) FROM rooms", context.asyncAssertSuccess(result => {
         val count = result.getResults.head.getInteger(0)
         context.assertEquals(1, count)
+        verifyInsertionAsync.countDown()
       }))
+      verifyInsertionAsync.await()
 
       val deleteAsync = context.async(1)
       roomDataStore.deleteRoom(DeleteRoomRequest("Test room", "mvandi"))

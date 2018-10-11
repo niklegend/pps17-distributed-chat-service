@@ -13,7 +13,7 @@ trait AuthenticationDataStore {
 
   def logoutUser(request: LogoutUserRequest): Observable[Unit]
 
-  def createRoom(request: CreateRoomRequest): Observable[String]
+  def createRoom(request: CreateRoomRequest): Observable[Unit]
 }
 
 /* Companion object */

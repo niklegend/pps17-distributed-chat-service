@@ -12,7 +12,7 @@ object Results {
 
   final case class RegisterResult(registeredUser: User, token: String)
 
-  final case class RoomCreationResult(createdRoom: Room, token: String)
+  final case class RoomCreationResult(createdRoom: Room)
 
   object Implicits {
 
@@ -28,7 +28,7 @@ object Results {
 
     implicit def roomCreationResultToJsonString(result: RoomCreationResult): String = {
       val createdRoomJson = new Gson().toJson(result)
-      Json.obj(("token", result.token), ("room", createdRoomJson)).encodePrettily()
+      Json.obj(("room", createdRoomJson)).encodePrettily()
     }
   }
 

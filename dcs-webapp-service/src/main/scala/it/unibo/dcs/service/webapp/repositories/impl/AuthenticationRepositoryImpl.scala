@@ -16,5 +16,5 @@ class AuthenticationRepositoryImpl(private val authenticationDataStore: Authenti
 
   override def logoutUser(request: LogoutUserRequest): Observable[Unit] = authenticationDataStore.logoutUser(request)
 
-  override def createRoom(request: CreateRoomRequest): Observable[String] = authenticationDataStore.createRoom(request)
+  override def createRoom(request: CreateRoomRequest): Observable[Unit] = authenticationDataStore.createRoom(request)
 }

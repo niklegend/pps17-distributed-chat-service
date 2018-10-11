@@ -10,7 +10,7 @@ import it.unibo.dcs.service.webapp.repositories.datastores.api.impl.Authenticati
 import rx.lang.scala.Observable
 
 trait AuthenticationApi {
-  def createRoom(request: Requests.CreateRoomRequest): Observable[String]
+  def createRoom(request: Requests.CreateRoomRequest): Observable[Unit]
 
   def loginUser(loginUserRequest: LoginUserRequest): Observable[String]
 

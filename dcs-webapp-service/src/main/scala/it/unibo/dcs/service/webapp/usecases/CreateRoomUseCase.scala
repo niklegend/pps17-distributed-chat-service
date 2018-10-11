@@ -5,21 +5,21 @@ import it.unibo.dcs.commons.RxHelper
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
 import it.unibo.dcs.commons.interactor.{ThreadExecutorExecutionContext, UseCase}
 import it.unibo.dcs.service.webapp.interaction.Requests.CreateRoomRequest
-import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, RoomRepository}
 import it.unibo.dcs.service.webapp.interaction.Results.RoomCreationResult
+import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, RoomRepository}
 import rx.lang.scala.Observable
 
 final class CreateRoomUseCase(private[this] val threadExecutor: ThreadExecutor,
-                        private[this] val postExecutionThread: PostExecutionThread,
-                        private[this] val authRepository: AuthenticationRepository,
-                        private[this] val roomRepository: RoomRepository)
+                              private[this] val postExecutionThread: PostExecutionThread,
+                              private[this] val authRepository: AuthenticationRepository,
+                              private[this] val roomRepository: RoomRepository)
   extends UseCase[RoomCreationResult, CreateRoomRequest](threadExecutor, postExecutionThread) {
 
   override protected[this] def createObservable(request: CreateRoomRequest): Observable[RoomCreationResult] =
     for {
-      token <- authRepository.createRoom(request)
+      _ <- authRepository.createRoom(request)
       room <- roomRepository.createRoom(request)
-    } yield RoomCreationResult(room, token)
+    } yield RoomCreationResult(room)
 }
 
 object CreateRoomUseCase {

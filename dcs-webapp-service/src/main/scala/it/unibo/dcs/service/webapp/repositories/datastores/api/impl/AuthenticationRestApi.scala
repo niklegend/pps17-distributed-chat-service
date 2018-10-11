@@ -47,8 +47,10 @@ class AuthenticationRestApi(private[this] val discovery: HttpEndpointDiscovery)
   }
 
 
-  override def createRoom(roomCreationRequest: CreateRoomRequest): Observable[String] =
+  override def createRoom(roomCreationRequest: CreateRoomRequest): Observable[Unit] =
     request(roomWebClient =>
-      Observable.from(roomWebClient.post(createRoomURI).sendJsonObjectFuture(roomCreationRequest)))
+      Observable.from(roomWebClient.post(createRoomURI)
+          .putHeader(authenticationKeyLabel, tokenPrefix + roomCreationRequest.token)
+        .sendJsonObjectFuture(roomCreationRequest)))
       .map(response => response.bodyAsString().getOrElse(throw RoomCreationException()))
 }

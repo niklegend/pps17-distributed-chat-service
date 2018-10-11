@@ -16,7 +16,7 @@ object Requests {
 
   final case class LogoutUserRequest(username: String, token: String)
 
-  final case class CreateRoomRequest(roomName: String, creator: User)
+  final case class CreateRoomRequest(roomName: String, creator: User, token: String)
 
 
   object Implicits {
@@ -67,7 +67,8 @@ object Requests {
     }
 
     implicit def jsonToRoomCreationRequest(json: JsonObject): CreateRoomRequest = {
-      CreateRoomRequest(json.getString("name"), json.getJsonObject("user"))
+      CreateRoomRequest(json.getString("name"), json.getJsonObject("user"),
+        json.getString("authorization"))
     }
   }
 

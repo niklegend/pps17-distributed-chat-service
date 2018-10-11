@@ -15,6 +15,6 @@ class AuthenticationDataStoreNetwork(private val authenticationApi: Authenticati
 
   override def logoutUser(request: LogoutUserRequest): Observable[Unit] = authenticationApi.logoutUser(request)
 
-  override def createRoom(request: CreateRoomRequest): Observable[String] =
+  override def createRoom(request: CreateRoomRequest): Observable[Unit] =
     authenticationApi.createRoom(request)
 }

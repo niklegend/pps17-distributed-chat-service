@@ -22,11 +22,11 @@ class AuthenticationRepositorySpec extends FlatSpec with MockFactory with OneIns
     user.lastName)
   private val room = Room("Room 1")
   private val token = "token"
-  private val roomCreationRequest = CreateRoomRequest(room.name, user)
+  private val roomCreationRequest = CreateRoomRequest(room.name, user, token)
   private val loginUserRequest = LoginUserRequest(user.username, "password")
   private val logoutUserRequest = LogoutUserRequest(user.username, token)
   private val registeredSubscriber: Subscriber[String] = stub[Subscriber[String]]
-  private val roomCreationSubscriber: Subscriber[String] = stub[Subscriber[String]]
+  private val roomCreationSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
   private val loginSubscriber: Subscriber[String] = stub[Subscriber[String]]
   private val logoutSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
 
@@ -38,8 +38,6 @@ class AuthenticationRepositorySpec extends FlatSpec with MockFactory with OneIns
     repository.createRoom(roomCreationRequest).subscribe(roomCreationSubscriber)
 
     // Then
-    // Verify that `subscriber.onNext` has been called once with `token` as argument
-    (roomCreationSubscriber onNext _) verify token once()
     // Verify that `subscriber.onCompleted` has been called once
     (() => roomCreationSubscriber onCompleted) verify() once()
   }

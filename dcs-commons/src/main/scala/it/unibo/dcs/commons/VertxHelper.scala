@@ -22,6 +22,12 @@ object VertxHelper {
     RxObservable[J](javaObservable).map[S](converter)
   }
 
+  def readJsonObject(file: String): JsonObject = {
+    val in = getClass.getResourceAsStream(file)
+    val str = IOUtils.toString(in, StandardCharsets.UTF_8)
+    new JsonObject(str)
+  }
+
   object Implicits {
 
     implicit def vertxToJVertx(vertx: Vertx): JVertx = vertx.asJava.asInstanceOf[JVertx]

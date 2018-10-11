@@ -67,4 +67,5 @@ class ServiceRequestHandlerImpl(loginUserUseCase: LoginUserUseCase, logoutUserUs
     override def onError(error: Throwable): Unit =
       respond(400, "invalid token or user not logged in")
   }
+
 }

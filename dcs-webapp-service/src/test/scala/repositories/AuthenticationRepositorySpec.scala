@@ -2,7 +2,7 @@ package repositories
 
 import java.util.Date
 
-import it.unibo.dcs.service.webapp.interaction.Requests.{CreateRoomRequest, LoginUserRequest, RegisterUserRequest}
+import it.unibo.dcs.service.webapp.interaction.Requests.{CreateRoomRequest, LoginUserRequest, LogoutUserRequest, RegisterUserRequest}
 import it.unibo.dcs.service.webapp.model.{Room, User}
 import it.unibo.dcs.service.webapp.repositories.AuthenticationRepository
 import it.unibo.dcs.service.webapp.repositories.datastores.AuthenticationDataStore
@@ -21,13 +21,14 @@ class AuthenticationRepositorySpec extends FlatSpec with MockFactory with OneIns
   private val registerRequest = RegisterUserRequest(user.username, "password", user.firstName,
     user.lastName)
   private val room = Room("Room 1")
+  private val token = "token"
   private val roomCreationRequest = CreateRoomRequest(room.name, user)
   private val loginUserRequest = LoginUserRequest(user.username, "password")
+  private val logoutUserRequest = LogoutUserRequest(user.username, token)
   private val registeredSubscriber: Subscriber[String] = stub[Subscriber[String]]
   private val roomCreationSubscriber: Subscriber[String] = stub[Subscriber[String]]
   private val loginSubscriber: Subscriber[String] = stub[Subscriber[String]]
   private val logoutSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
-  private val token = "token"
 
   it should "create a new room" in {
     // Given
@@ -79,11 +80,11 @@ class AuthenticationRepositorySpec extends FlatSpec with MockFactory with OneIns
   it should "logout a logged user" in {
     // Given
     (dataStore loginUser _) expects loginUserRequest returns (Observable just token)
-    (dataStore logoutUser _) expects user.username returns Observable.empty
+    (dataStore logoutUser _) expects logoutUserRequest returns Observable.empty
 
     // When
     repository.loginUser(loginUserRequest).subscribe(_ => {
-      repository.logoutUser(user.username).subscribe(logoutSubscriber)
+      repository.logoutUser(logoutUserRequest).subscribe(logoutSubscriber)
     })
 
     // Then

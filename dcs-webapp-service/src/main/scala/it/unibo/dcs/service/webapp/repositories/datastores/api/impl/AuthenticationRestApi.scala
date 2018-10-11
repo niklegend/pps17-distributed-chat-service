@@ -2,9 +2,9 @@ package it.unibo.dcs.service.webapp.repositories.datastores.api.impl
 
 import it.unibo.dcs.commons.service.{AbstractApi, HttpEndpointDiscovery}
 import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
-import it.unibo.dcs.service.webapp.interaction.Requests.{CreateRoomRequest, LoginUserRequest, RegisterUserRequest}
+import it.unibo.dcs.service.webapp.interaction.Requests.{CreateRoomRequest, LoginUserRequest, LogoutUserRequest, RegisterUserRequest}
 import it.unibo.dcs.service.webapp.repositories.datastores.api.AuthenticationApi
-import it.unibo.dcs.service.webapp.repositories.datastores.api.exceptions.{RoomCreationException, LoginResponseException, RegistrationResponseException}
+import it.unibo.dcs.service.webapp.repositories.datastores.api.exceptions.{LoginResponseException, RegistrationResponseException, RoomCreationException}
 import rx.lang.scala.Observable
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -25,14 +25,16 @@ class AuthenticationRestApi(private[this] val discovery: HttpEndpointDiscovery)
       .map(response => response.bodyAsString().getOrElse(throw RegistrationResponseException()))
   }
 
-  override def logoutUser(username: String): Observable[Unit] = {
+  override def logoutUser(logoutRequest: LogoutUserRequest): Observable[Unit] = {
     request(authWebClient =>
-      Observable.from(authWebClient.post("/protected/logout").sendJsonObjectFuture(username)))
+      Observable.from(authWebClient.post("/protected/logout")
+        .putHeader("Authorization", "Bearer " + logoutRequest.token)
+        .sendJsonObjectFuture(logoutRequest)))
       .map(_.body())
   }
 
   override def createRoom(roomCreationRequest: CreateRoomRequest): Observable[String] =
     request(roomWebClient =>
-      Observable.from(roomWebClient.post("/register").sendJsonObjectFuture(roomCreationRequest)))
+      Observable.from(roomWebClient.post("/protected/register").sendJsonObjectFuture(roomCreationRequest)))
       .map(response => response.bodyAsString().getOrElse(throw RoomCreationException()))
 }

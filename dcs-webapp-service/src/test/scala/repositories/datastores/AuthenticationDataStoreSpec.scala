@@ -2,7 +2,7 @@ package repositories.datastores
 
 import java.util.Date
 
-import it.unibo.dcs.service.webapp.interaction.Requests.{CreateRoomRequest, LoginUserRequest, RegisterUserRequest}
+import it.unibo.dcs.service.webapp.interaction.Requests.{CreateRoomRequest, LoginUserRequest, LogoutUserRequest, RegisterUserRequest}
 import it.unibo.dcs.service.webapp.model.{Room, User}
 import it.unibo.dcs.service.webapp.repositories.datastores.AuthenticationDataStore
 import it.unibo.dcs.service.webapp.repositories.datastores.api.AuthenticationApi
@@ -19,15 +19,17 @@ class AuthenticationDataStoreSpec extends FlatSpec with MockFactory with OneInst
   private val dataStore: AuthenticationDataStore = new AuthenticationDataStoreNetwork(authApi)
   private val user = User("niklegend", "nicola", "piscaglia", "bla", visible = true, new Date())
   private val room = Room("Room 1")
+  private val token = "token"
   private val registerRequest = RegisterUserRequest(user.username, "password", user.firstName,
     user.lastName)
   private val loginUserRequest = LoginUserRequest(user.username, "password")
+  private val logoutUserRequest = LogoutUserRequest(user.username, token)
   private val roomCreationRequest = CreateRoomRequest(room.name, user)
   private val registeredSubscriber: Subscriber[String] = stub[Subscriber[String]]
   private val roomCreationSubscriber: Subscriber[String] = stub[Subscriber[String]]
   private val loginSubscriber: Subscriber[String] = stub[Subscriber[String]]
   private val logoutSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
-  private val token = "token"
+
 
   it should "check the creation of a new room" in {
     // Given
@@ -79,11 +81,11 @@ class AuthenticationDataStoreSpec extends FlatSpec with MockFactory with OneInst
   it should "logout a logged user" in {
     // Given
     (authApi loginUser _) expects loginUserRequest returns (Observable just token)
-    (authApi logoutUser _) expects user.username returns Observable.empty
+    (authApi logoutUser _) expects logoutUserRequest returns Observable.empty
 
     // When
     dataStore.loginUser(loginUserRequest).subscribe(_ => {
-      dataStore.logoutUser(user.username).subscribe(logoutSubscriber)
+      dataStore.logoutUser(logoutUserRequest).subscribe(logoutSubscriber)
     })
 
     // Then

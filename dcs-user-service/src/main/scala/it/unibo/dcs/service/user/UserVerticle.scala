@@ -2,6 +2,7 @@ package it.unibo.dcs.service.user
 
 import io.vertx.core.{AbstractVerticle, Context, Vertx}
 import io.vertx.scala.ext.web.Router
+import io.vertx.scala.ext.web.handler.BodyHandler
 import it.unibo.dcs.commons.RxHelper
 import it.unibo.dcs.commons.interactor.ThreadExecutorExecutionContext
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
@@ -42,6 +43,9 @@ final class UserVerticle(private[this] val userRepository: UserRepository, priva
   }
 
   override protected def initializeRouter(router: Router): Unit = {
+
+    router.route().handler(BodyHandler.create())
+
     router.get("/users/:username")
       .handler(routingContext => {
         val username = routingContext.request().getParam("username").get

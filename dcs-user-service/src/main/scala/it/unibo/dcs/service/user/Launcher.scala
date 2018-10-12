@@ -2,7 +2,8 @@ package it.unibo.dcs.service.user
 
 import io.vertx.core.eventbus.{EventBus => JEventBus}
 import io.vertx.lang.scala.ScalaLogger
-import io.vertx.scala.core.{Vertx, VertxOptions}
+import io.vertx.lang.scala.json.JsonObject
+import io.vertx.scala.core.{DeploymentOptions, Vertx, VertxOptions}
 import io.vertx.scala.ext.jdbc.JDBCClient
 import io.vertx.scala.ext.sql.SQLConnection
 import io.vertx.servicediscovery.{Record, ServiceDiscovery}
@@ -31,7 +32,7 @@ object Launcher extends App {
         val publisher = new HttpEndpointPublisherImpl(discovery, eventBus)
         val userDataStore: UserDataStore = new UserDataStoreDatabase(connection)
         val userRepository = new UserRepositoryImpl(userDataStore)
-        vertx.deployVerticle(new UserVerticle(userRepository, publisher))
+        vertx.deployVerticle(new UserVerticle(userRepository, publisher), DeploymentOptions().setConfig(new JsonObject().put("host", "localhost").put("port", 8080)))
     }, cause => logger.error("", cause))
 
 }

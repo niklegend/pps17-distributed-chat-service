@@ -10,31 +10,12 @@ import { RegisterRequest } from '../requests';
 })
 export class RegisterComponent {
 
-  @Input()
-  username = '';
-
-  @Input()
-  firstName = '';
-
-  @Input()
-  lastName = '';
-
-  @Input()
-  password = '';
-
-  @Input()
-  passwordConfirm = '';
+  request = new RegisterRequest();
 
   constructor(private service: ChatService, private router: Router) { }
 
   register() {
-    this.service.register(RegisterRequest(
-      this.username,
-      this.firstName,
-      this.lastName,
-      this.password,
-      this.passwordConfirm
-    ));
+    this.service.register(this.request);
     // .subscribe();
   }
 

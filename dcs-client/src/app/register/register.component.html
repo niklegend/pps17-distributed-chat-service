@@ -5,19 +5,19 @@
         <form>
           <h1>Create Account</h1>
           <div>
-            <input type="text" class="form-control" placeholder="Username" id="username" name="username" [(ngModel)]="username" />
+            <input type="text" class="form-control" placeholder="Username" id="username" name="username" [(ngModel)]="request.username" />
           </div>
           <div>
-            <input type="text" class="form-control" placeholder="First Name" id="firstName" name="firstName" [(ngModel)]="firstName" />
+            <input type="text" class="form-control" placeholder="First Name" id="firstName" name="firstName" [(ngModel)]="request.firstName" />
           </div>
           <div>
-            <input type="text" class="form-control" placeholder="Last Name" id="lastName" name="lastName" [(ngModel)]="lastName" />
+            <input type="text" class="form-control" placeholder="Last Name" id="lastName" name="lastName" [(ngModel)]="request.lastName" />
           </div>
           <div>
-            <input type="password" class="form-control" placeholder="Password" id="password" name="password" [(ngModel)]="password" />
+            <input type="password" class="form-control" placeholder="Password" id="password" name="password" [(ngModel)]="request.password" />
           </div>
           <div>
-            <input type="password" class="form-control" placeholder="Password Confirm" id="passwordConfirm" name="passwordConfirm" [(ngModel)]="passwordConfirm" />
+            <input type="password" class="form-control" placeholder="Password Confirm" id="passwordConfirm" name="passwordConfirm" [(ngModel)]="request.passwordConfirm" />
           </div>
           <div>
             <button type="button" class="btn btn-block btn-default submit" (click)="register()">Submit</button>

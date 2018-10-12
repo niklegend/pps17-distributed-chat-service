@@ -10,17 +10,13 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent {
 
-  @Input()
-  username = '';
-
-  @Input()
-  password = '';
+  request: LoginRequest = new LoginRequest();
 
   constructor(private service: ChatService, private router: Router) { }
 
   login() {
-    this.service.login(LoginRequest(this.username, this.password));
-      // .subscribe();
+    this.service.login(this.request);
+    // .subscribe();
   }
 
 }

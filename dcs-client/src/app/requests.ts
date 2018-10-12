@@ -1,4 +1,4 @@
-export interface LoginRequest {
+export class LoginRequest {
 
     username: string;
 
@@ -6,14 +6,7 @@ export interface LoginRequest {
 
 }
 
-export function LoginRequest(username: string, password: string): LoginRequest {
-    return {
-        username,
-        password
-    };
-}
-
-export interface RegisterRequest {
+export class RegisterRequest {
 
     username: string;
 
@@ -27,28 +20,8 @@ export interface RegisterRequest {
 
 }
 
-export function RegisterRequest(username: string,
-                                firstName: string,
-                                lastName: string,
-                                password: string,
-                                passwordConfirm: string): RegisterRequest {
-    return {
-        username,
-        firstName,
-        lastName,
-        password,
-        passwordConfirm
-    };
-}
-
-export interface LogoutRequest {
+export class LogoutRequest {
 
     token: string;
 
-}
-
-export function LogoutRequest(token: string): LogoutRequest {
-    return {
-        token
-    };
 }

@@ -16,18 +16,20 @@ object Results {
 
   object Implicits {
 
+    private val gsonInstance = new Gson()
+
     implicit def registrationResultToJsonString(result: RegisterResult): String = {
-      val registeredUserJson = new Gson().toJson(result.registeredUser)
+      val registeredUserJson = gsonInstance.toJson(result.registeredUser)
       Json.obj(("token", result.token), ("user", registeredUserJson)).encodePrettily()
     }
 
     implicit def loginResultToJsonString(result: LoginResult): String = {
-      val loggedUserJson = new Gson().toJson(result.loggedUser)
+      val loggedUserJson = gsonInstance.toJson(result.loggedUser)
       Json.obj(("token", result.token), ("user", loggedUserJson)).encodePrettily()
     }
 
     implicit def roomCreationResultToJsonString(result: RoomCreationResult): String = {
-      val createdRoomJson = new Gson().toJson(result)
+      val createdRoomJson = gsonInstance.toJson(result)
       Json.obj(("room", createdRoomJson)).encodePrettily()
     }
   }

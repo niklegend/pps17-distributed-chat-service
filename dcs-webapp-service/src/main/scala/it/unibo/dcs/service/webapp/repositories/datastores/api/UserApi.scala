@@ -4,11 +4,6 @@ import io.vertx.core.Vertx
 import io.vertx.scala.core.eventbus.EventBus
 import io.vertx.servicediscovery.ServiceDiscovery
 import it.unibo.dcs.commons.service.HttpEndpointDiscoveryImpl
-<<<<<<< HEAD
-=======
-import it.unibo.dcs.service.webapp.interaction.Requests.RegisterUserRequest
-import it.unibo.dcs.service.webapp.model.User
->>>>>>> 2f8c6ff477083ad050ee14c3cf620e30542920da
 import it.unibo.dcs.service.webapp.interaction.Requests.RegisterUserRequest
 import it.unibo.dcs.service.webapp.model.User
 import it.unibo.dcs.service.webapp.repositories.datastores.api.impl.UserRestApi

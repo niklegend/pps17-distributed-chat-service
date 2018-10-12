@@ -18,7 +18,7 @@ object DeploymentUtils {
     deploymentOptions.getConfig.getInteger("port")
   }
 
-  def serverConfiguration: JsonObject = {
+  private def serverConfiguration: JsonObject = {
     VertxHelper.readJsonObject("/config.json")
   }
 }

@@ -7,6 +7,7 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { ChatComponent } from './chat/chat.component';
 import { RegisterComponent } from './register/register.component';
+import { ChatEntryComponent } from './chat-entry/chat-entry.component';
 
 const appRoutes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -21,7 +22,8 @@ const appRoutes: Routes = [
     AppComponent,
     LoginComponent,
     ChatComponent,
-    RegisterComponent
+    RegisterComponent,
+    ChatEntryComponent
   ],
   imports: [
     BrowserModule,

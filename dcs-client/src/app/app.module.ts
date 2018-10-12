@@ -9,6 +9,10 @@ import { AppComponent } from './app.component';
 import { LoginComponent } from './login/login.component';
 import { ChatComponent } from './chat/chat.component';
 import { RegisterComponent } from './register/register.component';
+
+import { RegisterFormComponent } from './register/register-form/register-form.component';
+import { LoginFormComponent } from './login/login-form/login-form.component';
+
 import { EventBusService } from './event-bus.service';
 import { ChatService } from './chat.service';
 
@@ -25,7 +29,9 @@ const appRoutes: Routes = [
     AppComponent,
     LoginComponent,
     ChatComponent,
-    RegisterComponent
+    RegisterComponent,
+    RegisterFormComponent,
+    LoginFormComponent
   ],
   imports: [
     BrowserModule,

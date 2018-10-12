@@ -1,7 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { ChatService } from '../chat.service';
-import { Router } from '@angular/router';
-import { RegisterRequest } from '../requests';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-register',
@@ -9,14 +6,4 @@ import { RegisterRequest } from '../requests';
   styleUrls: ['./register.component.css']
 })
 export class RegisterComponent {
-
-  request = new RegisterRequest();
-
-  constructor(private service: ChatService, private router: Router) { }
-
-  register() {
-    this.service.register(this.request);
-    // .subscribe();
-  }
-
 }

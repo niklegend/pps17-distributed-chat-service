@@ -2,7 +2,7 @@ package it.unibo.dcs.service.webapp.verticles.utils
 
 import io.vertx.core.json.JsonObject
 import io.vertx.scala.core.DeploymentOptions
-import it.unibo.dcs.commons.VertxHelper
+import it.unibo.dcs.commons.IoHelper
 
 object DeploymentUtils {
 
@@ -19,6 +19,6 @@ object DeploymentUtils {
   }
 
   def serverConfiguration: JsonObject = {
-    VertxHelper.readJsonObject("/config.json")
+    IoHelper.readJsonObject("/config.json")
   }
 }

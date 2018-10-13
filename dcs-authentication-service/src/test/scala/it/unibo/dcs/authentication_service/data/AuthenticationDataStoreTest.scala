@@ -28,7 +28,7 @@ class AuthenticationDataStoreTest extends FlatSpec with MockFactory {
   it should "call sqlConnection and return a result when invalidToken is called" in {
     val invalidateTokenSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
     specifyExecuteExpectation()
-    authDataStore invalidToken (token, LocalDateTime.now()) subscribe invalidateTokenSubscriber
+    authDataStore invalidToken (token, new Date()) subscribe invalidateTokenSubscriber
 
     assertSubscriber(invalidateTokenSubscriber)
   }

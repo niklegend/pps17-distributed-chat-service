@@ -513,4 +513,5 @@ local.properties
 ### Project specific
 
 /dcs-*/build/
+.vertx/
 .~*.lun#

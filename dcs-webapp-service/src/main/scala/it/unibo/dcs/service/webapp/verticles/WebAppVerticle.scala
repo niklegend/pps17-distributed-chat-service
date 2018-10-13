@@ -9,9 +9,9 @@ import io.vertx.scala.ext.web.handler.BodyHandler
 import io.vertx.servicediscovery.{Record, ServiceDiscovery}
 import it.unibo.dcs.commons.service.codecs.RecordMessageCodec
 import it.unibo.dcs.commons.service.{HttpEndpointPublisher, HttpEndpointPublisherImpl, ServiceVerticle}
-import it.unibo.dcs.service.webapp.verticles.requesthandler.ServiceRequestHandler
+import it.unibo.dcs.service.webapp.verticles.handler.ServiceRequestHandler
 
-
+/** Verticle that runs the WebApp Service */
 final class WebAppVerticle extends ServiceVerticle {
 
   private var host: String = _

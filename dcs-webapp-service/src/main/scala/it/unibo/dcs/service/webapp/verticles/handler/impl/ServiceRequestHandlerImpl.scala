@@ -1,4 +1,4 @@
-package it.unibo.dcs.service.webapp.verticles.requesthandler.impl
+package it.unibo.dcs.service.webapp.verticles.handler.impl
 
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.lang.scala.json.JsonObject
@@ -8,8 +8,8 @@ import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
 import it.unibo.dcs.service.webapp.interaction.Results.Implicits._
 import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, RoomRepository, UserRepository}
 import it.unibo.dcs.service.webapp.usecases._
-import it.unibo.dcs.service.webapp.verticles.requesthandler.ServiceRequestHandler
-import it.unibo.dcs.service.webapp.verticles.requesthandler.impl.messages._
+import it.unibo.dcs.service.webapp.verticles.handler.ServiceRequestHandler
+import it.unibo.dcs.service.webapp.verticles.handler.impl.messages._
 
 import scala.language.postfixOps
 

@@ -9,7 +9,7 @@ import it.unibo.dcs.service.webapp.interaction.Results.LoginResult
 import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, UserRepository}
 import rx.lang.scala.Observable
 
-
+/** */
 final class LoginUserUseCase(private[this] val threadExecutor: ThreadExecutor,
                              private[this] val postExecutionThread: PostExecutionThread,
                              private[this] val authRepository: AuthenticationRepository,
@@ -17,7 +17,6 @@ final class LoginUserUseCase(private[this] val threadExecutor: ThreadExecutor,
   extends UseCase[LoginResult, LoginUserRequest](threadExecutor, postExecutionThread) {
 
   override protected[this] def createObservable(loginRequest: LoginUserRequest): Observable[LoginResult] = {
-    /* Monadic style */
     for {
       token <- authRepository.loginUser(loginRequest)
       user <- userRepository.getUserByUsername(loginRequest.username)
@@ -26,7 +25,9 @@ final class LoginUserUseCase(private[this] val threadExecutor: ThreadExecutor,
 
 }
 
+/* Companion object */
 object LoginUserUseCase {
+  /* Factory method */
   def create(authRepository: AuthenticationRepository,
              userRepository: UserRepository)(implicit ctx: Context): LoginUserUseCase = {
     val threadExecutor: ThreadExecutor = ThreadExecutorExecutionContext(ctx.owner())

@@ -16,7 +16,6 @@ final class RegisterUserUseCase(private[this] val threadExecutor: ThreadExecutor
   extends UseCase[RegisterResult, RegisterUserRequest](threadExecutor, postExecutionThread) {
 
   override protected[this] def createObservable(registerRequest: RegisterUserRequest): Observable[RegisterResult] = {
-    /* Monadic style */
     for {
       token <- authRepository.registerUser(registerRequest)
       user <- userRepository.registerUser(registerRequest)

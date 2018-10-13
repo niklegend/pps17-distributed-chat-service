@@ -12,6 +12,7 @@ import { RegisterComponent } from './register/register.component';
 
 import { RegisterFormComponent } from './register/register-form/register-form.component';
 import { LoginFormComponent } from './login/login-form/login-form.component';
+import { RoomEntryComponent } from './room-entry/room-entry.component';
 
 import { EventBusService } from './event-bus.service';
 import { ChatService } from './chat.service';
@@ -31,7 +32,8 @@ const appRoutes: Routes = [
     ChatComponent,
     RegisterComponent,
     RegisterFormComponent,
-    LoginFormComponent
+    LoginFormComponent,
+    RoomEntryComponent
   ],
   imports: [
     BrowserModule,

@@ -1,28 +1,28 @@
 export class LoginRequest {
 
-    username: string;
+  username: string;
 
-    password: string;
+  password: string;
 
 }
 
 export class RegisterRequest {
 
-    username: string;
+  username: string;
 
-    firstName: string;
+  firstName: string;
 
-    lastName: string;
+  lastName: string;
 
-    password: string;
+  password: string;
 
-    passwordConfirm: string;
+  passwordConfirm: string;
 
 }
 
 export class LogoutRequest {
 
-    token: string;
+  token: string;
 
 }
 
@@ -33,5 +33,12 @@ export class CreateRoomRequest {
     username: string;
 
     token: string;
+
+}
+
+export class DeleteRoomRequest {
+
+  constructor(public name: string, public token: string) {
+  }
 
 }

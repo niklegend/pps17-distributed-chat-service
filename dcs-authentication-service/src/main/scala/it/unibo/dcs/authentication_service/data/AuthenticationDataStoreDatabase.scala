@@ -1,6 +1,6 @@
 package it.unibo.dcs.authentication_service.data
 
-import java.sql.Date
+import java.util.Date
 
 import io.vertx.core.Future
 import io.vertx.lang.scala.json.Json

@@ -25,3 +25,13 @@ export class LogoutRequest {
     token: string;
 
 }
+
+export class CreateRoomRequest {
+
+    name: string;
+
+    username: string;
+
+    token: string;
+
+}

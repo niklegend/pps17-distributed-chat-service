@@ -1,5 +1,5 @@
-import { Participation } from './participation';
-import { Room } from './room';
+import { Participation } from './model';
+import { Room } from './model';
 
 export interface User {
 

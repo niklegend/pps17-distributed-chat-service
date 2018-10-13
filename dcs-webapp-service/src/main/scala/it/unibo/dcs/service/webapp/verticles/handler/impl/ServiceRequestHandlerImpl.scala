@@ -45,7 +45,7 @@ final class ServiceRequestHandlerImpl(private val userRepository: UserRepository
 
   override def handleRoomCreation(context: RoutingContext)(implicit ctx: Context): Unit = {
     handle(context, roomCreationErrorMessage, {
-      val useCase = CreateRoomUseCase.apply(authRepository, roomRepository)
+      val useCase = CreateRoomUseCase(authRepository, roomRepository)
       useCase(_) subscribe (result => context response() end result)
     })
   }

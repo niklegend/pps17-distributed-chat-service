@@ -15,9 +15,13 @@ trait RoomRepository {
   def createRoom(request: CreateRoomRequest): Observable[Room]
 }
 
-/* Companion object */
+/** Companion object */
 object RoomRepository {
-  /* Factory method */
+
+  /** Factory method to create the room repository
+    *
+    * @param roomDataStore room data store reference
+    * @return the RoomRepository instance */
   def apply(roomDataStore: RoomDataStore): RoomRepository = new RoomRepositoryImpl(roomDataStore)
 }
 

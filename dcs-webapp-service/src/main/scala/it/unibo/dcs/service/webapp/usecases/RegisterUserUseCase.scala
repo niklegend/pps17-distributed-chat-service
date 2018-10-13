@@ -11,7 +11,13 @@ import rx.lang.scala.Observable
 
 /** It represents the user registration functionality.
   * It calls the authentication service to retrieve the token,
-  * then it contacts the User Service to store the new User. */
+  * then it contacts the User Service to store the new User.
+  *
+  * @param threadExecutor      thread executor that will perform the subscription
+  * @param postExecutionThread thread that will be notified of the subscription result
+  * @param authRepository      authentication repository reference
+  * @param userRepository      user repository reference
+  * @usecase registration of a new user */
 final class RegisterUserUseCase(private[this] val threadExecutor: ThreadExecutor,
                                 private[this] val postExecutionThread: PostExecutionThread,
                                 private[this] val authRepository: AuthenticationRepository,
@@ -26,7 +32,15 @@ final class RegisterUserUseCase(private[this] val threadExecutor: ThreadExecutor
   }
 }
 
+/** Companion object */
 object RegisterUserUseCase {
+
+  /** Factory method to create the use case
+    *
+    * @param authRepository authentication repository reference
+    * @param userRepository user repository reference
+    * @param ctx            Vertx context
+    * @return the use case object */
   def create(authRepository: AuthenticationRepository,
              userRepository: UserRepository)(implicit ctx: Context): RegisterUserUseCase = {
     val threadExecutor: ThreadExecutor = ThreadExecutorExecutionContext(ctx.owner())

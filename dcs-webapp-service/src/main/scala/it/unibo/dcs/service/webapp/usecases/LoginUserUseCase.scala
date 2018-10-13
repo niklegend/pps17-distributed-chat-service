@@ -9,7 +9,9 @@ import it.unibo.dcs.service.webapp.interaction.Results.LoginResult
 import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, UserRepository}
 import rx.lang.scala.Observable
 
-/** */
+/** It represents the login functionality.
+  * It calls the authentication service to check the credentials and retrieve the token,
+  * then it contacts the User Service to retrieve the User information. */
 final class LoginUserUseCase(private[this] val threadExecutor: ThreadExecutor,
                              private[this] val postExecutionThread: PostExecutionThread,
                              private[this] val authRepository: AuthenticationRepository,

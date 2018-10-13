@@ -6,12 +6,25 @@ import it.unibo.dcs.service.webapp.repositories.datastores.UserDataStore
 import it.unibo.dcs.service.webapp.repositories.impl.UserRepositoryImpl
 import rx.lang.scala.Observable
 
+/** Structure that handles User data access and storage. */
 trait UserRepository {
+
+  /** Retrieve a user given its username
+    *
+    * @param username username
+    * @return an observable stream composed by the retrieved user */
   def getUserByUsername(username: String): Observable[User]
 
+  /** Register a new user given its information
+    *
+    * @param request
+    * Needed information to register a new user
+    * @return an observable stream composed by the created user */
   def registerUser(request: RegisterUserRequest): Observable[User]
 }
 
+/* Companion object */
 object UserRepository {
+  /* Factory method */
   def apply(userDataStore: UserDataStore): UserRepository = new UserRepositoryImpl(userDataStore)
 }

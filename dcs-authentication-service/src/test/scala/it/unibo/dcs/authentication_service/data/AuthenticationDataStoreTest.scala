@@ -1,10 +1,8 @@
 package it.unibo.dcs.authentication_service.data
 
-import java.time.LocalDateTime
 import java.util.Date
 
 import io.vertx.scala.ext.sql.SQLConnection
-import it.unibo.dcs.authentication_service.data.{AuthenticationDataStore, AuthenticationDataStoreDatabase}
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
 import rx.lang.scala.Subscriber

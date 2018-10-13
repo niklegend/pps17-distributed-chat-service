@@ -7,7 +7,7 @@ import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
 import it.unibo.dcs.service.webapp.model.Room
 import it.unibo.dcs.service.webapp.repositories.datastores.api.RoomApi
 import it.unibo.dcs.service.webapp.repositories.datastores.api.exceptions.RoomCreationException
-import it.unibo.dcs.service.webapp.repositories.datastores.api.impl.routes._
+import it.unibo.dcs.service.webapp.repositories.datastores.api.routes._
 import rx.lang.scala.Observable
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -20,7 +20,7 @@ class RoomRestApi(private[this] val discovery: HttpEndpointDiscovery)
   override def createRoom(createRoomRequest: CreateRoomRequest): Observable[Room] = {
     for {
       response <- request((roomWebClient: WebClient) =>
-        Observable.from(roomWebClient.post(createRoomURI).sendJsonObjectFuture(createRoomRequest)))
+        Observable.from(roomWebClient.post(roomURI).sendJsonObjectFuture(createRoomRequest)))
     } yield response.bodyAsJsonObject().getOrElse(throw RoomCreationException())
   }
 }

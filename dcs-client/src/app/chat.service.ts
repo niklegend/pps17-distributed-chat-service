@@ -22,6 +22,8 @@ export class ChatService {
 
   private static ROOM_CREATED = 'rooms.created';
 
+  private user;
+
   constructor(private client: HttpClient, private eventBus: EventBusService) {
     // eventBus.connect(ChatService.EVENTS);
   }
@@ -45,5 +47,13 @@ export class ChatService {
 
   deleteRoom(request: DeleteRoomRequest): Observable<Room> {
     return this.client.post<Room>(ChatService.ROOMS + '/' + request.name, request);
+  }
+
+  setUser(user: User) {
+    this.user = user;
+  }
+
+  getUser():User {
+    return this.user;
   }
 }

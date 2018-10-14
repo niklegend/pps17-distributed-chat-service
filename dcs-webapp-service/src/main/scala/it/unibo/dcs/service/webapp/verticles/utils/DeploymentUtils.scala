@@ -22,12 +22,16 @@ object DeploymentUtils {
     deploymentOptions.getConfig.getString("host")
   }
 
-  /**
-    * */
+  /** It retrieves the port used to deploy the service
+    *
+    * @return service port */
   def deploymentPort: Integer = {
     deploymentOptions.getConfig.getInteger("port")
   }
 
+  /** It retrieves the server configuration expressed as Json Object
+    *
+    * @return the server configuration as json object */
   def serverConfiguration: JsonObject = {
     IoHelper.readJsonObject("/config.json")
   }

@@ -28,17 +28,13 @@ export class LogoutRequest {
 
 export class CreateRoomRequest {
 
-    name: string;
-
-    username: string;
-
-  token: string;
+    constructor(public name: string, public username: string, public token: string){}
 
 }
 
 export class DeleteRoomRequest {
 
-  constructor(public name: string, public token: string) {
+  constructor(public name: string, public username: string, public token: string) {
   }
 
 }

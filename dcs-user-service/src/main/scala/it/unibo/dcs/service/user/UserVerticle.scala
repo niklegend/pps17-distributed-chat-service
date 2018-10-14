@@ -9,10 +9,10 @@ import it.unibo.dcs.commons.RxHelper
 import it.unibo.dcs.commons.interactor.ThreadExecutorExecutionContext
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
 import it.unibo.dcs.commons.service.{HttpEndpointPublisher, ServiceVerticle}
+import it.unibo.dcs.service.user.UserVerticle.Implicits._
 import it.unibo.dcs.service.user.interactor.{CreateUserUseCase, GetUserUseCase}
 import it.unibo.dcs.service.user.repository.UserRepository
 import it.unibo.dcs.service.user.request.{CreateUserRequest, GetUserRequest}
-import it.unibo.dcs.service.user.UserVerticle.Implicits._
 import it.unibo.dcs.service.user.subscriber.{CreateUserSubscriber, GetUserSubscriber}
 
 final class UserVerticle(private[this] val userRepository: UserRepository, private[this] val publisher: HttpEndpointPublisher) extends ServiceVerticle {
@@ -65,7 +65,7 @@ final class UserVerticle(private[this] val userRepository: UserRepository, priva
         val username = routingContext.request().getParam("username").head
         val subscriber = new GetUserSubscriber(routingContext.response())
         getUserUseCase(username, subscriber)
-    })
+      })
 
     router.post("/createUser")
       .consumes("application/json")
@@ -75,7 +75,7 @@ final class UserVerticle(private[this] val userRepository: UserRepository, priva
         log.info(s"Received request: $request")
         val subscriber = new CreateUserSubscriber(routingContext.response())
         createUserUseCase(request, subscriber)
-    })
+      })
   }
 
 }

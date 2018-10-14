@@ -13,8 +13,9 @@ import it.unibo.dcs.commons.{IoHelper, VertxHelper}
 import it.unibo.dcs.commons.VertxHelper.Implicits._
 import it.unibo.dcs.commons.service.HttpEndpointPublisherImpl
 import it.unibo.dcs.commons.service.codecs.RecordMessageCodec
-import it.unibo.dcs.service.user.repository.UserDataStore
-import it.unibo.dcs.service.user.repository.impl.{UserDataStoreDatabase, UserRepositoryImpl}
+import it.unibo.dcs.service.user.data.UserDataStore
+import it.unibo.dcs.service.user.data.impl.UserDataStoreDatabase
+import it.unibo.dcs.service.user.repository.impl.UserRepositoryImpl
 
 import scala.language.implicitConversions
 

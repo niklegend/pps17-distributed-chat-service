@@ -2,6 +2,7 @@ package it.unibo.dcs.service.user
 
 import io.vertx.core.http.HttpMethod._
 import io.vertx.core.{AbstractVerticle, Context, Vertx}
+import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.ext.web.Router
 import io.vertx.scala.ext.web.handler.{BodyHandler, CorsHandler}
 import it.unibo.dcs.commons.RxHelper
@@ -10,8 +11,8 @@ import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExec
 import it.unibo.dcs.commons.service.{HttpEndpointPublisher, ServiceVerticle}
 import it.unibo.dcs.service.user.interactor.{CreateUserUseCase, GetUserUseCase}
 import it.unibo.dcs.service.user.repository.UserRepository
-import it.unibo.dcs.service.user.request.GetUserRequest
-import it.unibo.dcs.service.user.request.Implicits._
+import it.unibo.dcs.service.user.request.{CreateUserRequest, GetUserRequest}
+import it.unibo.dcs.service.user.UserVerticle.Implicits._
 import it.unibo.dcs.service.user.subscriber.{CreateUserSubscriber, GetUserSubscriber}
 
 final class UserVerticle(private[this] val userRepository: UserRepository, private[this] val publisher: HttpEndpointPublisher) extends ServiceVerticle {
@@ -38,10 +39,10 @@ final class UserVerticle(private[this] val userRepository: UserRepository, priva
     startHttpServer(host, port)
       .doOnCompleted(
         publisher.publish(name = "user-service", host = host, port = port)
-          .subscribe(_ => println("Record published!"),
-            cause => println(s"Could not publish record: ${cause.getMessage}")))
-      .subscribe(server => println(s"Server started at http://$host:${server.actualPort}"),
-        cause => println(s"Could not start server at http://$host:$port: ${cause.getMessage}"))
+          .subscribe(record => log.info(s"${record.getName} record published!"),
+            log.error(s"Could not publish record", _)))
+      .subscribe(server => log.info(s"Server started at http://$host:${server.actualPort}"),
+        log.error(s"Could not start server at http://$host:$port", _))
   }
 
   override protected def initializeRouter(router: Router): Unit = {
@@ -61,7 +62,7 @@ final class UserVerticle(private[this] val userRepository: UserRepository, priva
     router.get("/users/:username")
       .produces("application/json")
       .handler(routingContext => {
-        val username = routingContext.request().getParam("username").get
+        val username = routingContext.request().getParam("username").head
         val subscriber = new GetUserSubscriber(routingContext.response())
         getUserUseCase(username, subscriber)
     })
@@ -75,6 +76,21 @@ final class UserVerticle(private[this] val userRepository: UserRepository, priva
         val subscriber = new CreateUserSubscriber(routingContext.response())
         createUserUseCase(request, subscriber)
     })
+  }
+
+}
+
+object UserVerticle {
+
+  object Implicits {
+
+    implicit def jsonObjectToRequest(json: JsonObject): CreateUserRequest =
+      CreateUserRequest(json.getString("username"),
+        json.getString("firstName"), json.getString("lastName"))
+
+    implicit def stringToRequest(username: String): GetUserRequest =
+      GetUserRequest(username)
+
   }
 
 }

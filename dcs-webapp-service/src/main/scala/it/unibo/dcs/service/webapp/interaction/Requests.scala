@@ -12,8 +12,8 @@ object Requests {
 
   final case class LoginUserRequest(username: String, password: String)
 
-  final case class RegisterUserRequest(username: String, password: String,
-                                       firstName: String, lastName: String)
+  final case class RegisterUserRequest(username: String,
+                                       firstName: String, lastName: String, password: String, passwordConfirm: String)
 
   final case class LogoutUserRequest(username: String, token: String)
 
@@ -30,12 +30,12 @@ object Requests {
     implicit def registerUserRequestToJsonObject(request: RegisterUserRequest): JsonObject = {
       Json.obj(("username", request.username), ("firstName", request.firstName),
         ("lastName", request.lastName), ("password", request.password),
-        ("username", request.username))
+        ("passwordConfirm", request.passwordConfirm))
     }
 
     implicit def jsonObjectToRegisterUserRequest(json: JsonObject): RegisterUserRequest = {
-      RegisterUserRequest(json.getString("username"), json.getString("password"),
-        json.getString("firstName"), json.getString("lastName"))
+      RegisterUserRequest(json.getString("username"), json.getString("firstName"),
+        json.getString("lastName"), json.getString("password"), json.getString("passwordConfirm"))
     }
 
     implicit def logoutUserRequestToJsonObject(request: LogoutUserRequest): JsonObject = {

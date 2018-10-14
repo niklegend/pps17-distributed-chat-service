@@ -93,10 +93,10 @@ final class WebAppVerticle extends ServiceVerticle {
     startHttpServer(host, port)
       .doOnCompleted(
         publisher.publish("webapp-service")
-          .subscribe(_ => println("Record published!"),
-            cause => println(s"Could not publish record: ${cause.getMessage}")))
-      .subscribe(server => println(s"Server started at http://$host:${server.actualPort}"),
-        cause => println(s"Could not start server at http://$host:$port: ${cause.getMessage}"))
+          .subscribe(record => log.info(s"${record.getName} record published!"),
+            log.error(s"Could not publish record", _)))
+      .subscribe(server => log.info(s"Server started at http://$host:${server.actualPort}"),
+        log.error(s"Could not start server at http://$host:$port", _))
   }
 
 }

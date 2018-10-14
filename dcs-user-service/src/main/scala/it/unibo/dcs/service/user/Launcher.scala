@@ -3,12 +3,8 @@ package it.unibo.dcs.service.user
 import java.net.InetAddress
 
 import io.vertx.core.eventbus.{EventBus => JEventBus}
-import io.vertx.core.json.JsonObject
 import io.vertx.lang.scala.ScalaLogger
-<<<<<<< HEAD
-=======
 import io.vertx.lang.scala.json.JsonObject
->>>>>>> fdfe958634b0574458aec58b21ca30715f215457
 import io.vertx.scala.core.{DeploymentOptions, Vertx, VertxOptions}
 import io.vertx.scala.ext.jdbc.JDBCClient
 import io.vertx.scala.ext.sql.SQLConnection

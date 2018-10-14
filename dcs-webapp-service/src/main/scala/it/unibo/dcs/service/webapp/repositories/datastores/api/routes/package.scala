@@ -1,8 +1,8 @@
 package it.unibo.dcs.service.webapp.repositories.datastores.api
 
+/** URIs used by APIs wrappers */
 package object routes {
 
-  /* URIs */
   private val apiPrefix = "/api"
 
   val loginUserURI: String = apiPrefix + "/login"

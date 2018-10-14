@@ -17,7 +17,7 @@ export class RegisterFormComponent {
   register() {
     this.service.register(this.request)
       .subscribe(user => this.router.navigateByUrl('/'),
-                 error => console.error(error));
+                 err => console.error(err));
   }
 
 }

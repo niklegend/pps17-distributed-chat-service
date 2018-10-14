@@ -34,7 +34,7 @@ private[impl] object UserDataStoreDatabase {
 
   val selectUserByUsername = "SELECT * FROM `users` WHERE `username` = ?"
 
-  val insertUser = "INSERT INTO `users` (`username`, `first_name`, `last_name`) VALUES (?, ?)"
+  val insertUser = "INSERT INTO `users` (`username`, `first_name`, `last_name`) VALUES (?, ?, ?)"
 
   object Implicits {
 

@@ -13,6 +13,7 @@ import it.unibo.dcs.service.user.UserVerticle.Implicits._
 import it.unibo.dcs.service.user.interactor.{CreateUserUseCase, GetUserUseCase}
 import it.unibo.dcs.service.user.repository.UserRepository
 import it.unibo.dcs.service.user.request.{CreateUserRequest, GetUserRequest}
+import it.unibo.dcs.service.user.UserVerticle.Implicits._
 import it.unibo.dcs.service.user.subscriber.{CreateUserSubscriber, GetUserSubscriber}
 
 final class UserVerticle(private[this] val userRepository: UserRepository, private[this] val publisher: HttpEndpointPublisher) extends ServiceVerticle {

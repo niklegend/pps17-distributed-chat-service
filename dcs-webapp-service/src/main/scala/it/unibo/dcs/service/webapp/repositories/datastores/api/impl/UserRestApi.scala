@@ -22,15 +22,15 @@ class UserRestApi(private[this] val discovery: HttpEndpointDiscovery)
   }
 
   override def getUserByUsername(username: String): Observable[User] =
-    request(client => Observable.from(client.get(getUserURI(username)).sendFuture()))
-      .map(_.bodyAsJsonObject().getOrElse(throw GetUserResponseException()))
-
+    request((userWebClient: WebClient) =>
+      Observable.from(userWebClient.get(getUserURI(username)).sendFuture()))
+      .map(response => response.bodyAsJsonObject().getOrElse(throw GetUserResponseException()))
 }
 
 private[impl] object UserRestApi {
 
   val createUserURI = "/createUser"
 
-  def getUserURI(username: String) = s"/getUser/$username"
+  def getUserURI(username: String) = s"getUser/$username"
 
 }

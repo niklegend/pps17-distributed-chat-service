@@ -3,7 +3,7 @@ import { remove } from 'lodash';
 
 import { ChatService } from '../chat.service';
 import { DeleteRoomRequest, CreateRoomRequest } from '../requests';
-import { Room } from '../model';
+import { Room, User} from '../model';
 
 @Component({
   selector: 'app-chat',
@@ -26,6 +26,10 @@ export class ChatComponent implements OnInit {
       name: 'Room 1',
       participations: []
     });
+  }
+
+  getUser(): User {
+    return this.service.getUser();
   }
 
   deleteRoom(room: Room) {

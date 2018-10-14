@@ -59,7 +59,7 @@ final class UserVerticle(private[this] val userRepository: UserRepository, priva
       .allowedHeader("Access-Control-Allow-Credentials")
       .allowedHeader("Content-Type"))
 
-    router.get("/users/:username")
+    router.get("/getUser/:username")
       .produces("application/json")
       .handler(routingContext => {
         val username = routingContext.request().getParam("username").head
@@ -67,7 +67,7 @@ final class UserVerticle(private[this] val userRepository: UserRepository, priva
         getUserUseCase(username, subscriber)
     })
 
-    router.post("/users")
+    router.post("/createUser")
       .consumes("application/json")
       .produces("application/json")
       .handler(routingContext => {

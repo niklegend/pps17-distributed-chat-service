@@ -29,11 +29,9 @@ class UserRestApi(private[this] val discovery: HttpEndpointDiscovery)
 
 private[impl] object UserRestApi {
 
-  private val prefix = "/users"
+  val createUserURI = "/createUser"
 
-  val createUserURI = prefix
-
-  def getUserURI(username: String) = s"$prefix/$username"
+  def getUserURI(username: String) = s"getUser/$username"
 
 }
 

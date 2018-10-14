@@ -1,16 +1,17 @@
-import { Component, OnInit } from "@angular/core";
-import { remove } from "lodash";
+import { Component, OnInit } from '@angular/core';
+import { remove } from 'lodash';
 
-import { ChatService } from "../chat.service";
-import { DeleteRoomRequest, CreateRoomRequest } from "../requests";
-import { Room, User } from "../model";
+import { ChatService } from '../chat.service';
+import { DeleteRoomRequest, CreateRoomRequest } from '../requests';
+import { Room, User } from '../model';
 
 @Component({
-  selector: "app-chat",
-  templateUrl: "./chat.component.html",
-  styleUrls: ["./chat.component.css"]
+  selector: 'app-chat',
+  templateUrl: './chat.component.html',
+  styleUrls: ['./chat.component.css']
 })
 export class ChatComponent implements OnInit {
+
   rooms: Room[];
 
   create = false;
@@ -21,7 +22,7 @@ export class ChatComponent implements OnInit {
     // to debug
     this.rooms = [];
     this.rooms.push({
-      name: "Room 1",
+      name: 'Room 1',
       participations: []
     });
   }
@@ -54,4 +55,5 @@ export class ChatComponent implements OnInit {
   toggleCreate() {
     this.create = !this.create;
   }
+
 }

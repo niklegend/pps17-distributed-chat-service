@@ -1,8 +1,9 @@
 package it.unibo.dcs.service.room
 
+import io.vertx.core.http.HttpMethod._
 import io.vertx.core.{AbstractVerticle, Context, Vertx => JVertx}
 import io.vertx.scala.ext.web.Router
-import io.vertx.scala.ext.web.handler.BodyHandler
+import io.vertx.scala.ext.web.handler.{BodyHandler, CorsHandler}
 import it.unibo.dcs.commons.RxHelper
 import it.unibo.dcs.commons.interactor.ThreadExecutorExecutionContext
 import it.unibo.dcs.commons.interactor.executor.PostExecutionThread
@@ -10,6 +11,7 @@ import it.unibo.dcs.commons.service.{HttpEndpointPublisher, ServiceVerticle}
 import it.unibo.dcs.service.room.interactor.{CreateRoomUseCase, CreateUserUseCase, DeleteRoomUseCase}
 import it.unibo.dcs.service.room.repository.RoomRepository
 import it.unibo.dcs.service.room.request.{CreateRoomRequest, CreateUserRequest, DeleteRoomRequest}
+import it.unibo.dcs.service.room.request.Implicits._
 import it.unibo.dcs.service.room.subscriber.{CreateRoomSubscriber, CreateUserSubscriber, DeleteRoomSubscriber}
 
 final class RoomVerticle(private[this] val roomRepository: RoomRepository, val publisher: HttpEndpointPublisher) extends ServiceVerticle {
@@ -37,33 +39,42 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
   override protected def initializeRouter(router: Router): Unit = {
     router.route().handler(BodyHandler.create())
 
+    router.route().handler(CorsHandler.create("*")
+      .allowedMethod(GET)
+      .allowedMethod(POST)
+      .allowedMethod(PATCH)
+      .allowedMethod(PUT)
+      .allowedMethod(DELETE)
+      .allowedHeader("Access-Control-Allow-Method")
+      .allowedHeader("Access-Control-Allow-Origin")
+      .allowedHeader("Access-Control-Allow-Credentials")
+      .allowedHeader("Content-Type"))
+
     router.post("/createUser")
       .consumes("application/json")
       .produces("application/json")
       .handler(routingContext => {
-        val username = routingContext.getBodyAsJson.head.getString("username")
-        val request = CreateUserRequest(username)
-        createUserUseCase(request, new CreateUserSubscriber(routingContext.response()))
+        val request = routingContext.getBodyAsJson.head
+        val subscriber = new CreateUserSubscriber(routingContext.response())
+        createUserUseCase(request, subscriber)
       })
 
     router.post("/createRoom")
       .consumes("application/json")
       .produces("application/json")
       .handler(routingContext => {
-        val name = routingContext.getBodyAsJson.head.getString("name")
-        val username = routingContext.getBodyAsJson.head.getString("username")
-        val request = CreateRoomRequest(name, username)
-        createRoomUseCase(request, new CreateRoomSubscriber(routingContext.response()))
+        val request = routingContext.getBodyAsJson.head
+        val subscriber = new CreateRoomSubscriber(routingContext.response())
+        createRoomUseCase(request, subscriber)
       })
 
     router.post("/deleteRoom")
       .consumes("application/json")
       .produces("application/json")
       .handler(routingContext => {
-        val name = routingContext.getBodyAsJson.head.getString("name")
-        val username = routingContext.getBodyAsJson.head.getString("username")
-        val request = DeleteRoomRequest(name, username)
-        deleteRoomUseCase(request, new DeleteRoomSubscriber(routingContext.response))
+        val request = routingContext.getBodyAsJson.head
+        val subscriber = new DeleteRoomSubscriber(routingContext.response)
+        deleteRoomUseCase(request, subscriber)
       })
   }
 

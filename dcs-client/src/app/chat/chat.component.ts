@@ -27,8 +27,9 @@ export class ChatComponent implements OnInit {
   }
 
   deleteRoom(room: Room) {
-    this.service.deleteRoom(new DeleteRoomRequest(room.name, '')).subscribe(
-      deletedRoom => remove(this.rooms, r => r.name === deletedRoom.name)
-    );
+    this.service.deleteRoom(new DeleteRoomRequest(room.name, 'TODO: replace with username', 'TODO: replace with token'))
+      .subscribe(
+        deletedRoom => remove(this.rooms, r => r.name === deletedRoom.name)
+      );
   }
 }

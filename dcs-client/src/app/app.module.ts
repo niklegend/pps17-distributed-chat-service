@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 
 import { RouterModule, Routes } from '@angular/router';
@@ -16,6 +16,8 @@ import { RoomEntryComponent } from './room-entry/room-entry.component';
 
 import { EventBusService } from './event-bus.service';
 import { ChatService } from './chat.service';
+
+import { ServerInterceptor } from './server-interceptor';
 
 const appRoutes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -44,7 +46,8 @@ const appRoutes: Routes = [
       { enableTracing: true } // <-- debugging purposes only
     )
   ],
-  providers: [EventBusService, ChatService],
+  providers: [EventBusService, ChatService,
+    { provide: HTTP_INTERCEPTORS, useClass: ServerInterceptor, multi: true }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

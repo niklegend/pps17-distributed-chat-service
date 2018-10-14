@@ -11,9 +11,16 @@ package object request {
   final case class DeleteRoomRequest(name: String, username: String)
 
   object Implicits {
-    implicit def requestToJsonObject(request: DeleteRoomRequest): JsonObject = new JsonObject()
-      .put("name", request.name)
-      .put("owner_name", request.username)
+
+    implicit def jsonObjectToCreateUserRequest(json: JsonObject): CreateUserRequest =
+      CreateUserRequest(json.getString("username"))
+
+    implicit def jsonObjectToCreateRoomRequest(json: JsonObject): CreateRoomRequest =
+      CreateRoomRequest(json.getString("name"), json.getString("username"))
+
+    implicit def jsonObjectToDeleteRoomRequest(json: JsonObject): DeleteRoomRequest =
+      DeleteRoomRequest(json.getString("name"), json.getString("username"))
+
   }
 
 }

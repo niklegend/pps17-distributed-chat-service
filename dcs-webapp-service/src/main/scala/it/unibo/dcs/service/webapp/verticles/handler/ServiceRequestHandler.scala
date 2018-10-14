@@ -23,6 +23,8 @@ trait ServiceRequestHandler {
 
   def handleLogout(context: RoutingContext)(implicit ctx: Context): Unit
 
+  def handleRoomDeletion(context: RoutingContext)(implicit ctx: Context): Unit
+
   def handleRoomCreation(context: RoutingContext)(implicit ctx: Context): Unit
 }
 

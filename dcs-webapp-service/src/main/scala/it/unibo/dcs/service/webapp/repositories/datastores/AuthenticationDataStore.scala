@@ -1,6 +1,6 @@
 package it.unibo.dcs.service.webapp.repositories.datastores
 
-import it.unibo.dcs.service.webapp.interaction.Requests.{CreateRoomRequest, LoginUserRequest, LogoutUserRequest, RegisterUserRequest}
+import it.unibo.dcs.service.webapp.interaction.Requests._
 import it.unibo.dcs.service.webapp.repositories.datastores.api.AuthenticationApi
 import it.unibo.dcs.service.webapp.repositories.datastores.impl.AuthenticationDataStoreNetwork
 import rx.lang.scala.Observable
@@ -14,6 +14,8 @@ trait AuthenticationDataStore {
   def logoutUser(request: LogoutUserRequest): Observable[Unit]
 
   def createRoom(request: CreateRoomRequest): Observable[Unit]
+
+  def checkToken(request: CheckTokenRequest): Observable[Unit]
 }
 
 /* Companion object */

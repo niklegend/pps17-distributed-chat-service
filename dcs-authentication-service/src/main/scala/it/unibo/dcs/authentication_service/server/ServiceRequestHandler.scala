@@ -4,6 +4,8 @@ import io.vertx.scala.ext.web.RoutingContext
 
 trait ServiceRequestHandler {
 
+  def handleTokenCheck(implicit context: RoutingContext): Unit
+
   def handleRegistration(implicit context: RoutingContext): Unit
 
   def handleLogin(implicit context: RoutingContext): Unit

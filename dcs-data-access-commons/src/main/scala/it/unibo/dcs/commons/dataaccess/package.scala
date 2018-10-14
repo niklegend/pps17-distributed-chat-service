@@ -12,10 +12,12 @@ package object dataaccess {
 
     implicit def stringToDate(date: String): Date = mySqlFormat.parse(date)
 
-    implicit def stringToBoolean(value: String): Boolean = if (value == "0")
-      true
-    else
-      false
+    implicit def booleanToString(value: Boolean): String = if (value) "1" else "0"
+
+    implicit def stringToBoolean(value: String): Boolean =
+      if (value == "0") false
+      else if (value == "1") true
+      else throw new IllegalArgumentException()
 
   }
 

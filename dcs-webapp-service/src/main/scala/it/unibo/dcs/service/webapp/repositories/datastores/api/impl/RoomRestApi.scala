@@ -19,4 +19,17 @@ class RoomRestApi(private[this] val discovery: HttpEndpointDiscovery)
         .getOrElse(throw RoomDeletionResponseException())
       )
   }
+
+  override def createRoom(createRoomRequest: CreateRoomRequest): Observable[Room] = {
+    for {
+      response <- request((roomWebClient: WebClient) =>
+        Observable.from(roomWebClient.post(createRoomURI).sendJsonObjectFuture(createRoomRequest)))
+    } yield response.bodyAsJsonObject().getOrElse(throw RoomCreationException())
+  }
+}
+
+private[impl] object RoomRestApi {
+
+  val createRoomURI = "/createRoom"
+
 }

@@ -1,7 +1,7 @@
 package it.unibo.dcs.commons.service
 
 import io.vertx.core.{AbstractVerticle, Context, Vertx}
-import io.vertx.lang.scala.ScalaVerticle
+import io.vertx.lang.scala.{ScalaLogger, ScalaVerticle}
 import io.vertx.scala.core.eventbus.EventBus
 import io.vertx.scala.core.http.{HttpServer, HttpServerOptions}
 import io.vertx.scala.ext.web.Router
@@ -12,18 +12,21 @@ import rx.lang.scala.Observable
 
 abstract class ServiceVerticle extends ScalaVerticle {
 
+  private[this] var _log: ScalaLogger = _
+
   private[this] var _eventBus: EventBus = _
   private[this] var _router: Router = _
 
   override def init(jVertx: Vertx, context: Context, verticle: AbstractVerticle): Unit = {
     super.init(jVertx, context, verticle)
+    _log = ScalaLogger.getLogger(getClass.getName)
     _eventBus = vertx.eventBus
 
     _router = Router.router(vertx)
     initializeRouter(_router)
   }
 
-  protected final def startHttpServer(host: String,
+  protected[this] final def startHttpServer(host: String,
                                       port: Int,
                                       options: HttpServerOptions = DEFAULT_OPTIONS): Observable[HttpServer] =
     VertxHelper.toObservable[HttpServer] {
@@ -32,9 +35,11 @@ abstract class ServiceVerticle extends ScalaVerticle {
         .listen(port, host, _)
     }
 
-  protected def initializeRouter(router: Router): Unit
+  protected[this] def initializeRouter(router: Router): Unit
 
-  protected final def eventBus: EventBus = _eventBus
+  protected[this] final def eventBus: EventBus = _eventBus
+
+  protected[this] final def log: ScalaLogger = _log
 
 }
 

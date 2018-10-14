@@ -2,8 +2,8 @@ package repositories
 
 import java.util.Date
 
+import it.unibo.dcs.service.webapp.interaction.Requests.RegisterUserRequest
 import it.unibo.dcs.service.webapp.model.User
-import it.unibo.dcs.service.webapp.repositories.Requests.RegisterUserRequest
 import it.unibo.dcs.service.webapp.repositories.UserRepository
 import it.unibo.dcs.service.webapp.repositories.datastores.UserDataStore
 import it.unibo.dcs.service.webapp.repositories.impl.UserRepositoryImpl
@@ -17,8 +17,8 @@ class UserRepositorySpec extends FlatSpec with MockFactory with OneInstancePerTe
   private val userDataStore: UserDataStore = mock[UserDataStore]
   private val repository: UserRepository = new UserRepositoryImpl(userDataStore)
   private val user = User("niklegend", "nicola", "piscaglia", "bla", visible = true, new Date())
-  private val registerRequest = RegisterUserRequest(user.username, "password", user.firstName,
-    user.lastName)
+  private val registerRequest = RegisterUserRequest(user.username, user.firstName,
+    user.lastName, "password", "password")
   private val createUserSubscriber: Subscriber[User] = stub[Subscriber[User]]
   private val getUserSubscriber: Subscriber[User] = stub[Subscriber[User]]
 

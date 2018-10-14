@@ -1,19 +1,21 @@
 package it.unibo.dcs.authentication_service.data
 
-import java.sql.Date
-import java.time.LocalDateTime
-import io.vertx.core.{AsyncResult, Future}
+import java.util.Date
+import io.vertx.core.Future
 import io.vertx.lang.scala.json.Json
-import io.vertx.scala.ext.sql.{ResultSet, SQLConnection}
+import io.vertx.scala.ext.sql.SQLConnection
+import it.unibo.dcs.authentication_service.data.AuthenticationDataStoreDatabase.{insertInvalidToken, insertUser}
 import it.unibo.dcs.commons.VertxHelper
-import it.unibo.dcs.commons.dataaccess.{DataStoreDatabase, InsertParams}
+import it.unibo.dcs.commons.dataaccess.DataStoreDatabase
+import it.unibo.dcs.commons.dataaccess.Implicits.dateToString
 import rx.lang.scala.Observable
 
-class AuthenticationDataStoreDatabase(protected val connection: SQLConnection)
-  extends DataStoreDatabase with AuthenticationDataStore {
+class AuthenticationDataStoreDatabase(private[this] val connection: SQLConnection)
+  extends DataStoreDatabase(connection) with AuthenticationDataStore {
 
-  override def createUser(username: String, password: String): Observable[Unit] =
-    insert("users", InsertParams(Json.obj(("username", username), ("password", password))))
+  override def createUser(username: String, password: String): Observable[Unit] = {
+    execute(insertUser, Json.arr(username, password))
+  }
 
   override def checkUserExistence(username: String): Observable[Unit] =
     checkRecordPresence("users", ("username", username))
@@ -21,9 +23,8 @@ class AuthenticationDataStoreDatabase(protected val connection: SQLConnection)
   override def checkUserCredentials(username: String, password: String): Observable[Unit] =
     checkRecordPresence("users", ("username", username), ("password", password))
 
-  override def invalidToken(token: String, expirationDate: LocalDateTime): Observable[Unit] =
-    insert("invalid_tokens", InsertParams(Json.obj(("token", "'" + token + "'"),
-      ("expiration_date", Date.valueOf(expirationDate.toLocalDate).toString))))
+  override def invalidToken(token: String, expirationDate: Date): Observable[Unit] =
+    execute(insertInvalidToken, Json.arr("'" + token + "'", dateToString(expirationDate)))
 
   override def isTokenValid(token: String): Observable[Boolean] =
     checkResultSetSize("SELECT * FROM invalid_tokens WHERE token = '" + token + "'", 0)
@@ -63,4 +64,12 @@ class AuthenticationDataStoreDatabase(protected val connection: SQLConnection)
 
 object AuthenticationDataStoreDatabase{
   def apply(connection: SQLConnection) = new AuthenticationDataStoreDatabase(connection)
+}
+
+private[data] object AuthenticationDataStoreDatabase {
+
+  val insertUser = "INSERT INTO `users` (`username`, `password`) VALUES (?, ?);"
+
+  val insertInvalidToken = "INSERT INTO `invalid_tokens` (`token`, `expiration_date`) VALUES (?, ?);"
+
 }

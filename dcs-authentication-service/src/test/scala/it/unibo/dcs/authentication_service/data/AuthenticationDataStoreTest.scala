@@ -1,6 +1,7 @@
 package it.unibo.dcs.authentication_service.data
 
-import java.time.LocalDateTime
+import java.util.Date
+
 import io.vertx.scala.ext.sql.SQLConnection
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
@@ -25,7 +26,7 @@ class AuthenticationDataStoreTest extends FlatSpec with MockFactory {
   it should "call sqlConnection and return a result when invalidToken is called" in {
     val invalidateTokenSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
     specifyExecuteExpectation()
-    authDataStore invalidToken (token, LocalDateTime.now()) subscribe invalidateTokenSubscriber
+    authDataStore invalidToken (token, new Date()) subscribe invalidateTokenSubscriber
 
     assertSubscriber(invalidateTokenSubscriber)
   }

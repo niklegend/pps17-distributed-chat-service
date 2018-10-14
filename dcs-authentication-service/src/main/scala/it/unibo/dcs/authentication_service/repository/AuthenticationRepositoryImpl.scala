@@ -1,6 +1,6 @@
 package it.unibo.dcs.authentication_service.repository
 
-import java.time.LocalDateTime
+import java.util.Date
 
 import it.unibo.dcs.authentication_service.data.AuthenticationDataStore
 import rx.lang.scala.Observable
@@ -17,7 +17,7 @@ class AuthenticationRepositoryImpl(private[this] val authDataStore: Authenticati
   override def checkUserCredentials(username: String, password: String): Observable[Unit] =
     authDataStore.checkUserCredentials(username, password)
 
-  override def invalidToken(token: String, tokenExpirationDate: LocalDateTime): Observable[Unit] =
+  override def invalidToken(token: String, tokenExpirationDate: Date): Observable[Unit] =
     authDataStore.invalidToken(token, tokenExpirationDate)
 
   override def isTokenValid(token: String): Observable[Boolean] = authDataStore.isTokenValid(token)

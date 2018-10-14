@@ -1,6 +1,6 @@
 package it.unibo.dcs.authentication_service.data
 
-import java.time.LocalDateTime
+import java.util.Date
 
 import rx.lang.scala.Observable
 
@@ -12,7 +12,7 @@ trait AuthenticationDataStore {
 
   def checkUserCredentials(username: String, password: String) : Observable[Unit]
 
-  def invalidToken(token: String, expirationDate: LocalDateTime): Observable[Unit]
+  def invalidToken(token: String, expirationDate: Date): Observable[Unit]
 
   def isTokenValid(token: String): Observable[Boolean]
 

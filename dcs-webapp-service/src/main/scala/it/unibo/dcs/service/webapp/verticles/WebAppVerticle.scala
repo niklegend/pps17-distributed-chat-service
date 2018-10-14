@@ -1,17 +1,18 @@
 package it.unibo.dcs.service.webapp.verticles
 
 import io.vertx.core.eventbus.{EventBus => JEventBus}
+import io.vertx.core.http.HttpMethod._
 import io.vertx.core.{AbstractVerticle, Context, Vertx}
 import io.vertx.scala.core
 import io.vertx.scala.core.eventbus.EventBus
 import io.vertx.scala.ext.web.Router
-import io.vertx.scala.ext.web.handler.BodyHandler
+import io.vertx.scala.ext.web.handler.{BodyHandler, CorsHandler}
 import io.vertx.servicediscovery.{Record, ServiceDiscovery}
 import it.unibo.dcs.commons.service.codecs.RecordMessageCodec
 import it.unibo.dcs.commons.service.{HttpEndpointPublisher, HttpEndpointPublisherImpl, ServiceVerticle}
-import it.unibo.dcs.service.webapp.verticles.requesthandler.ServiceRequestHandler
+import it.unibo.dcs.service.webapp.verticles.handler.ServiceRequestHandler
 
-
+/** Verticle that runs the WebApp Service */
 final class WebAppVerticle extends ServiceVerticle {
 
   private var host: String = _
@@ -50,11 +51,24 @@ final class WebAppVerticle extends ServiceVerticle {
 
     implicit val ctx: core.Context = this.ctx
 
+    apiRouter.route()
+      .handler(BodyHandler.create())
+
+    apiRouter.route().handler(CorsHandler.create("*")
+      .allowedMethod(GET)
+      .allowedMethod(POST)
+      .allowedMethod(PATCH)
+      .allowedMethod(PUT)
+      .allowedMethod(DELETE)
+      .allowedHeader("Access-Control-Allow-Method")
+      .allowedHeader("Access-Control-Allow-Origin")
+      .allowedHeader("Access-Control-Allow-Credentials")
+      .allowedHeader("Content-Type"))
+
     apiRouter.post("/register")
       .consumes("application/json")
       .produces("application/json")
       .handler(context => requestHandler handleRegistration context)
-
 
     apiRouter.post("/login")
       .consumes("application/json")
@@ -62,9 +76,15 @@ final class WebAppVerticle extends ServiceVerticle {
       .handler(context => requestHandler handleLogin context)
 
 
-    apiRouter.post("/protected/logout")
+    apiRouter.post("/logout")
       .consumes("application/json")
       .handler(context => requestHandler handleLogout context)
+
+
+    apiRouter.post("/room")
+      .consumes("application/json")
+      .produces("application/json")
+      .handler(context => requestHandler handleRoomCreation context)
 
     router.mountSubRouter("/api", apiRouter)
   }
@@ -73,10 +93,10 @@ final class WebAppVerticle extends ServiceVerticle {
     startHttpServer(host, port)
       .doOnCompleted(
         publisher.publish("webapp-service")
-          .subscribe(_ => println("Record published!"),
-            cause => println(s"Could not publish record: ${cause.getMessage}")))
-      .subscribe(server => println(s"Server started at http://$host:${server.actualPort}"),
-        cause => println(s"Could not start server at http://$host:$port: ${cause.getMessage}"))
+          .subscribe(record => log.info(s"${record.getName} record published!"),
+            log.error(s"Could not publish record", _)))
+      .subscribe(server => log.info(s"Server started at http://$host:${server.actualPort}"),
+        log.error(s"Could not start server at http://$host:$port", _))
   }
 
 }

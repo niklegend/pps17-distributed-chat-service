@@ -1,6 +1,7 @@
 package it.unibo.dcs.authentication_service.interactor
 
 import java.time.LocalDateTime
+import java.util.Date
 
 import it.unibo.dcs.authentication_service.business_logic.JwtTokenDecoder
 import it.unibo.dcs.authentication_service.repository.AuthenticationRepository
@@ -17,7 +18,7 @@ final class LogoutUserUseCase(private[this] val threadExecutor: ThreadExecutor,
   val tokenDecoder = JwtTokenDecoder()
 
   override protected[this] def createObservable(request: LogoutUserRequest): Observable[Unit] =
-    authRepository.invalidToken(request.token, LocalDateTime.now())
+    authRepository.invalidToken(request.token, new Date())
 }
 
 object LogoutUserUseCase{

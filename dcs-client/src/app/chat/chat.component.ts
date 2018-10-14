@@ -14,6 +14,8 @@ export class ChatComponent implements OnInit {
 
   rooms: Room[];
 
+  creating = false;
+
   constructor(private service: ChatService) {
   }
 
@@ -38,4 +40,9 @@ export class ChatComponent implements OnInit {
       partecipation => this.rooms.push(partecipation.room)
     );
   }
+
+  toggleCreate() {
+    this.creating = !this.creating;
+  }
+
 }

@@ -9,15 +9,17 @@ import { Router } from '@angular/router';
   styleUrls: ['./login-form.component.css']
 })
 export class LoginFormComponent {
-
   request: LoginRequest = new LoginRequest();
 
-  constructor(private service: ChatService, private router: Router) { }
+  constructor(private service: ChatService, private router: Router) {}
 
   login() {
-    this.service.login(this.request)
-    .subscribe(user => this.router.navigateByUrl('/'),
-               error => console.error(error));
+    this.service.login(this.request).subscribe(
+      user => {
+        this.router.navigateByUrl('/');
+        console.log(user);
+      },
+      error => console.error(error)
+    );
   }
-
 }

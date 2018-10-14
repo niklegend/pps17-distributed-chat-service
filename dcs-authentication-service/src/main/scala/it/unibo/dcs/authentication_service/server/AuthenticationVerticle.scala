@@ -5,13 +5,12 @@ import io.vertx.core.http.HttpMethod._
 import io.vertx.core.{AbstractVerticle, Context}
 import io.vertx.lang.scala.json.Json
 import io.vertx.scala.ext.auth.jwt.{JWTAuth, JWTAuthOptions}
-import io.vertx.scala.ext.web.handler.{BodyHandler, CorsHandler, JWTAuthHandler}
+import io.vertx.scala.ext.web.handler.CorsHandler
 import io.vertx.scala.ext.web.{Router, RoutingContext}
 import io.vertx.scala.ext.web.handler.{BodyHandler, JWTAuthHandler}
 import it.unibo.dcs.authentication_service.interactor.{CheckTokenUseCase, LoginUserUseCase, LogoutUserUseCase, RegisterUserUseCase}
 import it.unibo.dcs.authentication_service.repository.AuthenticationRepository
 import it.unibo.dcs.commons.RxHelper
-import it.unibo.dcs.commons.VertxWebHelper._
 import it.unibo.dcs.commons.interactor.ThreadExecutorExecutionContext
 import it.unibo.dcs.commons.interactor.executor.PostExecutionThread
 import it.unibo.dcs.commons.service.{HttpEndpointPublisher, ServiceVerticle}
@@ -41,7 +40,8 @@ final class AuthenticationVerticle(authenticationRepository: AuthenticationRepos
       .allowedHeader("Access-Control-Allow-Credentials")
       .allowedHeader("Content-Type"))
 
-    val authProvider = createJwtAuthProvider()
+    val authOptions = createJwtAuthOptions()
+    val authProvider = JWTAuth.create(vertx, authOptions)
     router.route().handler(BodyHandler.create())
     setupProtectedRoutes(router, authProvider)
     setupRoutes(router, authProvider)
@@ -91,17 +91,26 @@ final class AuthenticationVerticle(authenticationRepository: AuthenticationRepos
           respondWithCode(401)
         }
       }
-      override def onError(error: Throwable): Unit =
+      override def onError(error: Throwable): Unit = {
+        error.printStackTrace()
         respondWithCode(401)
+      }
+
     }
   }
 
   private def checkTokenValidity(jwtAuthHandler: JWTAuthHandler, jwtAuth: JWTAuth)
                                 (implicit context: RoutingContext): Unit = {
-    jwtAuth.authenticateFuture(Json.obj(("jwt", getTokenFromHeader))).onComplete{ //TODO: solve the fact that the callback never gets called
-      case Success(_) => context.next()
-      case Failure(_) => respondWithCode(401)
-    }
+    val token = getTokenFromHeader
+    token.fold[Unit](() => respondWithCode(401))(tokenValue => {
+      jwtAuth.authenticateFuture(Json.obj(("jwt", tokenValue))).onComplete{
+        case Success(_) => context.next()
+        case Failure(error) => {
+          error.printStackTrace()
+          respondWithCode(401)
+        }
+      }
+    })
   }
 
   private def setupRoutes(router: Router, jwtAuth: JWTAuth): Unit = {

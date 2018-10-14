@@ -25,7 +25,7 @@ class AuthenticationDataStoreTest extends FlatSpec with MockFactory {
 
   it should "call sqlConnection and return a result when invalidToken is called" in {
     val invalidateTokenSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
-    specifyExecuteExpectation()
+    specifyUpdateExpectation()
     authDataStore invalidToken (token, new Date()) subscribe invalidateTokenSubscriber
 
     assertSubscriber(invalidateTokenSubscriber)
@@ -33,7 +33,7 @@ class AuthenticationDataStoreTest extends FlatSpec with MockFactory {
 
   it should "call sqlConnection and return a result when createUser is called" in {
     val registerSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
-    specifyExecuteExpectation()
+    specifyUpdateExpectation()
     authDataStore createUser(username, password) subscribe registerSubscriber
 
     assertSubscriber(registerSubscriber)
@@ -51,8 +51,8 @@ class AuthenticationDataStoreTest extends FlatSpec with MockFactory {
     (sqlConnection query (_, _)) expects (*, *) returns sqlConnection
   }
 
-  private def specifyExecuteExpectation(): Unit = {
-    (sqlConnection execute (_, _)) expects (*, *) returns sqlConnection
+  private def specifyUpdateExpectation(): Unit = {
+    (sqlConnection updateWithParams (_, _, _)) expects (*, *, *) returns sqlConnection
   }
 
   private def assertSubscriber(subscriber: Subscriber[_]): Unit = {

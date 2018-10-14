@@ -50,6 +50,13 @@ final class ServiceRequestHandlerImpl(private val userRepository: UserRepository
     })
   }
 
+  override def handleRoomDeletion(context: RoutingContext)(implicit ctx: Context): Unit = {
+    handle(context, roomDeletionErrorMessage, {
+      val useCase = DeleteRoomUseCase.create(authRepository, roomRepository)
+      useCase(_) subscribe (_ => context response() end)
+    })
+  }
+
   private def handleRequestBody(context: RoutingContext, ifEmptyResponse: => Unit, handler: JsonObject => Unit): Unit = {
     context.getBodyAsJson().fold(ifEmptyResponse)(handler)
   }

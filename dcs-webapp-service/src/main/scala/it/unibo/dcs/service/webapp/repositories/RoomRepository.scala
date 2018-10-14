@@ -1,6 +1,6 @@
 package it.unibo.dcs.service.webapp.repositories
 
-import it.unibo.dcs.service.webapp.interaction.Requests.CreateRoomRequest
+import it.unibo.dcs.service.webapp.interaction.Requests.{CreateRoomRequest, DeleteRoomRequest}
 import it.unibo.dcs.service.webapp.model.Room
 import it.unibo.dcs.service.webapp.repositories.datastores.RoomDataStore
 import it.unibo.dcs.service.webapp.repositories.impl.RoomRepositoryImpl
@@ -14,7 +14,7 @@ trait RoomRepository {
     * @return an observable stream composed by the created room. */
   def createRoom(request: CreateRoomRequest): Observable[Room]
 
-  def deleteRoom(roomName: String, username: String): Observable[Unit]
+  def deleteRoom(request: DeleteRoomRequest): Observable[Unit]
 }
 
 /* Companion object */

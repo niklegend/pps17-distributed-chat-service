@@ -1,6 +1,5 @@
 package it.unibo.dcs.authentication_service.interactor
 
-import java.time.LocalDateTime
 import java.util.Date
 
 import it.unibo.dcs.authentication_service.business_logic.JwtTokenDecoder

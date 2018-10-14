@@ -5,7 +5,7 @@ import io.vertx.scala.core.eventbus.EventBus
 import io.vertx.servicediscovery.ServiceDiscovery
 import it.unibo.dcs.commons.service.HttpEndpointDiscoveryImpl
 import it.unibo.dcs.service.webapp.interaction.Requests
-import it.unibo.dcs.service.webapp.interaction.Requests.{LoginUserRequest, LogoutUserRequest, RegisterUserRequest}
+import it.unibo.dcs.service.webapp.interaction.Requests.{CheckTokenRequest, LoginUserRequest, LogoutUserRequest, RegisterUserRequest}
 import it.unibo.dcs.service.webapp.repositories.datastores.api.impl.AuthenticationRestApi
 import rx.lang.scala.Observable
 
@@ -17,6 +17,8 @@ trait AuthenticationApi {
   def registerUser(request: RegisterUserRequest): Observable[String]
 
   def logoutUser(logoutUserRequest: LogoutUserRequest): Observable[Unit]
+
+  def checkToken(request: CheckTokenRequest): Observable[Unit]
 }
 
 /* Companion object */

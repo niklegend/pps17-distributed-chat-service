@@ -1,10 +1,10 @@
 package it.unibo.dcs.authentication_service.data
 
 import java.util.Date
-import io.vertx.core.Future
+
+import io.vertx.core.{AsyncResult, Future}
 import io.vertx.lang.scala.json.Json
-import io.vertx.scala.ext.sql.SQLConnection
-import it.unibo.dcs.authentication_service.data.AuthenticationDataStoreDatabase.{insertInvalidToken, insertUser}
+import io.vertx.scala.ext.sql.{ResultSet, SQLConnection}
 import it.unibo.dcs.commons.VertxHelper
 import it.unibo.dcs.commons.dataaccess.DataStoreDatabase
 import it.unibo.dcs.commons.dataaccess.Implicits.dateToString
@@ -12,6 +12,9 @@ import rx.lang.scala.Observable
 
 class AuthenticationDataStoreDatabase(private[this] val connection: SQLConnection)
   extends DataStoreDatabase(connection) with AuthenticationDataStore {
+
+  private val insertUser = "INSERT INTO `users` (`username`, `password`) VALUES (?, ?);"
+  private val insertInvalidToken = "INSERT INTO `invalid_tokens` (`token`, `expiration_date`) VALUES (?, ?);"
 
   override def createUser(username: String, password: String): Observable[Unit] = {
     execute(insertUser, Json.arr(username, password))
@@ -24,7 +27,7 @@ class AuthenticationDataStoreDatabase(private[this] val connection: SQLConnectio
     checkRecordPresence("users", ("username", username), ("password", password))
 
   override def invalidToken(token: String, expirationDate: Date): Observable[Unit] =
-    execute(insertInvalidToken, Json.arr("'" + token + "'", dateToString(expirationDate)))
+    execute(insertInvalidToken, Json.arr(token, dateToString(expirationDate)))
 
   override def isTokenValid(token: String): Observable[Boolean] =
     checkResultSetSize("SELECT * FROM invalid_tokens WHERE token = '" + token + "'", 0)
@@ -62,14 +65,6 @@ class AuthenticationDataStoreDatabase(private[this] val connection: SQLConnectio
     }
 }
 
-object AuthenticationDataStoreDatabase{
+private[data] object AuthenticationDataStoreDatabase{
   def apply(connection: SQLConnection) = new AuthenticationDataStoreDatabase(connection)
-}
-
-private[data] object AuthenticationDataStoreDatabase {
-
-  val insertUser = "INSERT INTO `users` (`username`, `password`) VALUES (?, ?);"
-
-  val insertInvalidToken = "INSERT INTO `invalid_tokens` (`token`, `expiration_date`) VALUES (?, ?);"
-
 }

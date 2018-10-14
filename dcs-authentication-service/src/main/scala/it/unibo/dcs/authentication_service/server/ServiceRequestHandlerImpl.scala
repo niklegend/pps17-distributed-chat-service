@@ -65,10 +65,9 @@ class ServiceRequestHandlerImpl(loginUserUseCase: LoginUserUseCase, logoutUserUs
 
     private def respondWithToken(token: String, username: String)(implicit context: RoutingContext): Unit = {
       context.response
-        .putHeader("Authorization", "Bearer " + token)
         .putHeader("content-type", "application/json")
         .setStatusCode(201)
-        .end(Json.obj(("username", username)).encodePrettily())
+        .end(Json.obj(("token", token)).encodePrettily())
     }
   }
 

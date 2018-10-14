@@ -1,6 +1,6 @@
 package it.unibo.dcs.service.webapp.repositories.datastores
 
-import it.unibo.dcs.service.webapp.interaction.Requests.CreateRoomRequest
+import it.unibo.dcs.service.webapp.interaction.Requests.{CreateRoomRequest, DeleteRoomRequest}
 import it.unibo.dcs.service.webapp.model.Room
 import it.unibo.dcs.service.webapp.repositories.datastores.api.RoomApi
 import it.unibo.dcs.service.webapp.repositories.datastores.impl.RoomDataStoreNetwork
@@ -8,7 +8,7 @@ import rx.lang.scala.Observable
 
 trait RoomDataStore {
 
-  def deleteRoom(roomName: String, username: String): Observable[Unit]
+  def deleteRoom(request: DeleteRoomRequest): Observable[Unit]
 
   def createRoom(request: CreateRoomRequest): Observable[Room]
 }

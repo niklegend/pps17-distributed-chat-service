@@ -105,10 +105,7 @@ final class AuthenticationVerticle(authenticationRepository: AuthenticationRepos
     token.fold[Unit](() => respondWithCode(401))(tokenValue => {
       jwtAuth.authenticateFuture(Json.obj(("jwt", tokenValue))).onComplete{
         case Success(_) => context.next()
-        case Failure(error) => {
-          error.printStackTrace()
-          respondWithCode(401)
-        }
+        case Failure(error) => respondWithCode(401)
       }
     })
   }

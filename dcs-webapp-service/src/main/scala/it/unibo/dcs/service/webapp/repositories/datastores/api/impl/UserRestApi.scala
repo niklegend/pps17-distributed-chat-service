@@ -26,7 +26,7 @@ class UserRestApi(private[this] val discovery: HttpEndpointDiscovery)
       Observable.from(userWebClient.get(getUserURI(username)).sendFuture()))
       .map(response => response.bodyAsJsonObject().getOrElse(throw GetUserResponseException()))
 }
-W
+
 private[impl] object UserRestApi {
 
   val createUserURI = "/createUser"

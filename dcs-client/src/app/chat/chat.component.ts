@@ -24,6 +24,7 @@ export class ChatComponent implements OnInit {
   constructor(private service: ChatService, private router: Router) {}
 
   ngOnInit() {
+    console.log(this.service.getUser());
     if (!this.service.getUser()) {
       this.router.navigateByUrl('/login');
     } else {

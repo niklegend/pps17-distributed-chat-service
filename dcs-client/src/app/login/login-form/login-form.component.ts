@@ -15,9 +15,8 @@ export class LoginFormComponent {
 
   login() {
     this.service.login(this.request).subscribe(
-      this.service.setUser,
-      console.error,
-      () => this.router.navigateByUrl('/')
-    );
+      user => this.service.setUser(user),
+      err => console.error(err),
+      () => this.router.navigateByUrl('/'));
   }
 }

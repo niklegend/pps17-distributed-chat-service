@@ -21,7 +21,7 @@ final class ServiceRequestHandlerImpl(private val userRepository: UserRepository
 
   override def handleRegistration(context: RoutingContext)(implicit ctx: Context): Unit = {
     handle(context, registrationErrorMessage, {
-      val useCase = RegisterUserUseCase create(authRepository, userRepository)
+      val useCase = RegisterUserUseCase create(authRepository, userRepository, roomRepository)
       useCase(_) subscribe (result => context.response() end result)
     })
   }

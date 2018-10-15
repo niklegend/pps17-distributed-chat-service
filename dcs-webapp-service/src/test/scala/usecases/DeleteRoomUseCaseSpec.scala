@@ -9,6 +9,8 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, OneInstancePerTest}
 import rx.lang.scala.{Observable, Subscriber}
 
+import scala.language.postfixOps
+
 class DeleteRoomUseCaseSpec extends FlatSpec with MockFactory with OneInstancePerTest {
 
   private val username = "ale"
@@ -32,7 +34,7 @@ class DeleteRoomUseCaseSpec extends FlatSpec with MockFactory with OneInstancePe
     // Given
     (roomRepository deleteRoom _) expects deleteRoomRequest returns (Observable just Unit)
     // userRepository is called with `registerRequest` as parameter returns an observable that contains only `user`
-    (authRepository checkToken  _) expects CheckTokenRequest(token) returns (Observable just Unit)
+    (authRepository checkToken _) expects CheckTokenRequest(token) returns (Observable just Unit)
 
     // When
     // createUserUseCase is executed with argument `request`

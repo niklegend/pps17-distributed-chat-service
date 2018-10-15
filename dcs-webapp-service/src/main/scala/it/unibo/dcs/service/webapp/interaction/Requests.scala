@@ -29,6 +29,7 @@ object Requests {
     implicit def deleteRoomRequestToJson(request: DeleteRoomRequest): JsonObject = {
       Json.obj(("name", request.roomName), ("username", request.username), ("token", request.token))
     }
+
     implicit def jsonToDeleteRoomRequest(json: JsonObject): DeleteRoomRequest = {
       DeleteRoomRequest(json.getString("name"), json.getString("username"), json.getString("token"))
     }

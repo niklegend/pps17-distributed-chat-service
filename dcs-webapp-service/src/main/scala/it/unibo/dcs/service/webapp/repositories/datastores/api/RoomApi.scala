@@ -4,7 +4,6 @@ import io.vertx.core.Vertx
 import io.vertx.scala.core.eventbus.EventBus
 import io.vertx.servicediscovery.ServiceDiscovery
 import it.unibo.dcs.commons.service.HttpEndpointDiscoveryImpl
-import it.unibo.dcs.service.webapp.interaction.Requests
 import it.unibo.dcs.service.webapp.interaction.Requests.{CreateRoomRequest, DeleteRoomRequest, RegisterUserRequest}
 import it.unibo.dcs.service.webapp.model.Room
 import it.unibo.dcs.service.webapp.repositories.datastores.api.impl.RoomRestApi

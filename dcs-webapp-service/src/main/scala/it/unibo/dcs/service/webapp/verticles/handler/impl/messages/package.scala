@@ -8,5 +8,6 @@ package object messages {
   val logoutErrorMessage = "Missing logout information"
   val loginErrorMessage = "Missing login information"
   val roomCreationErrorMessage = "Missing room creation information"
+  val roomDeletionErrorMessage = "Missing room deletion information"
 
 }

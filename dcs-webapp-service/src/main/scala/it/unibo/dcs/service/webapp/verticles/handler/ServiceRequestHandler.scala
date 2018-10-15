@@ -35,6 +35,8 @@ trait ServiceRequestHandler {
     * @param ctx     Vertx context passed implicitly */
   def handleLogout(context: RoutingContext)(implicit ctx: Context): Unit
 
+  def handleRoomDeletion(context: RoutingContext)(implicit ctx: Context): Unit
+
   /** Room creation request handler
     *
     * @param context Vertx routing context

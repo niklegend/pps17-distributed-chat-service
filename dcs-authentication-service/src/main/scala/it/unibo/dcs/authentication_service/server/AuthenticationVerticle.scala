@@ -5,18 +5,19 @@ import io.vertx.core.http.HttpMethod._
 import io.vertx.core.{AbstractVerticle, Context}
 import io.vertx.lang.scala.json.Json
 import io.vertx.scala.ext.auth.jwt.{JWTAuth, JWTAuthOptions}
-import io.vertx.scala.ext.web.handler.{BodyHandler, CorsHandler, JWTAuthHandler}
+import io.vertx.scala.ext.web.handler.CorsHandler
 import io.vertx.scala.ext.web.{Router, RoutingContext}
-import it.unibo.dcs.authentication_service.interactor.{LoginUserUseCase, LogoutUserUseCase, RegisterUserUseCase}
+import io.vertx.scala.ext.web.handler.{BodyHandler, JWTAuthHandler}
+import it.unibo.dcs.authentication_service.interactor.{CheckTokenUseCase, LoginUserUseCase, LogoutUserUseCase, RegisterUserUseCase}
 import it.unibo.dcs.authentication_service.repository.AuthenticationRepository
 import it.unibo.dcs.commons.RxHelper
-import it.unibo.dcs.commons.VertxWebHelper._
 import it.unibo.dcs.commons.interactor.ThreadExecutorExecutionContext
 import it.unibo.dcs.commons.interactor.executor.PostExecutionThread
 import it.unibo.dcs.commons.service.{HttpEndpointPublisher, ServiceVerticle}
+import it.unibo.dcs.commons.VertxWebHelper._
 import rx.lang.scala.Subscriber
-
 import scala.io.Source
+import scala.util.{Failure, Success}
 
 final class AuthenticationVerticle(authenticationRepository: AuthenticationRepository, private[this] val publisher: HttpEndpointPublisher)
   extends ServiceVerticle {
@@ -39,9 +40,10 @@ final class AuthenticationVerticle(authenticationRepository: AuthenticationRepos
       .allowedHeader("Access-Control-Allow-Credentials")
       .allowedHeader("Content-Type"))
 
-    val authProvider = createJwtAuthProvider()
+    val authOptions = createJwtAuthOptions()
+    val authProvider = JWTAuth.create(vertx, authOptions)
     router.route().handler(BodyHandler.create())
-    setupRedirects(router, authProvider)
+    setupProtectedRoutes(router, authProvider)
     setupRoutes(router, authProvider)
   }
 
@@ -59,40 +61,53 @@ final class AuthenticationVerticle(authenticationRepository: AuthenticationRepos
     .subscribe(server => log.info(s"Server started at http://$host:${server.actualPort}"),
       log.error(s"Could not start server at http://$host:$port", _))
 
-  private def createJwtAuthProvider(): JWTAuth = {
+  private def createJwtAuthOptions(): JWTAuthOptions = {
     val keyStoreSecret = Source.fromResource("keystore-secret.txt").getLines().next()
     val keyStoreOptions = Json.obj(("type", "jceks"), ("path", "keystore.jceks"), ("password", keyStoreSecret))
-    val authOptions = JWTAuthOptions.fromJson(Json.obj(("keyStore", keyStoreOptions)))
-    JWTAuth.create(vertx, authOptions)
+    JWTAuthOptions.fromJson(Json.obj(("keyStore", keyStoreOptions)))
   }
 
-  private def setupRedirects(router: Router, authProvider: JWTAuth): Unit = {
-    router.route("/protected/*").handler(JWTAuthHandler.create(authProvider))
-    val filterRouter = Router.router(vertx)
-    setupFilterRouter(filterRouter)
-    filterRouter.mountSubRouter("/protected/", router)
-  }
-
-  private def setupFilterRouter(filterRouter: Router): Unit = {
-    filterRouter.get.handler(context => {
+  private def setupProtectedRoutes(router: Router, jwtAuth: JWTAuth): Unit = {
+    val jwtAuthHandler = JWTAuthHandler.create(jwtAuth)
+    val protectedRouter = Router.router(vertx)
+    protectedRouter.route("/*").handler(context => {
       val token = getTokenFromHeader(context)
       if (token.isEmpty) {
         respondWithCode(401)(context)
+      } else{
+        authenticationRepository.isTokenValid(token.get).subscribe(getTokenSubscriber(jwtAuthHandler, jwtAuth)(context))
       }
-      authenticationRepository.isTokenInvalid(token.get).subscribe(getTokenSubscriber(context))
     })
+    router.mountSubRouter("/protected", protectedRouter)
   }
 
-  private def getTokenSubscriber(implicit context: RoutingContext): Subscriber[Boolean] = {
+  private def getTokenSubscriber(jwtAuthHandler: JWTAuthHandler, jwtAuth: JWTAuth)
+                                (implicit context: RoutingContext): Subscriber[Boolean] = {
     new Subscriber[Boolean]() {
-      override def onNext(value: Boolean): Unit = if (value) {
-        context.next()
-      } else {
+      override def onNext(tokenValid: Boolean): Unit = {
+        if (tokenValid) {
+          checkTokenValidity(jwtAuthHandler, jwtAuth)
+        } else {
+          respondWithCode(401)
+        }
+      }
+      override def onError(error: Throwable): Unit = {
+        error.printStackTrace()
         respondWithCode(401)
       }
 
-      override def onError(error: Throwable): Unit = respondWithCode(401)
     }
+  }
+
+  private def checkTokenValidity(jwtAuthHandler: JWTAuthHandler, jwtAuth: JWTAuth)
+                                (implicit context: RoutingContext): Unit = {
+    val token = getTokenFromHeader
+    token.fold[Unit](() => respondWithCode(401))(tokenValue => {
+      jwtAuth.authenticateFuture(Json.obj(("jwt", tokenValue))).onComplete{
+        case Success(_) => context.next()
+        case Failure(error) => respondWithCode(401)
+      }
+    })
   }
 
   private def setupRoutes(router: Router, jwtAuth: JWTAuth): Unit = {
@@ -100,14 +115,21 @@ final class AuthenticationVerticle(authenticationRepository: AuthenticationRepos
     router.post("/register").handler(requestHandler.handleRegistration(_))
     router.post("/login").handler(requestHandler.handleLogin(_))
     router.post("/protected/logout").handler(requestHandler.handleLogout(_))
+    router.get("/protected/tokenValidity").handler(requestHandler.handleTokenCheck(_))
   }
 
   private def getRequestHandler(jwtAuth: JWTAuth): ServiceRequestHandler = {
     val threadExecutor = ThreadExecutorExecutionContext(vertx)
     val postExecutionThread = PostExecutionThread(RxHelper.scheduler(this.ctx))
-    val loginUseCase = new LoginUserUseCase(threadExecutor, postExecutionThread, authenticationRepository, jwtAuth)
-    val logoutUseCase = new LogoutUserUseCase(threadExecutor, postExecutionThread, authenticationRepository)
-    val registerUseCase = new RegisterUserUseCase(threadExecutor, postExecutionThread, authenticationRepository, jwtAuth)
-    new ServiceRequestHandlerImpl(loginUseCase, logoutUseCase, registerUseCase)
+    val loginUseCase = LoginUserUseCase(threadExecutor, postExecutionThread, authenticationRepository, jwtAuth)
+    val logoutUseCase = LogoutUserUseCase(threadExecutor, postExecutionThread, authenticationRepository)
+    val registerUseCase = RegisterUserUseCase(threadExecutor, postExecutionThread, authenticationRepository, jwtAuth)
+    val checkTokenUseCase = CheckTokenUseCase(threadExecutor, postExecutionThread, authenticationRepository)
+    ServiceRequestHandlerImpl(loginUseCase, logoutUseCase, registerUseCase, checkTokenUseCase)
   }
+}
+
+object AuthenticationVerticle {
+  def apply(authenticationRepository: AuthenticationRepository, publisher: HttpEndpointPublisher) =
+    new AuthenticationVerticle(authenticationRepository, publisher)
 }

@@ -35,6 +35,10 @@ trait AuthenticationDataStore {
     * @return an empty observable stream */
   def createRoom(request: CreateRoomRequest): Observable[Unit]
 
+  /** It checks that the provided jwt token is valid
+    *
+    * @param request needed info to check the token validity
+    * @return an empty observable stream */
   def checkToken(request: CheckTokenRequest): Observable[Unit]
 }
 

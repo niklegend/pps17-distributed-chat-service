@@ -37,6 +37,10 @@ trait AuthenticationApi {
     * @return an empty observable */
   def logoutUser(request: LogoutUserRequest): Observable[Unit]
 
+  /** It tell the Authentication Service to check that the token is valid
+    *
+    * @param request request information containing the token
+    * @return an empty observable */
   def checkToken(request: CheckTokenRequest): Observable[Unit]
 }
 

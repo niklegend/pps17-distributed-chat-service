@@ -9,6 +9,13 @@ import it.unibo.dcs.commons.interactor.UseCase
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
 import rx.lang.scala.Observable
 
+/** It represents the use case to use to logout a user.
+  * It adds the provided jwt token to the set of invalid tokens, through authRepository.
+  *
+  * @param threadExecutor      thread executor that will perform the subscription
+  * @param postExecutionThread thread that will be notified of the subscription result
+  * @param authRepository      authentication repository reference
+  * @usecase logout of a user */
 final class LogoutUserUseCase(private[this] val threadExecutor: ThreadExecutor,
                          private[this] val postExecutionThread: PostExecutionThread,
                          private[this] val authRepository: AuthenticationRepository)
@@ -21,6 +28,13 @@ final class LogoutUserUseCase(private[this] val threadExecutor: ThreadExecutor,
 }
 
 object LogoutUserUseCase{
+
+  /** Factory method to create the use case
+    *
+    * @param threadExecutor      thread executor that will perform the subscription
+    * @param postExecutionThread thread that will be notified of the subscription result
+    * @param authRepository      authentication repository reference
+    * @return the use case object */
   def apply(threadExecutor: ThreadExecutor, postExecutionThread: PostExecutionThread,
             authRepository: AuthenticationRepository) =
     new LogoutUserUseCase(threadExecutor, postExecutionThread, authRepository)

@@ -34,9 +34,13 @@ trait AuthenticationRepository {
   def checkToken(request: CheckTokenRequest): Observable[Unit]
 }
 
-/* Companion object */
+/** Companion object */
 object AuthenticationRepository {
-  /* Factory method */
+
+  /** Factory method to create the authentication repository
+    *
+    * @param authenticationDataStore authentication data store reference
+    * @return the AuthenticationRepository instance */
   def apply(authenticationDataStore: AuthenticationDataStore): AuthenticationRepository =
     new AuthenticationRepositoryImpl(authenticationDataStore)
 }

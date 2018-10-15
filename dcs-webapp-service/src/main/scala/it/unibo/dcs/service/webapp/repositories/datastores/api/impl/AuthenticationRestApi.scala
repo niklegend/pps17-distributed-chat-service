@@ -8,10 +8,7 @@ import it.unibo.dcs.service.webapp.interaction.Requests._
 import it.unibo.dcs.service.webapp.repositories.datastores.api.AuthenticationApi
 import it.unibo.dcs.service.webapp.repositories.datastores.api.exceptions.{LoginResponseException, RegistrationResponseException, RoomCreationException}
 import it.unibo.dcs.service.webapp.repositories.datastores.api.impl.AuthenticationRestApi._
-<<<<<<< HEAD
-=======
-import rx.lang.scala.Observable
->>>>>>> 2ea58c7f4036bf5b775463df0c4e40ea2a9db0e3
+
 import it.unibo.dcs.service.webapp.repositories.datastores.api.routes.protectedRoomURI
 import rx.lang.scala.Observable
 

@@ -10,7 +10,7 @@ dependencies {
     compile project(':dcs-interactor-commons')
 
     compile group: 'io.vertx', name: 'vertx-auth-jwt-scala_2.12', version: vertxVersion
-    compile group: 'commons-codec', name: 'commons-codec', version: commonsCodecVersion
+    compile group: 'commons-codec', name: 'commons-codec', version: 1.11
     testCompile group: 'io.vertx', name: 'vertx-unit', version: vertxVersion
 
 }

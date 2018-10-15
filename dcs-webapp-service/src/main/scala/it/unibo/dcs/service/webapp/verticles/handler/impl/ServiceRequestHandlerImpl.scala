@@ -45,7 +45,7 @@ final class ServiceRequestHandlerImpl(private val userRepository: UserRepository
 
   override def handleRoomCreation(context: RoutingContext)(implicit ctx: Context): Unit = {
     handle(context, roomCreationErrorMessage, {
-      val useCase = CreateRoomUseCase.create(authRepository, roomRepository)
+      val useCase = CreateRoomUseCase(authRepository, roomRepository)
       useCase(_) subscribe (result => context response() end result)
     })
   }
@@ -62,10 +62,10 @@ final class ServiceRequestHandlerImpl(private val userRepository: UserRepository
   }
 
   private def handle(context: RoutingContext, message: String, handler: JsonObject => Unit): Unit = {
-    handleRequestBody(context, responseNotAcceptable(context, message), handler)
+    handleRequestBody(context, replyNotAcceptable(context, message), handler)
   }
 
-  private def responseNotAcceptable(context: RoutingContext, response: String): Unit = {
+  private def replyNotAcceptable(context: RoutingContext, response: String): Unit = {
     context.response().setStatusCode(HttpResponseStatus.NOT_ACCEPTABLE.code)
       .end(response)
   }

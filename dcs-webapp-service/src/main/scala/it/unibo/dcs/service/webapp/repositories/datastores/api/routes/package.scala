@@ -5,6 +5,6 @@ package object routes {
 
   private val apiPrefix = "/api"
 
-  val protectedRoomURI = apiPrefix + "/protected/room"
+  val protectedRoomURI: String = apiPrefix + "/protected/room"
 
 }

@@ -1,5 +1,6 @@
 package it.unibo.dcs.service.webapp.repositories.datastores
 
+import it.unibo.dcs.service.webapp.interaction.Requests
 import it.unibo.dcs.service.webapp.interaction.Requests.{CreateRoomRequest, DeleteRoomRequest}
 import it.unibo.dcs.service.webapp.model.Room
 import it.unibo.dcs.service.webapp.repositories.datastores.api.RoomApi
@@ -8,7 +9,9 @@ import rx.lang.scala.Observable
 
 /** Structure that allows access to rooms data by different means (e.g. network, file, database, ecc) */
 trait RoomDataStore {
- 
+
+  def registerUser(request: Requests.RegisterUserRequest): Observable[Unit]
+
   def deleteRoom(request: DeleteRoomRequest): Observable[Unit]
 
   /** Store a new room given its information (e.g. room name)

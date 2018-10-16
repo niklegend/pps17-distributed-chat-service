@@ -15,9 +15,12 @@ subprojects {
     dependencies {
         compile group: 'org.scala-lang', name: 'scala-library', version: scalaVersion
 
+        testCompile group: 'io.vertx', name: 'vertx-unit', version: vertxVersion
         testCompile group: 'org.scalacheck', name: 'scalacheck_2.12', version: scalaCheckVersion
         testCompile group: 'org.scalatest', name: 'scalatest_2.12', version: scalaTestVersion
         testCompile group: 'org.scalamock', name: 'scalamock_2.12', version: scalaMockVersion
+
+        testRuntime group: 'org.xerial', name: 'sqlite-jdbc', version: sqliteVersion
     }
 }
 
@@ -26,4 +29,9 @@ task stage(type: Copy) {
     subprojects {
         from tasks.withType(Jar)
     }
+}
+
+task scalaDoc(type: ScalaDoc, description: 'Generate scaladocs from all child projects as if it were a single project', group: 'Documentation') {
+    destinationDir = file("$buildDir/docs/scaladoc")
+    title = "$project.name $version API"
 }

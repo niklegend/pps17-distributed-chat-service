@@ -6,13 +6,16 @@ import rx.lang.scala.Observable
 abstract class AbstractApi(private[this] val discovery: HttpEndpointDiscovery,
                            private[this] val serviceName: String) {
 
-  protected[this] var clientOption: Option[WebClient] = None
+  private[this] var clientOption: Option[WebClient] = None
 
   discoverClient()
 
   private[this] def discoverClient(): Unit = {
     discovery.getWebClient(serviceName)
-      .subscribe(c => clientOption = Some(c))
+      .subscribe(c => {
+        println("Got web client")
+        clientOption = Some(c)
+      })
   }
 
   protected final def request[T](action: WebClient => Observable[HttpResponse[T]]): Observable[HttpResponse[T]] =

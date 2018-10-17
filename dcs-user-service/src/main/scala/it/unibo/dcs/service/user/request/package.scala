@@ -1,14 +1,20 @@
 package it.unibo.dcs.service.user
 
-import io.vertx.lang.scala.json.JsonObject
-import it.unibo.dcs.service.user.model.User
-
-import it.unibo.dcs.commons.dataaccess.Implicits._
+import it.unibo.dcs.commons.validation.ValidatorBuilder
 
 package object request {
 
   final case class CreateUserRequest(username: String, firstName: String, lastName: String)
 
   final case class GetUserRequest(username: String) extends AnyVal
+
+  object Validators {
+
+    val createUserValidator = new ValidatorBuilder[CreateUserRequest]
+      .addRule(request => checkNotEmpty(request.firstName))
+
+
+    private def checkNotEmpty(field: String) = Option(field).isDefined && !field.isEmpty
+  }
 
 }

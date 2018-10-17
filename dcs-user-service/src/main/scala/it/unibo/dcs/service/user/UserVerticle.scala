@@ -77,6 +77,12 @@ final class UserVerticle(private[this] val userRepository: UserRepository, priva
         val subscriber = new CreateUserSubscriber(routingContext.response())
         createUserUseCase(request, subscriber)
       })
+
+    router.post("/validateCreateUser")
+      .consumes("application/json")
+      .produces("application/json")
+      .handler(routingContext => {})
+
   }
 
 }

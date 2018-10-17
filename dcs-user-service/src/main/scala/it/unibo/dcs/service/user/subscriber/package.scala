@@ -7,8 +7,8 @@ import io.vertx.scala.core.http.HttpServerResponse
 import it.unibo.dcs.commons.dataaccess.Implicits.{booleanToString, dateToString}
 import it.unibo.dcs.service.user.model.User
 import it.unibo.dcs.service.user.model.exception.UserNotFoundException
-import rx.lang.scala.Subscriber
 import it.unibo.dcs.service.user.subscriber.Implicits._
+import rx.lang.scala.Subscriber
 
 package object subscriber {
 
@@ -32,6 +32,21 @@ package object subscriber {
         response.end(new JsonObject().put("status", statusJson).put("extras", extras).toString)
     }
 
+  }
+
+  final class ValidateUserCreationSubscriber(private[this] val response: HttpServerResponse) extends Subscriber[Unit] {
+
+    private[this] val log = ScalaLogger.getLogger(getClass.getName)
+
+    override def onCompleted(): Unit = ()
+
+    override def onError(error: Throwable): Unit = error match {
+      case UserNotFoundException(username) =>
+        val statusJson: JsonObject = HttpResponseStatus.BAD_REQUEST
+        val extras = new JsonObject().put("username", username)
+        response.setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
+        response.end(new JsonObject().put("status", statusJson).put("extras", extras).toString)
+    }
   }
 
   final class GetUserSubscriber(private[this] val response: HttpServerResponse) extends Subscriber[User] {

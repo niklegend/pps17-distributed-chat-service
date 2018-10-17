@@ -5,7 +5,7 @@ import io.vertx.lang.scala.ScalaLogger
 import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.core.http.HttpServerResponse
 import it.unibo.dcs.commons.dataaccess.Implicits.{booleanToString, dateToString}
-import it.unibo.dcs.commons.service.ErrorSubscriber
+import it.unibo.dcs.commons.service.ErrorHandler
 import it.unibo.dcs.exceptions.{MissingFirstNameException, MissingLastNameException, MissingUsernameException, UsernameAlreadyTaken}
 import it.unibo.dcs.service.user.model.User
 import it.unibo.dcs.service.user.model.exception.UserNotFoundException
@@ -28,9 +28,11 @@ package object subscriber {
   }
 
   final class ValidateUserCreationSubscriber(private[this] val response: HttpServerResponse)
-    extends Subscriber[Unit] with ErrorSubscriber {
+    extends Subscriber[Unit] with ErrorHandler {
 
     private[this] val log = ScalaLogger.getLogger(getClass.getName)
+
+    override def onCompleted(): Unit = response.end()
 
     override def onError(error: Throwable): Unit = error match {
       case MissingUsernameException(message) =>
@@ -53,7 +55,7 @@ package object subscriber {
   }
 
   final class GetUserSubscriber(private[this] val response: HttpServerResponse)
-    extends Subscriber[User] with ErrorSubscriber {
+    extends Subscriber[User] with ErrorHandler {
 
     private[this] val log = ScalaLogger.getLogger(getClass.getName)
 

@@ -6,7 +6,7 @@ import io.vertx.scala.core.http.HttpServerResponse
 
 import scala.language.implicitConversions
 
-trait ErrorSubscriber {
+trait ErrorHandler {
 
   protected def endErrorResponse(response: HttpServerResponse,
                                  httpResponseStatus: HttpResponseStatus,

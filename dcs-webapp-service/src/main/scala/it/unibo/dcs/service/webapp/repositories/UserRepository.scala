@@ -21,6 +21,8 @@ trait UserRepository {
     * Needed information to register a new user
     * @return an observable stream composed by the created user */
   def registerUser(request: RegisterUserRequest): Observable[User]
+
+  def checkUserRegistration(request: RegisterUserRequest): Observable[Unit]
 }
 
 /** Companion object */

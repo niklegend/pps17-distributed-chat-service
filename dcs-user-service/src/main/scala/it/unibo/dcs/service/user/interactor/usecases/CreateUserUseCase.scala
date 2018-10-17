@@ -1,4 +1,4 @@
-package it.unibo.dcs.service.user.interactor
+package it.unibo.dcs.service.user.interactor.usecases
 
 import it.unibo.dcs.commons.interactor.UseCase
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}

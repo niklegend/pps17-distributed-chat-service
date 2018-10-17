@@ -12,8 +12,7 @@ object Requests {
 
   final case class LoginUserRequest(username: String, password: String)
 
-  final case class RegisterUserRequest(username: String,
-                                       firstName: String, lastName: String, password: String, passwordConfirm: String)
+  final case class RegisterUserRequest(username: String, firstName: String, lastName: String, password: String, passwordConfirm: String)
 
   final case class LogoutUserRequest(username: String, token: String)
 

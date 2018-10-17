@@ -16,9 +16,8 @@ class AuthenticationDataStoreDatabase(private[this] val connection: SQLConnectio
   private val insertUser = "INSERT INTO `users` (`username`, `password`) VALUES (?, ?);"
   private val insertInvalidToken = "INSERT INTO `invalid_tokens` (`token`, `expiration_date`) VALUES (?, ?);"
 
-  override def createUser(username: String, password: String): Observable[Unit] = {
+  override def createUser(username: String, password: String): Observable[Unit] =
     execute(insertUser, Json.arr(username, password))
-  }
 
   override def checkUserExistence(username: String): Observable[Unit] =
     checkRecordPresence("users", ("username", username))

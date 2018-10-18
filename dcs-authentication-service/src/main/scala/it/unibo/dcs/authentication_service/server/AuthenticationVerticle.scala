@@ -103,6 +103,7 @@ final class AuthenticationVerticle(authenticationRepository: AuthenticationRepos
     val requestHandler = getRequestHandler(jwtAuth)
     router.post("/register").handler(requestHandler.handleRegistration(_))
     router.post("/login").handler(requestHandler.handleLogin(_))
+    router.post("/validateLogout").handler(requestHandler.handleCheckLogout(_))
     router.post("/protected/logout").handler(requestHandler.handleLogout(_))
     router.get("/protected/tokenValidity").handler(requestHandler.handleTokenCheck(_))
   }

@@ -40,6 +40,8 @@ class ServiceRequestHandlerImpl(loginUserUseCase: LoginUserUseCase, logoutUserUs
       }))
   }
 
+  override def handleCheckLogout(implicit context: RoutingContext): Unit = ???
+
   private def getUsername(implicit context: RoutingContext): Option[String] = getJsonBodyData("username")
 
   private def getPassword(implicit context: RoutingContext): Option[String] = getJsonBodyData("password")
@@ -77,6 +79,7 @@ class ServiceRequestHandlerImpl(loginUserUseCase: LoginUserUseCase, logoutUserUs
     override def onError(error: Throwable): Unit =
       respond(400, "invalid token or user not logged in")
   }
+
 }
 
 object ServiceRequestHandlerImpl{

@@ -1,7 +1,6 @@
 package it.unibo.dcs.service.webapp.verticles.handler.impl
 
 import io.netty.handler.codec.http.HttpResponseStatus
-import io.vertx.lang.scala.ScalaLogger
 import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.core.Context
 import io.vertx.scala.ext.web.RoutingContext
@@ -12,6 +11,7 @@ import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, RoomR
 import it.unibo.dcs.service.webapp.usecases._
 import it.unibo.dcs.service.webapp.verticles.handler.ServiceRequestHandler
 import it.unibo.dcs.service.webapp.verticles.handler.impl.messages._
+import it.unibo.dcs.service.webapp.verticles.handler.impl.subscribers.{LogoutUserSubscriber, ValidateRegistrationSubscriber}
 
 import scala.language.postfixOps
 
@@ -20,26 +20,17 @@ final class ServiceRequestHandlerImpl(private val userRepository: UserRepository
                                       private val roomRepository: RoomRepository)
   extends ServiceRequestHandler with ErrorHandler {
 
-  private val logger = ScalaLogger.getLogger(getClass.getName)
 
-  override def handleRegistration(context: RoutingContext)(implicit ctx: Context): Unit = {
+  override def handleRegistration(context: RoutingContext)(implicit ctx: Context): Unit =
     handle(context, registrationErrorMessage, request =>
-      //TODO Error handling
-      userRepository.checkUserRegistration(request).subscribe(_ => {
-        val useCase = RegisterUserUseCase create(authRepository, userRepository, roomRepository)
-        useCase(request) subscribe (result => context.response() end result)
-      })
-    )
-  }
+      userRepository.checkUserRegistration(request).subscribe(
+        ValidateRegistrationSubscriber(context.response(), request, authRepository, userRepository, roomRepository)))
 
 
-  override def handleLogout(context: RoutingContext)(implicit ctx: Context): Unit = {
-    //TODO Request validity check
-    handle(context, logoutErrorMessage, {
-      val useCase = LogoutUserUseCase.create(authRepository)
-      useCase(_) subscribe (_ => context response() end)
-    })
-  }
+  override def handleLogout(context: RoutingContext)(implicit ctx: Context): Unit =
+    handle(context, logoutErrorMessage, request =>
+      authRepository.checkLogout(request).subscribe(
+        LogoutUserSubscriber(context.response(), request, authRepository)))
 
 
   override def handleLogin(context: RoutingContext)(implicit ctx: Context): Unit = {
@@ -67,12 +58,12 @@ final class ServiceRequestHandlerImpl(private val userRepository: UserRepository
     })
   }
 
-  private def handleRequestBody(context: RoutingContext, ifEmptyResponse: => Unit, handler: JsonObject => Unit): Unit = {
-    context.getBodyAsJson().fold(ifEmptyResponse)(handler)
-  }
-
   private def handle(context: RoutingContext, message: String, handler: JsonObject => Unit): Unit = {
     handleRequestBody(context, replyBadRequest(context, message), handler)
+  }
+
+  private def handleRequestBody(context: RoutingContext, ifEmptyResponse: => Unit, handler: JsonObject => Unit): Unit = {
+    context.getBodyAsJson().fold(ifEmptyResponse)(handler)
   }
 
   private def replyBadRequest(context: RoutingContext, response: String): Unit = {

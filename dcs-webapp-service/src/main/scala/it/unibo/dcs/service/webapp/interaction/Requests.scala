@@ -80,6 +80,7 @@ object Requests {
     }
 
     implicit def jsonObjectToUser(json: JsonObject): User = {
+      println(json)
       User(json.getString("username"), json.getString("firstName"),
         json.getString("lastName"), json.getString("bio"), json.getBoolean("visible"),
         json.getString("lastSeen"))

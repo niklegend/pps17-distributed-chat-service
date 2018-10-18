@@ -81,7 +81,7 @@ package object subscriber {
         .put("firstName", user.firstName)
         .put("lastName", user.lastName)
         .put("bio", user.bio)
-        .put("visible", booleanToString(user.visible))
+        .put("visible", user.visible)
         .put("lastSeen", dateToString(user.lastSeen))
     }
 

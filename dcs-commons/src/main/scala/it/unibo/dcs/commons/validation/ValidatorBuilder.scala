@@ -5,19 +5,22 @@ import rx.lang.scala.Observable
 
 import scala.collection.mutable
 
-private[validation] final case class Rule[T](predicate: T => Boolean, exception: T => Throwable)
-
 final class ValidatorBuilder[T] private[validation]() {
 
   private[this] var _rules = Option(mutable.Buffer[Rule[T]]())
 
-  private[this] def addRule(rule: Rule[T]): ValidatorBuilder[T] = {
+  def addRule(rule: Rule[T]): ValidatorBuilder[T] = {
     rules += rule
     this
   }
 
-  def addRule(predicate: T => Boolean)(exception: T => Throwable = _ => new RuntimeException()): ValidatorBuilder[T] =
-    addRule(Rule[T](predicate, exception))
+  def observableRule(condition: T => Boolean, error: Throwable): Rule[T] = {
+    entity =>
+      Observable.just(entity)
+        .filter(condition)
+        .singleOption
+        .map(opt => opt.getOrElse(throw error))
+  }
 
   private[validation] def build: Validator[T] = {
     val validator = new ValidatorImpl[T](rules.toList)

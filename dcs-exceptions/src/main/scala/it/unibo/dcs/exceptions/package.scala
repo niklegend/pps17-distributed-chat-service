@@ -30,5 +30,7 @@ package object exceptions {
 
   final case class LogoutValidityResponseException(message: String) extends DcsException
 
+  final case class InvalidTokenException(message: String) extends DcsException
+
 }
 

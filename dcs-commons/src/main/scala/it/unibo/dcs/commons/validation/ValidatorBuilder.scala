@@ -1,6 +1,7 @@
 package it.unibo.dcs.commons.validation
 
 import it.unibo.dcs.commons.validation.ValidatorBuilder.EXCEPTION
+import rx.lang.scala.Observable
 
 import scala.collection.mutable
 

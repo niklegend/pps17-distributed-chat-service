@@ -1,7 +1,8 @@
 package it.unibo.dcs.authentication_service.interactor
 
-import _root_.it.unibo.dcs.authentication_service.request.LogoutUserRequest
 import it.unibo.dcs.authentication_service.MocksForUseCases._
+import it.unibo.dcs.service.authentication.request.LogoutUserRequest
+import it.unibo.dcs.service.authentication.interactor.LogoutUserUseCase
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
 import rx.lang.scala.{Observable, Subscriber}

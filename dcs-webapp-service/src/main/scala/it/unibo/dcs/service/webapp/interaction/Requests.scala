@@ -79,9 +79,11 @@ object Requests {
 
     implicit def jsonObjectToUser(json: JsonObject): User = {
       User(json.getString("username"), json.getString("firstName"),
-        json.getString("lastName"), json.getString("bio"), json.getBoolean("visible"),
+        json.getString("lastName"), json.getString("bio"), stringToBool(json.getString("visible")),
         json.getString("lastSeen"))
     }
+
+    private def stringToBool(string: String): Boolean = string.toInt != 0
 
     implicit def jsonObjectToRoom(json: JsonObject): Room = {
       Room(json.getString("name"))

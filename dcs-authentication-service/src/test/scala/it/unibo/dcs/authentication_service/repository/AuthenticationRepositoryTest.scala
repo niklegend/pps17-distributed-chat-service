@@ -2,7 +2,8 @@ package it.unibo.dcs.authentication_service.repository
 
 import java.util.Date
 
-import it.unibo.dcs.authentication_service.data.AuthenticationDataStore
+import it.unibo.dcs.service.authentication.data.AuthenticationDataStore
+import it.unibo.dcs.service.authentication.repository.AuthenticationRepositoryImpl
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
 import rx.lang.scala.{Observable, Subscriber}

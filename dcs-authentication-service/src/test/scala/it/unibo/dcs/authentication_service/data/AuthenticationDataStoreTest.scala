@@ -3,6 +3,7 @@ package it.unibo.dcs.authentication_service.data
 import java.util.Date
 
 import io.vertx.scala.ext.sql.SQLConnection
+import it.unibo.dcs.service.authentication.data.{AuthenticationDataStore, AuthenticationDataStoreDatabase}
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
 import rx.lang.scala.Subscriber

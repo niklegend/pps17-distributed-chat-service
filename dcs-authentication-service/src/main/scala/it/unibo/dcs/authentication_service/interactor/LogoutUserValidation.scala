@@ -14,3 +14,10 @@ final class LogoutUserValidation(private[this] val threadExecutor: ThreadExecuto
   override protected[this] def createObservable(request: LogoutUserRequest): Observable[Unit] =
     validator.validate(request)
 }
+
+object LogoutUserValidation {
+  def apply(threadExecutor: ThreadExecutor,
+            postExecutionThread: PostExecutionThread,
+            validator: Validator[LogoutUserRequest]): LogoutUserValidation =
+    new LogoutUserValidation(threadExecutor, postExecutionThread, validator)
+}

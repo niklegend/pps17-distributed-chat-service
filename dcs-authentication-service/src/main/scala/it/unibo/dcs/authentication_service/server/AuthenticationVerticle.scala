@@ -8,13 +8,14 @@ import io.vertx.scala.ext.auth.jwt.{JWTAuth, JWTAuthOptions}
 import io.vertx.scala.ext.web.handler.CorsHandler
 import io.vertx.scala.ext.web.{Router, RoutingContext}
 import io.vertx.scala.ext.web.handler.{BodyHandler, JWTAuthHandler}
-import it.unibo.dcs.authentication_service.interactor.{CheckTokenUseCase, LoginUserUseCase, LogoutUserUseCase, RegisterUserUseCase}
+import it.unibo.dcs.authentication_service.interactor._
 import it.unibo.dcs.authentication_service.repository.AuthenticationRepository
 import it.unibo.dcs.commons.RxHelper
 import it.unibo.dcs.commons.interactor.ThreadExecutorExecutionContext
 import it.unibo.dcs.commons.interactor.executor.PostExecutionThread
 import it.unibo.dcs.commons.service.{HttpEndpointPublisher, ServiceVerticle}
 import it.unibo.dcs.commons.VertxWebHelper._
+
 import scala.io.Source
 import scala.util.{Failure, Success}
 
@@ -115,7 +116,9 @@ final class AuthenticationVerticle(authenticationRepository: AuthenticationRepos
     val logoutUseCase = LogoutUserUseCase(threadExecutor, postExecutionThread, authenticationRepository)
     val registerUseCase = RegisterUserUseCase(threadExecutor, postExecutionThread, authenticationRepository, jwtAuth)
     val checkTokenUseCase = CheckTokenUseCase(threadExecutor, postExecutionThread, authenticationRepository)
-    ServiceRequestHandlerImpl(loginUseCase, logoutUseCase, registerUseCase, checkTokenUseCase)
+    val logoutValidator = ???
+    val logoutUserValidation = LogoutUserValidation(threadExecutor, postExecutionThread, logoutValidator)
+    ServiceRequestHandlerImpl(loginUseCase, logoutUseCase, registerUseCase, checkTokenUseCase, logoutUserValidation)
   }
 }
 

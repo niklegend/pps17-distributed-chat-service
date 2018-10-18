@@ -2,13 +2,14 @@ package it.unibo.dcs.authentication_service.server
 
 import io.vertx.lang.scala.json.Json
 import io.vertx.scala.ext.web.RoutingContext
-import it.unibo.dcs.authentication_service.interactor.{CheckTokenUseCase, LoginUserUseCase, LogoutUserUseCase, RegisterUserUseCase}
+import it.unibo.dcs.authentication_service.interactor._
 import it.unibo.dcs.authentication_service.request.{CheckTokenRequest, LoginUserRequest, LogoutUserRequest, RegisterUserRequest}
 import it.unibo.dcs.commons.VertxWebHelper._
 import rx.lang.scala.Subscriber
 
 class ServiceRequestHandlerImpl(loginUserUseCase: LoginUserUseCase, logoutUserUseCase: LogoutUserUseCase,
-                                registerUserUseCase: RegisterUserUseCase, checkTokenUseCase: CheckTokenUseCase)
+                                registerUserUseCase: RegisterUserUseCase, checkTokenUseCase: CheckTokenUseCase,
+                                logoutUserValidation: LogoutUserValidation)
   extends ServiceRequestHandler {
 
   override def handleRegistration(implicit context: RoutingContext): Unit = {
@@ -84,6 +85,8 @@ class ServiceRequestHandlerImpl(loginUserUseCase: LoginUserUseCase, logoutUserUs
 
 object ServiceRequestHandlerImpl{
   def apply(loginUserUseCase: LoginUserUseCase, logoutUserUseCase: LogoutUserUseCase,
-            registerUserUseCase: RegisterUserUseCase, checkTokenUseCase: CheckTokenUseCase) =
-    new ServiceRequestHandlerImpl(loginUserUseCase, logoutUserUseCase, registerUserUseCase, checkTokenUseCase)
+            registerUserUseCase: RegisterUserUseCase, checkTokenUseCase: CheckTokenUseCase,
+            logoutUserValidation: LogoutUserValidation) =
+    new ServiceRequestHandlerImpl(loginUserUseCase, logoutUserUseCase, registerUserUseCase, checkTokenUseCase,
+      logoutUserValidation)
 }

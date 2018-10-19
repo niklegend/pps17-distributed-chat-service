@@ -18,20 +18,17 @@ class AuthenticationRestApi(private[this] val discovery: HttpEndpointDiscovery)
   private val authenticationKeyLabel = "Authorization"
   private val tokenPrefix = "Bearer "
 
-
   override def loginUser(loginUserRequest: LoginUserRequest): Observable[String] = {
     request(authWebClient =>
       Observable.from(authWebClient.post(loginUserURI).sendJsonObjectFuture(loginUserRequest)))
       .map(response => response.bodyAsString().getOrElse(throw LoginResponseException()))
   }
 
-
   override def registerUser(registerRequest: RegisterUserRequest): Observable[String] = {
     request(authWebClient =>
       Observable.from(authWebClient.post(registerUserURI).sendJsonObjectFuture(registerRequest)))
       .map(response => response.bodyAsString().getOrElse(throw RegistrationResponseException()))
   }
-
 
   override def logoutUser(logoutRequest: LogoutUserRequest): Observable[Unit] = {
     request(authWebClient =>
@@ -44,12 +41,13 @@ class AuthenticationRestApi(private[this] val discovery: HttpEndpointDiscovery)
   override def createRoom(roomCreationRequest: CreateRoomRequest): Observable[Unit] =
     checkToken(CheckTokenRequest(roomCreationRequest.token))
 
-  override def checkToken(checkRoomRequest: CheckTokenRequest): Observable[Unit] =
+  override def checkToken(checkTokenRequest: CheckTokenRequest): Observable[Unit] = {
     request(tokenWebClient =>
       Observable.from(tokenWebClient.get(checkTokenURI)
-        .putHeader(authenticationKeyLabel, tokenPrefix + checkRoomRequest.token)
+        .putHeader(authenticationKeyLabel, tokenPrefix + checkTokenRequest.token)
         .sendJsonObjectFuture(Json.obj())))
       .map(_.body())
+  }
 }
 
 private[impl] object AuthenticationRestApi {

@@ -18,7 +18,7 @@ export class ChatService {
   private static LOGIN = ChatService.PREFIX + '/login';
   private static REGISTER = ChatService.PREFIX + '/register';
   private static LOGOUT = ChatService.PREFIX + '/logout';
-  private static ROOMS = ChatService.PREFIX + '/room';
+  private static ROOMS = ChatService.PREFIX + '/rooms';
 
   private static ROOM_CREATED = 'rooms.created';
 
@@ -46,7 +46,7 @@ export class ChatService {
   }
 
   deleteRoom(request: DeleteRoomRequest): Observable<Room> {
-    return this.client.post<Room>(ChatService.ROOMS + '/' + request.name, request);
+    return this.client.post<Room>(ChatService.ROOMS, request);
   }
 
   setUser(user: User) {

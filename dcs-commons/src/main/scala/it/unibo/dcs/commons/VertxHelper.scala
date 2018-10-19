@@ -1,13 +1,13 @@
 package it.unibo.dcs.commons
 
-import java.nio.charset.StandardCharsets
+import io.vertx.core.eventbus.{EventBus => JEventBus}
 
-import io.vertx.core.json.JsonObject
+import io.vertx.core.eventbus.MessageCodec
 import io.vertx.core.{AsyncResult, Future, Handler, Context => JContext, Vertx => JVertx}
+import io.vertx.scala.core.eventbus.EventBus
 import io.vertx.scala.core.{Context, Vertx}
 import it.unibo.dcs.commons.RxHelper.Implicits.RxObservable
 import it.unibo.dcs.commons.VertxHelper.Implicits._
-import org.apache.commons.io.IOUtils
 import rx.lang.scala.Observable
 
 import scala.util.{Failure, Success, Try}
@@ -44,6 +44,32 @@ object VertxHelper {
           Failure(ar.cause)
         else
           Failure(new IllegalStateException("Async result is neither succeeded or failed"))
+    }
+
+    implicit class RichEventBus(eventBus: EventBus) {
+
+      def registerCodec(codec: MessageCodec[_, _]):RichEventBus = {
+        eventBus.asJava.asInstanceOf[JEventBus].registerCodec(codec)
+        this
+      }
+
+      def unregisterCodec(name: String):RichEventBus = {
+        eventBus.asJava.asInstanceOf[JEventBus].unregisterCodec(name)
+        this
+      }
+
+      def registerDefaultCodec[T](codec: MessageCodec[T, _]):RichEventBus = {
+        eventBus.asJava.asInstanceOf[JEventBus].registerDefaultCodec(classOf[T], codec)
+        this
+      }
+
+      def unregisterDefaultCodec[T]: RichEventBus = {
+        eventBus.asJava.asInstanceOf[JEventBus].unregisterDefaultCodec(classOf[T])
+        this
+      }
+
+      def address(name: String): Address = new Address(eventBus, name)
+
     }
 
   }

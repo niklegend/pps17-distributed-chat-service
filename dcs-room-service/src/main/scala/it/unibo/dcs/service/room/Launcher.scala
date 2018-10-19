@@ -33,7 +33,7 @@ object Launcher extends App {
       case (vertx, connection) =>
         val discovery = ServiceDiscovery.create(vertx)
         val eventBus = vertx.eventBus
-        eventBus.asJava.asInstanceOf[JEventBus].registerDefaultCodec(classOf[Record], new RecordMessageCodec())
+        vertx.eventBus.registerDefaultCodec[Record](new RecordMessageCodec())
         val publisher = new HttpEndpointPublisherImpl(discovery, eventBus)
         val roomDataStore: RoomDataStore = new RoomDataStoreDatabase(connection)
         val roomRepository = new RoomRepositoryImpl(roomDataStore)

@@ -37,7 +37,7 @@ object Launcher extends App {
     val authDataStore = new AuthenticationDataStoreDatabase(sqlConnection)
     val authRepository = new AuthenticationRepositoryImpl(authDataStore)
 
-    vertx.eventBus.asJava.asInstanceOf[JEventBus].registerDefaultCodec(classOf[Record], new RecordMessageCodec())
+    vertx.eventBus.registerDefaultCodec[Record](new RecordMessageCodec())
 
     val discovery = ServiceDiscovery.create(vertx)
     val publisher = new HttpEndpointPublisherImpl(discovery, vertx.eventBus)

@@ -18,7 +18,7 @@ export class ChatService {
   private static LOGIN = ChatService.PREFIX + '/login';
   private static REGISTER = ChatService.PREFIX + '/register';
   private static LOGOUT = ChatService.PREFIX + '/logout';
-  private static ROOMS = ChatService.PREFIX + '/room';
+  private static ROOMS = ChatService.PREFIX + '/rooms';
 
   private static ROOM_CREATED = 'rooms.created';
 

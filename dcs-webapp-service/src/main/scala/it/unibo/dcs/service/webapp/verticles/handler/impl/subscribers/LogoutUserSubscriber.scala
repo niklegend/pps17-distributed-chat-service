@@ -4,6 +4,8 @@ import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.scala.core.Context
 import io.vertx.scala.core.http.HttpServerResponse
 import it.unibo.dcs.commons.VertxWebHelper._
+import it.unibo.dcs.commons.validation.ErrorTypes
+import it.unibo.dcs.commons.validation.ErrorTypes._
 import it.unibo.dcs.exceptions.LogoutValidityResponseException
 import it.unibo.dcs.service.webapp.interaction.Requests.LogoutUserRequest
 import it.unibo.dcs.service.webapp.repositories.AuthenticationRepository
@@ -25,7 +27,7 @@ final class LogoutUserSubscriber(private[this] val response: HttpServerResponse,
 
   override def onError(error: Throwable): Unit = error match {
     case LogoutValidityResponseException(message) =>
-      endErrorResponse(response, HttpResponseStatus.NO_CONTENT, errorType = "MISSING_RESPONSE_BODY", message)
+      endErrorResponse(response, HttpResponseStatus.NO_CONTENT, errorType = missingResponseBody, message)
   }
 }
 

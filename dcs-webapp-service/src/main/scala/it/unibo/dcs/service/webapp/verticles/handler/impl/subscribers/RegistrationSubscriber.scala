@@ -12,12 +12,12 @@ import it.unibo.dcs.service.webapp.usecases.RegisterUserUseCase
 import rx.lang.scala.Subscriber
 
 
-final class ValidateRegistrationSubscriber(private[this] val response: HttpServerResponse,
-                                           private[this] val request: RegisterUserRequest,
-                                           private[this] val authRepository: AuthenticationRepository,
-                                           private[this] val userRepository: UserRepository,
-                                           private[this] val roomRepository: RoomRepository,
-                                           private[this] implicit val ctx: Context)
+final class RegistrationSubscriber(private[this] val response: HttpServerResponse,
+                                   private[this] val request: RegisterUserRequest,
+                                   private[this] val authRepository: AuthenticationRepository,
+                                   private[this] val userRepository: UserRepository,
+                                   private[this] val roomRepository: RoomRepository,
+                                   private[this] implicit val ctx: Context)
   extends Subscriber[Unit] with ErrorHandler {
 
 
@@ -32,11 +32,11 @@ final class ValidateRegistrationSubscriber(private[this] val response: HttpServe
   }
 }
 
-object ValidateRegistrationSubscriber {
+object RegistrationSubscriber {
   def apply(response: HttpServerResponse,
             request: RegisterUserRequest,
             authRepository: AuthenticationRepository,
             userRepository: UserRepository,
-            roomRepository: RoomRepository)(implicit ctx: Context): ValidateRegistrationSubscriber =
-    new ValidateRegistrationSubscriber(response, request, authRepository, userRepository, roomRepository, ctx)
+            roomRepository: RoomRepository)(implicit ctx: Context): RegistrationSubscriber =
+    new RegistrationSubscriber(response, request, authRepository, userRepository, roomRepository, ctx)
 }

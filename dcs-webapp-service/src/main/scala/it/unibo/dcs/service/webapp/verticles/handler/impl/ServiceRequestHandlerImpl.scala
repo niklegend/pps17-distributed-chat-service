@@ -11,7 +11,7 @@ import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, RoomR
 import it.unibo.dcs.service.webapp.usecases._
 import it.unibo.dcs.service.webapp.verticles.handler.ServiceRequestHandler
 import it.unibo.dcs.service.webapp.verticles.handler.impl.messages._
-import it.unibo.dcs.service.webapp.verticles.handler.impl.subscribers.{LogoutUserSubscriber, ValidateRegistrationSubscriber}
+import it.unibo.dcs.service.webapp.verticles.handler.impl.subscribers.{LogoutUserSubscriber, RegistrationSubscriber}
 
 import scala.language.postfixOps
 
@@ -24,7 +24,7 @@ final class ServiceRequestHandlerImpl(private val userRepository: UserRepository
   override def handleRegistration(context: RoutingContext)(implicit ctx: Context): Unit =
     handle(context, registrationErrorMessage, request =>
       userRepository.checkUserRegistration(request).subscribe(
-        ValidateRegistrationSubscriber(context.response(), request, authRepository, userRepository, roomRepository)))
+        RegistrationSubscriber(context.response(), request, authRepository, userRepository, roomRepository)))
 
 
   override def handleLogout(context: RoutingContext)(implicit ctx: Context): Unit =

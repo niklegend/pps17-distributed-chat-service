@@ -6,6 +6,7 @@ import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.core.http.HttpServerResponse
 import it.unibo.dcs.commons.VertxWebHelper.endErrorResponse
 import it.unibo.dcs.commons.dataaccess.Implicits.dateToString
+import it.unibo.dcs.commons.validation.ErrorTypes._
 import it.unibo.dcs.exceptions.{MissingFirstNameException, MissingLastNameException, MissingUsernameException, UsernameAlreadyTaken}
 import it.unibo.dcs.service.user.model.User
 import it.unibo.dcs.service.user.model.exception.UserNotFoundException
@@ -37,19 +38,19 @@ package object subscriber {
     override def onError(error: Throwable): Unit = error match {
       case MissingUsernameException(message) =>
         log.error(error.getMessage)
-        endErrorResponse(response, HttpResponseStatus.BAD_REQUEST, errorType = "MISSING_USERNAME", message)
+        endErrorResponse(response, HttpResponseStatus.BAD_REQUEST, errorType = missingUsername, message)
 
       case MissingFirstNameException(message) =>
         log.error(error.getMessage)
-        endErrorResponse(response, HttpResponseStatus.BAD_REQUEST, errorType = "MISSING_FIRST_NAME", message)
+        endErrorResponse(response, HttpResponseStatus.BAD_REQUEST, errorType = missingFirstName, message)
 
       case MissingLastNameException(message) =>
         log.error(error.getMessage)
-        endErrorResponse(response, HttpResponseStatus.BAD_REQUEST, errorType = "MISSING_LAST_NAME", message)
+        endErrorResponse(response, HttpResponseStatus.BAD_REQUEST, errorType = missingLastName, message)
 
       case UsernameAlreadyTaken(username) =>
         log.error(error.getMessage)
-        endErrorResponse(response, HttpResponseStatus.BAD_REQUEST, errorType = "USERNAME_ALREADY_TAKEN",
+        endErrorResponse(response, HttpResponseStatus.BAD_REQUEST, errorType = usernameAlreadyTaken,
           description = "username: " + username + "is already taken")
     }
   }
@@ -66,7 +67,7 @@ package object subscriber {
 
     override def onError(error: Throwable): Unit = error match {
       case UserNotFoundException(username) =>
-        endErrorResponse(response, HttpResponseStatus.NOT_FOUND, errorType = "USER_NOT_FOUND",
+        endErrorResponse(response, HttpResponseStatus.NOT_FOUND, errorType = userNotFound,
           description = "User with username: " + username + "not found")
     }
 

@@ -4,21 +4,20 @@ import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.core.Context
 import io.vertx.scala.ext.web.RoutingContext
-import it.unibo.dcs.commons.service.ErrorHandler
+import it.unibo.dcs.commons.VertxWebHelper._
 import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
 import it.unibo.dcs.service.webapp.interaction.Results.Implicits._
 import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, RoomRepository, UserRepository}
 import it.unibo.dcs.service.webapp.usecases._
 import it.unibo.dcs.service.webapp.verticles.handler.ServiceRequestHandler
-import it.unibo.dcs.service.webapp.verticles.handler.impl.messages._
+import it.unibo.dcs.service.webapp.verticles.handler.impl.message._
 import it.unibo.dcs.service.webapp.verticles.handler.impl.subscribers.{LogoutUserSubscriber, RegistrationSubscriber}
 
 import scala.language.postfixOps
 
 final class ServiceRequestHandlerImpl(private val userRepository: UserRepository,
                                       private val authRepository: AuthenticationRepository,
-                                      private val roomRepository: RoomRepository)
-  extends ServiceRequestHandler with ErrorHandler {
+                                      private val roomRepository: RoomRepository) extends ServiceRequestHandler {
 
 
   override def handleRegistration(context: RoutingContext)(implicit ctx: Context): Unit =

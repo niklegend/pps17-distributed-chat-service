@@ -25,6 +25,7 @@ package object exceptions {
 
   final case class MissingRoomNameException(message: String) extends DcsException
 
+
   /* Response exceptions */
   final case class RegistrationResponseException(message: String) extends DcsException
 

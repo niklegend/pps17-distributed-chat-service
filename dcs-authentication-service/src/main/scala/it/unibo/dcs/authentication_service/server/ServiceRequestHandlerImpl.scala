@@ -6,7 +6,6 @@ import io.vertx.scala.ext.web.RoutingContext
 import it.unibo.dcs.authentication_service.interactor._
 import it.unibo.dcs.authentication_service.request.{CheckTokenRequest, LoginUserRequest, LogoutUserRequest, RegisterUserRequest}
 import it.unibo.dcs.commons.VertxWebHelper._
-import it.unibo.dcs.commons.service.ErrorHandler
 import rx.lang.scala.Subscriber
 
 class ServiceRequestHandlerImpl(loginUserUseCase: LoginUserUseCase, logoutUserUseCase: LogoutUserUseCase,
@@ -86,8 +85,7 @@ class ServiceRequestHandlerImpl(loginUserUseCase: LoginUserUseCase, logoutUserUs
       respond(400, "invalid token or user not logged in")
   }
 
-  private class LogoutValiditySubscriber(implicit routingContext: RoutingContext)
-    extends Subscriber[Unit] with ErrorHandler {
+  private class LogoutValiditySubscriber(implicit routingContext: RoutingContext) extends Subscriber[Unit] {
 
     override def onNext(unit: Unit): Unit = respondWithCode(200)
 

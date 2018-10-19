@@ -17,25 +17,16 @@ object Launcher extends App {
 
   private val logger = ScalaLogger.getLogger(getClass.getName)
 
-<<<<<<< HEAD
+  private val address = InetAddress.getLocalHost.getHostAddress
   val port = args(0).toInt
 
   val config = new JsonObject()
-      .put("host", InetAddress.getLocalHost.getHostAddress)
-      .put("port", args(0).toInt)
+      .put("host", address)
+      .put("port", port)
 
   VertxHelper.toObservable[Vertx](Vertx.clusteredVertx(VertxOptions(), _))
     .subscribe(vertx => vertx deployVerticle(new WebAppVerticle, DeploymentOptions()
       .setConfig(config)),
-=======
-  val options = DeploymentOptions()
-      .setConfig(new JsonObject()
-        .put("host", InetAddress.getLocalHost.getHostAddress)
-        .put("port", args(0).toInt))
-
-  VertxHelper.toObservable[Vertx](Vertx.clusteredVertx(VertxOptions(), _))
-    .subscribe(vertx => vertx deployVerticle(new WebAppVerticle, options),
->>>>>>> 6eaf76ce0b16e4dc75bd8070c0d83ea888c99b85
       cause => logger.error("", cause))
 
 }

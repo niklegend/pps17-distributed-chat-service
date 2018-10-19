@@ -6,14 +6,26 @@ package object exceptions {
   /** Sum type representing all the specific exceptions for Distributed Chat Service application */
   sealed trait DcsException extends RuntimeException
 
+  /* Already taken */
   final case class UsernameAlreadyTaken(username: String) extends DcsException
 
+  /* Not found*/
+  final case class UserNotFoundException(username: String) extends DcsException
+
+  /* Missing information */
   final case class MissingUsernameException(message: String) extends DcsException
 
   final case class MissingLastNameException(message: String) extends DcsException
 
+  final case class MissingPasswordException(message: String) extends DcsException
+
   final case class MissingFirstNameException(message: String) extends DcsException
 
+  final case class MissingTokenException(message: String) extends DcsException
+
+  final case class MissingRoomNameException(message: String) extends DcsException
+
+  /* Response exceptions */
   final case class RegistrationResponseException(message: String) extends DcsException
 
   final case class LoginResponseException(message: String) extends DcsException
@@ -29,8 +41,6 @@ package object exceptions {
   final case class RegistrationValidityResponseException(message: String) extends DcsException
 
   final case class LogoutValidityResponseException(message: String) extends DcsException
-
-  final case class InvalidTokenException(message: String) extends DcsException
 
 }
 

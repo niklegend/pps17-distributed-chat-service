@@ -45,6 +45,4 @@ else
     exit 1
 fi
 
-echo $port
-
 java -jar build/dcs-$service-service-1.0.jar $port

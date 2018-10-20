@@ -30,7 +30,9 @@ package object subscriber {
     }
   }
 
-  final class ValidateUserCreationSubscriber(private[this] val response: HttpServerResponse)
+  final class ValidateUserCreationSubscriber(private[this] val response: HttpServerResponse,
+                                             private[this] val request: CreateUserRequest,
+                                             private[this] val createUserUseCase: CreateUserUseCase)
     extends Subscriber[Unit] {
 
     private[this] val log = ScalaLogger.getLogger(getClass.getName)

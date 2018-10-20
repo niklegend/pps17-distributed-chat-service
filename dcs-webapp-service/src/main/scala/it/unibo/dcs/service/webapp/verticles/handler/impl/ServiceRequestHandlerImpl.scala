@@ -5,13 +5,14 @@ import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.core.Context
 import io.vertx.scala.ext.web.RoutingContext
 import it.unibo.dcs.commons.VertxWebHelper._
+import it.unibo.dcs.commons.validation.ErrorTypes._
 import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
 import it.unibo.dcs.service.webapp.interaction.Results.Implicits._
 import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, RoomRepository, UserRepository}
 import it.unibo.dcs.service.webapp.usecases._
 import it.unibo.dcs.service.webapp.verticles.handler.ServiceRequestHandler
 import it.unibo.dcs.service.webapp.verticles.handler.impl.message._
-import it.unibo.dcs.service.webapp.verticles.handler.impl.subscribers.{LogoutUserSubscriber, RegistrationSubscriber}
+import it.unibo.dcs.service.webapp.verticles.handler.impl.subscribers.RegistrationSubscriber
 
 import scala.language.postfixOps
 
@@ -21,19 +22,20 @@ final class ServiceRequestHandlerImpl(private val userRepository: UserRepository
 
 
   override def handleRegistration(context: RoutingContext)(implicit ctx: Context): Unit =
-    handle(context, registrationErrorMessage, request =>
-      userRepository.checkUserRegistration(request).subscribe(
-        RegistrationSubscriber(context.response(), request, authRepository, userRepository, roomRepository)))
+    handle(context, registrationErrorMessage, {
+      val useCase = RegisterUserUseCase.create(authRepository, userRepository, roomRepository)
+      useCase(_) subscribe RegistrationSubscriber(context.response(), authRepository, userRepository, roomRepository)
+    })
 
 
   override def handleLogout(context: RoutingContext)(implicit ctx: Context): Unit =
-    handle(context, logoutErrorMessage, request =>
-      authRepository.checkLogout(request).subscribe(
-        LogoutUserSubscriber(context.response(), request, authRepository)))
+    handle(context, logoutErrorMessage, {
+      val useCase = LogoutUserUseCase.create(authRepository)
+      useCase(_) subscribe (_ => context response() end)
+    })
 
 
   override def handleLogin(context: RoutingContext)(implicit ctx: Context): Unit = {
-    //TODO Request validity check
     handle(context, loginErrorMessage, {
       val useCase = LoginUserUseCase.create(authRepository, userRepository)
       useCase(_) subscribe (result => context response() end result)
@@ -42,7 +44,6 @@ final class ServiceRequestHandlerImpl(private val userRepository: UserRepository
 
 
   override def handleRoomCreation(context: RoutingContext)(implicit ctx: Context): Unit = {
-    //TODO Request validity check
     handle(context, roomCreationErrorMessage, {
       val useCase = CreateRoomUseCase(authRepository, roomRepository)
       useCase(_) subscribe (result => context response() end result)
@@ -50,7 +51,6 @@ final class ServiceRequestHandlerImpl(private val userRepository: UserRepository
   }
 
   override def handleRoomDeletion(context: RoutingContext)(implicit ctx: Context): Unit = {
-    //TODO Request validity check
     handle(context, roomDeletionErrorMessage, {
       val useCase = DeleteRoomUseCase.create(authRepository, roomRepository)
       useCase(_) subscribe (_ => context response() end)
@@ -66,7 +66,7 @@ final class ServiceRequestHandlerImpl(private val userRepository: UserRepository
   }
 
   private def replyBadRequest(context: RoutingContext, response: String): Unit = {
-    endErrorResponse(context.response(), HttpResponseStatus.BAD_REQUEST, "MISSING_REQUEST_BODY", response)
+    endErrorResponse(context.response(), HttpResponseStatus.BAD_REQUEST, missingRequestBody, response)
   }
 
 }

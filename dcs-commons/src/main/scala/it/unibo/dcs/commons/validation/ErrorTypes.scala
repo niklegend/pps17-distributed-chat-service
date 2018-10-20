@@ -7,6 +7,7 @@ object ErrorTypes {
   val createUserError = "USER_CREATION_ERROR"
 
   val missingResponseBody = "MISSING_RESPONSE_BODY"
+  val missingRequestBody = "MISSING_REQUEST_BODY"
   val missingUsername = "MISSING_USERNAME"
   val missingFirstName = "MISSING_FIRST_NAME"
   val missingLastName = "MISSING_LAST_NAME"

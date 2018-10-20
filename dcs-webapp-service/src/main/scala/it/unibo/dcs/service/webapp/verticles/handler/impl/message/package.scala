@@ -1,5 +1,6 @@
 package it.unibo.dcs.service.webapp.verticles.handler.impl
 
+//TODO to put in message commons
 /** Package object that contains all the messages to send to the web client */
 package object message {
 

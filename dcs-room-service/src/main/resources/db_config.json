@@ -1,13 +1,6 @@
 {
-<<<<<<< HEAD
-  "url": "jdbc:mysql://mysql1.gear.host/roomservice",
-  "driver_class": "com.mysql.cj.jdbc.Driver",
-  "user": "roomservice",
-  "password": "teddy_95"
-=======
     "url": "jdbc:mysql://mysql1.gear.host/roomservice?autoReconnect=true",
     "driver_class": "com.mysql.cj.jdbc.Driver",
     "user": "roomservice",
     "password": "teddy_95"
->>>>>>> 35053086a24dd878652b88fbfe33b03df454c684
 }

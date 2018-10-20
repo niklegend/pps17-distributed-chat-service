@@ -43,4 +43,5 @@ apply plugin: "cz.augi.gradle.wartremover"
 wartremover {
     warningWarts.remove("NonUnitStatements")
     warningWarts.remove("Var")
+    warningWarts.remove("Throw")
 }

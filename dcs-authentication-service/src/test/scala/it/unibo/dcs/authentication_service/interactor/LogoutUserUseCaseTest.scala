@@ -1,5 +1,6 @@
 package it.unibo.dcs.authentication_service.interactor
 
+import _root_.it.unibo.dcs.authentication_service.interactor.usecases.LogoutUserUseCase
 import _root_.it.unibo.dcs.authentication_service.request.LogoutUserRequest
 import it.unibo.dcs.authentication_service.MocksForUseCases._
 import org.scalamock.scalatest.MockFactory
@@ -16,7 +17,7 @@ class LogoutUserUseCaseTest extends FlatSpec with MockFactory {
   val logoutUserUseCase = new LogoutUserUseCase(threadExecutor, postExecutionThread, authRepository)
 
   it should "logout the user when the use case is executed" in {
-    (authRepository invalidToken (_, _)) expects (token, *) returns (Observable just expectedResult)
+    (authRepository invalidToken(_, _)) expects(token, *) returns (Observable just expectedResult)
 
     logoutUserUseCase(request).subscribe(subscriber)
 

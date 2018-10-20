@@ -30,7 +30,7 @@ final class RegisterUserUseCase(private[this] val threadExecutor: ThreadExecutor
   override protected[this] def createObservable(registerRequest: RegisterUserRequest): Observable[RegisterResult] = {
     for {
       token <- authRepository.registerUser(registerRequest)
-      user <- userRepository.registerUser(registerRequest)
+      user <- userRepository.registerUser(registerRequest, token)
     } yield {
       roomRepository.registerUser(registerRequest).subscribe()
       RegisterResult(user, token)

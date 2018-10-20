@@ -2,7 +2,7 @@ package it.unibo.dcs.service.webapp.repositories.datastores.api.impl
 
 import io.vertx.lang.scala.json.Json
 import it.unibo.dcs.commons.service.{AbstractApi, HttpEndpointDiscovery}
-import it.unibo.dcs.exceptions.{LoginResponseException, LogoutValidityResponseException, RegistrationResponseException}
+import it.unibo.dcs.exceptions.{LoginResponseException, RegistrationResponseException}
 import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
 import it.unibo.dcs.service.webapp.interaction.Requests._
 import it.unibo.dcs.service.webapp.repositories.datastores.api.AuthenticationApi
@@ -52,12 +52,6 @@ class AuthenticationRestApi(private[this] val discovery: HttpEndpointDiscovery)
         .sendJsonObjectFuture(Json.obj())))
       .map(_.body())
 
-  override def checkLogout(logoutUserRequest: LogoutUserRequest): Observable[Unit] = {
-    request(authWebClient =>
-      Observable.from(authWebClient.post(checkLogoutURI).sendJsonObjectFuture(logoutUserRequest)))
-      .map(response => response.bodyAsString()
-        .getOrElse(throw LogoutValidityResponseException("Authentication service returned an empty body")))
-  }
 }
 
 private[impl] object AuthenticationRestApi {

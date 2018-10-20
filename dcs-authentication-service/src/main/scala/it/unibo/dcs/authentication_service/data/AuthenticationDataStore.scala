@@ -29,12 +29,12 @@ trait AuthenticationDataStore {
     * @param username the username of the user
     * @param password the password of the user
     * @return an empty observable stream */
-  def checkUserCredentials(username: String, password: String) : Observable[Unit]
+  def checkUserCredentials(username: String, password: String): Observable[Unit]
 
   /**
     * It adds the provided token to the set of invalid tokens
     *
-    * @param token the jwt token of the user
+    * @param token          the jwt token of the user
     * @param expirationDate the jwt token's expiration date
     * @return an empty observable stream */
   def invalidToken(token: String, expirationDate: Date): Observable[Unit]

@@ -1,8 +1,10 @@
 package it.unibo.dcs.service.webapp.repositories.datastores.api.impl
 
-import io.vertx.scala.ext.web.client.WebClient
+import io.netty.handler.codec.http.HttpResponseStatus
+import io.vertx.core.buffer.Buffer
+import io.vertx.scala.ext.web.client.{HttpResponse, WebClient}
 import it.unibo.dcs.commons.service.{AbstractApi, HttpEndpointDiscovery}
-import it.unibo.dcs.exceptions.{GetUserResponseException, RegistrationValidityResponseException, UserCreationResponseException}
+import it.unibo.dcs.exceptions.{GetUserResponseException, UserCreationResponseException, UserServiceErrorException}
 import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
 import it.unibo.dcs.service.webapp.interaction.Requests.RegisterUserRequest
 import it.unibo.dcs.service.webapp.model.User
@@ -15,11 +17,24 @@ import scala.concurrent.ExecutionContext.Implicits.global
 class UserRestApi(private[this] val discovery: HttpEndpointDiscovery)
   extends AbstractApi(discovery, "user-service") with UserApi {
 
-  override def createUser(registrationRequest: RegisterUserRequest): Observable[User] = {
+  override def createUser(registrationRequest: RegisterUserRequest, token: String): Observable[User] = {
     request((userWebClient: WebClient) =>
       Observable.from(userWebClient.post(createUserURI).sendJsonObjectFuture(registrationRequest)))
-      .map(response => response.bodyAsJsonObject()
-        .getOrElse(throw UserCreationResponseException("User service returned an empty body")))
+      .map(response => responseStatus(response) match {
+        case HttpResponseStatus.OK => responseAsUser(registrationRequest, token, response)
+        case _ => throw UserServiceErrorException(responseAsUser(registrationRequest, token, response),
+          registrationRequest.username, token)
+      })
+  }
+
+  private def responseAsUser(registrationRequest: RegisterUserRequest, token: String, response: HttpResponse[Buffer]) = {
+    response.bodyAsJsonObject()
+      .getOrElse(throw UserCreationResponseException("User service returned an empty body",
+        registrationRequest.username, token))
+  }
+
+  private def responseStatus(response: HttpResponse[Buffer]) = {
+    HttpResponseStatus.valueOf(response.statusCode())
   }
 
   override def getUserByUsername(username: String): Observable[User] =
@@ -28,11 +43,6 @@ class UserRestApi(private[this] val discovery: HttpEndpointDiscovery)
       .map(response => response.bodyAsJsonObject()
         .getOrElse(throw GetUserResponseException("User service returned an empty body")))
 
-  override def checkUserRegistration(checkRegistrationRequest: RegisterUserRequest): Observable[Unit] =
-    request((userWebClient: WebClient) =>
-      Observable.from(userWebClient.post(validateRegistration).sendJsonObjectFuture(checkRegistrationRequest)))
-      .map(response => response.bodyAsJsonObject()
-        .getOrElse(throw RegistrationValidityResponseException("User service returned an empty body")))
 }
 
 private[impl] object UserRestApi {

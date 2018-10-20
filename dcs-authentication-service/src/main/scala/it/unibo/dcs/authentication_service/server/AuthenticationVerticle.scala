@@ -7,9 +7,10 @@ import io.vertx.lang.scala.json.Json
 import io.vertx.scala.ext.auth.jwt.{JWTAuth, JWTAuthOptions}
 import io.vertx.scala.ext.web.handler.{BodyHandler, CorsHandler, JWTAuthHandler}
 import io.vertx.scala.ext.web.{Router, RoutingContext}
-import it.unibo.dcs.authentication_service.interactor._
+import it.unibo.dcs.authentication_service.interactor.usecases.{CheckTokenUseCase, LoginUserUseCase, LogoutUserUseCase, RegisterUserUseCase}
+import it.unibo.dcs.authentication_service.interactor.validations.{LoginUserValidation, LogoutUserValidation, RegisterUserValidation}
 import it.unibo.dcs.authentication_service.repository.AuthenticationRepository
-import it.unibo.dcs.authentication_service.validator.LogoutUserValidator
+import it.unibo.dcs.authentication_service.validator.{LoginValidator, LogoutUserValidator, RegistrationValidator}
 import it.unibo.dcs.commons.RxHelper
 import it.unibo.dcs.commons.VertxWebHelper._
 import it.unibo.dcs.commons.interactor.ThreadExecutorExecutionContext
@@ -104,7 +105,6 @@ final class AuthenticationVerticle(authenticationRepository: AuthenticationRepos
     val requestHandler = getRequestHandler(jwtAuth)
     router.post("/register").handler(requestHandler.handleRegistration(_))
     router.post("/login").handler(requestHandler.handleLogin(_))
-    router.post("/validateLogout").handler(requestHandler.handleCheckLogout(_))
     router.post("/protected/logout").handler(requestHandler.handleLogout(_))
     router.get("/protected/tokenValidity").handler(requestHandler.handleTokenCheck(_))
   }
@@ -112,13 +112,21 @@ final class AuthenticationVerticle(authenticationRepository: AuthenticationRepos
   private def getRequestHandler(jwtAuth: JWTAuth): ServiceRequestHandler = {
     val threadExecutor = ThreadExecutorExecutionContext(vertx)
     val postExecutionThread = PostExecutionThread(RxHelper.scheduler(this.ctx))
+
     val loginUseCase = LoginUserUseCase(threadExecutor, postExecutionThread, authenticationRepository, jwtAuth)
     val logoutUseCase = LogoutUserUseCase(threadExecutor, postExecutionThread, authenticationRepository)
     val registerUseCase = RegisterUserUseCase(threadExecutor, postExecutionThread, authenticationRepository, jwtAuth)
     val checkTokenUseCase = CheckTokenUseCase(threadExecutor, postExecutionThread, authenticationRepository)
+
     val logoutValidator = LogoutUserValidator(authenticationRepository)
     val logoutUserValidation = LogoutUserValidation(threadExecutor, postExecutionThread, logoutValidator)
-    ServiceRequestHandlerImpl(loginUseCase, logoutUseCase, registerUseCase, checkTokenUseCase, logoutUserValidation)
+    val registrationValidator = RegistrationValidator()
+    val registrationValidation = RegisterUserValidation(threadExecutor, postExecutionThread, registrationValidator)
+    val loginValidator = LoginValidator(authenticationRepository)
+    val loginValidation = LoginUserValidation(threadExecutor, postExecutionThread, loginValidator)
+
+    ServiceRequestHandlerImpl(loginUseCase, logoutUseCase, registerUseCase, checkTokenUseCase,
+      logoutUserValidation, registrationValidation, loginValidation)
   }
 }
 

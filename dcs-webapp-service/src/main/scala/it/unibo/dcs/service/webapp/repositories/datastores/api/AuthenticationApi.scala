@@ -41,7 +41,6 @@ trait AuthenticationApi {
     * @return an empty observable */
   def checkToken(request: CheckTokenRequest): Observable[Unit]
 
-  def checkLogout(logoutUserRequest: LogoutUserRequest): Observable[Unit]
 }
 
 /** Companion object */

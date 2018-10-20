@@ -1,4 +1,4 @@
-package it.unibo.dcs.authentication_service.interactor
+package it.unibo.dcs.authentication_service.interactor.usecases
 
 import io.vertx.scala.ext.auth.jwt.JWTAuth
 import it.unibo.dcs.authentication_service.business_logic.JwtTokenGenerator
@@ -16,9 +16,9 @@ import rx.lang.scala.Observable
   * @param jwtAuth             jwt authentication provider
   * @usecase creation of a jwt token */
 abstract class ReturningTokenUseCase(private[this] val threadExecutor: ThreadExecutor,
-                             private[this] val postExecutionThread: PostExecutionThread,
-                             private[this] val authRepository: AuthenticationRepository,
-                             private[this] val jwtAuth: JWTAuth)
+                                     private[this] val postExecutionThread: PostExecutionThread,
+                                     private[this] val authRepository: AuthenticationRepository,
+                                     private[this] val jwtAuth: JWTAuth)
   extends UseCase[String, TokenRequest](threadExecutor, postExecutionThread) {
 
   val tokenGenerator = JwtTokenGenerator(jwtAuth)

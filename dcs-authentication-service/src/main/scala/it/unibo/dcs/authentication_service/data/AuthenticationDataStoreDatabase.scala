@@ -65,6 +65,6 @@ class AuthenticationDataStoreDatabase(private[this] val connection: SQLConnectio
     }
 }
 
-private[data] object AuthenticationDataStoreDatabase{
+private[data] object AuthenticationDataStoreDatabase {
   def apply(connection: SQLConnection) = new AuthenticationDataStoreDatabase(connection)
 }

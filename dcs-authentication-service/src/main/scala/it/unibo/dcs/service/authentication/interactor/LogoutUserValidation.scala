@@ -1,9 +1,9 @@
-package it.unibo.dcs.authentication_service.interactor
+package it.unibo.dcs.service.authentication.interactor
 
-import it.unibo.dcs.authentication_service.request.LogoutUserRequest
 import it.unibo.dcs.commons.interactor.Validation
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
 import it.unibo.dcs.commons.validation.Validator
+import it.unibo.dcs.service.authentication.request.LogoutUserRequest
 import rx.lang.scala.Observable
 
 final class LogoutUserValidation(private[this] val threadExecutor: ThreadExecutor,

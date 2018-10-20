@@ -8,13 +8,14 @@ import io.vertx.scala.ext.auth.jwt.{JWTAuth, JWTAuthOptions}
 import io.vertx.scala.ext.web.handler.{BodyHandler, CorsHandler, JWTAuthHandler}
 import io.vertx.scala.ext.web.{Router, RoutingContext}
 import io.vertx.scala.ext.web.handler.{BodyHandler, JWTAuthHandler}
-import it.unibo.dcs.service.authentication.interactor.{CheckTokenUseCase, LoginUserUseCase, LogoutUserUseCase, RegisterUserUseCase}
+import it.unibo.dcs.service.authentication.interactor._
 import it.unibo.dcs.service.authentication.repository.AuthenticationRepository
 import it.unibo.dcs.commons.RxHelper
 import it.unibo.dcs.commons.VertxWebHelper._
 import it.unibo.dcs.commons.interactor.ThreadExecutorExecutionContext
 import it.unibo.dcs.commons.interactor.executor.PostExecutionThread
 import it.unibo.dcs.commons.service.{HttpEndpointPublisher, ServiceVerticle}
+import it.unibo.dcs.service.authentication.authentication.LogoutUserValidator
 
 import scala.io.Source
 import scala.util.{Failure, Success}

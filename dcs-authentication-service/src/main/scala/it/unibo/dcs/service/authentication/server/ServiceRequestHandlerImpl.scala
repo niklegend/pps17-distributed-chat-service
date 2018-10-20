@@ -3,7 +3,7 @@ package it.unibo.dcs.service.authentication.server
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.lang.scala.json.Json
 import io.vertx.scala.ext.web.RoutingContext
-import it.unibo.dcs.service.authentication.interactor.{CheckTokenUseCase, LoginUserUseCase, LogoutUserUseCase, RegisterUserUseCase}
+import it.unibo.dcs.service.authentication.interactor._
 import it.unibo.dcs.service.authentication.request.{CheckTokenRequest, LoginUserRequest, LogoutUserRequest, RegisterUserRequest}
 import it.unibo.dcs.commons.VertxWebHelper._
 import it.unibo.dcs.commons.validation.ErrorTypes.invalidToken

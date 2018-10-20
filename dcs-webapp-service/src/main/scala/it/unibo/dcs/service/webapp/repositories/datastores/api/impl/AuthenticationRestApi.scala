@@ -51,6 +51,7 @@ class AuthenticationRestApi(private[this] val discovery: HttpEndpointDiscovery)
         .putHeader(authenticationKeyLabel, tokenPrefix + checkTokenRequest.token)
         .sendJsonObjectFuture(Json.obj())))
       .map(_.body())
+  }
 
   override def checkLogout(logoutUserRequest: LogoutUserRequest): Observable[Unit] = {
     request(authWebClient =>

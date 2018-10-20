@@ -1,12 +1,12 @@
-package it.unibo.dcs.authentication_service
+package it.unibo.dcs.service.authentication
 
-import it.unibo.dcs.authentication_service.repository.AuthenticationRepository
-import it.unibo.dcs.authentication_service.request.{CheckTokenRequest, LoginUserRequest, LogoutUserRequest, RegisterUserRequest}
-import it.unibo.dcs.authentication_service.validator.Messages._
+import it.unibo.dcs.service.authentication.authentication.Messages._
 import it.unibo.dcs.commons.validation.Validator
 import it.unibo.dcs.exceptions.{MissingPasswordException, MissingTokenException, MissingUsernameException, UserNotFoundException}
+import it.unibo.dcs.service.authentication.repository.AuthenticationRepository
+import it.unibo.dcs.service.authentication.request.{CheckTokenRequest, LoginUserRequest, LogoutUserRequest, RegisterUserRequest}
 
-package object validator {
+package object authentication {
 
   object LogoutUserValidator {
     def apply(authRepository: AuthenticationRepository): Validator[LogoutUserRequest] = Validator[LogoutUserRequest] {

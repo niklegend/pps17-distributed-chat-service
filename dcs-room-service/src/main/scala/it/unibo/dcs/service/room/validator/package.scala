@@ -8,7 +8,7 @@ import it.unibo.dcs.service.room.validator.Messages._
 package object validator {
 
   object CreateUserValidator {
-    def apply: Validator[CreateUserRequest] = Validator[CreateUserRequest] {
+    def apply(): Validator[CreateUserRequest] = Validator[CreateUserRequest] {
       builder =>
         builder.addRule(builder.observableRule(request =>
           Conditions.stringNotEmpty(request.username), MissingUsernameException(missingUsernameInRegistration)))
@@ -16,7 +16,7 @@ package object validator {
   }
 
   object CreateRoomValidator {
-    def apply: Validator[CreateRoomRequest] = Validator[CreateRoomRequest] {
+    def apply(): Validator[CreateRoomRequest] = Validator[CreateRoomRequest] {
       builder =>
         builder
           .addRule(builder.observableRule(request =>
@@ -28,7 +28,7 @@ package object validator {
   }
 
   object DeleteRoomValidator {
-    def apply: Validator[DeleteRoomRequest] = Validator[DeleteRoomRequest] {
+    def apply(): Validator[DeleteRoomRequest] = Validator[DeleteRoomRequest] {
       builder =>
         builder
           .addRule(builder.observableRule(request =>

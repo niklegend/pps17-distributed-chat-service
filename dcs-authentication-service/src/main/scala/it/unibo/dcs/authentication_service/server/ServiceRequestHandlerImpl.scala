@@ -59,7 +59,8 @@ class ServiceRequestHandlerImpl(loginUserUseCase: LoginUserUseCase, logoutUserUs
 
     override def onError(error: Throwable): Unit = {
       error.printStackTrace()
-      respond(errorCode, errorMessage)
+      endErrorResponse(routingContext.response(), HttpResponseStatus.valueOf(errorCode),
+        unexpectedTokenError, errorMessage)
     }
 
     private def respondWithToken(token: String, username: String)(implicit context: RoutingContext): Unit = {
@@ -74,8 +75,8 @@ class ServiceRequestHandlerImpl(loginUserUseCase: LoginUserUseCase, logoutUserUs
     override def onNext(unit: Unit): Unit = respondWithCode(200)
 
     override def onError(error: Throwable): Unit =
-      endErrorResponse(routingContext.response(), HttpResponseStatus.BAD_REQUEST,
-        errorType = invalidToken, description = "Invalid token or user not logged in")
+      endErrorResponse(routingContext.response(), HttpResponseStatus.INTERNAL_SERVER_ERROR,
+        errorType = unexpectedLogoutError, description = error.getMessage)
   }
 
   private class LogoutValiditySubscriber(implicit routingContext: RoutingContext) extends Subscriber[Unit] {

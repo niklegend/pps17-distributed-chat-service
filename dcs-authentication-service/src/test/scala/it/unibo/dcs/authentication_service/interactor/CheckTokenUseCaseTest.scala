@@ -1,6 +1,7 @@
 package it.unibo.dcs.authentication_service.interactor
 
 import it.unibo.dcs.authentication_service.MocksForUseCases.{authRepository, postExecutionThread, threadExecutor}
+import it.unibo.dcs.authentication_service.interactor.usecases.CheckTokenUseCase
 import it.unibo.dcs.authentication_service.request.CheckTokenRequest
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec

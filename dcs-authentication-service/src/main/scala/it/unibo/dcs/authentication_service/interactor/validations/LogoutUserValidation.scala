@@ -1,4 +1,4 @@
-package it.unibo.dcs.authentication_service.interactor
+package it.unibo.dcs.authentication_service.interactor.validations
 
 import it.unibo.dcs.authentication_service.request.LogoutUserRequest
 import it.unibo.dcs.commons.interactor.Validation

@@ -4,6 +4,7 @@ import io.vertx.lang.scala.json.JsonObject
 import it.unibo.dcs.authentication_service.MocksForUseCases._
 import _root_.it.unibo.dcs.authentication_service.request.LoginUserRequest
 import io.vertx.scala.ext.auth.jwt.JWTOptions
+import _root_.it.unibo.dcs.authentication_service.interactor.usecases.LoginUserUseCase
 import org.scalamock.scalatest.MockFactory
 import rx.lang.scala.{Observable, Subscriber}
 import org.scalatest.FlatSpec

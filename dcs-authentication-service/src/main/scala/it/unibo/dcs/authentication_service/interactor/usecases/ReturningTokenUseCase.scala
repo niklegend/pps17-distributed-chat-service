@@ -1,4 +1,4 @@
-package it.unibo.dcs.authentication_service.interactor
+package it.unibo.dcs.authentication_service.interactor.usecases
 
 import io.vertx.scala.ext.auth.jwt.JWTAuth
 import it.unibo.dcs.authentication_service.business_logic.JwtTokenGenerator

@@ -1,31 +1,31 @@
-package it.unibo.dcs.authentication_service.interactor
+package it.unibo.dcs.authentication_service.interactor.usecases
 
 import io.vertx.scala.ext.auth.jwt.JWTAuth
 import it.unibo.dcs.authentication_service.repository.AuthenticationRepository
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
 import rx.lang.scala.Observable
 
-/** It represents the use case to use to login as a user.
-  * It checks in the database that the username and password are correct, through authRepository.
+/** It represents the use case to use to register a user.
+  * It saves the new user to the database, through authRepository.
   *
   * @param threadExecutor      thread executor that will perform the subscription
   * @param postExecutionThread thread that will be notified of the subscription result
   * @param authRepository      authentication repository reference
   * @param jwtAuth             jwt authentication provider
-  * @usecase login of a user */
-final class LoginUserUseCase(private[this] val threadExecutor: ThreadExecutor,
+  * @usecase registration of a user */
+final class RegisterUserUseCase(private[this] val threadExecutor: ThreadExecutor,
                              private[this] val postExecutionThread: PostExecutionThread,
                              private[this] val authRepository: AuthenticationRepository,
                              private[this] val jwtAuth: JWTAuth)
   extends ReturningTokenUseCase(threadExecutor, postExecutionThread, authRepository, jwtAuth) {
 
   protected def getMainObservable(username: String, password: String): Observable[Unit] = {
-    authRepository.checkUserCredentials(username, password)
+    authRepository.createUser(username, password)
   }
 
 }
 
-object LoginUserUseCase{
+object RegisterUserUseCase {
 
   /** Factory method to create the use case
     *
@@ -36,5 +36,5 @@ object LoginUserUseCase{
     * @return the use case object */
   def apply(threadExecutor: ThreadExecutor, postExecutionThread: PostExecutionThread,
             authRepository: AuthenticationRepository, jwtAuth: JWTAuth) =
-    new LoginUserUseCase(threadExecutor, postExecutionThread, authRepository, jwtAuth)
+    new RegisterUserUseCase(threadExecutor, postExecutionThread, authRepository, jwtAuth)
 }

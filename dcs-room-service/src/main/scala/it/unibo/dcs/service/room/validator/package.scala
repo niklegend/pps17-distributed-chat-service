@@ -1,6 +1,6 @@
 package it.unibo.dcs.service.room
 
-import it.unibo.dcs.commons.validation.Validator
+import it.unibo.dcs.commons.validation.{Conditions, Validator}
 import it.unibo.dcs.exceptions.{MissingRoomNameException, MissingUsernameException}
 import it.unibo.dcs.service.room.request.{CreateRoomRequest, CreateUserRequest, DeleteRoomRequest}
 import it.unibo.dcs.service.room.validator.Messages._
@@ -11,8 +11,7 @@ package object validator {
     def apply: Validator[CreateUserRequest] = Validator[CreateUserRequest] {
       builder =>
         builder.addRule(builder.observableRule(request =>
-          builder.Conditions.stringNotEmpty(request.username),
-          MissingUsernameException(missingUsernameInRegistration)))
+          Conditions.stringNotEmpty(request.username), MissingUsernameException(missingUsernameInRegistration)))
     }
   }
 
@@ -21,12 +20,10 @@ package object validator {
       builder =>
         builder
           .addRule(builder.observableRule(request =>
-            builder.Conditions.stringNotEmpty(request.name),
-            MissingRoomNameException(missingRoomNameInCreation)))
+            Conditions.stringNotEmpty(request.name), MissingRoomNameException(missingRoomNameInCreation)))
 
           .addRule(builder.observableRule(request =>
-            builder.Conditions.stringNotEmpty(request.username),
-            MissingUsernameException(missingCreatorInCreation)))
+            Conditions.stringNotEmpty(request.username), MissingUsernameException(missingCreatorInCreation)))
     }
   }
 
@@ -35,12 +32,10 @@ package object validator {
       builder =>
         builder
           .addRule(builder.observableRule(request =>
-            builder.Conditions.stringNotEmpty(request.name),
-            MissingRoomNameException(missingRoomNameInDeletion)))
+            Conditions.stringNotEmpty(request.name), MissingRoomNameException(missingRoomNameInDeletion)))
 
           .addRule(builder.observableRule(request =>
-            builder.Conditions.stringNotEmpty(request.username),
-            MissingUsernameException(missingCreatorInDeletion)))
+            Conditions.stringNotEmpty(request.username), MissingUsernameException(missingCreatorInDeletion)))
     }
   }
 

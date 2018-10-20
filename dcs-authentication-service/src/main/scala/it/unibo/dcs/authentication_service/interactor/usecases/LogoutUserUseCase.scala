@@ -1,4 +1,4 @@
-package it.unibo.dcs.authentication_service.interactor
+package it.unibo.dcs.authentication_service.interactor.usecases
 
 import java.util.Date
 

@@ -1,6 +1,13 @@
 {
+<<<<<<< HEAD
   "url": "jdbc:mysql://mysql1.gear.host/userservice",
   "driver_class": "com.mysql.cj.jdbc.Driver",
   "user": "userservice",
   "password": "teddy_95"
+=======
+    "url": "jdbc:mysql://mysql1.gear.host/userservice?autoReconnect=true",
+    "driver_class": "com.mysql.cj.jdbc.Driver",
+    "user": "userservice",
+    "password": "teddy_95"
+>>>>>>> 35053086a24dd878652b88fbfe33b03df454c684
 }

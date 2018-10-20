@@ -1,6 +1,13 @@
 {
+<<<<<<< HEAD
   "url": "jdbc:mysql://mysql6.gear.host/authservice",
   "driver_class": "com.mysql.cj.jdbc.Driver",
   "user": "authservice",
   "password": "teddy_95"
+=======
+    "url": "jdbc:mysql://mysql6.gear.host/authservice?autoReconnect=true",
+    "driver_class": "com.mysql.cj.jdbc.Driver",
+    "user": "authservice",
+    "password": "teddy_95"
+>>>>>>> 35053086a24dd878652b88fbfe33b03df454c684
 }

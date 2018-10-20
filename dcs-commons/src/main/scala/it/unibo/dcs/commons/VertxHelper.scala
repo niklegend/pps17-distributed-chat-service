@@ -34,7 +34,7 @@ object VertxHelper {
 
     implicit def toSucceededFuture[T](result: T): AsyncResult[T] = Future.succeededFuture(result)
 
-    implicit def toFailedFuture[T](causeFailure: Throwable): AsyncResult[T] = Future.failedFuture(causeFailure)
+    implicit def toFailedFuture[T](cause: Throwable): AsyncResult[T] = Future.failedFuture(cause)
 
     implicit class RichAsyncResult[T](ar: AsyncResult[T]) {
       final def toTry: Try[T] =
@@ -77,7 +77,7 @@ object VertxHelper {
           addresses(name)
         } else {
           val address = new Address(eventBus, name)
-          addresses += name -> address
+          addresses(name) = address
           address
         }
 

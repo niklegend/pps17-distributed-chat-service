@@ -14,18 +14,18 @@ package object validator {
   object UserCreationValidator {
     def apply(userRepository: UserRepository): Validator[CreateUserRequest] = Validator[CreateUserRequest] { builder =>
       builder
-        .addRule(builder.observableRule(request => request != null,
-          new NullPointerException(nullUserCreationRequest))
+        .addRule(request => request != null,
+          new NullPointerException(nullUserCreationRequest)
         )
-        .addRule(builder.observableRule(request =>
+        .addRule(request =>
           builder.Conditions.stringNotEmpty(request.firstName),
-          MissingFirstNameException(missingFirstNameInRegistration))
+          MissingFirstNameException(missingFirstNameInRegistration)
         )
-        .addRule(builder.observableRule(request =>
-          builder.Conditions.stringNotEmpty(request.lastName), MissingLastNameException(missingLastNameInRegistration))
+        .addRule(request =>
+          builder.Conditions.stringNotEmpty(request.lastName), MissingLastNameException(missingLastNameInRegistration)
         )
-        .addRule(builder.observableRule(request =>
-          builder.Conditions.stringNotEmpty(request.username), MissingUsernameException(missingUsernameInRegistration))
+        .addRule(request =>
+          builder.Conditions.stringNotEmpty(request.username), MissingUsernameException(missingUsernameInRegistration)
         )
         .addRule(request =>
           userRepository.getUserByUsername(request)

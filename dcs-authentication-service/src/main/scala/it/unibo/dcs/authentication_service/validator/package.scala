@@ -11,8 +11,8 @@ package object validator {
   object LogoutUserValidator {
     def apply(authRepository: AuthenticationRepository): Validator[LogoutUserRequest] = Validator[LogoutUserRequest] {
       builder =>
-        builder.addRule(builder.observableRule(request =>
-          builder.Conditions.stringNotEmpty(request.token), MissingTokenException(missingToken)))
+        builder.addRule(request =>
+          builder.Conditions.stringNotEmpty(request.token), MissingTokenException(missingToken))
     }
   }
 
@@ -21,13 +21,12 @@ package object validator {
     def apply: Validator[RegisterUserRequest] = Validator[RegisterUserRequest] {
       builder =>
         builder
-          .addRule(builder.observableRule(
+          .addRule(
             request => builder.Conditions.stringNotEmpty(request.username),
-            MissingUsernameException(missingUsername)))
-
-          .addRule(builder.observableRule(
+            MissingUsernameException(missingUsername))
+          .addRule(
             request => request.password != null && !request.password.isEmpty,
-            MissingPasswordException(missingPassword)))
+            MissingPasswordException(missingPassword))
     }
   }
 
@@ -36,15 +35,15 @@ package object validator {
     def apply(authRepository: AuthenticationRepository): Validator[LoginUserRequest] = Validator[LoginUserRequest] {
       builder =>
         builder
-          .addRule(builder.observableRule(
+          .addRule(
             request => builder.Conditions.stringNotEmpty(request.username),
             MissingUsernameException(missingUsername)
-          ))
+          )
 
-          .addRule(builder.observableRule(
+          .addRule(
             request => builder.Conditions.stringNotEmpty(request.password),
             MissingPasswordException(missingPassword)
-          ))
+          )
 
           .addRule(request => authRepository.checkUserExistence(request.username)
             .doOnError(throw UserNotFoundException(request.username)))
@@ -55,8 +54,8 @@ package object validator {
     def apply: Validator[CheckTokenRequest] = Validator[CheckTokenRequest] {
       builder =>
         builder
-          .addRule(builder.observableRule(
-            request => builder.Conditions.stringNotEmpty(request.token), MissingTokenException(missingToken)))
+          .addRule(
+            request => builder.Conditions.stringNotEmpty(request.token), MissingTokenException(missingToken))
     }
   }
 

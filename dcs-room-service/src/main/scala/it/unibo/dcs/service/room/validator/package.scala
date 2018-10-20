@@ -10,9 +10,9 @@ package object validator {
   object CreateUserValidator {
     def apply: Validator[CreateUserRequest] = Validator[CreateUserRequest] {
       builder =>
-        builder.addRule(builder.observableRule(request =>
+        builder.addRule(request =>
           builder.Conditions.stringNotEmpty(request.username),
-          MissingUsernameException(missingUsernameInRegistration)))
+          MissingUsernameException(missingUsernameInRegistration))
     }
   }
 
@@ -20,13 +20,13 @@ package object validator {
     def apply: Validator[CreateRoomRequest] = Validator[CreateRoomRequest] {
       builder =>
         builder
-          .addRule(builder.observableRule(request =>
+          .addRule(request =>
             builder.Conditions.stringNotEmpty(request.name),
-            MissingRoomNameException(missingRoomNameInCreation)))
+            MissingRoomNameException(missingRoomNameInCreation))
 
-          .addRule(builder.observableRule(request =>
+          .addRule(request =>
             builder.Conditions.stringNotEmpty(request.username),
-            MissingUsernameException(missingCreatorInCreation)))
+            MissingUsernameException(missingCreatorInCreation))
     }
   }
 
@@ -34,13 +34,13 @@ package object validator {
     def apply: Validator[DeleteRoomRequest] = Validator[DeleteRoomRequest] {
       builder =>
         builder
-          .addRule(builder.observableRule(request =>
+          .addRule(request =>
             builder.Conditions.stringNotEmpty(request.name),
-            MissingRoomNameException(missingRoomNameInDeletion)))
-
-          .addRule(builder.observableRule(request =>
+            MissingRoomNameException(missingRoomNameInDeletion)
+          )
+          .addRule(request =>
             builder.Conditions.stringNotEmpty(request.username),
-            MissingUsernameException(missingCreatorInDeletion)))
+            MissingUsernameException(missingCreatorInDeletion))
     }
   }
 

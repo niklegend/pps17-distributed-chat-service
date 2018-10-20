@@ -20,7 +20,7 @@ class JwtTokenGenerator(jwtAuth: JWTAuth) {
 
 }
 
-object JwtTokenGenerator{
+object JwtTokenGenerator {
 
   /** Factory method to instantiate the class
     *

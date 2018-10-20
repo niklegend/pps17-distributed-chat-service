@@ -12,8 +12,8 @@ import io.vertx.servicediscovery.{Record, ServiceDiscovery}
 import it.unibo.dcs.authentication_service.data.AuthenticationDataStoreDatabase
 import it.unibo.dcs.authentication_service.repository.AuthenticationRepositoryImpl
 import it.unibo.dcs.commons.IoHelper
-import it.unibo.dcs.commons.service.HttpEndpointPublisherImpl
 import it.unibo.dcs.commons.VertxHelper.Implicits._
+import it.unibo.dcs.commons.service.HttpEndpointPublisherImpl
 import it.unibo.dcs.commons.service.codecs.RecordMessageCodec
 
 import scala.util.{Failure, Success}

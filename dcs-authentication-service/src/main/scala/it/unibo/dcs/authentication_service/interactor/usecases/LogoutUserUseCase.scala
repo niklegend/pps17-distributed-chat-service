@@ -17,8 +17,8 @@ import rx.lang.scala.Observable
   * @param authRepository      authentication repository reference
   * @usecase logout of a user */
 final class LogoutUserUseCase(private[this] val threadExecutor: ThreadExecutor,
-                         private[this] val postExecutionThread: PostExecutionThread,
-                         private[this] val authRepository: AuthenticationRepository)
+                              private[this] val postExecutionThread: PostExecutionThread,
+                              private[this] val authRepository: AuthenticationRepository)
   extends UseCase[Unit, LogoutUserRequest](threadExecutor, postExecutionThread) {
 
   val tokenDecoder = JwtTokenDecoder()
@@ -27,7 +27,7 @@ final class LogoutUserUseCase(private[this] val threadExecutor: ThreadExecutor,
     authRepository.invalidToken(request.token, new Date())
 }
 
-object LogoutUserUseCase{
+object LogoutUserUseCase {
 
   /** Factory method to create the use case
     *

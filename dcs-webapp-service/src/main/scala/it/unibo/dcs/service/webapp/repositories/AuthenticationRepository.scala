@@ -18,6 +18,8 @@ trait AuthenticationRepository {
     * @return an observable stream of just one token */
   def registerUser(request: RegisterUserRequest): Observable[String]
 
+  def deleteUser(request: DeleteUserRequest): Observable[Unit]
+
   /** @param request
     * User data needed to logout
     * @return an empty observable object */

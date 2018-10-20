@@ -2,6 +2,8 @@ package it.unibo.dcs.commons.validation
 
 object ErrorTypes {
 
+  val userServiceWrongResponse = "USER_SERVICE_WRONG_RESPONSE"
+
   val createRoomError = "ROOM_CREATION_ERROR"
   val deleteRoomError = "ROOM_DELETION_ERROR"
   val createUserError = "USER_CREATION_ERROR"

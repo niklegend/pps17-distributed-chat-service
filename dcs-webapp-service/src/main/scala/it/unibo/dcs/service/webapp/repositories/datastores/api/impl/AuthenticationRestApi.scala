@@ -34,7 +34,6 @@ class AuthenticationRestApi(private[this] val discovery: HttpEndpointDiscovery)
         .getOrElse(throw RegistrationResponseException("Authentication service returned an empty body")))
   }
 
-
   override def logoutUser(logoutRequest: LogoutUserRequest): Observable[Unit] = {
     request(authWebClient =>
       Observable.from(authWebClient.post(logoutUserURI)

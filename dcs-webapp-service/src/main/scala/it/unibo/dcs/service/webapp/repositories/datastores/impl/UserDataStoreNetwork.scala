@@ -10,6 +10,7 @@ class UserDataStoreNetwork(private val userApi: UserApi) extends UserDataStore {
 
   override def getUserByUsername(username: String): Observable[User] = userApi.getUserByUsername(username)
 
-  override def createUser(request: RegisterUserRequest): Observable[User] = userApi.createUser(request)
+  override def createUser(request: RegisterUserRequest, token: String): Observable[User] =
+    userApi.createUser(request, token)
 
 }

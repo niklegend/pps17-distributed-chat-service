@@ -14,9 +14,9 @@ import rx.lang.scala.Observable
   * @param jwtAuth             jwt authentication provider
   * @usecase registration of a user */
 final class RegisterUserUseCase(private[this] val threadExecutor: ThreadExecutor,
-                             private[this] val postExecutionThread: PostExecutionThread,
-                             private[this] val authRepository: AuthenticationRepository,
-                             private[this] val jwtAuth: JWTAuth)
+                                private[this] val postExecutionThread: PostExecutionThread,
+                                private[this] val authRepository: AuthenticationRepository,
+                                private[this] val jwtAuth: JWTAuth)
   extends ReturningTokenUseCase(threadExecutor, postExecutionThread, authRepository, jwtAuth) {
 
   protected def getMainObservable(username: String, password: String): Observable[Unit] = {

@@ -22,4 +22,6 @@ class AuthenticationRepositoryImpl(private val authenticationDataStore: Authenti
 
   override def checkToken(request: Requests.CheckTokenRequest): Observable[Unit] =
     authenticationDataStore.checkToken(request)
+
+  override def deleteUser(request: Requests.DeleteUserRequest): Observable[Unit] = ???
 }

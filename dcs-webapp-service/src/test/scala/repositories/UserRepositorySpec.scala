@@ -22,12 +22,14 @@ class UserRepositorySpec extends FlatSpec with MockFactory with OneInstancePerTe
   private val createUserSubscriber: Subscriber[User] = stub[Subscriber[User]]
   private val getUserSubscriber: Subscriber[User] = stub[Subscriber[User]]
 
+  private val token: String = "token"
+
   it should "register a new user" in {
     // Given
-    (userDataStore createUser _) expects registerRequest returns Observable.just(user) noMoreThanOnce()
+    (userDataStore createUser(_, _)) expects(registerRequest, token) returns Observable.just(user) noMoreThanOnce()
 
     // When
-    repository registerUser registerRequest subscribe createUserSubscriber
+    repository registerUser(registerRequest, token) subscribe createUserSubscriber
 
     // Then
     // Verify that `subscriber.onNext` has been called once with `token` as argument

@@ -21,7 +21,7 @@ class JwtTokenDecoder() {
 
 }
 
-object JwtTokenDecoder{
+object JwtTokenDecoder {
 
   /** Factory method to instantiate the class
     *

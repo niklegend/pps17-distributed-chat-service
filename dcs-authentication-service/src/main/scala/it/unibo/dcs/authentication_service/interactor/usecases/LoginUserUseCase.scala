@@ -25,7 +25,7 @@ final class LoginUserUseCase(private[this] val threadExecutor: ThreadExecutor,
 
 }
 
-object LoginUserUseCase{
+object LoginUserUseCase {
 
   /** Factory method to create the use case
     *

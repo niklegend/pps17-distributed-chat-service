@@ -22,21 +22,21 @@ final class ServiceRequestHandlerImpl(private val userRepository: UserRepository
 
 
   override def handleRegistration(context: RoutingContext)(implicit ctx: Context): Unit =
-    handle(context, registrationErrorMessage, {
+    handle(context, missingRegistrationInfoMessage, {
       val useCase = RegisterUserUseCase.create(authRepository, userRepository, roomRepository)
-      useCase(_) subscribe RegistrationSubscriber(context.response(), authRepository, userRepository, roomRepository)
+      useCase(_) subscribe RegistrationSubscriber(context, authRepository, userRepository, roomRepository)
     })
 
 
   override def handleLogout(context: RoutingContext)(implicit ctx: Context): Unit =
-    handle(context, logoutErrorMessage, {
+    handle(context, missingLogoutInfoMessage, {
       val useCase = LogoutUserUseCase.create(authRepository)
       useCase(_) subscribe (_ => context response() end)
     })
 
 
   override def handleLogin(context: RoutingContext)(implicit ctx: Context): Unit = {
-    handle(context, loginErrorMessage, {
+    handle(context, missingLoginInfoMessage, {
       val useCase = LoginUserUseCase.create(authRepository, userRepository)
       useCase(_) subscribe (result => context response() end result)
     })
@@ -44,14 +44,14 @@ final class ServiceRequestHandlerImpl(private val userRepository: UserRepository
 
 
   override def handleRoomCreation(context: RoutingContext)(implicit ctx: Context): Unit = {
-    handle(context, roomCreationErrorMessage, {
+    handle(context, missingRoomCreationInfoMessage, {
       val useCase = CreateRoomUseCase(authRepository, roomRepository)
       useCase(_) subscribe (result => context response() end result)
     })
   }
 
   override def handleRoomDeletion(context: RoutingContext)(implicit ctx: Context): Unit = {
-    handle(context, roomDeletionErrorMessage, {
+    handle(context, missingRoomDeletionInfoMessage, {
       val useCase = DeleteRoomUseCase.create(authRepository, roomRepository)
       useCase(_) subscribe (_ => context response() end)
     })

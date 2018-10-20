@@ -2,7 +2,6 @@ package it.unibo.dcs.service.room
 
 import java.net.InetAddress
 
-import io.vertx.core.eventbus.{EventBus => JEventBus}
 import io.vertx.lang.scala.ScalaLogger
 import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.core.{DeploymentOptions, Vertx, VertxOptions}

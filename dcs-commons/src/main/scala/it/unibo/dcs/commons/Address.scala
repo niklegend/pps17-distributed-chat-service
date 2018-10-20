@@ -2,9 +2,9 @@ package it.unibo.dcs.commons
 
 import io.vertx.core.AsyncResult
 import io.vertx.scala.core.eventbus._
-import VertxHelper.Implicits.functionToHandler
+import it.unibo.dcs.commons.VertxHelper.Implicits.functionToHandler
 
-import scala.reflect.runtime.universe._
+import scala.reflect.runtime.universe.TypeTag
 
 final class Address private[commons](private[this] val eventBus: EventBus, private[this] val name: String) {
 
@@ -13,7 +13,7 @@ final class Address private[commons](private[this] val eventBus: EventBus, priva
     this
   }
 
-  def publish[T: TypeTag](message: AnyRef, options: DeliveryOptions = DeliveryOptions()): Address = {
+  def publish(message: AnyRef, options: DeliveryOptions = DeliveryOptions()): Address = {
     eventBus.publish(name, message, options)
     this
   }

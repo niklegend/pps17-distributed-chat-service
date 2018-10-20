@@ -26,7 +26,7 @@ final class LogoutUserSubscriber(private[this] val response: HttpServerResponse,
 
   override def onError(error: Throwable): Unit = error match {
     case LogoutValidityResponseException(message) =>
-      endErrorResponse(response, HttpResponseStatus.NO_CONTENT, errorType = missingResponseBody, message)
+      endErrorResponse(response, HttpResponseStatus.INTERNAL_SERVER_ERROR, errorType = missingResponseBody, message)
   }
 }
 

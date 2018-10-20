@@ -8,8 +8,10 @@ import it.unibo.dcs.commons.VertxWebHelper.endErrorResponse
 import it.unibo.dcs.commons.dataaccess.Implicits.{booleanToString, dateToString}
 import it.unibo.dcs.commons.validation.ErrorTypes._
 import it.unibo.dcs.exceptions.{MissingFirstNameException, MissingLastNameException, MissingUsernameException, UsernameAlreadyTaken}
+import it.unibo.dcs.service.user.interactor.usecases.CreateUserUseCase
 import it.unibo.dcs.service.user.model.User
 import it.unibo.dcs.service.user.model.exception.UserNotFoundException
+import it.unibo.dcs.service.user.request.CreateUserRequest
 import it.unibo.dcs.service.user.subscriber.Implicits._
 import rx.lang.scala.Subscriber
 
@@ -28,11 +30,13 @@ package object subscriber {
     }
   }
 
-  final class ValidateUserCreationSubscriber(private[this] val response: HttpServerResponse) extends Subscriber[Unit] {
+  final class ValidateUserCreationSubscriber(private[this] val response: HttpServerResponse,
+                                             request: CreateUserRequest,
+                                             createUserUseCase: CreateUserUseCase) extends Subscriber[Unit] {
 
     private[this] val log = ScalaLogger.getLogger(getClass.getName)
 
-    override def onCompleted(): Unit = response.end()
+    override def onCompleted(): Unit = createUserUseCase(request, new CreateUserSubscriber(response))
 
     override def onError(error: Throwable): Unit = error match {
       case MissingUsernameException(message) =>

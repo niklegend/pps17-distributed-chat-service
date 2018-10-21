@@ -1,7 +1,7 @@
 package it.unibo.dcs.service.room
 
 import it.unibo.dcs.commons.validation.Validator
-import it.unibo.dcs.exceptions.{MissingRoomNameException, MissingUsernameException}
+import it.unibo.dcs.exceptions.{RoomNameRequiredException, UsernameRequiredException}
 import it.unibo.dcs.service.room.request.{CreateRoomRequest, CreateUserRequest, DeleteRoomRequest}
 import it.unibo.dcs.service.room.validator.Messages._
 
@@ -12,7 +12,7 @@ package object validator {
       builder =>
         builder.addRule(request =>
           builder.Conditions.stringNotEmpty(request.username),
-          MissingUsernameException(missingUsernameInRegistration))
+          UsernameRequiredException)
     }
   }
 
@@ -22,11 +22,11 @@ package object validator {
         builder
           .addRule(request =>
             builder.Conditions.stringNotEmpty(request.name),
-            MissingRoomNameException(missingRoomNameInCreation))
+            RoomNameRequiredException)
 
           .addRule(request =>
             builder.Conditions.stringNotEmpty(request.username),
-            MissingUsernameException(missingCreatorInCreation))
+            UsernameRequiredException)
     }
   }
 
@@ -36,11 +36,12 @@ package object validator {
         builder
           .addRule(request =>
             builder.Conditions.stringNotEmpty(request.name),
-            MissingRoomNameException(missingRoomNameInDeletion)
+            RoomNameRequiredException
           )
           .addRule(request =>
             builder.Conditions.stringNotEmpty(request.username),
-            MissingUsernameException(missingCreatorInDeletion))
+            UsernameRequiredException
+          )
     }
   }
 

@@ -77,6 +77,7 @@ final class WebAppVerticle extends ServiceVerticle {
 
     apiRouter.post("/logout")
       .consumes("application/json")
+      .produces("application/json")
       .handler(context => requestHandler handleLogout context)
 
 

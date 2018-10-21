@@ -1,8 +1,8 @@
 package it.unibo.dcs.service.webapp.repositories.datastores.api.impl
 
-import io.vertx.lang.scala.json.Json
+import io.vertx.lang.scala.json.{Json, JsonObject}
 import it.unibo.dcs.commons.service.{AbstractApi, HttpEndpointDiscovery}
-import it.unibo.dcs.exceptions.{LoginResponseException, LogoutValidityResponseException, RegistrationResponseException}
+import it.unibo.dcs.exceptions.{InternalException, bodyAsJsonObject}
 import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
 import it.unibo.dcs.service.webapp.interaction.Requests._
 import it.unibo.dcs.service.webapp.repositories.datastores.api.AuthenticationApi
@@ -18,20 +18,16 @@ class AuthenticationRestApi(private[this] val discovery: HttpEndpointDiscovery)
   private val authenticationKeyLabel = "Authorization"
   private val tokenPrefix = "Bearer "
 
-  override def loginUser(loginUserRequest: LoginUserRequest): Observable[String] = {
-    request(authWebClient =>
-      Observable.from(authWebClient.post(loginUserURI).sendJsonObjectFuture(loginUserRequest)))
-      .map(response => response.bodyAsJsonObject()
-        .getOrElse(throw LoginResponseException("Authentication service returned an empty body"))
-        .getString("token"))
-  }
+  override def loginUser(loginUserRequest: LoginUserRequest): Observable[String] = request(authWebClient =>
+    Observable.from(authWebClient.post(loginUserURI).sendJsonObjectFuture(loginUserRequest)))
+    .map(bodyAsJsonObject(throw InternalException("Authentication service returned an empty body")))
+    .map(getToken)
 
   override def registerUser(registerRequest: RegisterUserRequest): Observable[String] = {
     request(authWebClient =>
       Observable.from(authWebClient.post(registerUserURI).sendJsonObjectFuture(registerRequest)))
-      .map(response => response.bodyAsJsonObject()
-        .getOrElse(throw RegistrationResponseException("Authentication service returned an empty body"))
-        .getString("token"))
+      .map(bodyAsJsonObject(throw InternalException("Authentication service returned an empty body")))
+      .map(getToken)
   }
 
   override def logoutUser(logoutRequest: LogoutUserRequest): Observable[Unit] = {
@@ -39,7 +35,8 @@ class AuthenticationRestApi(private[this] val discovery: HttpEndpointDiscovery)
       Observable.from(authWebClient.post(logoutUserURI)
         .putHeader(authenticationKeyLabel, tokenPrefix + logoutRequest.token)
         .sendJsonObjectFuture(logoutRequest)))
-      .map(_.body())
+      .map(bodyAsJsonObject(Json.emptyObj()))
+      .map(_ => ())
   }
 
   override def createRoom(roomCreationRequest: CreateRoomRequest): Observable[Unit] =
@@ -50,14 +47,16 @@ class AuthenticationRestApi(private[this] val discovery: HttpEndpointDiscovery)
       Observable.from(tokenWebClient.get(checkTokenURI)
         .putHeader(authenticationKeyLabel, tokenPrefix + checkRoomRequest.token)
         .sendJsonObjectFuture(Json.obj())))
-      .map(_.body())
+      .map(bodyAsJsonObject())
+    .map(_ => ())
 
   override def checkLogout(logoutUserRequest: LogoutUserRequest): Observable[Unit] = {
     request(authWebClient =>
       Observable.from(authWebClient.post(checkLogoutURI).sendJsonObjectFuture(logoutUserRequest)))
-      .map(response => response.bodyAsString()
-        .getOrElse(throw LogoutValidityResponseException("Authentication service returned an empty body")))
+      .map(bodyAsJsonObject())
+      .map(_ => ())
   }
+
 }
 
 private[impl] object AuthenticationRestApi {
@@ -67,5 +66,9 @@ private[impl] object AuthenticationRestApi {
   val checkLogoutURI = "/validateLogout"
   val logoutUserURI = "/protected/logout"
   val checkTokenURI = "/protected/tokenValidity"
+
+  private[impl] def getToken(json: JsonObject): String = {
+    json.getString("token")
+  }
 
 }

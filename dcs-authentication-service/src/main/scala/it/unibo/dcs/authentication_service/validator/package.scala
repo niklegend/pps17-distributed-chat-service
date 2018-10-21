@@ -2,9 +2,8 @@ package it.unibo.dcs.authentication_service
 
 import it.unibo.dcs.authentication_service.repository.AuthenticationRepository
 import it.unibo.dcs.authentication_service.request.{CheckTokenRequest, LoginUserRequest, LogoutUserRequest, RegisterUserRequest}
-import it.unibo.dcs.authentication_service.validator.Messages._
 import it.unibo.dcs.commons.validation.Validator
-import it.unibo.dcs.exceptions.{MissingPasswordException, MissingTokenException, MissingUsernameException, UserNotFoundException}
+import it.unibo.dcs.exceptions.{PasswordRequiredException, TokenRequiredException, UserNotFoundException, UsernameRequiredException}
 
 package object validator {
 
@@ -12,10 +11,9 @@ package object validator {
     def apply(authRepository: AuthenticationRepository): Validator[LogoutUserRequest] = Validator[LogoutUserRequest] {
       builder =>
         builder.addRule(request =>
-          builder.Conditions.stringNotEmpty(request.token), MissingTokenException(missingToken))
+          builder.Conditions.stringNotEmpty(request.token), TokenRequiredException)
     }
   }
-
 
   object RegistrationValidator {
     def apply: Validator[RegisterUserRequest] = Validator[RegisterUserRequest] {
@@ -23,13 +21,12 @@ package object validator {
         builder
           .addRule(
             request => builder.Conditions.stringNotEmpty(request.username),
-            MissingUsernameException(missingUsername))
+            UsernameRequiredException)
           .addRule(
             request => request.password != null && !request.password.isEmpty,
-            MissingPasswordException(missingPassword))
+            PasswordRequiredException)
     }
   }
-
 
   object LoginValidator {
     def apply(authRepository: AuthenticationRepository): Validator[LoginUserRequest] = Validator[LoginUserRequest] {
@@ -37,12 +34,12 @@ package object validator {
         builder
           .addRule(
             request => builder.Conditions.stringNotEmpty(request.username),
-            MissingUsernameException(missingUsername)
+            UsernameRequiredException
           )
 
           .addRule(
             request => builder.Conditions.stringNotEmpty(request.password),
-            MissingPasswordException(missingPassword)
+            PasswordRequiredException
           )
 
           .addRule(request => authRepository.checkUserExistence(request.username)
@@ -55,14 +52,8 @@ package object validator {
       builder =>
         builder
           .addRule(
-            request => builder.Conditions.stringNotEmpty(request.token), MissingTokenException(missingToken))
+            request => builder.Conditions.stringNotEmpty(request.token), TokenRequiredException)
     }
-  }
-
-  object Messages {
-    val missingUsername = "Username missing in registration request"
-    val missingPassword = "Password missing in registration request"
-    val missingToken = "Token missing in logout request"
   }
 
 }

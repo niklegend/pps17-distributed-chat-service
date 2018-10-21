@@ -9,6 +9,6 @@ trait RoomDataStore {
 
   def createRoom(request: CreateRoomRequest): Observable[Unit]
 
-  def deleteRoom(request: DeleteRoomRequest): Observable[Unit]
+  def deleteRoom(request: DeleteRoomRequest): Observable[String]
 
 }

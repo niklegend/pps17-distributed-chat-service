@@ -1,10 +1,10 @@
 package it.unibo.dcs.service.user
 
 import it.unibo.dcs.commons.validation.Validator
-import it.unibo.dcs.exceptions.{MissingFirstNameException, MissingLastNameException, MissingUsernameException, UsernameAlreadyTaken}
+import it.unibo.dcs.exceptions.{FirstNameRequiredException, LastNameRequiredException, UsernameRequiredException}
 import it.unibo.dcs.service.user.repository.UserRepository
 import it.unibo.dcs.service.user.request.{CreateUserRequest, GetUserRequest}
-import it.unibo.dcs.service.user.validator.Implicits._
+import it.unibo.dcs.service.user.validator.Implicits.userCreationRequestToGetUserRequest
 import it.unibo.dcs.service.user.validator.Messages._
 
 import scala.language.implicitConversions
@@ -19,18 +19,16 @@ package object validator {
         )
         .addRule(request =>
           builder.Conditions.stringNotEmpty(request.firstName),
-          MissingFirstNameException(missingFirstNameInRegistration)
+          FirstNameRequiredException
         )
         .addRule(request =>
-          builder.Conditions.stringNotEmpty(request.lastName), MissingLastNameException(missingLastNameInRegistration)
+          builder.Conditions.stringNotEmpty(request.lastName), LastNameRequiredException
         )
         .addRule(request =>
-          builder.Conditions.stringNotEmpty(request.username), MissingUsernameException(missingUsernameInRegistration)
+          builder.Conditions.stringNotEmpty(request.username), UsernameRequiredException
         )
         .addRule(request =>
-          userRepository.getUserByUsername(request)
-            .singleOption
-            .map(opt => opt.flatMap(throw UsernameAlreadyTaken(request.username))))
+          userRepository.checkIfUserExists(request))
     }
   }
 

@@ -2,11 +2,13 @@ package it.unibo.dcs.authentication_service.server
 
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.lang.scala.json.Json
+import io.vertx.scala.core.http.HttpServerResponse
 import io.vertx.scala.ext.web.RoutingContext
 import it.unibo.dcs.authentication_service.interactor._
 import it.unibo.dcs.authentication_service.request.{CheckTokenRequest, LoginUserRequest, LogoutUserRequest, RegisterUserRequest}
+import it.unibo.dcs.commons.VertxWebHelper.Implicits.{RichHttpServerResponse, jsonObjectToString}
 import it.unibo.dcs.commons.VertxWebHelper._
-import it.unibo.dcs.commons.validation.ErrorTypes.invalidToken
+import it.unibo.dcs.exceptions.ErrorSubscriber
 import rx.lang.scala.Subscriber
 
 class ServiceRequestHandlerImpl(loginUserUseCase: LoginUserUseCase, logoutUserUseCase: LogoutUserUseCase,
@@ -18,34 +20,34 @@ class ServiceRequestHandlerImpl(loginUserUseCase: LoginUserUseCase, logoutUserUs
     val credentials = getCredentials
     doIfValidCredentials(credentials,
       registerUserUseCase(RegisterUserRequest(credentials._1.get, credentials._2.get))
-        .subscribe(new TokenSubscriber("Username already taken", 409)))
+        .subscribe(new TokenSubscriber(context.response())))
   }
 
   override def handleLogin(implicit context: RoutingContext): Unit = {
     val credentials = getCredentials
     doIfValidCredentials(credentials,
       loginUserUseCase(LoginUserRequest(credentials._1.get, credentials._2.get))
-        .subscribe(new TokenSubscriber("Wrong username or password", 401)))
+        .subscribe(new TokenSubscriber(context.response())))
   }
 
   override def handleLogout(implicit context: RoutingContext): Unit = {
     val token = getTokenFromHeader
-    doIfDefined(token, logoutUserUseCase(LogoutUserRequest(token.get)).subscribe(new LogoutSubscriber))
+    doIfDefined(token, logoutUserUseCase(LogoutUserRequest(token.get), new LogoutSubscriber(context.response)))
   }
 
   override def handleTokenCheck(implicit context: RoutingContext): Unit = {
     val token = getTokenFromHeader
     doIfDefined(token, checkTokenUseCase(CheckTokenRequest(token.get))
       .subscribe(tokenIsValid => if (tokenIsValid) {
-        respond(200, "Token is valid")
+        respond(HttpResponseStatus.OK)
       } else {
-        respond(401, "Token is invalid")
+        respond(HttpResponseStatus.UNAUTHORIZED)
       }))
   }
 
   override def handleCheckLogout(implicit context: RoutingContext): Unit = {
     val token = getTokenFromHeader
-    doIfDefined(token, logoutUserValidation(LogoutUserRequest(token.get)).subscribe(new LogoutValiditySubscriber))
+    doIfDefined(token, logoutUserValidation(LogoutUserRequest(token.get), new LogoutValiditySubscriber(context.response())))
   }
 
   private def getUsername(implicit context: RoutingContext): Option[String] = getJsonBodyData("username")
@@ -59,40 +61,29 @@ class ServiceRequestHandlerImpl(loginUserUseCase: LoginUserUseCase, logoutUserUs
                                   (implicit routingContext: RoutingContext): Unit = {
     if (credentials._1.isDefined && credentials._2.isDefined) {
       action
-    } else respond(401, "Credentials not present")
+    } else respond(HttpResponseStatus.UNAUTHORIZED)
   }
 
-  private class TokenSubscriber(errorMessage: String, errorCode: Int)(implicit routingContext: RoutingContext)
-    extends Subscriber[String] {
-    override def onNext(token: String): Unit = respondWithToken(token, getUsername(routingContext).get)
+  private class TokenSubscriber(protected override val response: HttpServerResponse)
+    extends Subscriber[String]
+    with ErrorSubscriber {
 
-    override def onError(error: Throwable): Unit = {
-      error.printStackTrace()
-      respond(errorCode, errorMessage)
-    }
+    override def onNext(token: String): Unit = response.end(Json.obj(("token", token)))
 
-    private def respondWithToken(token: String, username: String)(implicit context: RoutingContext): Unit = {
-      context.response
-        .putHeader("content-type", "application/json")
-        .setStatusCode(201)
-        .end(Json.obj(("token", token)).encodePrettily())
-    }
   }
 
-  private class LogoutSubscriber(implicit routingContext: RoutingContext) extends Subscriber[Unit] {
-    override def onNext(unit: Unit): Unit = respondWithCode(200)
+  private class LogoutSubscriber(protected override val response: HttpServerResponse) extends Subscriber[Unit]
+    with ErrorSubscriber {
 
-    override def onError(error: Throwable): Unit =
-      respond(400, "invalid token or user not logged in")
+    override def onCompleted(): Unit = response.setStatus(HttpResponseStatus.RESET_CONTENT).end()
+
   }
 
-  private class LogoutValiditySubscriber(implicit routingContext: RoutingContext) extends Subscriber[Unit] {
+  private class LogoutValiditySubscriber(protected override val response: HttpServerResponse) extends Subscriber[Unit]
+    with ErrorSubscriber {
 
-    override def onNext(unit: Unit): Unit = respondWithCode(200)
+    override def onCompleted(): Unit = response.setStatus(HttpResponseStatus.OK).end()
 
-    override def onError(error: Throwable): Unit =
-      endErrorResponse(routingContext.response(), HttpResponseStatus.BAD_REQUEST,
-        errorType = invalidToken, description = "invalid token or user not logged in")
   }
 
 }

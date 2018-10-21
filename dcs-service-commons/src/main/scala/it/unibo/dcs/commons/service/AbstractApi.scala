@@ -1,5 +1,6 @@
 package it.unibo.dcs.commons.service
 
+import io.vertx.lang.scala.json.{JsonArray, JsonObject}
 import io.vertx.scala.ext.web.client.{HttpResponse, WebClient}
 import rx.lang.scala.Observable
 
@@ -22,8 +23,8 @@ abstract class AbstractApi(private[this] val discovery: HttpEndpointDiscovery,
     clientOption match {
       case Some(c) => action(c)
         .doOnError { _ =>
-            clientOption = None
-            discoverClient()
+          clientOption = None
+          discoverClient()
         }
       // TODO: replace with a more meaningful exception
       case _ => throw new RuntimeException

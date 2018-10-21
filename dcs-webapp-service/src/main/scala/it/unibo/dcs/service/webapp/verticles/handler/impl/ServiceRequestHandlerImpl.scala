@@ -11,7 +11,7 @@ import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, RoomR
 import it.unibo.dcs.service.webapp.usecases._
 import it.unibo.dcs.service.webapp.verticles.handler.ServiceRequestHandler
 import it.unibo.dcs.service.webapp.verticles.handler.impl.message._
-import it.unibo.dcs.service.webapp.verticles.handler.impl.subscribers.{LogoutUserSubscriber, RegistrationSubscriber}
+import it.unibo.dcs.service.webapp.verticles.handler.impl.subscribers.{LogoutUserSubscriber, RegisterUserSubscriber}
 
 import scala.language.postfixOps
 
@@ -20,17 +20,26 @@ final class ServiceRequestHandlerImpl(private val userRepository: UserRepository
                                       private val roomRepository: RoomRepository) extends ServiceRequestHandler {
 
 
-  override def handleRegistration(context: RoutingContext)(implicit ctx: Context): Unit =
-    handle(context, registrationErrorMessage, request =>
-      userRepository.checkUserRegistration(request).subscribe(
-        RegistrationSubscriber(context.response(), request, authRepository, userRepository, roomRepository)))
+  override def handleRegistration(context: RoutingContext)(implicit ctx: Context): Unit = {
+    println("Receiver registration request")
 
+    handle(context, registrationErrorMessage, request =>
+      userRepository.checkUserRegistration(request)
+        .flatMap { _ =>
+          val useCase = RegisterUserUseCase.create(authRepository, userRepository, roomRepository)
+          useCase(request)
+        }
+        .subscribe(RegisterUserSubscriber(context.response)))
+  }
 
   override def handleLogout(context: RoutingContext)(implicit ctx: Context): Unit =
     handle(context, logoutErrorMessage, request =>
-      authRepository.checkLogout(request).subscribe(
-        LogoutUserSubscriber(context.response(), request, authRepository)))
-
+      authRepository.checkLogout(request)
+        .flatMap { _ =>
+          val useCase = LogoutUserUseCase.create(authRepository)
+          useCase(request)
+        }
+        .subscribe(LogoutUserSubscriber(context.response)))
 
   override def handleLogin(context: RoutingContext)(implicit ctx: Context): Unit = {
     //TODO Request validity check

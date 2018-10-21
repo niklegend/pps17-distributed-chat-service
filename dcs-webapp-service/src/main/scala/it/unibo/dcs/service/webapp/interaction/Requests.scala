@@ -1,5 +1,6 @@
 package it.unibo.dcs.service.webapp.interaction
 
+import com.google.gson.Gson
 import io.vertx.lang.scala.json.{Json, JsonObject}
 import it.unibo.dcs.commons.dataaccess.Implicits.stringToDate
 import it.unibo.dcs.service.webapp.model.{Room, User}
@@ -50,6 +51,10 @@ object Requests {
       Json.obj(("username", request.username), ("firstName", request.firstName),
         ("lastName", request.lastName), ("password", request.password),
         ("passwordConfirm", request.passwordConfirm))
+    }
+
+    implicit def deleteUserRequestToJsonObject(request: DeleteUserRequest): JsonObject = {
+      Json.fromObjectString(new Gson().toJson(request))
     }
 
     implicit def jsonObjectToRegisterUserRequest(json: JsonObject): RegisterUserRequest = {

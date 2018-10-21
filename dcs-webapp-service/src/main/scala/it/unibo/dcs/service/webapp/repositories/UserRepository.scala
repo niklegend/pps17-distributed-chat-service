@@ -9,6 +9,8 @@ import rx.lang.scala.Observable
 /** Structure that handles User data access and storage. */
 trait UserRepository {
 
+  def deleteUser(username: String): Observable[Unit]
+
   /** Retrieve a user given its username
     *
     * @param username username

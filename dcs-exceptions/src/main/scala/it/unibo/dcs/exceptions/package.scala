@@ -29,9 +29,11 @@ package object exceptions {
 
 
   /* Response exceptions */
-  final case class RegistrationResponseException(message: String) extends DcsException
+  final case class RegistrationResponseException(message: String, username: String, token: String) extends DcsException
 
   final case class LoginResponseException(message: String) extends DcsException
+
+  final case class LogoutResponseException(message: String) extends DcsException
 
   final case class GetUserResponseException(message: String) extends DcsException
 
@@ -41,11 +43,19 @@ package object exceptions {
 
   final case class RoomCreationResponseException(message: String) extends DcsException
 
-  final case class RegistrationValidityResponseException(message: String) extends DcsException
+  final case class TokenCheckResponseException(message: String) extends DcsException
 
-  final case class LogoutValidityResponseException(message: String) extends DcsException
+  final case class AuthRegistrationResponseException(message: String) extends DcsException
+
+  final case class DeleteUserResponseException(message: String) extends DcsException
 
   final case class UserServiceErrorException(errorJson: JsonObject,
+                                             username: String,
+                                             token: String = "") extends DcsException
+
+  final case class AuthServiceErrorException(errorJson: JsonObject) extends DcsException
+
+  final case class RoomServiceErrorException(errorJson: JsonObject,
                                              username: String,
                                              token: String) extends DcsException
 

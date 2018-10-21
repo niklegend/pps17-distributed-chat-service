@@ -65,7 +65,7 @@ class AuthenticationRestApi(private[this] val discovery: HttpEndpointDiscovery)
       })
   }
 
-  override def checkToken(checkRoomRequest: CheckTokenRequest): Observable[Unit] =
+  override def checkToken(checkTokenRequest: CheckTokenRequest): Observable[Unit] =
     request(tokenWebClient =>
       Observable.from(tokenWebClient.get(checkTokenURI)
         .putHeader(authenticationKeyLabel, tokenPrefix + checkTokenRequest.token)

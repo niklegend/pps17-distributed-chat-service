@@ -10,7 +10,7 @@ import rx.lang.scala.Observable
 /** Structure that allows access to rooms data by different means (e.g. network, file, database, ecc) */
 trait RoomDataStore {
 
-  def registerUser(request: Requests.RegisterUserRequest): Observable[Unit]
+  def registerUser(request: Requests.RegisterUserRequest, token: String): Observable[Unit]
 
   def deleteRoom(request: DeleteRoomRequest): Observable[Unit]
 

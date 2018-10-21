@@ -9,12 +9,13 @@ import it.unibo.dcs.exceptions._
 import it.unibo.dcs.service.webapp.interaction.Requests.DeleteUserRequest
 import it.unibo.dcs.service.webapp.interaction.Results.Implicits._
 import it.unibo.dcs.service.webapp.interaction.Results.RegisterResult
-import it.unibo.dcs.service.webapp.repositories.AuthenticationRepository
+import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, UserRepository}
 import rx.lang.scala.Subscriber
 
 
 final class RegistrationSubscriber(private[this] val routingContext: RoutingContext,
                                    private[this] val authRepository: AuthenticationRepository,
+                                   private[this] val userRepository: UserRepository,
                                    private[this] implicit val ctx: Context) extends Subscriber[RegisterResult] {
 
 
@@ -22,8 +23,13 @@ final class RegistrationSubscriber(private[this] val routingContext: RoutingCont
 
   override def onError(error: Throwable): Unit = error match {
 
-    case RegistrationResponseException(message) => ()
-    case AuthServiceErrorException(errorJson) => ()
+    case AuthRegistrationResponseException(message) =>
+      endErrorResponse(routingContext.response(), HttpResponseStatus.INTERNAL_SERVER_ERROR,
+        missingResponseBody, message)
+
+    case AuthServiceErrorException(errorJson) =>
+      implicit val context: RoutingContext = this.routingContext
+      respond(HttpResponseStatus.BAD_REQUEST.code(), errorJson.encodePrettily())
 
     case UserServiceErrorException(errorResponseJson, username, token) =>
       implicit val routingContext: RoutingContext = this.routingContext
@@ -33,7 +39,10 @@ final class RegistrationSubscriber(private[this] val routingContext: RoutingCont
         override def onCompleted(): Unit =
           respond(HttpResponseStatus.BAD_REQUEST.code(), errorResponseJson.encodePrettily())
 
-        override def onError(error: Throwable): Unit = ???
+        /* We could retry to rollback... */
+        override def onError(error: Throwable): Unit =
+          endErrorResponse(routingContext.response(), HttpResponseStatus.INTERNAL_SERVER_ERROR,
+            userServiceWrongResponse, error.getMessage)
       }
 
     case UserCreationResponseException(message, username, token) =>
@@ -45,21 +54,43 @@ final class RegistrationSubscriber(private[this] val routingContext: RoutingCont
           endErrorResponse(routingContext.response(), HttpResponseStatus.INTERNAL_SERVER_ERROR,
             userServiceWrongResponse, message)
 
-        override def onError(error: Throwable): Unit = ???
+        /* We could retry to rollback... */
+        override def onError(error: Throwable): Unit =
+          endErrorResponse(routingContext.response(), HttpResponseStatus.INTERNAL_SERVER_ERROR,
+            userServiceWrongResponse, error.getMessage)
       }
 
-    case RegistrationResponseException(message) => ()
-    case RoomServiceErrorException(errorJson) => ()
+    case RoomServiceErrorException(errorJson, username, token) =>
+      rollbackRepositories(username, token)
+      respond(HttpResponseStatus.BAD_REQUEST.code(), errorJson.encodePrettily())
+
+    case RegistrationResponseException(message, username, token) =>
+      rollbackRepositories(username, token)
+      endErrorResponse(routingContext.response(), HttpResponseStatus.INTERNAL_SERVER_ERROR,
+        missingResponseBody, message)
+
+  }
+
+  private def rollbackRepositories(username: String, token: String) = {
+    rollbackAuthRepository(username, token)(_)
+    rollbackUserRepository(username)(_)
+    implicit val context: RoutingContext = this.routingContext
   }
 
   /* Rollback changes previously performed in Authentication service */
   private def rollbackAuthRepository(username: String, token: String)(subscriber: Subscriber[Unit]) = {
     authRepository.deleteUser(DeleteUserRequest(username, token)).subscribe(subscriber)
   }
+
+  /* Rollback changes previously performed in User service */
+  private def rollbackUserRepository(username: String)(subscriber: Subscriber[Unit]): Unit = {
+    userRepository.deleteUser(username).subscribe(subscriber)
+  }
 }
 
 object RegistrationSubscriber {
   def apply(routingContext: RoutingContext,
+            userRepository: UserRepository,
             authRepository: AuthenticationRepository)(implicit ctx: Context): RegistrationSubscriber =
-    new RegistrationSubscriber(routingContext, authRepository, ctx)
+    new RegistrationSubscriber(routingContext, authRepository, userRepository, ctx)
 }

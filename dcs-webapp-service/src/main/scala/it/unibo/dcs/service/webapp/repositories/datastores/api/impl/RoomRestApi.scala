@@ -30,17 +30,19 @@ class RoomRestApi(private[this] val discovery: HttpEndpointDiscovery)
     } yield response.bodyAsJsonObject().orElse(throw RoomDeletionResponseException("Room service returned an empty body"))
   }
 
-  override def registerUser(userRegistrationRequest: RegisterUserRequest): Observable[Unit] = {
+  override def registerUser(userRegistrationRequest: RegisterUserRequest, token: String): Observable[Unit] = {
     for {
       response <- request((roomWebClient: WebClient) =>
         Observable.from(roomWebClient.post(RoomRestApi.registerUser).sendJsonObjectFuture(userRegistrationRequest)))
     } yield responseStatus(response) match {
       case HttpResponseStatus.OK => response.bodyAsJsonObject()
-        .orElse(throw RegistrationResponseException("Room service returned an empty body"))
+        .orElse(throw RegistrationResponseException("Room service returned an empty body",
+          userRegistrationRequest.username, token))
       case _ =>
         val responseJson = response.bodyAsJsonObject()
-          .getOrElse(throw RegistrationResponseException("Room service returned an empty body after an error"))
-        throw RoomServiceErrorException(responseJson)
+          .getOrElse(throw RegistrationResponseException("Room service returned an empty body after an error",
+            userRegistrationRequest.username, token))
+        throw RoomServiceErrorException(responseJson, userRegistrationRequest.username, token)
     }
   }
 }

@@ -41,11 +41,11 @@ class AuthenticationRestApi(private[this] val discovery: HttpEndpointDiscovery)
       .map(response => responseStatus(response) match {
         case HttpResponseStatus.OK =>
           response.bodyAsJsonObject()
-            .getOrElse(throw RegistrationResponseException("Authentication service returned an empty body"))
+            .getOrElse(throw AuthRegistrationResponseException("Authentication service returned an empty body"))
             .getString("token")
         case _ =>
           val errorJson = response.bodyAsJsonObject()
-            .getOrElse(throw RegistrationResponseException(
+            .getOrElse(throw AuthRegistrationResponseException(
               "Authentication service returned an empty body after an error"))
           throw AuthServiceErrorException(errorJson)
       })

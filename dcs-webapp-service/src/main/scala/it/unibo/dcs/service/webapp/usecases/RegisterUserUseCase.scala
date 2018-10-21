@@ -32,7 +32,7 @@ final class RegisterUserUseCase(private[this] val threadExecutor: ThreadExecutor
       token <- authRepository.registerUser(registerRequest)
       user <- userRepository.registerUser(registerRequest, token)
     } yield {
-      roomRepository.registerUser(registerRequest).subscribe()
+      roomRepository.registerUser(registerRequest, token).subscribe()
       RegisterResult(user, token)
     }
   }

@@ -1,9 +1,14 @@
 package it.unibo.dcs.service.webapp.verticles.handler.impl.subscribers
 
+import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.scala.core.Context
 import io.vertx.scala.ext.web.RoutingContext
+import it.unibo.dcs.commons.VertxWebHelper._
+import it.unibo.dcs.commons.validation.ErrorTypes._
 import it.unibo.dcs.exceptions._
 import rx.lang.scala.Subscriber
+
+import scala.language.postfixOps
 
 final class RoomDeletionSubscriber(private[this] val routingContext: RoutingContext)
                                   (private[this] implicit val ctx: Context) extends Subscriber[Unit] {
@@ -12,13 +17,21 @@ final class RoomDeletionSubscriber(private[this] val routingContext: RoutingCont
 
   override def onError(error: Throwable): Unit = error match {
 
-    case TokenCheckResponseException(message) => ???
+    case TokenCheckResponseException(message) =>
+      endErrorResponse(routingContext.response(), HttpResponseStatus.INTERNAL_SERVER_ERROR,
+        missingResponseBody, message)
 
-    case AuthServiceErrorException(errorJson) => ???
+    case AuthServiceErrorException(errorJson) =>
+      implicit val context: RoutingContext = this.routingContext
+      respond(HttpResponseStatus.BAD_REQUEST.code(), errorJson.encodePrettily())
 
-    case RoomServiceErrorException(errorJson) => ???
+    case RoomServiceErrorException(errorJson, _, _) =>
+      implicit val context: RoutingContext = this.routingContext
+      respond(HttpResponseStatus.BAD_REQUEST.code(), errorJson.encodePrettily())
 
-    case RoomDeletionResponseException(message) => ???
+    case RoomDeletionResponseException(message) =>
+      endErrorResponse(routingContext.response(), HttpResponseStatus.INTERNAL_SERVER_ERROR,
+        missingResponseBody, message)
   }
 
 }

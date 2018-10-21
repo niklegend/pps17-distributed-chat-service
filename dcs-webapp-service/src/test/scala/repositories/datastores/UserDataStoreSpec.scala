@@ -23,14 +23,12 @@ class UserDataStoreSpec extends FlatSpec with MockFactory with OneInstancePerTes
   private val createUserSubscriber: Subscriber[User] = stub[Subscriber[User]]
   private val getUserSubscriber: Subscriber[User] = stub[Subscriber[User]]
 
-  val token: String = "token"
-
   it should "create a new user" in {
     // Given
-    (userApi createUser(_, _)) expects(registerRequest, token) returns Observable.just(user) noMoreThanOnce()
+    (userApi createUser _) expects registerRequest returns Observable.just(user) noMoreThanOnce()
 
     // When
-    dataStore.createUser(registerRequest, token).subscribe(createUserSubscriber)
+    dataStore.createUser(registerRequest).subscribe(createUserSubscriber)
 
     // Then
     // Verify that `subscriber.onNext` has been called once with `token` as argument

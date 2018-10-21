@@ -57,7 +57,7 @@ class AuthenticationRestApi(private[this] val discovery: HttpEndpointDiscovery)
         .putHeader(authenticationKeyLabel, tokenPrefix + logoutRequest.token)
         .sendJsonObjectFuture(logoutRequest)))
       .map(response => responseStatus(response) match {
-        case HttpResponseStatus.OK => response.body()
+        case HttpResponseStatus.OK => ()
         case _ =>
           val errorJson = response.bodyAsJsonObject()
             .getOrElse(throw LogoutResponseException("Authentication service returned an empty body after an error"))
@@ -71,22 +71,37 @@ class AuthenticationRestApi(private[this] val discovery: HttpEndpointDiscovery)
         .putHeader(authenticationKeyLabel, tokenPrefix + checkRoomRequest.token)
         .sendJsonObjectFuture(Json.obj())))
       .map(response => responseStatus(response) match {
-        case HttpResponseStatus.OK => response.body()
+        case HttpResponseStatus.OK => ()
         case _ =>
           val errorJson = response.bodyAsJsonObject()
             .getOrElse(throw TokenCheckResponseException("Authentication service returned an empty body after an error"))
           throw AuthServiceErrorException(errorJson)
       })
 
-  override def deleteUser(request: DeleteUserRequest): Observable[Unit] = ???
+  override def deleteUser(deleteUserRequest: DeleteUserRequest): Observable[Unit] = {
+    request(authWebClient =>
+      Observable.from(authWebClient.delete(deleteUserURI(deleteUserRequest.username))
+        .putHeader(authenticationKeyLabel, tokenPrefix + deleteUserRequest.token)
+        .sendFuture()))
+      .map(response => responseStatus(response) match {
+        case HttpResponseStatus.OK => ()
+        case _ =>
+          val errorJson = response.bodyAsJsonObject()
+            .getOrElse(
+              throw DeleteUserResponseException("Authentication service returned an empty body after an error"))
+          throw AuthServiceErrorException(errorJson)
+      })
+  }
+
 }
 
 private[impl] object AuthenticationRestApi {
 
   val loginUserURI = "/login"
   val registerUserURI = "/register"
-  val checkLogoutURI = "/validateLogout"
   val logoutUserURI = "/protected/logout"
   val checkTokenURI = "/protected/tokenValidity"
+  val checkLogoutURI = "/validateLogout"
 
+  def deleteUserURI(username: String) = s"/user/$username"
 }

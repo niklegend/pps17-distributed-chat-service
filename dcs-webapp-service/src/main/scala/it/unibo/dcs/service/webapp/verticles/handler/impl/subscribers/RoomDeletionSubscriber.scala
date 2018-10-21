@@ -13,6 +13,8 @@ import scala.language.postfixOps
 final class RoomDeletionSubscriber(private[this] val routingContext: RoutingContext)
                                   (private[this] implicit val ctx: Context) extends Subscriber[Unit] {
 
+  private implicit val context: RoutingContext = this.routingContext
+
   override def onCompleted(): Unit = routingContext response() end
 
   override def onError(error: Throwable): Unit = error match {
@@ -22,11 +24,9 @@ final class RoomDeletionSubscriber(private[this] val routingContext: RoutingCont
         missingResponseBody, message)
 
     case AuthServiceErrorException(errorJson) =>
-      implicit val context: RoutingContext = this.routingContext
       respond(HttpResponseStatus.BAD_REQUEST.code(), errorJson.encodePrettily())
 
     case RoomServiceErrorException(errorJson, _, _) =>
-      implicit val context: RoutingContext = this.routingContext
       respond(HttpResponseStatus.BAD_REQUEST.code(), errorJson.encodePrettily())
 
     case RoomDeletionResponseException(message) =>

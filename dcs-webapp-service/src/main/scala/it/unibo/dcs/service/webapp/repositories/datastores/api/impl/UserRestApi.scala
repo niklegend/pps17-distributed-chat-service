@@ -5,7 +5,7 @@ import io.vertx.core.buffer.Buffer
 import io.vertx.scala.ext.web.client.{HttpResponse, WebClient}
 import it.unibo.dcs.commons.VertxWebHelper._
 import it.unibo.dcs.commons.service.{AbstractApi, HttpEndpointDiscovery}
-import it.unibo.dcs.exceptions.{GetUserResponseException, UserCreationResponseException, UserServiceErrorException}
+import it.unibo.dcs.exceptions.{DeleteUserResponseException, GetUserResponseException, UserCreationResponseException, UserServiceErrorException}
 import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
 import it.unibo.dcs.service.webapp.interaction.Requests.RegisterUserRequest
 import it.unibo.dcs.service.webapp.model.User
@@ -40,15 +40,25 @@ class UserRestApi(private[this] val discovery: HttpEndpointDiscovery)
       .map(response => response.bodyAsJsonObject()
         .getOrElse(throw GetUserResponseException("User service returned an empty body")))
 
-  override def deleteUser(username: String): Observable[Unit] = ???
+  override def deleteUser(username: String): Observable[Unit] =
+    request(userWebClient =>
+      Observable.from(userWebClient.post(deleteUserURI(username)).sendFuture()))
+      .map(response => responseStatus(response) match {
+        case HttpResponseStatus.OK => ()
+        case _ =>
+          val errorJson = response.bodyAsJsonObject()
+            .getOrElse(throw DeleteUserResponseException("User service returned an empty body after an error"))
+          throw UserServiceErrorException(errorJson, username)
+      })
+
 }
 
 private[impl] object UserRestApi {
 
   val createUserURI = "/createUser"
-
   val validateRegistration = "/validateRegistration"
 
-  def getUserURI(username: String) = s"/getUser/$username"
+  def deleteUserURI(username: String) = s"/deleteUser/$username"
 
+  def getUserURI(username: String) = s"/getUser/$username"
 }

@@ -47,9 +47,11 @@ package object exceptions {
 
   final case class AuthRegistrationResponseException(message: String) extends DcsException
 
+  final case class DeleteUserResponseException(message: String) extends DcsException
+
   final case class UserServiceErrorException(errorJson: JsonObject,
                                              username: String,
-                                             token: String) extends DcsException
+                                             token: String = "") extends DcsException
 
   final case class AuthServiceErrorException(errorJson: JsonObject) extends DcsException
 

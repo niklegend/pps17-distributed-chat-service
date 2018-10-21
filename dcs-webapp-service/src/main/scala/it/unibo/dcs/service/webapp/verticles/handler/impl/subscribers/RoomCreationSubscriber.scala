@@ -14,6 +14,7 @@ import rx.lang.scala.Subscriber
 final class RoomCreationSubscriber(private[this] val routingContext: RoutingContext)
                                   (private[this] implicit val ctx: Context) extends Subscriber[RoomCreationResult] {
 
+  private implicit val context: RoutingContext = this.routingContext
 
   override def onNext(result: RoomCreationResult): Unit = routingContext.response().end(result)
 
@@ -24,11 +25,9 @@ final class RoomCreationSubscriber(private[this] val routingContext: RoutingCont
         missingResponseBody, message)
 
     case AuthServiceErrorException(errorJson) =>
-      implicit val context: RoutingContext = this.routingContext
       respond(HttpResponseStatus.BAD_REQUEST.code(), errorJson.encodePrettily())
 
     case RoomServiceErrorException(errorJson, _, _) =>
-      implicit val context: RoutingContext = this.routingContext
       respond(HttpResponseStatus.BAD_REQUEST.code(), errorJson.encodePrettily())
 
     case RoomCreationResponseException(message) =>

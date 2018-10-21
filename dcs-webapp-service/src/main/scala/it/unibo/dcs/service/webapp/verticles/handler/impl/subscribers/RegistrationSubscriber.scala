@@ -18,6 +18,7 @@ final class RegistrationSubscriber(private[this] val routingContext: RoutingCont
                                    private[this] val userRepository: UserRepository,
                                    private[this] implicit val ctx: Context) extends Subscriber[RegisterResult] {
 
+  private implicit val routeContext: RoutingContext = this.routingContext
 
   override def onNext(result: RegisterResult): Unit = routingContext.response().end(result)
 
@@ -28,14 +29,12 @@ final class RegistrationSubscriber(private[this] val routingContext: RoutingCont
         missingResponseBody, message)
 
     case AuthServiceErrorException(errorJson) =>
-      implicit val context: RoutingContext = this.routingContext
       respond(HttpResponseStatus.BAD_REQUEST.code(), errorJson.encodePrettily())
 
     case UserServiceErrorException(errorResponseJson, username, token) =>
-      implicit val routingContext: RoutingContext = this.routingContext
       rollbackAuthRepository(username, token)(new RollbackOnServiceErrorSubscriber())
 
-      class RollbackOnServiceErrorSubscriber(implicit routingContext: RoutingContext) extends Subscriber[Unit] {
+      class RollbackOnServiceErrorSubscriber() extends Subscriber[Unit] {
         override def onCompleted(): Unit =
           respond(HttpResponseStatus.BAD_REQUEST.code(), errorResponseJson.encodePrettily())
 
@@ -46,10 +45,9 @@ final class RegistrationSubscriber(private[this] val routingContext: RoutingCont
       }
 
     case UserCreationResponseException(message, username, token) =>
-      implicit val routingContext: RoutingContext = this.routingContext
       rollbackAuthRepository(username, token)(new RollbackOnWrongResponseSubscriber())
 
-      class RollbackOnWrongResponseSubscriber(implicit routingContext: RoutingContext) extends Subscriber[Unit] {
+      class RollbackOnWrongResponseSubscriber() extends Subscriber[Unit] {
         override def onCompleted(): Unit =
           endErrorResponse(routingContext.response(), HttpResponseStatus.INTERNAL_SERVER_ERROR,
             userServiceWrongResponse, message)
@@ -74,7 +72,6 @@ final class RegistrationSubscriber(private[this] val routingContext: RoutingCont
   private def rollbackRepositories(username: String, token: String) = {
     rollbackAuthRepository(username, token)(_)
     rollbackUserRepository(username)(_)
-    implicit val context: RoutingContext = this.routingContext
   }
 
   /* Rollback changes previously performed in Authentication service */

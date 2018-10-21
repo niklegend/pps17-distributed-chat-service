@@ -18,4 +18,5 @@ class AuthenticationDataStoreNetwork(private val authenticationApi: Authenticati
   override def checkToken(request: CheckTokenRequest): Observable[Unit] =
     authenticationApi.checkToken(request)
 
+  override def deleteUser(request: DeleteUserRequest): Observable[Unit] = authenticationApi.deleteUser(request)
 }

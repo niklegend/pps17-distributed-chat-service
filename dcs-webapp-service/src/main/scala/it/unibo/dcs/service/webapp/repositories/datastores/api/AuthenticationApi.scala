@@ -11,6 +11,9 @@ import rx.lang.scala.Observable
 /** Utility wrapper for making requests to the Authentication Service via the network */
 trait AuthenticationApi {
 
+  def deleteUser(request: DeleteUserRequest): Observable[Unit]
+
+
   /** It tells the Authentication Service to check the validity of the login credentials
     *
     * @param request user login credentials

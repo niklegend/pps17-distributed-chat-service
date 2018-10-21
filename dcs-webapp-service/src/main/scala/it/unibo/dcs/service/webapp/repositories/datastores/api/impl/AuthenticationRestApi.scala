@@ -78,6 +78,7 @@ class AuthenticationRestApi(private[this] val discovery: HttpEndpointDiscovery)
           throw AuthServiceErrorException(errorJson)
       })
 
+  override def deleteUser(request: DeleteUserRequest): Observable[Unit] = ???
 }
 
 private[impl] object AuthenticationRestApi {

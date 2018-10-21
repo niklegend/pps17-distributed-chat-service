@@ -40,6 +40,7 @@ class UserRestApi(private[this] val discovery: HttpEndpointDiscovery)
       .map(response => response.bodyAsJsonObject()
         .getOrElse(throw GetUserResponseException("User service returned an empty body")))
 
+  override def deleteUser(username: String): Observable[Unit] = ???
 }
 
 private[impl] object UserRestApi {

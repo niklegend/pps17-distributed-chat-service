@@ -13,6 +13,6 @@ class RoomDataStoreNetwork(private val roomApi: RoomApi) extends RoomDataStore {
 
   override def createRoom(request: CreateRoomRequest): Observable[Room] = roomApi.createRoom(request)
 
-  override def registerUser(request: RegisterUserRequest, token: String): Observable[Unit] =
-    roomApi.registerUser(request, token)
+  override def registerUser(request: RegisterUserRequest): Observable[Unit] =
+    roomApi.registerUser(request)
 }

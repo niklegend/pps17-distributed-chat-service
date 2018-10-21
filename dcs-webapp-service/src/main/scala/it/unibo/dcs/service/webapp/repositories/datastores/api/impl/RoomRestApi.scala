@@ -1,14 +1,14 @@
 package it.unibo.dcs.service.webapp.repositories.datastores.api.impl
 
-import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.scala.ext.web.client.WebClient
 import it.unibo.dcs.commons.VertxWebHelper
 import it.unibo.dcs.commons.service.{AbstractApi, HttpEndpointDiscovery}
-import it.unibo.dcs.exceptions.{RegistrationResponseException, RoomCreationResponseException, RoomDeletionResponseException, RoomServiceErrorException}
+import it.unibo.dcs.exceptions.{RoomCreationResponseException, RoomDeletionResponseException}
 import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
 import it.unibo.dcs.service.webapp.interaction.Requests._
 import it.unibo.dcs.service.webapp.model.Room
 import it.unibo.dcs.service.webapp.repositories.datastores.api.RoomApi
+import it.unibo.dcs.service.webapp.repositories.datastores.api.exceptions.RegistrationResponseException
 import rx.lang.scala.Observable
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -32,20 +32,11 @@ class RoomRestApi(private[this] val discovery: HttpEndpointDiscovery)
     })
   }
 
-  override def registerUser(userRegistrationRequest: RegisterUserRequest, token: String): Observable[Unit] = {
+  override def registerUser(userRegistrationRequest: RegisterUserRequest): Observable[Unit] = {
     for {
       response <- request((roomWebClient: WebClient) =>
         Observable.from(roomWebClient.post(RoomRestApi.registerUser).sendJsonObjectFuture(userRegistrationRequest)))
-    } yield responseStatus(response) match {
-      case HttpResponseStatus.OK => response.bodyAsJsonObject()
-        .orElse(throw RegistrationResponseException("Room service returned an empty body",
-          userRegistrationRequest.username, token))
-      case _ =>
-        val responseJson = response.bodyAsJsonObject()
-          .getOrElse(throw RegistrationResponseException("Room service returned an empty body after an error",
-            userRegistrationRequest.username, token))
-        throw RoomServiceErrorException(responseJson, userRegistrationRequest.username, token)
-    }
+    } yield response.bodyAsJsonObject().getOrElse(throw RegistrationResponseException())
   }
 }
 

@@ -12,7 +12,7 @@ import rx.lang.scala.Observable
 /** Utility wrapper for making requests to the Room Service via the network */
 trait RoomApi {
 
-  def registerUser(request: RegisterUserRequest, token: String): Observable[Unit]
+  def registerUser(request: RegisterUserRequest): Observable[Unit]
 
 
   /** It tells the Room Service to store a new room

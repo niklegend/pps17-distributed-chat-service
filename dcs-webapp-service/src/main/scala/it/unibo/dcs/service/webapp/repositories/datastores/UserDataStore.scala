@@ -24,7 +24,7 @@ trait UserDataStore {
     * @param request the user registration request
     * @param token   token previously obtained by the Authentication service
     * @return an observable stream of just the user created */
-  def createUser(request: RegisterUserRequest, token: String): Observable[User]
+  def createUser(request: RegisterUserRequest): Observable[User]
 
 }
 

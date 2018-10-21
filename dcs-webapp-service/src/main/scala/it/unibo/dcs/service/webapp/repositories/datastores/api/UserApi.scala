@@ -20,7 +20,7 @@ trait UserApi {
     * @param request user information needed to perform a registration
     * @param token   token previously obtained by the Authentication service
     * @return an observable stream of just the created user */
-  def createUser(request: RegisterUserRequest, token: String): Observable[User]
+  def createUser(request: RegisterUserRequest): Observable[User]
 
   /** It request the user service to retrieve a user given its username
     *

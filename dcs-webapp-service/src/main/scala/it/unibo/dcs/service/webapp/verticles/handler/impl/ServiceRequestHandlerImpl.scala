@@ -12,7 +12,7 @@ import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, RoomR
 import it.unibo.dcs.service.webapp.usecases._
 import it.unibo.dcs.service.webapp.verticles.handler.ServiceRequestHandler
 import it.unibo.dcs.service.webapp.verticles.handler.impl.message._
-import it.unibo.dcs.service.webapp.verticles.handler.impl.subscribers.RegistrationSubscriber
+import it.unibo.dcs.service.webapp.verticles.handler.impl.subscribers.{LoginUserSubscriber, LogoutUserSubscriber, RegistrationSubscriber}
 
 import scala.language.postfixOps
 
@@ -24,21 +24,21 @@ final class ServiceRequestHandlerImpl(private val userRepository: UserRepository
   override def handleRegistration(context: RoutingContext)(implicit ctx: Context): Unit =
     handle(context, missingRegistrationInfoMessage, {
       val useCase = RegisterUserUseCase.create(authRepository, userRepository, roomRepository)
-      useCase(_) subscribe RegistrationSubscriber(context, authRepository, userRepository, roomRepository)
+      useCase(_) subscribe RegistrationSubscriber(context, authRepository)
     })
 
 
   override def handleLogout(context: RoutingContext)(implicit ctx: Context): Unit =
     handle(context, missingLogoutInfoMessage, {
       val useCase = LogoutUserUseCase.create(authRepository)
-      useCase(_) subscribe (_ => context response() end)
+      useCase(_) subscribe LogoutUserSubscriber(context)
     })
 
 
   override def handleLogin(context: RoutingContext)(implicit ctx: Context): Unit = {
     handle(context, missingLoginInfoMessage, {
       val useCase = LoginUserUseCase.create(authRepository, userRepository)
-      useCase(_) subscribe (result => context response() end result)
+      useCase(_) subscribe LoginUserSubscriber(context)
     })
   }
 

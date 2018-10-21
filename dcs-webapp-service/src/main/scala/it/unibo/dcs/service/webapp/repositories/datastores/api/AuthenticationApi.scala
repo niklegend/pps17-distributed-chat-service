@@ -11,12 +11,6 @@ import rx.lang.scala.Observable
 /** Utility wrapper for making requests to the Authentication Service via the network */
 trait AuthenticationApi {
 
-  /** It tells the Authentication Service to check if the room creation is allowed
-    *
-    * @param request info about room creation
-    * @return an empty observable */
-  def createRoom(request: CreateRoomRequest): Observable[Unit]
-
   /** It tells the Authentication Service to check the validity of the login credentials
     *
     * @param request user login credentials

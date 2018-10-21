@@ -3,6 +3,7 @@ package it.unibo.dcs.service.webapp.repositories.datastores.api.impl
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.buffer.Buffer
 import io.vertx.scala.ext.web.client.{HttpResponse, WebClient}
+import it.unibo.dcs.commons.VertxWebHelper._
 import it.unibo.dcs.commons.service.{AbstractApi, HttpEndpointDiscovery}
 import it.unibo.dcs.exceptions.{GetUserResponseException, UserCreationResponseException, UserServiceErrorException}
 import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
@@ -29,12 +30,8 @@ class UserRestApi(private[this] val discovery: HttpEndpointDiscovery)
 
   private def responseAsUser(registrationRequest: RegisterUserRequest, token: String, response: HttpResponse[Buffer]) = {
     response.bodyAsJsonObject()
-      .getOrElse(throw UserCreationResponseException("User service returned an empty body",
+      .getOrElse(throw UserCreationResponseException("User service returned an empty body after an error",
         registrationRequest.username, token))
-  }
-
-  private def responseStatus(response: HttpResponse[Buffer]) = {
-    HttpResponseStatus.valueOf(response.statusCode())
   }
 
   override def getUserByUsername(username: String): Observable[User] =

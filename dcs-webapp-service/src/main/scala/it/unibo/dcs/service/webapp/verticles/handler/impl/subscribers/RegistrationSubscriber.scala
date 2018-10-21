@@ -5,24 +5,25 @@ import io.vertx.scala.core.Context
 import io.vertx.scala.ext.web.RoutingContext
 import it.unibo.dcs.commons.VertxWebHelper._
 import it.unibo.dcs.commons.validation.ErrorTypes._
-import it.unibo.dcs.exceptions.{UserCreationResponseException, UserServiceErrorException}
+import it.unibo.dcs.exceptions._
 import it.unibo.dcs.service.webapp.interaction.Requests.DeleteUserRequest
 import it.unibo.dcs.service.webapp.interaction.Results.Implicits._
 import it.unibo.dcs.service.webapp.interaction.Results.RegisterResult
-import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, RoomRepository, UserRepository}
+import it.unibo.dcs.service.webapp.repositories.AuthenticationRepository
 import rx.lang.scala.Subscriber
 
 
 final class RegistrationSubscriber(private[this] val routingContext: RoutingContext,
                                    private[this] val authRepository: AuthenticationRepository,
-                                   private[this] val userRepository: UserRepository,
-                                   private[this] val roomRepository: RoomRepository,
                                    private[this] implicit val ctx: Context) extends Subscriber[RegisterResult] {
 
 
   override def onNext(result: RegisterResult): Unit = routingContext.response().end(result)
 
   override def onError(error: Throwable): Unit = error match {
+
+    case RegistrationResponseException(message) => ()
+    case AuthServiceErrorException(errorJson) => ()
 
     case UserServiceErrorException(errorResponseJson, username, token) =>
       implicit val routingContext: RoutingContext = this.routingContext
@@ -46,6 +47,9 @@ final class RegistrationSubscriber(private[this] val routingContext: RoutingCont
 
         override def onError(error: Throwable): Unit = ???
       }
+
+    case RegistrationResponseException(message) => ()
+    case RoomServiceErrorException(errorJson) => ()
   }
 
   /* Rollback changes previously performed in Authentication service */
@@ -56,8 +60,6 @@ final class RegistrationSubscriber(private[this] val routingContext: RoutingCont
 
 object RegistrationSubscriber {
   def apply(routingContext: RoutingContext,
-            authRepository: AuthenticationRepository,
-            userRepository: UserRepository,
-            roomRepository: RoomRepository)(implicit ctx: Context): RegistrationSubscriber =
-    new RegistrationSubscriber(routingContext, authRepository, userRepository, roomRepository, ctx)
+            authRepository: AuthenticationRepository)(implicit ctx: Context): RegistrationSubscriber =
+    new RegistrationSubscriber(routingContext, authRepository, ctx)
 }

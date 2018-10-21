@@ -5,13 +5,11 @@ import io.vertx.scala.ext.web.RoutingContext
 import it.unibo.dcs.exceptions._
 import it.unibo.dcs.service.webapp.interaction.Results.Implicits._
 import it.unibo.dcs.service.webapp.interaction.Results.RoomCreationResult
-import it.unibo.dcs.service.webapp.repositories.AuthenticationRepository
 import rx.lang.scala.Subscriber
 
 
-final class RoomCreationSubscriber(private[this] val routingContext: RoutingContext,
-                                   private[this] val authRepository: AuthenticationRepository,
-                                   private[this] implicit val ctx: Context) extends Subscriber[RoomCreationResult] {
+final class RoomCreationSubscriber(private[this] val routingContext: RoutingContext)
+                                  (private[this] implicit val ctx: Context) extends Subscriber[RoomCreationResult] {
 
 
   override def onNext(result: RoomCreationResult): Unit = routingContext.response().end(result)
@@ -30,7 +28,6 @@ final class RoomCreationSubscriber(private[this] val routingContext: RoutingCont
 }
 
 object RoomCreationSubscriber {
-  def apply(routingContext: RoutingContext,
-            authRepository: AuthenticationRepository)(implicit ctx: Context): RoomDeletionSubscriber =
-    new RoomDeletionSubscriber(routingContext, authRepository, ctx)
+  def apply(routingContext: RoutingContext)(implicit ctx: Context): RoomCreationSubscriber =
+    new RoomCreationSubscriber(routingContext)
 }

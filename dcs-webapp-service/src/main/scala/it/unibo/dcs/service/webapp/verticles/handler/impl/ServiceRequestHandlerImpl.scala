@@ -7,12 +7,11 @@ import io.vertx.scala.ext.web.RoutingContext
 import it.unibo.dcs.commons.VertxWebHelper._
 import it.unibo.dcs.commons.validation.ErrorTypes._
 import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
-import it.unibo.dcs.service.webapp.interaction.Results.Implicits._
 import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, RoomRepository, UserRepository}
 import it.unibo.dcs.service.webapp.usecases._
 import it.unibo.dcs.service.webapp.verticles.handler.ServiceRequestHandler
 import it.unibo.dcs.service.webapp.verticles.handler.impl.message._
-import it.unibo.dcs.service.webapp.verticles.handler.impl.subscribers.{LoginUserSubscriber, LogoutUserSubscriber, RegistrationSubscriber}
+import it.unibo.dcs.service.webapp.verticles.handler.impl.subscribers._
 
 import scala.language.postfixOps
 
@@ -46,14 +45,14 @@ final class ServiceRequestHandlerImpl(private val userRepository: UserRepository
   override def handleRoomCreation(context: RoutingContext)(implicit ctx: Context): Unit = {
     handle(context, missingRoomCreationInfoMessage, {
       val useCase = CreateRoomUseCase(authRepository, roomRepository)
-      useCase(_) subscribe (result => context response() end result)
+      useCase(_) subscribe RoomCreationSubscriber(context)
     })
   }
 
   override def handleRoomDeletion(context: RoutingContext)(implicit ctx: Context): Unit = {
     handle(context, missingRoomDeletionInfoMessage, {
       val useCase = DeleteRoomUseCase.create(authRepository, roomRepository)
-      useCase(_) subscribe (_ => context response() end)
+      useCase(_) subscribe RoomDeletionSubscriber(context)
     })
   }
 

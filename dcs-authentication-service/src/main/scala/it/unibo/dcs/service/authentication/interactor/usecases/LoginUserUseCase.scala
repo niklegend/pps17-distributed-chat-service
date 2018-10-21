@@ -2,7 +2,6 @@ package it.unibo.dcs.service.authentication.interactor.usecases
 
 import io.vertx.scala.ext.auth.jwt.JWTAuth
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
-import it.unibo.dcs.service.authentication.interactor.ReturningTokenUseCase
 import it.unibo.dcs.service.authentication.repository.AuthenticationRepository
 import rx.lang.scala.Observable
 

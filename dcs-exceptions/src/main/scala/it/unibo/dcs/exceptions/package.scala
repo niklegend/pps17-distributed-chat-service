@@ -43,6 +43,8 @@ package object exceptions {
 
   final case class RoomCreationResponseException(message: String) extends DcsException
 
+  final case class TokenCheckResponseException(message: String) extends DcsException
+
   final case class UserServiceErrorException(errorJson: JsonObject,
                                              username: String,
                                              token: String) extends DcsException

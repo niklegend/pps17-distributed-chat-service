@@ -1,16 +1,12 @@
 package it.unibo.dcs.service.webapp.verticles.handler.impl.subscribers
 
-import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.scala.core.Context
 import io.vertx.scala.ext.web.RoutingContext
-import it.unibo.dcs.commons.VertxWebHelper.{endErrorResponse, respond}
-import it.unibo.dcs.commons.validation.ErrorTypes.userServiceWrongResponse
-import it.unibo.dcs.exceptions.{RoomCreationResponseException, RoomServiceErrorException, UserServiceErrorException}
-import it.unibo.dcs.service.webapp.interaction.Requests.DeleteUserRequest
+import it.unibo.dcs.exceptions._
+import it.unibo.dcs.service.webapp.interaction.Results.Implicits._
 import it.unibo.dcs.service.webapp.interaction.Results.RoomCreationResult
 import it.unibo.dcs.service.webapp.repositories.AuthenticationRepository
 import rx.lang.scala.Subscriber
-import it.unibo.dcs.service.webapp.interaction.Results.Implicits._
 
 
 final class RoomCreationSubscriber(private[this] val routingContext: RoutingContext,
@@ -22,15 +18,19 @@ final class RoomCreationSubscriber(private[this] val routingContext: RoutingCont
 
   override def onError(error: Throwable): Unit = error match {
 
-    case RoomServiceErrorException(errorResponseJson) => ()
+    case TokenCheckResponseException(message) => ???
 
-    case RoomCreationResponseException(message) => ()
+    case AuthServiceErrorException(errorJson) => ???
+
+    case RoomServiceErrorException(errorJson) => ???
+
+    case RoomCreationResponseException(message) => ???
   }
 
 }
 
 object RoomCreationSubscriber {
   def apply(routingContext: RoutingContext,
-            authRepository: AuthenticationRepository)(implicit ctx: Context): RoomCreationSubscriber =
-    new RoomCreationSubscriber(routingContext, authRepository, ctx)
+            authRepository: AuthenticationRepository)(implicit ctx: Context): RoomDeletionSubscriber =
+    new RoomDeletionSubscriber(routingContext, authRepository, ctx)
 }

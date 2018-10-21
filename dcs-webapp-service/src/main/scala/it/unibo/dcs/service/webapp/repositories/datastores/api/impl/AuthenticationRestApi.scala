@@ -4,7 +4,7 @@ import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.lang.scala.json.Json
 import it.unibo.dcs.commons.VertxWebHelper._
 import it.unibo.dcs.commons.service.{AbstractApi, HttpEndpointDiscovery}
-import it.unibo.dcs.exceptions.{AuthServiceErrorException, LoginResponseException, LogoutResponseException, RegistrationResponseException}
+import it.unibo.dcs.exceptions._
 import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
 import it.unibo.dcs.service.webapp.interaction.Requests._
 import it.unibo.dcs.service.webapp.repositories.datastores.api.AuthenticationApi
@@ -70,7 +70,13 @@ class AuthenticationRestApi(private[this] val discovery: HttpEndpointDiscovery)
       Observable.from(tokenWebClient.get(checkTokenURI)
         .putHeader(authenticationKeyLabel, tokenPrefix + checkRoomRequest.token)
         .sendJsonObjectFuture(Json.obj())))
-      .map(_.body())
+      .map(response => responseStatus(response) match {
+        case HttpResponseStatus.OK => response.body()
+        case _ =>
+          val errorJson = response.bodyAsJsonObject()
+            .getOrElse(throw TokenCheckResponseException("Authentication service returned an empty body after an error"))
+          throw AuthServiceErrorException(errorJson)
+      })
 
 }
 

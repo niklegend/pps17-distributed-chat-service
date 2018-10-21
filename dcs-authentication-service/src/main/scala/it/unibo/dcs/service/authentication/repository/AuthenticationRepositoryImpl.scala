@@ -23,6 +23,6 @@ class AuthenticationRepositoryImpl(private[this] val authDataStore: Authenticati
   override def isTokenValid(token: String): Observable[Boolean] = authDataStore.isTokenValid(token)
 }
 
-object AuthenticationRepositoryImpl{
+object AuthenticationRepositoryImpl {
   def apply(authDataStore: AuthenticationDataStore) = new AuthenticationRepositoryImpl(authDataStore)
 }

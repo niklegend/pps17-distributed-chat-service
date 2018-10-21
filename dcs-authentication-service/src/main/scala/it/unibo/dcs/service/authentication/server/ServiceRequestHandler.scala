@@ -6,8 +6,6 @@ import io.vertx.scala.ext.web.RoutingContext
   * It handles all the incoming request to the service APIs. */
 trait ServiceRequestHandler {
 
-  def handleCheckLogout(implicit context: RoutingContext): Unit
-
   /** Token check request handler
     *
     * @param context Vertx routing context passed implicitly */

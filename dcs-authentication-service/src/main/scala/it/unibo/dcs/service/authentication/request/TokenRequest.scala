@@ -4,6 +4,7 @@ package it.unibo.dcs.service.authentication.request
 trait TokenRequest {
 
   def username: String
+
   def password: String
 
 }

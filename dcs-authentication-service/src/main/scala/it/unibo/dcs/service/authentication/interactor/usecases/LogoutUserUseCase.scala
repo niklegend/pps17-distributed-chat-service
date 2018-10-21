@@ -1,12 +1,11 @@
-package it.unibo.dcs.service.authentication.interactor
+package it.unibo.dcs.service.authentication.interactor.usecases
 
 import java.util.Date
-
+import it.unibo.dcs.commons.interactor.UseCase
+import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
 import it.unibo.dcs.service.authentication.business_logic.JwtTokenDecoder
 import it.unibo.dcs.service.authentication.repository.AuthenticationRepository
 import it.unibo.dcs.service.authentication.request.LogoutUserRequest
-import it.unibo.dcs.commons.interactor.UseCase
-import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
 import rx.lang.scala.Observable
 
 /** It represents the use case to use to logout a user.
@@ -17,8 +16,8 @@ import rx.lang.scala.Observable
   * @param authRepository      authentication repository reference
   * @usecase logout of a user */
 final class LogoutUserUseCase(private[this] val threadExecutor: ThreadExecutor,
-                         private[this] val postExecutionThread: PostExecutionThread,
-                         private[this] val authRepository: AuthenticationRepository)
+                              private[this] val postExecutionThread: PostExecutionThread,
+                              private[this] val authRepository: AuthenticationRepository)
   extends UseCase[Unit, LogoutUserRequest](threadExecutor, postExecutionThread) {
 
   val tokenDecoder = JwtTokenDecoder()
@@ -27,7 +26,7 @@ final class LogoutUserUseCase(private[this] val threadExecutor: ThreadExecutor,
     authRepository.invalidToken(request.token, new Date())
 }
 
-object LogoutUserUseCase{
+object LogoutUserUseCase {
 
   /** Factory method to create the use case
     *

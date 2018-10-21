@@ -1,6 +1,7 @@
 package it.unibo.dcs.service.webapp.repositories.datastores.api.impl
 
 import io.vertx.scala.ext.web.client.WebClient
+import it.unibo.dcs.commons.VertxWebHelper
 import it.unibo.dcs.commons.service.{AbstractApi, HttpEndpointDiscovery}
 import it.unibo.dcs.exceptions.{RegistrationResponseException, RoomCreationResponseException, RoomDeletionResponseException}
 import it.unibo.dcs.service.webapp.interaction.Requests
@@ -26,7 +27,9 @@ class RoomRestApi(private[this] val discovery: HttpEndpointDiscovery)
     for {
       response <- request((roomWebClient: WebClient) =>
         Observable.from(roomWebClient.post(RoomRestApi.deleteRoomURI).sendJsonObjectFuture(deletionRequest)))
-    } yield response.bodyAsJsonObject().getOrElse(throw RoomDeletionResponseException("Room service returned an empty body"))
+    } yield Observable.just(response).map(response => if(!VertxWebHelper.isCodeSuccessful(response.statusCode())){
+      throw RoomDeletionResponseException("Room service returned an error")
+    })
   }
 
   override def registerUser(userRegistrationRequest: Requests.RegisterUserRequest): Observable[Unit] = {

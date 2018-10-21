@@ -2,7 +2,6 @@ package it.unibo.dcs.service.room.repository.impl
 
 import it.unibo.dcs.service.room.data.RoomDataStore
 import it.unibo.dcs.service.room.repository.RoomRepository
-import it.unibo.dcs.service.room.request
 import it.unibo.dcs.service.room.request.{CreateRoomRequest, CreateUserRequest, DeleteRoomRequest}
 import rx.lang.scala.Observable
 

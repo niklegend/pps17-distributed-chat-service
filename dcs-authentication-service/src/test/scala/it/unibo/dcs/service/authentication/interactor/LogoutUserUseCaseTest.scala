@@ -16,7 +16,7 @@ class LogoutUserUseCaseTest extends FlatSpec with MockFactory {
   val logoutUserUseCase = new LogoutUserUseCase(threadExecutor, postExecutionThread, authRepository)
 
   it should "logout the user when the use case is executed" in {
-    (authRepository invalidToken (_, _)) expects (token, *) returns (Observable just expectedResult)
+    (authRepository invalidToken(_, _)) expects(token, *) returns (Observable just expectedResult)
 
     logoutUserUseCase(request).subscribe(subscriber)
 

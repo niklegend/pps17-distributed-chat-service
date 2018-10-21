@@ -9,6 +9,7 @@ import rx.lang.scala.Observable
 
 class AuthenticationRepositoryImpl(private val authenticationDataStore: AuthenticationDataStore)
   extends AuthenticationRepository {
+
   override def loginUser(loginUserRequest: LoginUserRequest): Observable[String] =
     authenticationDataStore.loginUser(loginUserRequest)
 
@@ -22,5 +23,5 @@ class AuthenticationRepositoryImpl(private val authenticationDataStore: Authenti
   override def checkToken(request: Requests.CheckTokenRequest): Observable[Unit] =
     authenticationDataStore.checkToken(request)
 
-  override def checkLogout(request: LogoutUserRequest): Observable[Unit] = authenticationDataStore.checkLogout(request)
+  override def deleteUser(request: Requests.DeleteUserRequest): Observable[Unit] = ???
 }

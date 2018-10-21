@@ -6,7 +6,7 @@ import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExec
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
 
-object MocksForUseCases extends FlatSpec with MockFactory{
+object MocksForUseCases extends FlatSpec with MockFactory {
 
   val threadExecutor: ThreadExecutor = mock[ThreadExecutor]
   val postExecutionThread: PostExecutionThread = mock[PostExecutionThread]

@@ -1,8 +1,8 @@
-package it.unibo.dcs.service.authentication.interactor
+package it.unibo.dcs.service.authentication.interactor.usecases
 
 import io.vertx.scala.ext.auth.jwt.JWTAuth
-import it.unibo.dcs.service.authentication.repository.AuthenticationRepository
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
+import it.unibo.dcs.service.authentication.repository.AuthenticationRepository
 import rx.lang.scala.Observable
 
 /** It represents the use case to use to register a user.
@@ -14,9 +14,9 @@ import rx.lang.scala.Observable
   * @param jwtAuth             jwt authentication provider
   * @usecase registration of a user */
 final class RegisterUserUseCase(private[this] val threadExecutor: ThreadExecutor,
-                             private[this] val postExecutionThread: PostExecutionThread,
-                             private[this] val authRepository: AuthenticationRepository,
-                             private[this] val jwtAuth: JWTAuth)
+                                private[this] val postExecutionThread: PostExecutionThread,
+                                private[this] val authRepository: AuthenticationRepository,
+                                private[this] val jwtAuth: JWTAuth)
   extends ReturningTokenUseCase(threadExecutor, postExecutionThread, authRepository, jwtAuth) {
 
   protected def getMainObservable(username: String, password: String): Observable[Unit] = {

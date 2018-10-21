@@ -1,4 +1,4 @@
-package it.unibo.dcs.service.authentication.interactor
+package it.unibo.dcs.service.authentication.interactor.validations
 
 import it.unibo.dcs.commons.interactor.Validation
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}

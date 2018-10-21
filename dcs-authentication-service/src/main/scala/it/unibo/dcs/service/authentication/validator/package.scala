@@ -1,10 +1,10 @@
 package it.unibo.dcs.service.authentication
 
 import it.unibo.dcs.service.authentication.authentication.Messages._
-import it.unibo.dcs.commons.validation.Validator
+import it.unibo.dcs.commons.validation.{Conditions, Validator}
 import it.unibo.dcs.exceptions.{MissingPasswordException, MissingTokenException, MissingUsernameException, UserNotFoundException}
 import it.unibo.dcs.service.authentication.repository.AuthenticationRepository
-import it.unibo.dcs.service.authentication.request.{CheckTokenRequest, LoginUserRequest, LogoutUserRequest, RegisterUserRequest}
+import it.unibo.dcs.service.authentication.request.{LoginUserRequest, LogoutUserRequest, RegisterUserRequest}
 
 package object authentication {
 
@@ -12,17 +12,16 @@ package object authentication {
     def apply(authRepository: AuthenticationRepository): Validator[LogoutUserRequest] = Validator[LogoutUserRequest] {
       builder =>
         builder.addRule(builder.observableRule(request =>
-          builder.Conditions.stringNotEmpty(request.token), MissingTokenException(missingToken)))
+          Conditions.stringNotEmpty(request.token), MissingTokenException(missingToken)))
     }
   }
 
-
   object RegistrationValidator {
-    def apply: Validator[RegisterUserRequest] = Validator[RegisterUserRequest] {
+    def apply(): Validator[RegisterUserRequest] = Validator[RegisterUserRequest] {
       builder =>
         builder
           .addRule(builder.observableRule(
-            request => builder.Conditions.stringNotEmpty(request.username),
+            request => Conditions.stringNotEmpty(request.username),
             MissingUsernameException(missingUsername)))
 
           .addRule(builder.observableRule(
@@ -31,32 +30,22 @@ package object authentication {
     }
   }
 
-
   object LoginValidator {
     def apply(authRepository: AuthenticationRepository): Validator[LoginUserRequest] = Validator[LoginUserRequest] {
       builder =>
         builder
           .addRule(builder.observableRule(
-            request => builder.Conditions.stringNotEmpty(request.username),
+            request => Conditions.stringNotEmpty(request.username),
             MissingUsernameException(missingUsername)
           ))
 
           .addRule(builder.observableRule(
-            request => builder.Conditions.stringNotEmpty(request.password),
+            request => Conditions.stringNotEmpty(request.password),
             MissingPasswordException(missingPassword)
           ))
 
           .addRule(request => authRepository.checkUserExistence(request.username)
             .doOnError(throw UserNotFoundException(request.username)))
-    }
-  }
-
-  object CheckTokenValidator {
-    def apply: Validator[CheckTokenRequest] = Validator[CheckTokenRequest] {
-      builder =>
-        builder
-          .addRule(builder.observableRule(
-            request => builder.Conditions.stringNotEmpty(request.token), MissingTokenException(missingToken)))
     }
   }
 

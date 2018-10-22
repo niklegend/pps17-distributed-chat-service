@@ -42,8 +42,7 @@ package object validator {
             PasswordRequiredException
           )
 
-          .addRule(request => authRepository.checkUserExistence(request.username)
-            .doOnError(throw UserNotFoundException(request.username)))
+          .addRule(request => authRepository.checkUserExistence(request.username)))
     }
   }
 

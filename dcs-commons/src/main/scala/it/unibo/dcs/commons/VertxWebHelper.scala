@@ -27,13 +27,6 @@ object VertxWebHelper {
     context.response.setStatusCode(statusCode).end(responseBody.encodePrettily())
   }
 
-  def respondOkToPostWithJson(body: JsonObject)(implicit context: RoutingContext): Unit = {
-    context.response
-      .putHeader("content-type", "application/json")
-      .setStatusCode(201)
-      .end(body.encodePrettily())
-  }
-
   def isCodeSuccessful(statusCode: Int): Boolean = statusCode / 100 == 2
 
   def doIfDefined(id: Option[_], action: => Unit)(implicit context: RoutingContext): Unit =

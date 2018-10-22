@@ -30,7 +30,7 @@ buildscript {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'it.unibo.dcs.authentication_service.server.Launcher'
+        attributes 'Main-Class': 'it.unibo.dcs.service.authentication.server.Launcher'
     }
 
     from {
@@ -43,5 +43,4 @@ apply plugin: "cz.augi.gradle.wartremover"
 wartremover {
     warningWarts.remove("NonUnitStatements")
     warningWarts.remove("Var")
-    warningWarts.remove("Throw")
 }

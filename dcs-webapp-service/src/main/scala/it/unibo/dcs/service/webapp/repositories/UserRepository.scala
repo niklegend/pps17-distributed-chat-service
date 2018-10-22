@@ -22,7 +22,7 @@ trait UserRepository {
     * @param request
     * Needed information to register a new user
     * @return an observable stream composed by the created user */
-  def registerUser(request: RegisterUserRequest, token: String): Observable[User]
+  def registerUser(request: RegisterUserRequest): Observable[User]
 
 }
 

@@ -20,7 +20,7 @@ object Requests {
 
   final case class CreateRoomRequest(name: String, username: String, token: String)
 
-  final case class DeleteRoomRequest(roomName: String, username: String, token: String)
+  final case class DeleteRoomRequest(name: String, username: String, token: String)
 
   final case class CheckTokenRequest(token: String)
 
@@ -28,7 +28,7 @@ object Requests {
   object Implicits {
 
     implicit def deleteRoomRequestToJson(request: DeleteRoomRequest): JsonObject = {
-      Json.obj(("name", request.roomName), ("username", request.username), ("token", request.token))
+      Json.obj(("name", request.name), ("username", request.username), ("token", request.token))
     }
 
     implicit def jsonToDeleteRoomRequest(json: JsonObject): DeleteRoomRequest = {

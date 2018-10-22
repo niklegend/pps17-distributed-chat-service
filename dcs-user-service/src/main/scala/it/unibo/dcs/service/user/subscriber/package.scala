@@ -2,12 +2,14 @@ package it.unibo.dcs.service.user
 
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.lang.scala.ScalaLogger
-import io.vertx.lang.scala.json.{Json, JsonObject}
+import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.core.http.HttpServerResponse
-import it.unibo.dcs.commons.VertxWebHelper.Implicits.{jsonObjectToString, RichHttpServerResponse}
+import it.unibo.dcs.commons.VertxWebHelper.Implicits.{RichHttpServerResponse, jsonObjectToString}
 import it.unibo.dcs.commons.dataaccess.Implicits.dateToString
 import it.unibo.dcs.exceptions.ErrorSubscriber
+import it.unibo.dcs.service.user.interactor.usecases.CreateUserUseCase
 import it.unibo.dcs.service.user.model.User
+import it.unibo.dcs.service.user.request.CreateUserRequest
 import it.unibo.dcs.service.user.subscriber.Implicits._
 import rx.lang.scala.Subscriber
 
@@ -28,12 +30,12 @@ package object subscriber {
 
   }
 
-  final class ValidateUserCreationSubscriber(protected override val response: HttpServerResponse) extends Subscriber[Unit]
+  final class ValidateUserCreationSubscriber(protected override val response: HttpServerResponse,
+                                             private[this] val request: CreateUserRequest,
+                                             private[this] val createUserUseCase: CreateUserUseCase) extends Subscriber[Unit]
       with ErrorSubscriber {
 
-    private[this] val log = ScalaLogger.getLogger(getClass.getName)
-
-    override def onCompleted(): Unit = response.setStatus(HttpResponseStatus.NO_CONTENT).end()
+    override def onCompleted(): Unit = createUserUseCase(request, new CreateUserSubscriber(response))
 
   }
 

@@ -4,8 +4,7 @@ import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
 import io.vertx.scala.ext.web.client.HttpResponse
 import it.unibo.dcs.exceptions.ErrorType._
-
-import exceptions.Implicits.jsonObjectToDcsException
+import it.unibo.dcs.exceptions.Implicits.jsonObjectToDcsException
 
 /** It contains all the exceptions used by the APIs */
 package object exceptions {
@@ -15,6 +14,7 @@ package object exceptions {
   private val KEY_TYPE = "type"
   private val KEY_EXTRAS = "extras"
 
+  private val KEY_SERVICE_NAME = "serviceName"
   private val KEY_DESCRIPTION = "description"
   private val KEY_NAME = "name"
   private val KEY_USERNAME = "username"
@@ -22,6 +22,8 @@ package object exceptions {
   object ErrorType {
 
     val Internal = "Internal"
+
+    val ServiceUnavailable = "SERVICE_UNAVAILABLE"
 
     val UserAlreadyExists = "USER_ALREADY_EXISTS"
 
@@ -34,6 +36,8 @@ package object exceptions {
     val WrongUsernameOrPassword = "WRONG_USERNAME_OR_PASSWORD"
 
     val InvalidToken = "INVALID_TOKEN"
+
+    val BodyRequired = "BODY_REQUIRED"
 
     val UsernameRequired = "USERNAME_REQUIRED"
 
@@ -54,7 +58,17 @@ package object exceptions {
   /** Sum type representing all the specific exceptions for Distributed Chat Service application */
   sealed abstract class DcsException(val errorType: String) extends RuntimeException
 
-  final case class InternalException(description: String = "") extends DcsException(Internal)
+  sealed case class InternalException(description: String = "") extends DcsException(Internal)
+
+  final case class KeyRequiredException(key: String, error: String) extends InternalException(s"Key '$key' is required in $error error")
+
+  final case class AuthServiceErrorException(cause: Throwable) extends InternalException()
+
+  final case class RoomServiceErrorException(cause: Throwable) extends InternalException()
+
+  final case class UserServiceErrorException(cause: Throwable) extends InternalException()
+
+  final case class ServiceUnavailableException(serviceName: String) extends DcsException(ServiceUnavailable)
 
   final case class UserAlreadyExistsException(username: String) extends DcsException(UserAlreadyExists)
 
@@ -69,6 +83,8 @@ package object exceptions {
   final case object WrongUsernameOrPasswordException extends DcsException(WrongUsernameOrPassword)
 
   /* Field required */
+  final case object BodyRequiredException extends DcsException(BodyRequired)
+
   final case object UsernameRequiredException extends DcsException(UsernameRequired)
 
   final case object FirstNameRequiredException extends DcsException(FirstNameRequired)
@@ -86,11 +102,14 @@ package object exceptions {
   object Implicits {
 
     implicit def throwableToJsonObject(cause: Throwable): JsonObject = {
+      println(cause.getClass)
       val error = new JsonObject()
       cause match {
         case e: DcsException =>
           error.put(KEY_TYPE, e.errorType)
           e match {
+            case ServiceUnavailableException(serviceName) =>
+              error.put(KEY_EXTRAS, Json.obj((KEY_SERVICE_NAME, serviceName)))
             case UserAlreadyExistsException(username) =>
               error.put(KEY_EXTRAS, Json.obj((KEY_USERNAME, username)))
             case UserNotFoundException(username) =>
@@ -102,6 +121,7 @@ package object exceptions {
             case InternalException(description) =>
               if (description != null && description.nonEmpty)
                 error.put(KEY_EXTRAS, Json.obj((KEY_DESCRIPTION, description)))
+            case _ =>
           }
         case _ =>
           error.put(KEY_TYPE, Internal)
@@ -115,50 +135,64 @@ package object exceptions {
 
     implicit def jsonObjectToDcsException(json: JsonObject): JsonObject = {
       if (json.containsKey(KEY_ERROR)) {
-        if (json.containsKey(KEY_TYPE)) {
-          json.getString(KEY_TYPE) match {
+        val error = json.getJsonObject(KEY_ERROR)
+        if (error.containsKey(KEY_TYPE)) {
+          error.getString(KEY_TYPE) match {
+            case ServiceUnavailable =>
+              if (error.containsKey(KEY_EXTRAS)) {
+                val extras = error.getJsonObject(KEY_EXTRAS)
+                if (extras.containsKey(KEY_SERVICE_NAME)) {
+                  val serviceName = extras.getString(KEY_SERVICE_NAME)
+                  throw ServiceUnavailableException(serviceName)
+                }
+                throw KeyRequiredException(KEY_SERVICE_NAME, ServiceUnavailable)
+              }
+              throw KeyRequiredException(KEY_USERNAME, ServiceUnavailable)
             case UserNotFound =>
-              if (json.containsKey(KEY_EXTRAS)) {
-                val extras = json.getJsonObject(KEY_EXTRAS)
+              if (error.containsKey(KEY_EXTRAS)) {
+                val extras = error.getJsonObject(KEY_EXTRAS)
                 if (extras.containsKey(KEY_USERNAME)) {
                   val username = extras.getString(KEY_USERNAME)
                   throw UserNotFoundException(username)
                 }
                 throw InternalException(s"Missing key '$KEY_USERNAME' in $UserNotFound error")
+                throw KeyRequiredException(KEY_USERNAME, UserNotFound)
               }
-              throw InternalException(s"Missing key '$KEY_EXTRAS' in $UserNotFound error")
+              throw KeyRequiredException(KEY_NAME, UserNotFound)
             case UserAlreadyExists =>
-              if (json.containsKey(KEY_EXTRAS)) {
-                val extras = json.getJsonObject(KEY_EXTRAS)
+              if (error.containsKey(KEY_EXTRAS)) {
+                val extras = error.getJsonObject(KEY_EXTRAS)
                 if (extras.containsKey(KEY_USERNAME)) {
                   val username = extras.getString(KEY_USERNAME)
                   throw UserAlreadyExistsException(username)
                 }
-                throw InternalException(s"Missing key '$KEY_USERNAME' in $UserAlreadyExists error")
+                throw KeyRequiredException(KEY_USERNAME, UserAlreadyExists)
               }
-              throw InternalException(s"Missing key '$KEY_EXTRAS' in $UserAlreadyExists error")
+              throw KeyRequiredException(KEY_NAME, UserAlreadyExists)
             case RoomNotFound =>
-              if (json.containsKey(KEY_EXTRAS)) {
-                val extras = json.getJsonObject(KEY_EXTRAS)
+              if (error.containsKey(KEY_EXTRAS)) {
+                val extras = error.getJsonObject(KEY_EXTRAS)
                 if (extras.containsKey(KEY_NAME)) {
                   val name = extras.getString(KEY_NAME)
                   throw RoomNotFoundException(name)
                 }
-                throw InternalException(s"Missing key '$KEY_NAME' in $RoomNotFound error")
+                throw KeyRequiredException(KEY_NAME, RoomNotFound)
               }
-              throw InternalException(s"Missing key '$KEY_EXTRAS' in $RoomNotFound error")
+              throw KeyRequiredException(KEY_EXTRAS, RoomNotFound)
             case RoomAlreadyExists =>
-              if (json.containsKey(KEY_EXTRAS)) {
-                val extras = json.getJsonObject(KEY_EXTRAS)
+              if (error.containsKey(KEY_EXTRAS)) {
+                val extras = error.getJsonObject(KEY_EXTRAS)
                 if (extras.containsKey(KEY_NAME)) {
                   val name = extras.getString(KEY_NAME)
                   throw RoomAlreadyExistsException(name)
                 }
-                throw InternalException(s"Missing key '$KEY_NAME' in $RoomAlreadyExists error")
+                throw KeyRequiredException(KEY_NAME, RoomAlreadyExists)
               }
-              throw InternalException(s"Missing key '$KEY_EXTRAS' in $RoomAlreadyExists error")
+              throw KeyRequiredException(KEY_EXTRAS, RoomAlreadyExists)
             case WrongUsernameOrPassword =>
               throw WrongUsernameOrPasswordException
+            case BodyRequired =>
+              throw BodyRequiredException
             case UsernameRequired =>
               throw UsernameRequiredException
             case FirstNameRequired =>
@@ -174,8 +208,8 @@ package object exceptions {
             case RoomNameRequired =>
               throw RoomNameRequiredException
             case Internal =>
-              if (json.containsKey(KEY_EXTRAS)) {
-                val extras = json.getJsonObject(KEY_EXTRAS)
+              if (error.containsKey(KEY_EXTRAS)) {
+                val extras = error.getJsonObject(KEY_EXTRAS)
                 if (extras.containsKey(KEY_DESCRIPTION)) {
                   val description = extras.getString(KEY_DESCRIPTION)
                   throw InternalException(description)
@@ -190,6 +224,8 @@ package object exceptions {
     }
 
     implicit def throwableToHttpResponseStatus(cause: Throwable): HttpResponseStatus = cause match {
+      case ServiceUnavailableException(_) =>
+        HttpResponseStatus.SERVICE_UNAVAILABLE
       case UserNotFoundException(_)
            | RoomNotFoundException(_) =>
         HttpResponseStatus.NOT_FOUND

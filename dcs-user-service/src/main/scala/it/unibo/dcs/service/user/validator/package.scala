@@ -1,6 +1,6 @@
 package it.unibo.dcs.service.user
 
-import it.unibo.dcs.commons.validation.Validator
+import it.unibo.dcs.commons.validation.{Conditions, Validator}
 import it.unibo.dcs.exceptions.{FirstNameRequiredException, LastNameRequiredException, UsernameRequiredException}
 import it.unibo.dcs.service.user.repository.UserRepository
 import it.unibo.dcs.service.user.request.{CreateUserRequest, GetUserRequest}
@@ -18,14 +18,14 @@ package object validator {
           new NullPointerException(nullUserCreationRequest)
         )
         .addRule(request =>
-          builder.Conditions.stringNotEmpty(request.firstName),
+          Conditions.stringNotEmpty(request.firstName),
           FirstNameRequiredException
         )
         .addRule(request =>
-          builder.Conditions.stringNotEmpty(request.lastName), LastNameRequiredException
+          Conditions.stringNotEmpty(request.lastName), LastNameRequiredException
         )
         .addRule(request =>
-          builder.Conditions.stringNotEmpty(request.username), UsernameRequiredException
+          Conditions.stringNotEmpty(request.username), UsernameRequiredException
         )
         .addRule(request =>
           userRepository.checkIfUserExists(request))

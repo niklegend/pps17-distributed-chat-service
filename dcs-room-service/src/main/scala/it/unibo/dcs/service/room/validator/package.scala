@@ -17,8 +17,7 @@ package object validator {
 
   object CreateRoomValidator {
     def apply(): Validator[CreateRoomRequest] = Validator[CreateRoomRequest] {
-      builder =>
-        builder
+      builder => builder
           .addRule(request =>
             Conditions.stringNotEmpty(request.name),
             RoomNameRequiredException
@@ -32,8 +31,7 @@ package object validator {
 
   object DeleteRoomValidator {
     def apply(): Validator[DeleteRoomRequest] = Validator[DeleteRoomRequest] {
-      builder =>
-        builder
+      builder => builder
           .addRule(request =>
             Conditions.stringNotEmpty(request.name),
             RoomNameRequiredException

@@ -9,47 +9,44 @@ package object validator {
 
   object LogoutUserValidator {
     def apply(authRepository: AuthenticationRepository): Validator[LogoutUserRequest] = Validator[LogoutUserRequest] {
-      builder =>
-        builder.addRule(request =>
-          Conditions.stringNotEmpty(request.token), TokenRequiredException)
+      builder => builder.addRule(request =>
+          Conditions.stringNotEmpty(request.token), TokenRequiredException
+        )
     }
   }
 
   object RegistrationValidator {
     def apply(): Validator[RegisterUserRequest] = Validator[RegisterUserRequest] {
-      builder =>
-        builder
+      builder => builder
           .addRule(
             request => Conditions.stringNotEmpty(request.username),
-            UsernameRequiredException)
+            UsernameRequiredException
+          )
           .addRule(
             request => Conditions.stringNotEmpty(request.password),
-            PasswordRequiredException)
+            PasswordRequiredException
+          )
     }
   }
 
   object LoginValidator {
     def apply(authRepository: AuthenticationRepository): Validator[LoginUserRequest] = Validator[LoginUserRequest] {
-      builder =>
-        builder
+      builder => builder
           .addRule(
             request => Conditions.stringNotEmpty(request.username),
             UsernameRequiredException
           )
-
           .addRule(
             request => Conditions.stringNotEmpty(request.password),
             PasswordRequiredException
           )
-
-          .addRule(request => authRepository.checkUserExistence(request.username)))
+          .addRule(request => authRepository.checkUserExistence(request.username))
     }
   }
 
   object CheckTokenValidator {
     def apply: Validator[CheckTokenRequest] = Validator[CheckTokenRequest] {
-      builder =>
-        builder
+      builder => builder
           .addRule(
             request => Conditions.stringNotEmpty(request.token), TokenRequiredException)
     }

@@ -3,7 +3,7 @@ package it.unibo.dcs.service.webapp.verticles.handler.impl
 import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.core.Context
 import io.vertx.scala.ext.web.RoutingContext
-import it.unibo.dcs.exceptions.BodyRequiredException
+import it.unibo.dcs.exceptions.InternalException
 import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
 import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, RoomRepository, UserRepository}
 import it.unibo.dcs.service.webapp.usecases._
@@ -47,7 +47,7 @@ final class ServiceRequestHandlerImpl(private[this] val userRepository: UserRepo
     }
 
   private[this] def handleRequestBody(context: RoutingContext)(handler: JsonObject => Unit): Unit = {
-    context.getBodyAsJson().fold(throw BodyRequiredException)(handler)
+    context.getBodyAsJson().fold(throw InternalException("Request body required"))(handler)
   }
 
 }

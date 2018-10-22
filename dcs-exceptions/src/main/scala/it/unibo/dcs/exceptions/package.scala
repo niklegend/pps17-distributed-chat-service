@@ -37,8 +37,6 @@ package object exceptions {
 
     val InvalidToken = "INVALID_TOKEN"
 
-    val BodyRequired = "BODY_REQUIRED"
-
     val UsernameRequired = "USERNAME_REQUIRED"
 
     val FirstNameRequired = "FIRST_NAME_REQUIRED"
@@ -58,15 +56,19 @@ package object exceptions {
   /** Sum type representing all the specific exceptions for Distributed Chat Service application */
   sealed abstract class DcsException(val errorType: String) extends RuntimeException
 
-  sealed case class InternalException(description: String = "") extends DcsException(Internal)
+  final case class InternalException(description: String = "") extends DcsException(Internal)
 
-  final case class KeyRequiredException(key: String, error: String) extends InternalException(s"Key '$key' is required in $error error")
+  final case object KeyRequiredException {
 
-  final case class AuthServiceErrorException(cause: Throwable) extends InternalException()
+    def apply(key: String, error: String) = InternalException(s"Key '$key' is required in $error error")
 
-  final case class RoomServiceErrorException(cause: Throwable) extends InternalException()
+  }
 
-  final case class UserServiceErrorException(cause: Throwable) extends InternalException()
+  final case class AuthServiceErrorException(cause: Throwable) extends DcsException(Internal)
+
+  final case class RoomServiceErrorException(cause: Throwable) extends DcsException(Internal)
+
+  final case class UserServiceErrorException(cause: Throwable) extends DcsException(Internal)
 
   final case class ServiceUnavailableException(serviceName: String) extends DcsException(ServiceUnavailable)
 
@@ -83,8 +85,6 @@ package object exceptions {
   final case object WrongUsernameOrPasswordException extends DcsException(WrongUsernameOrPassword)
 
   /* Field required */
-  final case object BodyRequiredException extends DcsException(BodyRequired)
-
   final case object UsernameRequiredException extends DcsException(UsernameRequired)
 
   final case object FirstNameRequiredException extends DcsException(FirstNameRequired)
@@ -191,8 +191,6 @@ package object exceptions {
               throw KeyRequiredException(KEY_EXTRAS, RoomAlreadyExists)
             case WrongUsernameOrPassword =>
               throw WrongUsernameOrPasswordException
-            case BodyRequired =>
-              throw BodyRequiredException
             case UsernameRequired =>
               throw UsernameRequiredException
             case FirstNameRequired =>

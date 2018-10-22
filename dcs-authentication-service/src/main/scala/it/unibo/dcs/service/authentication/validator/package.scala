@@ -4,7 +4,7 @@ import it.unibo.dcs.service.authentication.authentication.Messages._
 import it.unibo.dcs.commons.validation.{Conditions, Validator}
 import it.unibo.dcs.exceptions.{MissingPasswordException, MissingTokenException, MissingUsernameException, UserNotFoundException}
 import it.unibo.dcs.service.authentication.repository.AuthenticationRepository
-import it.unibo.dcs.service.authentication.request.{LoginUserRequest, LogoutUserRequest, RegisterUserRequest}
+import it.unibo.dcs.service.authentication.request.Requests._
 
 package object authentication {
 
@@ -45,7 +45,7 @@ package object authentication {
           ))
 
           .addRule(request => authRepository.checkUserExistence(request.username)
-            .doOnError(throw UserNotFoundException(request.username)))
+            .doOnError(_ => throw UserNotFoundException(request.username)))
     }
   }
 

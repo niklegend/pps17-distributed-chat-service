@@ -1,7 +1,6 @@
 package it.unibo.dcs.service.authentication.data
 
 import java.util.Date
-
 import io.vertx.core.{AsyncResult, Future}
 import io.vertx.lang.scala.json.Json
 import io.vertx.scala.ext.sql.{ResultSet, SQLConnection}
@@ -32,12 +31,12 @@ class AuthenticationDataStoreDatabase(private[this] val connection: SQLConnectio
     checkResultSetSize("SELECT * FROM invalid_tokens WHERE token = '" + token + "'", 0)
 
   private def checkRecordPresence(table: String, parameters: (String, String)*): Observable[Unit] =
-    VertxHelper.toObservable[Unit] { handler =>
-      val query = "SELECT * FROM " + table + " WHERE " +
-        parameters.map(param => param._1 + " = " + "'" + param._2 + "'")
-          .fold("")((param1, param2) => param1 + " AND " + param2)
-      val completeQuery = query.replaceFirst("AND", "")
-      connection.query(completeQuery, handleQueryResult(_, handler))
+    VertxHelper.toObservable[Unit] { handler => {
+      val clauses = parameters.map(param => param._1 + " = " + "'" + param._2 + "'")
+        .fold("")((param1, param2) => param1 + " AND " + param2)
+      val query = ("SELECT * FROM " + table + " WHERE " + clauses).replaceFirst("AND", "")
+      connection.query(query, handleQueryResult(_, handler))
+      }
     }
 
   private def handleQueryResult(result: AsyncResult[ResultSet], handler: AsyncResult[Unit] => Unit): Unit = {
@@ -50,12 +49,12 @@ class AuthenticationDataStoreDatabase(private[this] val connection: SQLConnectio
     handler(resultFuture)
   }
 
-  private def checkResultSetSize(query: String, size: Int): Observable[Boolean] =
+  private def checkResultSetSize(query: String, expectedSize: Int): Observable[Boolean] =
     VertxHelper.toObservable[Boolean] { handler =>
       connection.query(query, ar => {
         val result: Future[Boolean] = Future.future()
         if (ar.succeeded()) {
-          result.complete(ar.result().getResults.size == size)
+          result.complete(ar.result().getResults.size == expectedSize)
         } else {
           result.fail(ar.cause())
         }

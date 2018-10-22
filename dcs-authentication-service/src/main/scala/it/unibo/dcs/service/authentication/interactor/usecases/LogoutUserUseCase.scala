@@ -1,11 +1,12 @@
 package it.unibo.dcs.service.authentication.interactor.usecases
 
 import java.util.Date
+
 import it.unibo.dcs.commons.interactor.UseCase
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
 import it.unibo.dcs.service.authentication.business_logic.JwtTokenDecoder
 import it.unibo.dcs.service.authentication.repository.AuthenticationRepository
-import it.unibo.dcs.service.authentication.request.LogoutUserRequest
+import it.unibo.dcs.service.authentication.request.Requests.LogoutUserRequest
 import rx.lang.scala.Observable
 
 /** It represents the use case to use to logout a user.

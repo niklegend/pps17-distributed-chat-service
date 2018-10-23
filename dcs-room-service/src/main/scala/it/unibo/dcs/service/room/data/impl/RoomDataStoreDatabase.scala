@@ -13,7 +13,8 @@ final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
 
   override def createUser(request: CreateUserRequest): Observable[Unit] = execute(insertUserQuery, request)
 
-  override def deleteRoom(request: DeleteRoomRequest): Observable[Unit] = execute(deleteRoomQuery, request)
+  override def deleteRoom(request: DeleteRoomRequest): Observable[String] = execute(deleteRoomQuery, request)
+    .map(_ => request.name)
 
   override def createRoom(request: CreateRoomRequest): Observable[Unit] = execute(insertRoomQuery, request)
 

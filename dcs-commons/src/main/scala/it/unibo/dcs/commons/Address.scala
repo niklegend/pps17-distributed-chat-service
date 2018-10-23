@@ -13,7 +13,7 @@ final class Address private[commons](private[this] val eventBus: EventBus, priva
     this
   }
 
-  def publish(message: AnyRef, options: DeliveryOptions = DeliveryOptions()): Address = {
+  def publish[T <: AnyRef](message: T, options: DeliveryOptions = DeliveryOptions()): Address = {
     eventBus.publish(name, message, options)
     this
   }

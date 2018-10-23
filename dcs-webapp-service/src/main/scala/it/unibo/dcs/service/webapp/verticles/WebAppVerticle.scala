@@ -4,11 +4,13 @@ import io.vertx.core.http.HttpMethod._
 import io.vertx.core.{AbstractVerticle, Context, Vertx}
 import io.vertx.scala.core
 import io.vertx.scala.core.eventbus.EventBus
+import io.vertx.scala.ext.bridge.PermittedOptions
 import io.vertx.scala.ext.web.Router
+import io.vertx.scala.ext.web.handler.sockjs.{BridgeOptions, SockJSHandler}
 import io.vertx.scala.ext.web.handler.{BodyHandler, CorsHandler}
-import io.vertx.servicediscovery.{Record, ServiceDiscovery}
-import it.unibo.dcs.commons.service.codecs.RecordMessageCodec
+import io.vertx.servicediscovery.ServiceDiscovery
 import it.unibo.dcs.commons.service.{HttpEndpointPublisher, HttpEndpointPublisherImpl, ServiceVerticle}
+import it.unibo.dcs.service.webapp.verticles.Addresses.rooms
 import it.unibo.dcs.service.webapp.verticles.handler.ServiceRequestHandler
 
 /** Verticle that runs the WebApp Service */
@@ -64,6 +66,9 @@ final class WebAppVerticle extends ServiceVerticle {
       .allowedHeader("Access-Control-Allow-Credentials")
       .allowedHeader("Content-Type"))
 
+    apiRouter.route("/events/*")
+      .handler(sockJSHandler)
+
     apiRouter.post("/register")
       .consumes("application/json")
       .produces("application/json")
@@ -102,6 +107,12 @@ final class WebAppVerticle extends ServiceVerticle {
         log.error(s"Could not start server at http://$host:$port", _))
   }
 
+  private lazy val sockJSHandler = {
+    val options = BridgeOptions()
+      .addOutboundPermitted(PermittedOptions().setAddress(rooms.created))
+      .addOutboundPermitted(PermittedOptions().setAddress(rooms.deleted))
+
+    SockJSHandler.create(vertx).bridge(options)
+  }
+
 }
-
-

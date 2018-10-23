@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { ChatService } from "../../service/chat.service";
+import { ChatService } from '../../service/chat.service';
 import { Router } from '@angular/router';
+
+import {remove } from 'lodash';
+import { Room } from '../../model';
 
 @Component({
   selector: 'app-rooms',
@@ -8,27 +11,16 @@ import { Router } from '@angular/router';
   styleUrls: ['./rooms.component.scss']
 })
 export class RoomsComponent implements OnInit {
+
   showMenu = '';
 
-  rooms = [
-    {
-      name: 'Room1'
-    },
-    {
-      name: 'Room2'
-    },
-    {
-      name: 'Room3'
-    },
-    {
-      name: 'Room4'
-    }
-  ];
+  rooms: Room[];
 
   constructor(private chat: ChatService, private router: Router) {}
 
   ngOnInit() {
     this.chat.onRoomCreated().subscribe(room => this.rooms.unshift(room));
+    this.chat.onRoomDeleted().subscribe(name => remove(this.rooms, room => room.name === name));
   }
 
   addExpandClass(element) {
@@ -50,4 +42,5 @@ export class RoomsComponent implements OnInit {
       .subscribe(() => {}, err => console.error(err)
     );
   }
+
 }

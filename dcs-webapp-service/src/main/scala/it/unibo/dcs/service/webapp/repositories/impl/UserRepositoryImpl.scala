@@ -7,11 +7,7 @@ import it.unibo.dcs.service.webapp.repositories.datastores.UserDataStore
 import rx.lang.scala.Observable
 
 class UserRepositoryImpl(userDataStore: UserDataStore) extends UserRepository {
-
   override def getUserByUsername(username: String): Observable[User] = userDataStore.getUserByUsername(username)
 
   override def registerUser(request: RegisterUserRequest): Observable[User] = userDataStore.createUser(request)
-
-  override def deleteUser(username: String): Observable[String] = userDataStore.deleteUser(username)
-
 }

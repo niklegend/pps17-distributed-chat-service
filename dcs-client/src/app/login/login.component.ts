@@ -1,30 +1,21 @@
 import { Component, OnInit } from '@angular/core';
+import { ChatService } from '../chat.service';
 import { Router } from '@angular/router';
-import { AuthService } from '../service/auth.service';
-import { LoginRequest } from '../requests';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
 
-  request = new LoginRequest();
+  constructor(private service: ChatService, private router: Router) {
+  }
 
-  constructor(private router: Router, private auth: AuthService) {}
-
-  ngOnInit() {}
-
-  login() {
-    this.auth.login(this.request).subscribe(
-      _ => {},
-      err => {
-        this.request.password = '';
-        console.error(err);
-      },
-      () => this.router.navigateByUrl('/')
-    );
+  ngOnInit(): void {
+    if (this.service.getUser()) {
+      this.router.navigateByUrl('/');
+    }
   }
 
 }

@@ -1,10 +1,8 @@
 package it.unibo.dcs.commons.validation
 
-import rx.lang.scala.Observable
-
 trait Validator[T] {
 
-  def validate(t: T): Observable[Unit]
+  def validate(t: T)
 
 }
 

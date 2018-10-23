@@ -12,13 +12,10 @@ final class RoomRepositorySpec extends FlatSpec with MockFactory with OneInstanc
   val roomDataStore = mock[RoomDataStore]
   val roomRepository = new RoomRepositoryImpl(roomDataStore)
 
-  private val username = "mvandi"
-  private val roomName = "Test room"
+  val subscriber = stub[Subscriber[Unit]]
 
   it should "create a new user on the data store" in {
-    val request = CreateUserRequest(username)
-
-    val subscriber = stub[Subscriber[Unit]]
+    val request = CreateUserRequest("mvandi")
 
     // Given
     (roomDataStore createUser _) expects request returns Observable.just()
@@ -31,9 +28,7 @@ final class RoomRepositorySpec extends FlatSpec with MockFactory with OneInstanc
   }
 
   it should "Create a new room on the data store" in {
-    val request = CreateRoomRequest(roomName, username)
-
-    val subscriber = stub[Subscriber[Unit]]
+    val request = CreateRoomRequest("Aula Magna", "aulamagna")
 
     //Given
     (roomDataStore createRoom _) expects request returns Observable.just()
@@ -45,18 +40,16 @@ final class RoomRepositorySpec extends FlatSpec with MockFactory with OneInstanc
   }
 
   it should "Delete a room if the user who is trying to delete the room is also the user who created the room" in {
-    val request = DeleteRoomRequest(roomName, username)
-
-    val subscriber = stub[Subscriber[String]]
+    val request = DeleteRoomRequest("Test room", "mvandi")
 
     // Given
-    (roomDataStore deleteRoom _) expects request returns Observable.just(roomName)
+    (roomDataStore deleteRoom _) expects request returns Observable.just()
 
     // When
     roomRepository.deleteRoom(request).subscribe(subscriber)
 
     // Then
-    (subscriber.onNext _) verify roomName once()
+    (() => subscriber.onCompleted) verify() once()
   }
 
 }

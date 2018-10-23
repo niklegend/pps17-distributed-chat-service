@@ -21,13 +21,13 @@ final class DeleteRoomUseCase(private[this] val threadExecutor: ThreadExecutor,
                               private[this] val postExecutionThread: PostExecutionThread,
                               private[this] val authRepository: AuthenticationRepository,
                               private[this] val roomRepository: RoomRepository)
-  extends UseCase[String, DeleteRoomRequest](threadExecutor, postExecutionThread) {
+  extends UseCase[Unit, DeleteRoomRequest](threadExecutor, postExecutionThread) {
 
-  override protected[this] def createObservable(request: DeleteRoomRequest): Observable[String] = {
+  override protected[this] def createObservable(request: DeleteRoomRequest): Observable[Unit] = {
     for {
       _ <- authRepository.checkToken(CheckTokenRequest(request.token))
-      name <- roomRepository.deleteRoom(request)
-    } yield name
+      _ <- roomRepository.deleteRoom(request)
+    } yield Unit
   }
 
 }

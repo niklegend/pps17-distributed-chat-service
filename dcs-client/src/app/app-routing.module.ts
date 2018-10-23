@@ -1,32 +1,27 @@
 import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
-import { AuthGuard } from './guard/auth-guard';
+import { RouterModule, Routes } from '@angular/router';
 
 import { LoginComponent } from './login/login.component';
+import { ChatComponent } from './chat/chat.component';
 import { RegisterComponent } from './register/register.component';
 
 const routes: Routes = [
-  {
-    path: 'login',
-    component: LoginComponent,
-    canActivate: [AuthGuard]
-  },
-  {
-    path: 'register',
-    component: RegisterComponent,
-    canActivate: [AuthGuard]
-  },
-  {
-    path: '',
-    loadChildren: './chat/chat.module#ChatModule',
-    canActivate: [AuthGuard]
-},
+  { path: 'login', component: LoginComponent },
+  { path: 'register', component: RegisterComponent },
+  { path: '', component: ChatComponent },
+  { path: '**', redirectTo: '' }
+  // { path: '**', component: PageNotFoundComponent }
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule],
-  providers: [AuthGuard]
+  imports: [
+    RouterModule.forRoot(
+      routes,
+      // { enableTracing: true } // <-- debugging purposes only
+    )
+  ],
+  exports: [RouterModule]
 })
 export class AppRoutingModule { }

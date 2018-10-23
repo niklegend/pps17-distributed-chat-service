@@ -12,13 +12,9 @@ import rx.lang.scala.Observable
 /** Utility wrapper for making requests to the User Service via the network */
 trait UserApi {
 
-  def deleteUser(username: String): Observable[String]
-
-
   /** It tells user service to create a new user and returns it as Observable
     *
     * @param request user information needed to perform a registration
-    * @param token   token previously obtained by the Authentication service
     * @return an observable stream of just the created user */
   def createUser(request: RegisterUserRequest): Observable[User]
 

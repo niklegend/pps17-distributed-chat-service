@@ -4,7 +4,6 @@ import rx.lang.scala.Scheduler
 import rx.lang.scala.schedulers.ExecutionContextScheduler
 
 import scala.concurrent.ExecutionContext
-import scala.language.implicitConversions
 
 package object executor {
 

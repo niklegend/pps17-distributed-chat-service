@@ -1,5 +1,6 @@
 package it.unibo.dcs.service.webapp.verticles
 
+import io.vertx.core.eventbus.{EventBus => JEventBus}
 import io.vertx.core.http.HttpMethod._
 import io.vertx.core.{AbstractVerticle, Context, Vertx}
 import io.vertx.scala.core
@@ -39,6 +40,7 @@ final class WebAppVerticle extends ServiceVerticle {
 
   private def initEventBus = {
     val eventBus = vertx.eventBus
+    eventBus.asJava.asInstanceOf[JEventBus].registerDefaultCodec(classOf[Record], new RecordMessageCodec())
     eventBus
   }
 
@@ -74,20 +76,16 @@ final class WebAppVerticle extends ServiceVerticle {
       .produces("application/json")
       .handler(context => requestHandler handleLogin context)
 
+
     apiRouter.post("/logout")
       .consumes("application/json")
-      .produces("application/json")
       .handler(context => requestHandler handleLogout context)
+
 
     apiRouter.post("/rooms")
       .consumes("application/json")
       .produces("application/json")
       .handler(context => requestHandler handleRoomCreation context)
-
-    apiRouter.delete("/rooms")
-      .consumes("application/json")
-      .produces("application/json")
-      .handler(context => requestHandler handleRoomDeletion context)
 
     router.mountSubRouter("/api", apiRouter)
   }

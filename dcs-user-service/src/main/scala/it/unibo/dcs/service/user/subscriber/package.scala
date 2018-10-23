@@ -4,43 +4,15 @@ import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.lang.scala.ScalaLogger
 import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.core.http.HttpServerResponse
-import it.unibo.dcs.commons.VertxWebHelper.Implicits.{RichHttpServerResponse, jsonObjectToString}
-import it.unibo.dcs.commons.dataaccess.Implicits.dateToString
-import it.unibo.dcs.exceptions.ErrorSubscriber
-import it.unibo.dcs.service.user.interactor.usecases.CreateUserUseCase
+import it.unibo.dcs.commons.dataaccess.Implicits.{booleanToString, dateToString}
 import it.unibo.dcs.service.user.model.User
-import it.unibo.dcs.service.user.request.CreateUserRequest
-import it.unibo.dcs.service.user.subscriber.Implicits._
+import it.unibo.dcs.service.user.model.exception.UserNotFoundException
 import rx.lang.scala.Subscriber
-
-import scala.language.implicitConversions
+import it.unibo.dcs.service.user.subscriber.Implicits._
 
 package object subscriber {
 
-  final class CreateUserSubscriber(protected override val response: HttpServerResponse) extends Subscriber[User]
-    with ErrorSubscriber {
-
-    private[this] val log = ScalaLogger.getLogger(getClass.getName)
-
-    override def onNext(user: User): Unit = {
-      val json: JsonObject = user
-      log.info(s"Answering with user: $json")
-      response.setStatus(HttpResponseStatus.CREATED).end(json)
-    }
-
-  }
-
-  final class ValidateUserCreationSubscriber(protected override val response: HttpServerResponse,
-                                             private[this] val request: CreateUserRequest,
-                                             private[this] val createUserUseCase: CreateUserUseCase) extends Subscriber[Unit]
-      with ErrorSubscriber {
-
-    override def onCompleted(): Unit = createUserUseCase(request, new CreateUserSubscriber(response))
-
-  }
-
-  final class GetUserSubscriber(protected override val response: HttpServerResponse) extends Subscriber[User]
-    with ErrorSubscriber {
+  final class CreateUserSubscriber(private[this] val response: HttpServerResponse) extends Subscriber[User] {
 
     private[this] val log = ScalaLogger.getLogger(getClass.getName)
 
@@ -50,9 +22,44 @@ package object subscriber {
       response.end(json)
     }
 
+    override def onCompleted(): Unit = ()
+
+    override def onError(error: Throwable): Unit = error match {
+      case UserNotFoundException(username) =>
+        val statusJson: JsonObject = HttpResponseStatus.BAD_REQUEST
+        val extras = new JsonObject().put("username", username)
+        response.setStatusCode(HttpResponseStatus.BAD_REQUEST.code())
+        response.end(new JsonObject().put("status", statusJson).put("extras", extras).toString)
+    }
+
+  }
+
+  final class GetUserSubscriber(private[this] val response: HttpServerResponse) extends Subscriber[User] {
+
+    private[this] val log = ScalaLogger.getLogger(getClass.getName)
+
+    override def onNext(user: User): Unit = {
+      val json: JsonObject = user
+      log.info(s"Answering with user: $json")
+      response.end(json)
+    }
+
+    override def onCompleted(): Unit = ()
+
+    override def onError(error: Throwable): Unit = error match {
+      case UserNotFoundException(username) =>
+        val statusJson: JsonObject = HttpResponseStatus.NOT_FOUND
+        val extras = new JsonObject().put("username", username)
+        response.setStatusCode(HttpResponseStatus.NOT_FOUND.code())
+        response.write(new JsonObject().put("status", statusJson).put("extras", extras).toString)
+    }
+
   }
 
   object Implicits {
+
+    implicit def httpResponseStatusToJsonObject(status: HttpResponseStatus): JsonObject =
+      new JsonObject().put("code", status.code()).put("reasonPhrase", status.reasonPhrase())
 
     implicit def userToJsonObject(user: User): JsonObject = {
       new JsonObject()
@@ -60,9 +67,11 @@ package object subscriber {
         .put("firstName", user.firstName)
         .put("lastName", user.lastName)
         .put("bio", user.bio)
-        .put("visible", user.visible)
+        .put("visible", booleanToString(user.visible))
         .put("lastSeen", dateToString(user.lastSeen))
     }
+
+    implicit def jsonObjectToString(json: JsonObject): String = json.encode()
 
   }
 

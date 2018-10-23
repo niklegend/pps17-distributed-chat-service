@@ -14,8 +14,7 @@ import scala.language.postfixOps
 class DeleteRoomUseCaseSpec extends FlatSpec with MockFactory with OneInstancePerTest {
 
   private val username = "ale"
-  private val roomName = "Room 1"
-  private val room = Room(roomName)
+  private val room = Room("Room 1")
   private val token = "token"
   private val deleteRoomRequest = DeleteRoomRequest(room.name, username, token)
   private val roomDeletionResult = Unit
@@ -25,7 +24,7 @@ class DeleteRoomUseCaseSpec extends FlatSpec with MockFactory with OneInstancePe
   private val roomRepository: RoomRepository = mock[RoomRepository]
   private val authRepository: AuthenticationRepository = mock[AuthenticationRepository]
 
-  private val roomDeletionSubscriber = stub[Subscriber[String]]
+  private val roomDeletionSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
 
   private val deleteRoomUseCase =
     new DeleteRoomUseCase(threadExecutor, postExecutionThread, authRepository, roomRepository)
@@ -33,15 +32,15 @@ class DeleteRoomUseCaseSpec extends FlatSpec with MockFactory with OneInstancePe
 
   it should "delete the chosen room when the use case is executed" in {
     // Given
-    (roomRepository deleteRoom _) expects deleteRoomRequest returns (Observable just roomName)
+    (roomRepository deleteRoom _) expects deleteRoomRequest returns (Observable just Unit)
     // userRepository is called with `registerRequest` as parameter returns an observable that contains only `user`
-    (authRepository checkToken _) expects CheckTokenRequest(token) returns (Observable just roomName)
+    (authRepository checkToken _) expects CheckTokenRequest(token) returns (Observable just Unit)
 
     // When
     // createUserUseCase is executed with argument `request`
     deleteRoomUseCase(deleteRoomRequest) subscribe roomDeletionSubscriber
 
     // Then
-    (roomDeletionSubscriber onNext _) verify roomName once()
+    (() => roomDeletionSubscriber onCompleted) verify() once()
   }
 }

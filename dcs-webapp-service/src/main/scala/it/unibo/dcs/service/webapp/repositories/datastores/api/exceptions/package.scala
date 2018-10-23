@@ -5,14 +5,14 @@ package object exceptions {
 
   final case class RegistrationResponseException() extends RuntimeException
 
-  final case class LoginResponseException() extends RuntimeException
-
   final case class GetUserResponseException() extends RuntimeException
 
   final case class UserCreationResponseException() extends RuntimeException
 
-  final case class RoomDeletionException() extends RuntimeException
+  final case class RoomDeletionResponseException() extends RuntimeException
 
-  final case class RoomCreationException() extends RuntimeException
+  final case class RoomCreationResponseException() extends RuntimeException
+
+  final case class RegistrationValidityResponseException() extends RuntimeException
 
 }

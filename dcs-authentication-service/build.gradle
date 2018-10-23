@@ -8,6 +8,8 @@ dependencies {
     compile project(':dcs-service-commons')
     compile project(':dcs-data-access-commons')
     compile project(':dcs-interactor-commons')
+    compile project(':dcs-exceptions')
+
 
     compile group: 'io.vertx', name: 'vertx-auth-jwt-scala_2.12', version: vertxVersion
     compile group: 'commons-codec', name: 'commons-codec', version: commonsCodecVersion
@@ -28,7 +30,7 @@ buildscript {
 
 jar {
     manifest {
-        attributes 'Main-Class': 'it.unibo.dcs.authentication_service.server.Launcher'
+        attributes 'Main-Class': 'it.unibo.dcs.service.authentication.server.Launcher'
     }
 
     from {

@@ -29,7 +29,7 @@ object Results {
     }
 
     implicit def roomCreationResultToJsonObject(result: RoomCreationResult): JsonObject = {
-      Json.fromObjectString(gsonInstance.toJson(result))
+      Json.fromObjectString(gsonInstance.toJson(result.room))
     }
   }
 

@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { ChatService } from '../../service/chat.service';
 import { Router } from '@angular/router';
+import { remove } from 'lodash';
 
-import {remove } from 'lodash';
 import { Room } from '../../model';
 
 @Component({
@@ -14,12 +14,16 @@ export class RoomsComponent implements OnInit {
 
   showMenu = '';
 
-  rooms: Room[];
+  rooms: Room[] = [];
 
-  constructor(private chat: ChatService, private router: Router) {}
+  constructor(private chat: ChatService, private router: Router) {
+  }
 
   ngOnInit() {
-    this.chat.onRoomCreated().subscribe(room => this.rooms.unshift(room));
+    this.chat.onRoomCreated().subscribe(room => {
+      console.log('Room created!');
+      this.addRoom(room);
+    });
     this.chat.onRoomDeleted().subscribe(name => remove(this.rooms, room => room.name === name));
   }
 
@@ -36,11 +40,20 @@ export class RoomsComponent implements OnInit {
     this.router.navigate(['/rooms', room.name]);
   }
 
-  deleteRoom(room) {
+  deleteRoom(room: Room) {
     console.log(room);
     this.chat.deleteRoom(room.name)
       .subscribe(() => {}, err => console.error(err)
     );
+  }
+
+  private addRoom(room: Room) {
+    console.log(room);
+    if (this.rooms.length === 0) {
+      this.rooms.push(room);
+    } else {
+      this.rooms.unshift(room);
+    }
   }
 
 }

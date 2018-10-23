@@ -10,6 +10,7 @@ import { CreateRoomRequest } from '../../requests';
   styleUrls: ['./add-room.component.scss']
 })
 export class AddRoomComponent implements OnInit {
+
   name = '';
 
   constructor(private router: Router, private chat: ChatService) {}
@@ -23,8 +24,8 @@ export class AddRoomComponent implements OnInit {
   addRoom() {
     this.chat.createRoom(this.name)
       .subscribe(
-        p => {
-          this.router.navigate(['/rooms', p.room.name]);
+        name => {
+          this.router.navigate(["/rooms", name]);
         },
         err => console.error(err)
       );
@@ -41,4 +42,5 @@ export class AddRoomComponent implements OnInit {
     this.chat.selectRoom(room);
     this.router.navigate(['/rooms', room.name]);*/
   }
+
 }

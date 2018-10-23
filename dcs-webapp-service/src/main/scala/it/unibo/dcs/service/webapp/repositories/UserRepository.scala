@@ -9,6 +9,8 @@ import rx.lang.scala.Observable
 /** Structure that handles User data access and storage. */
 trait UserRepository {
 
+  def deleteUser(username: String): Observable[String]
+
   /** Retrieve a user given its username
     *
     * @param username username
@@ -21,6 +23,7 @@ trait UserRepository {
     * Needed information to register a new user
     * @return an observable stream composed by the created user */
   def registerUser(request: RegisterUserRequest): Observable[User]
+
 }
 
 /** Companion object */

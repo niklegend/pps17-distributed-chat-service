@@ -1,9 +1,15 @@
 package it.unibo.dcs.commons
 
+import io.netty.handler.codec.http.HttpResponseStatus
+import io.vertx.core.buffer.Buffer
 import io.vertx.core.http.HttpHeaders
-import io.vertx.core.json.JsonObject
-import io.vertx.lang.scala.json.Json
+import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
+import io.vertx.scala.core.http.HttpServerResponse
 import io.vertx.scala.ext.web.RoutingContext
+import io.vertx.scala.ext.web.client.HttpResponse
+import it.unibo.dcs.commons.VertxWebHelper.Implicits._
+
+import scala.language.implicitConversions
 
 object VertxWebHelper {
 
@@ -16,16 +22,8 @@ object VertxWebHelper {
   def respondWithCode(statusCode: Int)(implicit context: RoutingContext): Unit =
     context.response.setStatusCode(statusCode).end
 
-  def respond(statusCode: Int, message: String)(implicit context: RoutingContext): Unit = {
-    val responseBody = Json.obj(("status", statusCode), ("message", message))
-    context.response.setStatusCode(statusCode).end(responseBody.encodePrettily())
-  }
-
-  def respondOkToPostWithJson(body: JsonObject)(implicit context: RoutingContext): Unit = {
-    context.response
-      .putHeader("content-type", "application/json")
-      .setStatusCode(201)
-      .end(body.encodePrettily())
+  def respond(status: HttpResponseStatus)(implicit context: RoutingContext): Unit = {
+    context.response.setStatus(status).end()
   }
 
   def isCodeSuccessful(statusCode: Int): Boolean = statusCode / 100 == 2
@@ -38,4 +36,35 @@ object VertxWebHelper {
   def getTokenFromHeader(implicit context: RoutingContext): Option[String] = {
     context.request().headers().get(HttpHeaders.AUTHORIZATION.toString).map(token => token.split(" ").last)
   }
+
+  def endErrorResponse(response: HttpServerResponse,
+                       httpResponseStatus: HttpResponseStatus,
+                       errorType: String, description: String): Unit = {
+    val statusJson: JsonObject = httpResponseStatus
+    val typeField = ("type", errorType)
+    val descriptionField = ("description", description)
+    response.setStatus(httpResponseStatus)
+    response.end(Json.obj(("status", statusJson), typeField, descriptionField))
+  }
+
+  def responseStatus(response: HttpResponse[Buffer]): HttpResponseStatus = {
+    HttpResponseStatus.valueOf(response.statusCode())
+  }
+
+  object Implicits {
+
+    implicit def jsonObjectToString(json: JsonObject): String = json.encode()
+
+    implicit def jsonArrayToString(json: JsonArray): String = json.encode()
+
+    implicit def httpResponseStatusToJsonObject(status: HttpResponseStatus): JsonObject =
+      new JsonObject().put("code", status.code).put("reasonPhrase", status.reasonPhrase)
+
+    implicit class RichHttpServerResponse(response: HttpServerResponse) {
+      def setStatus(status: HttpResponseStatus): HttpServerResponse =
+        response.setStatusCode(status.code).setStatusMessage(status.reasonPhrase)
+    }
+
+  }
+
 }

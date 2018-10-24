@@ -6,7 +6,7 @@ import it.unibo.dcs.service.webapp.interaction.Requests.{CheckTokenRequest, Crea
 import it.unibo.dcs.service.webapp.interaction.Results.RoomCreationResult
 import it.unibo.dcs.service.webapp.model.{Room, User}
 import it.unibo.dcs.service.webapp.repositories.RoomRepository
-import it.unibo.dcs.service.webapp.usecases.CreateRoomUseCase
+import it.unibo.dcs.service.webapp.usecases.JoinRoomUseCase
 import rx.lang.scala.{Observable, Subscriber}
 
 import scala.language.postfixOps
@@ -24,7 +24,7 @@ class CreateRoomUseCaseSpec extends UseCaseSpec {
 
   private val roomCreationSubscriber: Subscriber[RoomCreationResult] = stub[Subscriber[RoomCreationResult]]
 
-  private val createRoomUseCase = new CreateRoomUseCase(threadExecutor, postExecutionThread, authRepository, roomRepository)
+  private val createRoomUseCase = new JoinRoomUseCase(threadExecutor, postExecutionThread, authRepository, roomRepository)
 
 
   it should "create a new room when the use case is executed" in {

@@ -22,6 +22,8 @@ object Requests {
 
   final case class DeleteRoomRequest(name: String, username: String, token: String)
 
+  final case class RoomJoinRequest()
+
   final case class CheckTokenRequest(token: String)
 
   /** It enables implicit conversions in order to clean code that deal with requests. */

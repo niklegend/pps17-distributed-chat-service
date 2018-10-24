@@ -15,6 +15,8 @@ object Results {
 
   final case class RoomCreationResult(room: Room)
 
+  final case class RoomJoinResult()
+
   /** It enables implicit conversions in order to clean code that deals with results. */
   object Implicits {
 

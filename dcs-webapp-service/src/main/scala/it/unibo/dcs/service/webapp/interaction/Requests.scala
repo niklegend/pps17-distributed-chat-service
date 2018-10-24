@@ -79,7 +79,6 @@ object Requests {
     }
 
     implicit def jsonObjectToRoomJoinRequest(json: JsonObject): RoomJoinRequest = {
-      //TODO use gson in this way to delete some implicits: gson.fromJson(json.encode(), RoomJoinRequest.getClass)
       RoomJoinRequest(json.getString("name"), json.getString("username"), json.getString("token"))
     }
   }

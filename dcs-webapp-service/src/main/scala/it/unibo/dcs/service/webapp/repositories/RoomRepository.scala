@@ -9,6 +9,11 @@ import rx.lang.scala.Observable
 /** Structure that handles Rooms data access and storage. */
 trait RoomRepository {
 
+  /** Store a new user given its information
+    *
+    * @param request needed data to register a new user
+    * @return an empty observable
+    */
   def registerUser(request: RegisterUserRequest): Observable[Unit]
 
   /** Create and store a new room given the creation request

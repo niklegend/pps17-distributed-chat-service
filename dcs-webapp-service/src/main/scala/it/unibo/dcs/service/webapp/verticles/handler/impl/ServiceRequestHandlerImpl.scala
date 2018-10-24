@@ -46,12 +46,7 @@ final class ServiceRequestHandlerImpl(private[this] val userRepository: UserRepo
       useCase(_, RoomDeletionSubscriber(context.response))
     }
 
-  override def handleJoinRoom(context: RoutingContext)(implicit ctx: Context): Unit =
-    handleRequestBody(context) {
-      val useCase = JoinRoomUseCase(authRepository, roomRepository)
-      useCase(_, JoinRoomSubscriber(context.response))
-      _
-    }
+  override def handleJoinRoom(context: RoutingContext)(implicit ctx: Context): Unit = ???
 
   private[this] def handleRequestBody(context: RoutingContext)(handler: JsonObject => Unit): Unit = {
     context.getBodyAsJson().fold(throw InternalException("Request body required"))(handler)

@@ -18,7 +18,6 @@ class DeleteRoomUseCaseSpec extends FlatSpec with MockFactory with OneInstancePe
   private val room = Room(roomName)
   private val token = "token"
   private val deleteRoomRequest = DeleteRoomRequest(room.name, username, token)
-  private val roomDeletionResult = Unit
 
   private val threadExecutor: ThreadExecutor = mock[ThreadExecutor]
   private val postExecutionThread: PostExecutionThread = mock[PostExecutionThread]

@@ -11,11 +11,17 @@ trait RoomRepository {
 
   def registerUser(request: RegisterUserRequest): Observable[Unit]
 
-  /** @param request
-    * Needed data to create a new room *
+  /** Create and store a new room given the creation request
+    *
+    * @param request Needed data to create a new room
     * @return an observable stream composed by the created room. */
   def createRoom(request: CreateRoomRequest): Observable[Room]
 
+  /** Delete a room given the deletion request
+    *
+    * @param request the room deletion request
+    * @return an observable stream of the deleted room's name
+    */
   def deleteRoom(request: DeleteRoomRequest): Observable[String]
 }
 

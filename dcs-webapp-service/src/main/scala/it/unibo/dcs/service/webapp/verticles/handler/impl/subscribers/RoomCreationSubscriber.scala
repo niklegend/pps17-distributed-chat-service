@@ -1,7 +1,6 @@
 package it.unibo.dcs.service.webapp.verticles.handler.impl.subscribers
 
 import io.netty.handler.codec.http.HttpResponseStatus
-import io.vertx.scala.core.Context
 import io.vertx.scala.core.http.HttpServerResponse
 import it.unibo.dcs.commons.VertxWebHelper.Implicits.RichHttpServerResponse
 import it.unibo.dcs.exceptions._

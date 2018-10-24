@@ -12,6 +12,11 @@ import rx.lang.scala.Observable
 /** Utility wrapper for making requests to the Room Service via the network */
 trait RoomApi {
 
+  /** Register a new user given its info
+    *
+    * @param request needed info to register a new user
+    * @return an empty observable
+    */
   def registerUser(request: RegisterUserRequest): Observable[Unit]
 
 
@@ -21,6 +26,11 @@ trait RoomApi {
     * @return an observable stream of just the created room */
   def createRoom(request: CreateRoomRequest): Observable[Room]
 
+  /** Delete a room given its info
+    *
+    * @param request needed data to delete a room
+    * @return an observable stream of the delete room's identifier
+    */
   def deleteRoom(request: DeleteRoomRequest): Observable[String]
 
 }

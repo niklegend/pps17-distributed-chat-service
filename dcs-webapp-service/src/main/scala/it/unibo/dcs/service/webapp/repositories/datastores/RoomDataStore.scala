@@ -1,13 +1,21 @@
 package it.unibo.dcs.service.webapp.repositories.datastores
 
 import it.unibo.dcs.service.webapp.interaction.Requests._
-import it.unibo.dcs.service.webapp.model.Room
+import it.unibo.dcs.service.webapp.model.{Room, User}
 import it.unibo.dcs.service.webapp.repositories.datastores.api.RoomApi
 import it.unibo.dcs.service.webapp.repositories.datastores.impl.RoomDataStoreNetwork
 import rx.lang.scala.Observable
 
 /** Structure that allows access to rooms data by different means (e.g. network, file, database, ecc) */
 trait RoomDataStore {
+
+  /** It adds the user to the list of participants in the room
+    *
+    * @param request needed data to join a room
+    * @return an observable stream of the joined user
+    */
+  def joinRoom(request: RoomJoinRequest): Observable[User]
+
 
   /** Register a new user given its info
     *

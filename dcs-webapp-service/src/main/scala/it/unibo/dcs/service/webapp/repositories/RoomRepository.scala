@@ -29,12 +29,12 @@ trait RoomRepository {
     */
   def deleteRoom(request: DeleteRoomRequest): Observable[String]
 
-  /** It provides to join a room by a user
+  /** It adds the user to the list of participants in the room
     *
     * @param request room join request
     * @return an observable stream of the user who join the room
     */
-  def joinUser(request: RoomJoinRequest): Observable[User]
+  def joinRoom(request: RoomJoinRequest): Observable[User]
 }
 
 /** Companion object */

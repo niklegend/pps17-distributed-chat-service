@@ -36,6 +36,6 @@ object LogoutUserUseCase {
     * @param authRepository      authentication repository reference
     * @return the use case object */
   def apply(threadExecutor: ThreadExecutor, postExecutionThread: PostExecutionThread,
-            authRepository: AuthenticationRepository) =
+            authRepository: AuthenticationRepository): LogoutUserUseCase =
     new LogoutUserUseCase(threadExecutor, postExecutionThread, authRepository)
 }

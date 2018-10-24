@@ -13,10 +13,14 @@ class AuthenticationDataStoreDatabase(private[this] val connection: SQLConnectio
   extends DataStoreDatabase(connection) with AuthenticationDataStore {
 
   private val insertUser = "INSERT INTO `users` (`username`, `password`) VALUES (?, ?);"
+  private val deleteUser = "DELETE FROM `users` WHERE `username`=?"
   private val insertInvalidToken = "INSERT INTO `invalid_tokens` (`token`, `expiration_date`) VALUES (?, ?);"
 
   override def createUser(username: String, password: String): Observable[Unit] =
     execute(insertUser, Json.arr(username, password))
+
+  override def deleteUser(username: String, token: String): Observable[Unit] =
+    execute(deleteUser, Json.arr(username)).map(_ => invalidToken(token, new Date()))
 
   override def checkUserExistence(username: String): Observable[Unit] =
     checkRecordPresence("users", ("username", username))
@@ -61,8 +65,10 @@ class AuthenticationDataStoreDatabase(private[this] val connection: SQLConnectio
         handler(result)
       })
     }
+
 }
 
 private[data] object AuthenticationDataStoreDatabase {
-  def apply(connection: SQLConnection) = new AuthenticationDataStoreDatabase(connection)
+  def apply(connection: SQLConnection): AuthenticationDataStoreDatabase =
+    new AuthenticationDataStoreDatabase(connection)
 }

@@ -12,6 +12,9 @@ object Requests {
   /** Request to logout the user, given the jwt token */
   final case class LogoutUserRequest(token: String)
 
+  /** Request to delete the user, given the username */
+  final case class DeleteUserRequest(username: String, token: String)
+
   /** Request to register the user with the specified user credentials */
   final case class RegisterUserRequest(username: String, password: String) extends TokenRequest
 

@@ -23,7 +23,7 @@ class AuthenticationRepositoryTest extends FlatSpec with MockFactory {
     val loginSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
     (authDataStore checkUserExistence _) expects username returns (Observable just expectedResult)
 
-    authRepository checkUserExistence (username) subscribe loginSubscriber
+    authRepository checkUserExistence username subscribe loginSubscriber
 
     (loginSubscriber onNext _) verify expectedResult once()
     (() => loginSubscriber onCompleted) verify() once()

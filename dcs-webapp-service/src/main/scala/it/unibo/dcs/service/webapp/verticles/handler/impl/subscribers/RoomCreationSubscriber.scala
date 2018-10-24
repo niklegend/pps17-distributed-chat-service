@@ -4,7 +4,7 @@ import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.lang.scala.ScalaLogger
 import io.vertx.lang.scala.json.{Json, JsonObject}
 import io.vertx.scala.core.http.HttpServerResponse
-import it.unibo.dcs.commons.{Address, Publisher}
+import it.unibo.dcs.commons.Publisher
 import it.unibo.dcs.commons.VertxWebHelper.Implicits.{RichHttpServerResponse, jsonObjectToString}
 import it.unibo.dcs.exceptions._
 import it.unibo.dcs.service.webapp.interaction.Results.Implicits._

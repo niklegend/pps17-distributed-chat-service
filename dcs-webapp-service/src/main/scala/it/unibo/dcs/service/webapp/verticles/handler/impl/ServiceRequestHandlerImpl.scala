@@ -20,8 +20,6 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
                                       private[this] val authRepository: AuthenticationRepository,
                                       private[this] val roomRepository: RoomRepository) extends ServiceRequestHandler {
 
-  private[this] lazy val roomCreated = eventBus.address(rooms.created)
-
   private[this] lazy val roomDeleted = eventBus.address(rooms.deleted)
 
   override def handleRegistration(context: RoutingContext)(implicit ctx: Context): Unit =
@@ -45,7 +43,7 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
   override def handleRoomCreation(context: RoutingContext)(implicit ctx: Context): Unit =
     handleRequestBody(context) {
       val useCase = CreateRoomUseCase(authRepository, roomRepository)
-      useCase(_, RoomCreationSubscriber(context.response, roomCreated))
+      useCase(_, RoomCreationSubscriber(context.response))
     }
 
   override def handleRoomDeletion(context: RoutingContext)(implicit ctx: Context): Unit =
@@ -54,8 +52,7 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
       useCase(_, RoomDeletionSubscriber(context.response, roomDeleted))
     }
 
-  private[this] def handleRequestBody(context: RoutingContext)(handler: JsonObject => Unit): Unit = {
+  private[this] def handleRequestBody(context: RoutingContext)(handler: JsonObject => Unit): Unit =
     context.getBodyAsJson().fold(throw InternalException("Request body required"))(handler)
-  }
 
 }

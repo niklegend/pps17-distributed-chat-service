@@ -22,7 +22,7 @@ export class RoomsComponent implements OnInit {
   ngOnInit() {
     this.chat.onRoomCreated().subscribe(room => {
       console.log('Room created!');
-      this.addRoom(room);
+      this.rooms.unshift(room);
     });
     this.chat.onRoomDeleted().subscribe(name => remove(this.rooms, room => room.name === name));
   }
@@ -45,15 +45,6 @@ export class RoomsComponent implements OnInit {
     this.chat.deleteRoom(room.name)
       .subscribe(() => {}, err => console.error(err)
     );
-  }
-
-  private addRoom(room: Room) {
-    console.log(room);
-    if (this.rooms.length === 0) {
-      this.rooms.push(room);
-    } else {
-      this.rooms.unshift(room);
-    }
   }
 
 }

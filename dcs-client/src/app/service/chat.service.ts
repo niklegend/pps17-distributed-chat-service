@@ -17,7 +17,6 @@ export class ChatService {
 
   private static ROOMS = ChatService.API_PREFIX + '/rooms';
 
-  private static ROOM_CREATED = 'rooms.created';
   private static ROOM_DELETED = 'rooms.deleted';
 
   private roomCreated = new Subject<Room>();
@@ -30,10 +29,6 @@ export class ChatService {
     private auth: AuthService
   ) {
     eventBus.connect(ChatService.EVENTS);
-
-    eventBus.registerHandler(ChatService.ROOM_CREATED, (err, msg) => {
-      this.roomCreated.next(msg.body);
-    });
 
     eventBus.registerHandler(ChatService.ROOM_DELETED, (err, msg) => {
       this.roomDeleted.next(msg.body.name);
@@ -51,18 +46,16 @@ export class ChatService {
   createRoom(name: string): Observable<string> {
     const user = this.auth.user;
     return this.http
-      .post<any>(
-        '/api/rooms',
-        new CreateRoomRequest(name, user.username, user.token)
-      )
-      .pipe(map(r => r.name));
+      .post<Room>('/api/rooms', new CreateRoomRequest(name, user.username, user.token))
+      .pipe(tap(room => this.roomCreated.next(room)))
+      .pipe(map(room => room.name));
   }
 
   deleteRoom(name: string): Observable<void> {
     const user = this.auth.user;
-    const requestBody = new DeleteRoomRequest(name, user.username, user.token);
+    const body = new DeleteRoomRequest(name, user.username, user.token);
     return this.http.request<void>('delete', ChatService.ROOMS, {
-      body: requestBody
+      body
     });
   }
 

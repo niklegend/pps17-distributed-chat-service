@@ -72,7 +72,6 @@ package object subscriber {
     implicit def roomToJsonObject(room: Room): JsonObject = {
       new JsonObject()
         .put("name", room.name)
-        .put("owner_username", room.ownerUsername)
     }
 
   }

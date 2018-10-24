@@ -6,8 +6,6 @@ private[verticles] object Addresses {
 
     private val prefix = "rooms"
 
-    val created = s"$prefix.created"
-
     val deleted = s"$prefix.deleted"
 
   }

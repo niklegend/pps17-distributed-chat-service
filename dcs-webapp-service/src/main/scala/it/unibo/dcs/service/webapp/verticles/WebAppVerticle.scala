@@ -3,15 +3,16 @@ package it.unibo.dcs.service.webapp.verticles
 import io.vertx.core.http.HttpMethod._
 import io.vertx.core.{AbstractVerticle, Context, Vertx}
 import io.vertx.scala.core
-import io.vertx.scala.core.eventbus.EventBus
 import io.vertx.scala.ext.bridge.PermittedOptions
 import io.vertx.scala.ext.web.Router
 import io.vertx.scala.ext.web.handler.sockjs.{BridgeOptions, SockJSHandler}
 import io.vertx.scala.ext.web.handler.{BodyHandler, CorsHandler, StaticHandler}
 import io.vertx.servicediscovery.ServiceDiscovery
+import it.unibo.dcs.commons.VertxWebHelper.Implicits.contentTypeToString
 import it.unibo.dcs.commons.service.{HttpEndpointPublisher, HttpEndpointPublisherImpl, ServiceVerticle}
 import it.unibo.dcs.service.webapp.verticles.Addresses.rooms
 import it.unibo.dcs.service.webapp.verticles.handler.ServiceRequestHandler
+import org.apache.http.entity.ContentType
 
 /** Verticle that runs the WebApp Service */
 final class WebAppVerticle extends ServiceVerticle {
@@ -70,28 +71,28 @@ final class WebAppVerticle extends ServiceVerticle {
       .handler(sockJSHandler)
 
     apiRouter.post("/register")
-      .consumes("application/json")
-      .produces("application/json")
+      .consumes(ContentType.APPLICATION_JSON)
+      .produces(ContentType.APPLICATION_JSON)
       .handler(context => requestHandler handleRegistration context)
 
     apiRouter.post("/login")
-      .consumes("application/json")
-      .produces("application/json")
+      .consumes(ContentType.APPLICATION_JSON)
+      .produces(ContentType.APPLICATION_JSON)
       .handler(context => requestHandler handleLogin context)
 
     apiRouter.post("/logout")
-      .consumes("application/json")
-      .produces("application/json")
+      .consumes(ContentType.APPLICATION_JSON)
+      .produces(ContentType.APPLICATION_JSON)
       .handler(context => requestHandler handleLogout context)
 
     apiRouter.post("/rooms")
-      .consumes("application/json")
-      .produces("application/json")
+      .consumes(ContentType.APPLICATION_JSON)
+      .produces(ContentType.APPLICATION_JSON)
       .handler(context => requestHandler handleRoomCreation context)
 
     apiRouter.delete("/rooms")
-      .consumes("application/json")
-      .produces("application/json")
+      .consumes(ContentType.APPLICATION_JSON)
+      .produces(ContentType.APPLICATION_JSON)
       .handler(context => requestHandler handleRoomDeletion context)
 
     router.mountSubRouter("/api", apiRouter)
@@ -107,7 +108,7 @@ final class WebAppVerticle extends ServiceVerticle {
         log.error(s"Could not start server at http://$host:$port", _))
   }
 
-  private def sockJSHandler: SockJSHandler = {
+  private lazy val sockJSHandler: SockJSHandler = {
     val options = BridgeOptions()
       .addOutboundPermitted(PermittedOptions().setAddress(rooms.deleted))
 

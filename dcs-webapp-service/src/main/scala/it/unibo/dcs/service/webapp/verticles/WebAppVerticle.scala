@@ -18,7 +18,9 @@ final class WebAppVerticle extends ServiceVerticle {
   @SuppressWarnings(Array("org.wartremover.warts.Var", "org.wartremover.warts.Null"))
   private var port: Int = _
 
+  @SuppressWarnings(Array("org.wartremover.warts.Var", "org.wartremover.warts.Null"))
   private var publisher: HttpEndpointPublisher = _
+  @SuppressWarnings(Array("org.wartremover.warts.Var", "org.wartremover.warts.Null"))
   private var requestHandler: ServiceRequestHandler = _
 
   override def init(jVertx: Vertx, context: Context, verticle: AbstractVerticle): Unit = {

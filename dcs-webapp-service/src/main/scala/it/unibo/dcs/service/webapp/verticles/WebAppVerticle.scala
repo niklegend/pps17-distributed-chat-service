@@ -13,7 +13,9 @@ import it.unibo.dcs.service.webapp.verticles.handler.ServiceRequestHandler
 /** Verticle that runs the WebApp Service */
 final class WebAppVerticle extends ServiceVerticle {
 
+  @SuppressWarnings(Array("org.wartremover.warts.Var", "org.wartremover.warts.Null"))
   private var host: String = _
+  @SuppressWarnings(Array("org.wartremover.warts.Var", "org.wartremover.warts.Null"))
   private var port: Int = _
 
   private var publisher: HttpEndpointPublisher = _

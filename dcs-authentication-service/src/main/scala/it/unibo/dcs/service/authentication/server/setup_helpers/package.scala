@@ -26,7 +26,8 @@ package object setupHelpers {
                                    authenticationRepository: AuthenticationRepository): Unit = {
     val jwtAuthHandler = JWTAuthHandler.create(jwtAuth)
     val protectedRouter = Router.router(vertx)
-    protectedRouter.route("/*").handler(checkTokenValidity(jwtAuthHandler, jwtAuth, authenticationRepository)(_))
+    protectedRouter.route("/*")
+      .handler(checkTokenValidity(jwtAuthHandler, jwtAuth, authenticationRepository)(_))
     router.mountSubRouter("/protected", protectedRouter)
   }
 

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 SRC=./dist
 DEST=../dcs-webapp-service/src/main/resources/webroot
 
@@ -11,9 +13,11 @@ fi
 echo "Building Angular application..."
 ng build --prod --aot
 
-if [ -d "$DEST" ]; then
-    echo "Removing contents from folder '$DEST'..."
-    rm -r $DEST/*
+if [ -d "$DEST"]; then
+    if [ "$(ls -A "$DIR")" ]; then
+        echo "Removing contents from folder '$DEST'..."
+        rm -r $DEST/*
+    fi
 else
     echo "Creating folder '$DEST'..."
     mkdir -p $DEST

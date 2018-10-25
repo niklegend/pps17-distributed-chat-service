@@ -31,12 +31,24 @@ object Results {
     implicit def loginResultToJsonString(result: LoginResult): String =
       resultToJsonString(result.user, _.put("token", result.token))
 
-    implicit def roomCreationResultToJsonString(result: RoomCreationResult): String = resultToJsonString(result)
+    implicit def roomCreationResultToJsonString(result: RoomCreationResult): String = resultToJsonString(result.room)
 
     implicit def roomJoinResultToJsonString(result: RoomJoinResult): String = resultToJsonString(result)
 
-    private def resultToJsonString(result: Product, transformations: JsonObject => JsonObject = identity): String = {
-      transformations(Json.fromObjectString(gson.toJson(result))) encode()
+    private def resultToJsonString(result: Product, build: JsonObject => JsonObject = identity): String = {
+      build(Json.fromObjectString(gson.toJson(result))) encode()
+    }
+
+    implicit def registrationResultToJsonObject(result: RegisterResult): JsonObject = {
+      Json.fromObjectString(gson.toJson(result.user)).put("token", result.token)
+    }
+
+    implicit def loginResultToJsonObject(result: LoginResult): JsonObject = {
+      Json.fromObjectString(gson.toJson(result.user)).put("token", result.token)
+    }
+
+    implicit def roomCreationResultToJsonObject(result: RoomCreationResult): JsonObject = {
+      Json.fromObjectString(gson.toJson(result.room))
     }
 
   }

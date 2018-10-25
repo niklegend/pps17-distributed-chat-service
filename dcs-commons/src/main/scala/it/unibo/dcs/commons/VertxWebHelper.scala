@@ -3,11 +3,14 @@ package it.unibo.dcs.commons
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.http.HttpHeaders
+import io.vertx.core.http.HttpMethod._
 import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
 import io.vertx.scala.core.http.HttpServerResponse
-import io.vertx.scala.ext.web.RoutingContext
 import io.vertx.scala.ext.web.client.HttpResponse
+import io.vertx.scala.ext.web.handler.CorsHandler
+import io.vertx.scala.ext.web.{Router, RoutingContext}
 import it.unibo.dcs.commons.VertxWebHelper.Implicits._
+import org.apache.http.entity.ContentType
 
 import scala.language.implicitConversions
 
@@ -51,6 +54,18 @@ object VertxWebHelper {
     HttpResponseStatus.valueOf(response.statusCode())
   }
 
+  def setupCors(router: Router): Unit =
+    router.route().handler(CorsHandler.create("*")
+      .allowedMethod(GET)
+      .allowedMethod(POST)
+      .allowedMethod(PATCH)
+      .allowedMethod(PUT)
+      .allowedMethod(DELETE)
+      .allowedHeader("Access-Control-Allow-Method")
+      .allowedHeader("Access-Control-Allow-Origin")
+      .allowedHeader("Access-Control-Allow-Credentials")
+      .allowedHeader("Content-Type"))
+
   object Implicits {
 
     implicit def jsonObjectToString(json: JsonObject): String = json.encode()
@@ -59,6 +74,10 @@ object VertxWebHelper {
 
     implicit def httpResponseStatusToJsonObject(status: HttpResponseStatus): JsonObject =
       new JsonObject().put("code", status.code).put("reasonPhrase", status.reasonPhrase)
+
+    implicit def contentTypeToString(contentType: ContentType): String = {
+      contentType.getMimeType
+    }
 
     implicit class RichHttpServerResponse(response: HttpServerResponse) {
       def setStatus(status: HttpResponseStatus): HttpServerResponse =

@@ -5,6 +5,8 @@ import io.vertx.core.{AbstractVerticle, Context, Vertx}
 import io.vertx.scala.core
 import io.vertx.scala.ext.bridge.PermittedOptions
 import io.vertx.scala.ext.web.Router
+import io.vertx.scala.ext.web.handler.{BodyHandler, CorsHandler}
+import io.vertx.servicediscovery.ServiceDiscovery
 import io.vertx.scala.ext.web.handler.sockjs.{BridgeOptions, SockJSHandler}
 import io.vertx.scala.ext.web.handler.{BodyHandler, CorsHandler, StaticHandler}
 import io.vertx.servicediscovery.ServiceDiscovery
@@ -17,10 +19,14 @@ import org.apache.http.entity.ContentType
 /** Verticle that runs the WebApp Service */
 final class WebAppVerticle extends ServiceVerticle {
 
+  @SuppressWarnings(Array("org.wartremover.warts.Var", "org.wartremover.warts.Null"))
   private var host: String = _
+  @SuppressWarnings(Array("org.wartremover.warts.Var", "org.wartremover.warts.Null"))
   private var port: Int = _
 
+  @SuppressWarnings(Array("org.wartremover.warts.Var", "org.wartremover.warts.Null"))
   private var publisher: HttpEndpointPublisher = _
+  @SuppressWarnings(Array("org.wartremover.warts.Var", "org.wartremover.warts.Null"))
   private var requestHandler: ServiceRequestHandler = _
 
   override def init(jVertx: Vertx, context: Context, verticle: AbstractVerticle): Unit = {
@@ -89,6 +95,11 @@ final class WebAppVerticle extends ServiceVerticle {
       .consumes(ContentType.APPLICATION_JSON)
       .produces(ContentType.APPLICATION_JSON)
       .handler(context => requestHandler handleRoomCreation context)
+
+    apiRouter.post("/rooms/:room")
+      .consumes("application/json")
+      .produces("application/json")
+      .handler(context => requestHandler handleJoinRoom context)
 
     apiRouter.delete("/rooms")
       .consumes(ContentType.APPLICATION_JSON)

@@ -7,7 +7,7 @@ import rx.lang.scala.Subscriber
 import scala.language.postfixOps
 
 final class LogoutUserSubscriber(protected override val response: HttpServerResponse) extends Subscriber[Unit]
-                                with ErrorSubscriber {
+  with ErrorSubscriber {
 
   override def onCompleted(): Unit = response.end()
 

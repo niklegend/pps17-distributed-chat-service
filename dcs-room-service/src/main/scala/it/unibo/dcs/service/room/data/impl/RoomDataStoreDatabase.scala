@@ -7,9 +7,10 @@ import it.unibo.dcs.commons.dataaccess.{DataStoreDatabase, ResultSetHelper}
 import it.unibo.dcs.exceptions.RoomNotFoundException
 import it.unibo.dcs.service.room.data.RoomDataStore
 import it.unibo.dcs.service.room.data.impl.RoomDataStoreDatabase.Implicits._
-import it.unibo.dcs.service.room.data.impl.RoomDataStoreDatabase.{deleteRoomQuery, insertRoomQuery, insertUserQuery, selectRoomByName}
+import it.unibo.dcs.service.room.data.impl.RoomDataStoreDatabase._
 import it.unibo.dcs.service.room.model._
-import it.unibo.dcs.service.room.request.{CreateRoomRequest, CreateUserRequest, DeleteRoomRequest, GetRoomRequest}
+import it.unibo.dcs.service.room.request
+import it.unibo.dcs.service.room.request._
 import rx.lang.scala.Observable
 
 final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDatabase(connection) with RoomDataStore {
@@ -31,6 +32,12 @@ final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
           ResultSetHelper.getRows(resultSet).head
         }
       }
+
+  override def getRooms(request: GetRoomsRequest): Observable[Set[Room]] =
+    query(selectAllRooms, request)
+    .map { resultSet =>
+      ResultSetHelper.getRows(resultSet).map(row => jsonObjectToRoom(row)).toSet
+    }
 }
 
 private[impl] object RoomDataStoreDatabase {
@@ -42,6 +49,8 @@ private[impl] object RoomDataStoreDatabase {
   val deleteRoomQuery = "DELETE FROM `rooms` WHERE `name` = ? AND `owner_username` = ?;"
 
   val selectRoomByName = "SELECT * FROM `rooms` WHERE `name` = ? "
+
+  val selectAllRooms = "SELECT * FROM `rooms`"
 
   object Implicits {
 
@@ -57,13 +66,16 @@ private[impl] object RoomDataStoreDatabase {
       new JsonArray().add(request.name)
     }
 
+    implicit def requestToParams(request: GetRoomsRequest): JsonArray = {
+      new JsonArray()
+    }
+
     implicit def requestToParams(request: DeleteRoomRequest): JsonArray = {
       new JsonArray().add(request.name).add(request.username)
     }
 
     implicit def jsonObjectToRoom(roomJsonObject: JsonObject): Room = {
-      Room(roomJsonObject.getString("name"),
-        roomJsonObject.getString("owner_username"))
+      Room(roomJsonObject.getString("name"))
     }
   }
 

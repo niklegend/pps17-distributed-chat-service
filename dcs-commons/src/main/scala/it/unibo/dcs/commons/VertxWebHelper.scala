@@ -10,6 +10,7 @@ import io.vertx.scala.ext.web.{Router, RoutingContext}
 import io.vertx.scala.ext.web.client.HttpResponse
 import io.vertx.scala.ext.web.handler.CorsHandler
 import it.unibo.dcs.commons.VertxWebHelper.Implicits._
+import org.apache.http.entity.ContentType
 
 import scala.language.implicitConversions
 
@@ -33,7 +34,9 @@ object VertxWebHelper {
   def doIfDefined(id: Option[_], action: => Unit)(implicit context: RoutingContext): Unit =
     if (id.isDefined) {
       action
-    } else respondWithCode(400)
+    } else {
+      respond(HttpResponseStatus.BAD_REQUEST)
+    }
 
   def getTokenFromHeader(implicit context: RoutingContext): Option[String] = {
     context.request().headers().get(HttpHeaders.AUTHORIZATION.toString).map(token => token.split(" ").last)
@@ -73,6 +76,10 @@ object VertxWebHelper {
 
     implicit def httpResponseStatusToJsonObject(status: HttpResponseStatus): JsonObject =
       new JsonObject().put("code", status.code).put("reasonPhrase", status.reasonPhrase)
+
+    implicit def contentTypeToString(contentType: ContentType): String = {
+      contentType.getMimeType
+    }
 
     implicit class RichHttpServerResponse(response: HttpServerResponse) {
       def setStatus(status: HttpResponseStatus): HttpServerResponse =

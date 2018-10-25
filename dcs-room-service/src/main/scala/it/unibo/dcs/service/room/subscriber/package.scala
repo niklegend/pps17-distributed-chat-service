@@ -5,15 +5,16 @@ import io.vertx.lang.scala.json.{Json, JsonObject}
 import io.vertx.scala.core.http.HttpServerResponse
 import it.unibo.dcs.commons.VertxWebHelper.Implicits.jsonObjectToString
 import it.unibo.dcs.exceptions.ErrorSubscriber
-import it.unibo.dcs.service.room.interactor.usecases.{CreateRoomUseCase, CreateUserUseCase, DeleteRoomUseCase}
+import it.unibo.dcs.service.room.interactor.usecases.{CreateRoomUseCase, CreateUserUseCase, DeleteRoomUseCase, GetRoomsUseCase}
 import it.unibo.dcs.service.room.model.Room
-import it.unibo.dcs.service.room.request.{CreateRoomRequest, CreateUserRequest, DeleteRoomRequest}
+import it.unibo.dcs.service.room.request.{CreateRoomRequest, CreateUserRequest, DeleteRoomRequest, GetRoomsRequest}
 import it.unibo.dcs.service.room.subscriber.Implicits._
 import rx.lang.scala.Subscriber
 
 package object subscriber {
 
-  final class CreateRoomSubscriber(protected override val response: HttpServerResponse) extends Subscriber[Room] with ErrorSubscriber {
+  final class CreateRoomSubscriber(protected override val response: HttpServerResponse) extends Subscriber[Room]
+    with ErrorSubscriber {
 
     private[this] val log = ScalaLogger.getLogger(getClass.getName)
 
@@ -48,6 +49,13 @@ package object subscriber {
 
   }
 
+  class GetRoomsSubscriber(protected override val response: HttpServerResponse) extends Subscriber[Set[Room]]
+    with ErrorSubscriber {
+
+    override def onNext(rooms: Set[Room]): Unit = response.end(Json.obj(("rooms", rooms)))
+
+  }
+
   final class CreateUserValiditySubscriber(protected override val response: HttpServerResponse,
                                            request: CreateUserRequest,
                                            createUserUseCase: CreateUserUseCase) extends Subscriber[Unit]
@@ -66,12 +74,19 @@ package object subscriber {
 
   }
 
+  class GetRoomsValiditySubscriber(protected override val response: HttpServerResponse, request: GetRoomsRequest,
+                                   getRoomsUseCase: GetRoomsUseCase) extends Subscriber[Unit]
+    with ErrorSubscriber {
+
+    override def onCompleted(): Unit = getRoomsUseCase(request, new GetRoomsSubscriber(response))
+
+  }
+
   object Implicits {
 
     implicit def roomToJsonObject(room: Room): JsonObject = {
       new JsonObject()
         .put("name", room.name)
-        .put("owner_username", room.ownerUsername)
     }
 
   }

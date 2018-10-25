@@ -6,6 +6,7 @@ import io.vertx.scala.ext.auth.jwt.JWTAuth
 import io.vertx.scala.ext.web.handler.BodyHandler
 import io.vertx.scala.ext.web.Router
 import it.unibo.dcs.commons.RxHelper
+import it.unibo.dcs.commons.VertxWebHelper.Implicits.contentTypeToString
 import it.unibo.dcs.commons.VertxWebHelper._
 import it.unibo.dcs.commons.interactor.ThreadExecutorExecutionContext
 import it.unibo.dcs.commons.interactor.executor.PostExecutionThread
@@ -14,6 +15,7 @@ import it.unibo.dcs.service.authentication.repository.AuthenticationRepository
 import it.unibo.dcs.service.authentication.server.containers._
 import it.unibo.dcs.service.authentication.server.handlers.{ServiceRequestHandler, ServiceRequestHandlerImpl}
 import it.unibo.dcs.service.authentication.server.setupHelpers._
+import org.apache.http.entity.ContentType
 
 /** Verticle that runs the Authentication Service */
 final class AuthenticationVerticle(private[this] val authenticationRepository: AuthenticationRepository,
@@ -47,23 +49,28 @@ final class AuthenticationVerticle(private[this] val authenticationRepository: A
       log.error(s"Could not start server at http://$host:$port", _))
 
   private def setupRoutes(router: Router, jwtAuth: JWTAuth): Unit = {
-    val jsonMIMEType = "application/json"
     val requestHandler = getRequestHandler(jwtAuth)
+
     router.post("/register")
-      .consumes(jsonMIMEType).produces(jsonMIMEType)
+      .consumes(ContentType.APPLICATION_JSON)
+      .produces(ContentType.APPLICATION_JSON)
       .handler(requestHandler.handleRegistration(_))
 
     router.post("/login")
-      .consumes(jsonMIMEType).produces(jsonMIMEType)
+      .consumes(ContentType.APPLICATION_JSON)
+      .produces(ContentType.APPLICATION_JSON)
       .handler(requestHandler.handleLogin(_))
 
-    router.post("/protected/logout").produces(jsonMIMEType)
+    router.post("/protected/logout")
+      .produces(ContentType.APPLICATION_JSON)
       .handler(requestHandler.handleLogout(_))
 
-    router.get("/protected/tokenValidity").produces(jsonMIMEType)
+    router.get("/protected/tokenValidity")
+      .produces(ContentType.APPLICATION_JSON)
       .handler(requestHandler.handleTokenCheck(_))
 
-    router.delete("/protected/user/:username").produces(jsonMIMEType)
+    router.delete("/protected/user/:username")
+      .produces(ContentType.APPLICATION_JSON)
       .handler(requestHandler.handleUserDeletion(_))
   }
 
@@ -75,6 +82,7 @@ final class AuthenticationVerticle(private[this] val authenticationRepository: A
     val validations = createValidations(threadExecutor, postExecutionThread, authenticationRepository)
     ServiceRequestHandlerImpl(useCases, validations)
   }
+
 }
 
 object AuthenticationVerticle {

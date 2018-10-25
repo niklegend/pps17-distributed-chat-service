@@ -11,12 +11,11 @@ import rx.lang.scala.{Observable, Subscriber}
 
 class RegisterUserUseCaseTest extends FlatSpec with MockFactory {
 
-  val request = RegisterUserRequest("ale", "123456")
-  val expectedResult = "token"
+  private val request = RegisterUserRequest("ale", "123456")
+  private val expectedResult = "token"
 
-  val subscriber: Subscriber[String] = stub[Subscriber[String]]
-
-  val registerUserUseCase = new RegisterUserUseCase(threadExecutor, postExecutionThread, authRepository, jwtAuth)
+  private val subscriber: Subscriber[String] = stub[Subscriber[String]]
+  private val registerUserUseCase = new RegisterUserUseCase(threadExecutor, postExecutionThread, authRepository, jwtAuth)
 
   it should "register the user when the use case is executed" in {
     (authRepository createUser(_, _)) expects(request.username, request.password) returns (Observable just expectedResult)

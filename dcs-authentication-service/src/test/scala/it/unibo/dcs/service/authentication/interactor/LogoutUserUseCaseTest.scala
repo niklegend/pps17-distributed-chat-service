@@ -9,12 +9,12 @@ import rx.lang.scala.{Observable, Subscriber}
 
 class LogoutUserUseCaseTest extends FlatSpec with MockFactory {
 
-  val token = "header.eyJzdWIiOiAiYWxlIn0=.signature"
-  val request = LogoutUserRequest(token)
-  val expectedResult: Unit = Unit
+  private val token = "header.eyJzdWIiOiAiYWxlIn0=.signature"
+  private val request = LogoutUserRequest(token)
+  private val expectedResult: Unit = Unit
 
-  val subscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
-  val logoutUserUseCase = new LogoutUserUseCase(threadExecutor, postExecutionThread, authRepository)
+  private val subscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
+  private val logoutUserUseCase = new LogoutUserUseCase(threadExecutor, postExecutionThread, authRepository)
 
   it should "logout the user when the use case is executed" in {
     (authRepository invalidToken(_, _)) expects(token, *) returns (Observable just expectedResult)

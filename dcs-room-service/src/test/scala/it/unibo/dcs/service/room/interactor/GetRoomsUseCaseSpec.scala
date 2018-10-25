@@ -1,0 +1,32 @@
+package it.unibo.dcs.service.room.interactor
+
+import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
+import it.unibo.dcs.service.room.interactor.usecases.GetRoomsUseCase
+import it.unibo.dcs.service.room.model.Room
+import it.unibo.dcs.service.room.repository.RoomRepository
+import it.unibo.dcs.service.room.request.GetRoomsRequest
+import org.scalamock.scalatest.MockFactory
+import org.scalatest.{FlatSpec, OneInstancePerTest}
+import rx.lang.scala.{Observable, Subscriber}
+
+final class GetRoomsUseCaseSpec extends FlatSpec with MockFactory with OneInstancePerTest {
+
+  private val threadExecutor = mock[ThreadExecutor]
+  private val postExecutionThread = mock[PostExecutionThread]
+  private val roomRepository = mock[RoomRepository]
+  private val getRoomsUseCase = new GetRoomsUseCase(threadExecutor, postExecutionThread, roomRepository)
+
+  private val expectedResult = Set(Room("Room 01"), Room("Room 02"), Room("Room 03"))
+  val request = GetRoomsRequest()
+
+  val subscriber:Subscriber[Set[Room]] = stub[Subscriber[Set[Room]]]
+
+  it should "Get all the rooms" in {
+    (roomRepository getRooms _) expects request returns Observable.just(expectedResult)
+
+    getRoomsUseCase(request).subscribe(subscriber)
+
+    subscriber.onNext _ verify expectedResult
+  }
+
+}

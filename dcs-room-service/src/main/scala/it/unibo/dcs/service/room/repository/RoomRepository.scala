@@ -1,7 +1,7 @@
 package it.unibo.dcs.service.room.repository
 
 import it.unibo.dcs.service.room.model.Room
-import it.unibo.dcs.service.room.request.{CreateRoomRequest, CreateUserRequest, DeleteRoomRequest, GetRoomRequest}
+import it.unibo.dcs.service.room.request._
 import rx.lang.scala.Observable
 
 trait RoomRepository {
@@ -14,4 +14,5 @@ trait RoomRepository {
 
   def getRoomByName(request: GetRoomRequest): Observable[Room]
 
+  def getRooms(request: GetRoomsRequest): Observable[Set[Room]]
 }

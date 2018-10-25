@@ -108,7 +108,7 @@ final class WebAppVerticle extends ServiceVerticle {
         log.error(s"Could not start server at http://$host:$port", _))
   }
 
-  private def sockJSHandler: SockJSHandler = {
+  private lazy val sockJSHandler: SockJSHandler = {
     val options = BridgeOptions()
       .addOutboundPermitted(PermittedOptions().setAddress(rooms.deleted))
 

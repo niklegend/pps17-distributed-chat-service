@@ -13,8 +13,8 @@ fi
 echo "Building Angular application..."
 ng build --prod --aot
 
-if [ -d "$DEST"]; then
-    if [ "$(ls -A "$DIR")" ]; then
+if [ -d "$DEST" ]; then
+    if [ `ls -1A $DEST | wc -l` -ne 0 ]; then
         echo "Removing contents from folder '$DEST'..."
         rm -r $DEST/*
     fi

@@ -5,8 +5,6 @@ import io.vertx.core.{AbstractVerticle, Context, Vertx}
 import io.vertx.scala.core
 import io.vertx.scala.ext.bridge.PermittedOptions
 import io.vertx.scala.ext.web.Router
-import io.vertx.scala.ext.web.handler.{BodyHandler, CorsHandler}
-import io.vertx.servicediscovery.ServiceDiscovery
 import io.vertx.scala.ext.web.handler.sockjs.{BridgeOptions, SockJSHandler}
 import io.vertx.scala.ext.web.handler.{BodyHandler, CorsHandler, StaticHandler}
 import io.vertx.servicediscovery.ServiceDiscovery

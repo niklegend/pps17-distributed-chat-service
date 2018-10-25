@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
-import { Subject, Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { EventBusService } from './event-bus.service';
-import { Room, Participation } from '../model';
-import { CreateRoomRequest, DeleteRoomRequest } from '../requests';
-import { AuthService } from './auth.service';
-import { map, tap } from 'rxjs/operators';
+import {Injectable} from '@angular/core';
+import {Observable, Subject} from 'rxjs';
+import {HttpClient} from '@angular/common/http';
+import {EventBusService} from './event-bus.service';
+import {Participation, Room} from '../model';
+import {CreateRoomRequest, DeleteRoomRequest, JoinRoomRequest} from '../requests';
+import {AuthService} from './auth.service';
+import {map, tap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +22,7 @@ export class ChatService {
   private roomCreated = new Subject<Room>();
   private roomDeleted = new Subject<string>();
   private roomSelected = new Subject<Room>();
+  private roomJoined = new Subject<Participation>();
 
   constructor(
     private http: HttpClient,
@@ -59,6 +60,12 @@ export class ChatService {
     });
   }
 
+  joinRoom(name: string): Observable<Participation> {
+    const user = this.auth.user;
+    const body = new JoinRoomRequest(name, user.username, user.token);
+    return this.http.post<Participation>(ChatService.ROOMS + "/" + name, body);
+  }
+
   onRoomCreated(): Observable<Room> {
     return this.roomCreated
       .asObservable()
@@ -67,5 +74,9 @@ export class ChatService {
 
   onRoomDeleted(): Observable<string> {
     return this.roomDeleted.asObservable();
+  }
+
+  onRoomJoined(): Observable<Participation> {
+    return this.roomJoined.asObservable();
   }
 }

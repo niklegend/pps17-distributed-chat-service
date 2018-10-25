@@ -28,7 +28,7 @@ final class JoinRoomUseCase(private[this] val threadExecutor: ThreadExecutor,
   override protected[this] def createObservable(request: RoomJoinRequest): Observable[RoomJoinResult] =
     authRepository.checkToken(CheckTokenRequest(request.token))
       .flatMap(_ => roomRepository.joinRoom(request))
-      .map(joinedUser => RoomJoinResult(joinedUser))
+      .map(RoomJoinResult)
 }
 
 /** Companion object */

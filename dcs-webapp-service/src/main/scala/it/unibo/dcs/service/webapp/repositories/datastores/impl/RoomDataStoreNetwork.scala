@@ -2,7 +2,7 @@ package it.unibo.dcs.service.webapp.repositories.datastores.impl
 
 import it.unibo.dcs.service.webapp.interaction.Requests
 import it.unibo.dcs.service.webapp.interaction.Requests._
-import it.unibo.dcs.service.webapp.model.{Participation, Room, User}
+import it.unibo.dcs.service.webapp.model.{Participation, Room}
 import it.unibo.dcs.service.webapp.repositories.datastores.RoomDataStore
 import it.unibo.dcs.service.webapp.repositories.datastores.api.RoomApi
 import rx.lang.scala.Observable

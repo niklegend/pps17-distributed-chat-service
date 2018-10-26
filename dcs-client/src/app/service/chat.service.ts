@@ -18,6 +18,7 @@ export class ChatService {
   private static ROOMS = ChatService.API_PREFIX + '/rooms';
 
   private static ROOM_DELETED = 'rooms.deleted';
+  private static ROOM_JOINED = 'rooms.joined';
 
   private roomCreated = new Subject<Room>();
   private roomDeleted = new Subject<string>();
@@ -33,6 +34,10 @@ export class ChatService {
 
     eventBus.registerHandler(ChatService.ROOM_DELETED, (err, msg) => {
       this.roomDeleted.next(msg.body.name);
+    });
+
+    eventBus.registerHandler(ChatService.ROOM_JOINED, (err, msg) => {
+      this.roomJoined.next(msg.body)
     });
   }
 

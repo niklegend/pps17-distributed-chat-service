@@ -2,6 +2,7 @@ package it.unibo.dcs.service.webapp.interaction
 
 import com.google.gson.Gson
 import io.vertx.lang.scala.json.{Json, JsonObject}
+import it.unibo.dcs.service.webapp.interaction.JsonLabels.tokenLabel
 import it.unibo.dcs.service.webapp.model.{Participation, Room, User}
 
 import scala.language.implicitConversions
@@ -26,10 +27,10 @@ object Results {
     private val gson = new Gson()
 
     implicit def registrationResultToJsonString(result: RegisterResult): String =
-      resultToJsonString(result.user, _.put("token", result.token))
+      resultToJsonString(result.user, _.put(tokenLabel, result.token))
 
     implicit def loginResultToJsonString(result: LoginResult): String =
-      resultToJsonString(result.user, _.put("token", result.token))
+      resultToJsonString(result.user, _.put(tokenLabel, result.token))
 
     implicit def roomCreationResultToJsonString(result: RoomCreationResult): String = resultToJsonString(result.room)
 
@@ -39,11 +40,11 @@ object Results {
       transformations(Json.fromObjectString(gson.toJson(result))) encode()
 
     implicit def registrationResultToJsonObject(result: RegisterResult): JsonObject = {
-      Json.fromObjectString(gson.toJson(result.user)).put("token", result.token)
+      Json.fromObjectString(gson.toJson(result.user)).put(tokenLabel, result.token)
     }
 
     implicit def loginResultToJsonObject(result: LoginResult): JsonObject = {
-      Json.fromObjectString(gson.toJson(result.user)).put("token", result.token)
+      Json.fromObjectString(gson.toJson(result.user)).put(tokenLabel, result.token)
     }
 
     implicit def roomCreationResultToJsonObject(result: RoomCreationResult): JsonObject = {

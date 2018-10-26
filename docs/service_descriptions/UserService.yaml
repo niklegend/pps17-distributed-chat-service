@@ -35,6 +35,7 @@ paths:
                 type: string
               lastName:
                 type: string
+          required: true
       responses:
         201:
           description: The user was successfully created.
@@ -74,6 +75,57 @@ paths:
       responses:
         200:
           description: The user retrieved.
+          schema:
+            required:
+              - username
+              - firstName
+              - lastName
+              - bio
+              - visible
+              - lastSeen
+            properties:
+              username:
+                type: string
+              firstName:
+                type: string
+              lastName:
+                type: string
+              bio:
+                type: string
+              visible:
+                type: boolean
+              lastSeen:
+                type: string
+                format: date-time
+    put:
+      summary: Updates a user.
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "username"
+          in: path
+          description: The username of the user to update.
+          required: true
+          type: "string"
+        - name: user
+          in: body
+          description: The user fields to update.
+          schema:
+            properties:
+              firstName:
+                type: string
+              lastName:
+                type: string
+              bio:
+                type: string
+              visible:
+                type: boolean
+          required: true
+      responses:
+        200:
+          description: The user was successfully updated.
           schema:
             required:
               - username

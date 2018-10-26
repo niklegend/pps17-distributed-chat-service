@@ -17,6 +17,12 @@ paths:
       summary: Retrieves a list of rooms.
       produces:
         - "application/json"
+      parameters:
+        - name: "user"
+          in: query
+          description: The username of the user which made the request.
+          required: true
+          type: "string"
       responses:
         200:
           description: A list of Room
@@ -47,6 +53,7 @@ paths:
                 type: string
               username:
                 type: string
+          required: true
       responses:
         201:
           description: The room was successfully created.
@@ -71,18 +78,18 @@ paths:
           type: "string"
         - name: room
           in: body
-          description: The room to create.
+          description: The room to delete.
           schema:
             required:
               - username
             properties:
               username:
                 type: string
+          required: true
       responses:
         204:
           description: The room was successfully deleted.
           schema:
-            type: object
             required:
               - name
             properties:
@@ -103,25 +110,24 @@ paths:
           type: "string"
         - name: user
           in: body
-          description: The user which joins the room.
+          description: The user that joins the room.
           schema:
             required:
               - username
             properties:
               username:
                 type: string
+          required: true
       responses:
         201:
           description: The participation was successfully created.
           schema:
-            type: object
             required:
               - room
               - username
               - joinDate
             properties:
               room:
-                type: object
                 required:
                   - name
                 properties:
@@ -145,14 +151,13 @@ paths:
           type: "string"
         - name: "username"
           in: path
-          description: The user name of the user for which to delete the participation.
+          description: The username of the user for which to delete the participation.
           required: true
           type: "string"
       responses:
         204:
           description: The participation was successfully deleted.
           schema:
-            type: object
             required:
               - name
               - username
@@ -164,7 +169,7 @@ paths:
 
   /rooms/{name}/messages:
     get:
-      summary: Retrieves a list of all the messages.
+      summary: Retrieves a list of all the messages in a room.
       produces:
         - "application/json"
       parameters:
@@ -187,13 +192,11 @@ paths:
                 content:
                   type: string
                 participation:
-                  type: object
                   required:
                     - room
                     - username
                   properties:
                     room:
-                      type: object
                       required:
                         - name
                       properties:
@@ -222,6 +225,7 @@ paths:
             properties:
               username:
                 type: string
+          required: true
       responses:
         201:
           description: The user was successfully created.
@@ -238,7 +242,7 @@ paths:
           type: "string"
       responses:
         204:
-          description: The user was successfully delete.
+          description: The user was successfully deleted.
 
   /users/{username}/participations:
     get:
@@ -253,12 +257,12 @@ paths:
           type: "string"
         - name: "username"
           in: path
-          description: The user name of the user for which to delete the participation.
+          description: The username of the user for which to delete the participation.
           required: true
           type: "string"
       responses:
         200:
-          description: A list of participations.
+          description: A list of all the user's participations.
           schema:
             type: array
             items:

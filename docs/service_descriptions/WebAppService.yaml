@@ -8,6 +8,12 @@ info:
 schemes:
   - http
 
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+
 #host: www.example.com
 basePath: /api
 
@@ -41,6 +47,7 @@ paths:
                 type: string
               passwordConfirm:
                 type: string
+          required: true
       responses:
         201:
           description: The user was successfully registered.
@@ -90,6 +97,7 @@ paths:
                 type: string
               password:
                 type: string
+          required: true
       responses:
         200:
           description: The user was successfully logged in.
@@ -122,6 +130,8 @@ paths:
   /logout:
     delete:
       summary: Logs out a User.
+      security:
+        - Bearer: []
       consumes:
         - "application/json"
       produces:
@@ -133,12 +143,10 @@ paths:
           schema:
             required:
               - username
-              - token
             properties:
               username:
                 type: string
-              token:
-                type: string
+          required: true
       responses:
         200:
           description: The user was successfully logged out.
@@ -146,8 +154,16 @@ paths:
   /rooms:
     get:
       summary: Retrieves a list of rooms.
+      security:
+        - Bearer: []
       produces:
         - "application/json"
+      parameters:
+        - name: "user"
+          in: query
+          description: The username of the user which made the request.
+          required: true
+          type: "string"
       responses:
         200:
           description: A list of Room
@@ -161,6 +177,8 @@ paths:
                   type: string
     post:
       summary: Creates a new room.
+      security:
+        - Bearer: []
       consumes:
         - "application/json"
       produces:
@@ -171,16 +189,14 @@ paths:
           description: The room to create.
           schema:
             required:
-              - token
               - name
               - username
             properties:
-              token:
-                type: string
               name:
                 type: string
               username:
                 type: string
+          required: true
       responses:
         201:
           description: The room was successfully created.
@@ -194,6 +210,8 @@ paths:
   /rooms/{name}:
     delete:
       summary: Deletes a room.
+      security:
+        - Bearer: []
       consumes:
         - "application/json"
       produces:
@@ -206,22 +224,22 @@ paths:
           type: "string"
         - name: room
           in: body
-          description: The room to create.
+          description: The room to delete.
           schema:
             required:
-              - token
               - username
             properties:
-              token:
-                type: string
               username:
                 type: string
+          required: true
       responses:
         204:
           description: The room was successfully deleted.
   /rooms/{name}/participations:
     post:
       summary: Creates a new participation.
+      security:
+        - Bearer: []
       consumes:
         - "application/json"
       produces:
@@ -238,24 +256,20 @@ paths:
           schema:
             required:
               - username
-              - token
             properties:
               username:
                 type: string
-              token:
-                type: string
+          required: true
       responses:
         201:
           description: The participation was successfully created.
           schema:
-            type: object
             required:
               - room
               - user
               - joinDate
             properties:
               room:
-                type: object
                 required:
                   - name
                 properties:
@@ -289,6 +303,8 @@ paths:
   /rooms/{name}/participations/{username}:
     delete:
       summary: Deletes a participation.
+      security:
+        - Bearer: []
       produces:
         - "application/json"
       parameters:
@@ -299,24 +315,80 @@ paths:
           type: "string"
         - name: "username"
           in: path
-          description: The user name of the user for which to delete the participation.
+          description: The username of the user for which to delete the participation.
           required: true
           type: "string"
-        - name: token
-          in: body
-          description: The token of user who wants to delete the participation.
-          schema:
-            required:
-              - token
-            properties:
-              token:
-                type: string
       responses:
         204:
           description: The participation was successfully deleted.
+          schema:
+            required:
+              - name
+              - username
+            properties:
+              name:
+                type: string
+              username:
+                type: string
+          
   /users/{username}:
+    put:
+      summary: Updates a user.
+      security:
+        - Bearer: []
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "username"
+          in: path
+          description: The username of the user to update.
+          required: true
+          type: "string"
+        - name: user
+          in: body
+          description: The user fields to update.
+          schema:
+            properties:
+              firstName:
+                type: string
+              lastName:
+                type: string
+              bio:
+                type: string
+              visible:
+                type: boolean
+          required: true
+      responses:
+        200:
+          description: The user was successfully updated.
+          schema:
+            required:
+              - username
+              - firstName
+              - lastName
+              - bio
+              - visible
+              - lastSeen
+            properties:
+              username:
+                type: string
+              firstName:
+                type: string
+              lastName:
+                type: string
+              bio:
+                type: string
+              visible:
+                type: boolean
+              lastSeen:
+                type: string
+                format: date-time
     delete:
       summary: Deletes a User.
+      security:
+        - Bearer: []
       produces:
         - "application/json"
       parameters:
@@ -325,18 +397,9 @@ paths:
           description: The username of the user to delete.
           required: true
           type: "string"
-        - name: token
-          in: body
-          description: The token of user who wants to delete the participation.
-          schema:
-            required:
-              - token
-            properties:
-              token:
-                type: string
       responses:
         204:
-          description: The user was successfully delete.
+          description: The user was successfully deleted.
           schema:
             required:
               - username
@@ -347,6 +410,8 @@ paths:
   /users/{username}/participations:
     get:
       summary: Retrieves all the participations for a given user.
+      security:
+        - Bearer: []
       produces:
         - "application/json"
       parameters:
@@ -357,7 +422,7 @@ paths:
           type: "string"
         - name: "username"
           in: path
-          description: The user name of the user for which to delete the participation.
+          description: The username of the user for which to delete the participation.
           required: true
           type: "string"
       responses:

@@ -2,11 +2,17 @@ swagger: "2.0"
 
 info:
   version: 1.0.0
-  title: User Service API
+  title: Authentication Service API
   description: A description of the Authentication Service API using OpenAPI Specification.
 
 schemes:
   - http
+
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
 
 #host: www.example.com
 #basePath: /
@@ -14,7 +20,7 @@ schemes:
 paths:
   /register:
     post:
-      summary: Register a new User.
+      summary: Registers a new User.
       consumes:
         - "application/json"
       produces:
@@ -35,6 +41,7 @@ paths:
                 type: string
               passwordConfirm:
                 type: string
+          required: true
       responses:
         201:
           description: The user was successfully registered.
@@ -47,7 +54,7 @@ paths:
 
   /login:
     post:
-      summary: Login a User.
+      summary: Logins a User.
       consumes:
         - "application/json"
       produces:
@@ -55,7 +62,7 @@ paths:
       parameters:
         - name: user
           in: body
-          description: The user to create.
+          description: The user to login.
           schema:
             required:
               - username
@@ -65,6 +72,7 @@ paths:
                 type: string
               password:
                 type: string
+          required: true
       responses:
         200:
           description: The user was successfully logged in.
@@ -75,59 +83,16 @@ paths:
               token:
                 type: string
 
-  /protected/verify/{username}:
-    get:
-      summary: Validates a token.
-      consumes:
-        - "application/json"
-      produces:
-        - "application/json"
-      parameters:
-        - name: "token"
-          in: header
-          description: The token to validate.
-          required: true
-          type: "string"
-        - name: "username"
-          in: path
-          description: The user for which validate the token to.
-          required: true
-          type: "string"
-      responses:
-        200:
-          description: The token is valid.
-  /protected/users/{username}:
-    delete:
-      summary: Deletes a User.
-      produces:
-        - "application/json"
-      parameters:
-        - name: "token"
-          in: header
-          description: The token of the username to delete.
-          required: true
-          type: "string"
-        - name: "username"
-          in: path
-          description: The username of the user to delete.
-          required: true
-          type: "string"
-      responses:
-        204:
-          description: The user was successfully delete.
   /protected/logout:
     delete:
       summary: Logs out a User.
+      security:
+        - Bearer: []
       consumes:
         - "application/json"
       produces:
         - "application/json"
       parameters:
-        - name: "token"
-          in: header
-          description: The token of the username to delete.
-          required: true
-          type: "string"
         - name: user
           in: body
           description: The user to log out.
@@ -137,6 +102,41 @@ paths:
             properties:
               username:
                 type: string
+          required: true
       responses:
         200:
+          description: The user was successfully logged out.
+  /protected/verify/{username}:
+    get:
+      summary: Validates a token.
+      security:
+        - Bearer: []
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "username"
+          in: path
+          description: The username of the user for which verify the token for.
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: The token is valid.
+  /protected/users/{username}:
+    delete:
+      summary: Deletes a User.
+      security:
+        - Bearer: []
+      produces:
+        - "application/json"
+      parameters:
+        - name: "username"
+          in: path
+          description: The username of the user to delete.
+          required: true
+          type: "string"
+      responses:
+        204:
           description: The user was successfully delete.

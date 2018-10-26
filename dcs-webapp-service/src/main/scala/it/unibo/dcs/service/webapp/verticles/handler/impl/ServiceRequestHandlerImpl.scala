@@ -58,7 +58,7 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
       useCase(_, JoinRoomSubscriber(context.response()))
     }
 
-  private[this] def handleRequestBody(context: RoutingContext)(handler: JsonObject => Unit): Unit = 
+  private[this] def handleRequestBody(context: RoutingContext)(handler: JsonObject => Unit): Unit =
     context.getBodyAsJson().fold(throw InternalException("Request body required"))(handler)
 
 }

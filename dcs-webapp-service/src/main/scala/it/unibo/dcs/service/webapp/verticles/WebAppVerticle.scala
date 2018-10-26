@@ -120,6 +120,7 @@ final class WebAppVerticle extends ServiceVerticle {
   private lazy val sockJSHandler: SockJSHandler = {
     val options = BridgeOptions()
       .addOutboundPermitted(PermittedOptions().setAddress(rooms.deleted))
+      .addOutboundPermitted(PermittedOptions().setAddress(rooms.joined))
 
     SockJSHandler.create(vertx).bridge(options)
   }

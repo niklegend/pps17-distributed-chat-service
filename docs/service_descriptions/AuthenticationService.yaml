@@ -1,0 +1,142 @@
+swagger: "2.0"
+
+info:
+  version: 1.0.0
+  title: User Service API
+  description: A description of the Authentication Service API using OpenAPI Specification.
+
+schemes:
+  - http
+
+#host: www.example.com
+#basePath: /
+
+paths:
+  /register:
+    post:
+      summary: Register a new User.
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: user
+          in: body
+          description: The user to create.
+          schema:
+            required:
+              - username
+              - password
+              - passwordConfirm
+            properties:
+              username:
+                type: string
+              password:
+                type: string
+              passwordConfirm:
+                type: string
+      responses:
+        201:
+          description: The user was successfully registered.
+          schema:
+            required:
+              - token
+            properties:
+              token:
+                type: string
+
+  /login:
+    post:
+      summary: Login a User.
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: user
+          in: body
+          description: The user to create.
+          schema:
+            required:
+              - username
+              - password
+            properties:
+              username:
+                type: string
+              password:
+                type: string
+      responses:
+        200:
+          description: The user was successfully logged in.
+          schema:
+            required:
+              - token
+            properties:
+              token:
+                type: string
+
+  /protected/verify/{username}:
+    get:
+      summary: Validates a token.
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "token"
+          in: header
+          description: The token to validate.
+          required: true
+          type: "string"
+        - name: "username"
+          in: path
+          description: The user for which validate the token to.
+          required: true
+          type: "string"
+      responses:
+        200:
+          description: The token is valid.
+  /protected/users/{username}:
+    delete:
+      summary: Deletes a User.
+      produces:
+        - "application/json"
+      parameters:
+        - name: "token"
+          in: header
+          description: The token of the username to delete.
+          required: true
+          type: "string"
+        - name: "username"
+          in: path
+          description: The username of the user to delete.
+          required: true
+          type: "string"
+      responses:
+        204:
+          description: The user was successfully delete.
+  /protected/logout:
+    delete:
+      summary: Logs out a User.
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - name: "token"
+          in: header
+          description: The token of the username to delete.
+          required: true
+          type: "string"
+        - name: user
+          in: body
+          description: The user to log out.
+          schema:
+            required:
+              - username
+            properties:
+              username:
+                type: string
+      responses:
+        200:
+          description: The user was successfully delete.

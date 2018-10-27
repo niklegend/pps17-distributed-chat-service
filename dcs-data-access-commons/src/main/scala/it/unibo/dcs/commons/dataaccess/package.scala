@@ -4,7 +4,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 
 package object dataaccess {
-  private val mySqlFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+  val mySqlFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
 
   object Implicits {
 

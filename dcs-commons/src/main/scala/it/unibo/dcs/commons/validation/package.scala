@@ -4,6 +4,6 @@ import rx.lang.scala.Observable
 
 package object validation {
 
-  type Rule[A] = A => Observable[Unit]
+  type Rule[T] = T => Observable[Unit]
 
 }

@@ -129,7 +129,8 @@ object RoomVerticle {
       JsonHelper.fromJson[DeleteRoomRequest](gson, json)
 
     implicit def jsonObjectToJoinRoomRequest(json: JsonObject): JoinRoomRequest =
-      JoinRoomRequest(json.getString("name"), json.getString("username"))
+      JsonHelper.fromJson[JoinRoomRequest](gson, json)
+
   }
 
 }

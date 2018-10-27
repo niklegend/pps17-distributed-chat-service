@@ -1,10 +1,10 @@
 package it.unibo.dcs.service.room
 
-import com.google.gson.Gson
+import com.google.gson.{Gson, GsonBuilder}
 import io.vertx.lang.scala.ScalaLogger
 import io.vertx.lang.scala.json.{Json, JsonObject}
 import io.vertx.scala.core.http.HttpServerResponse
-import it.unibo.dcs.commons.JsonHelper
+import it.unibo.dcs.commons.{JsonHelper, dataaccess}
 import it.unibo.dcs.commons.VertxWebHelper.Implicits.jsonObjectToString
 import it.unibo.dcs.exceptions.ErrorSubscriber
 import it.unibo.dcs.service.room.interactor.usecases.{CreateRoomUseCase, CreateUserUseCase, DeleteRoomUseCase, JoinRoomUseCase}
@@ -89,16 +89,15 @@ package object subscriber {
 
   object Implicits {
 
-    private val gson = new Gson
+    private val gson = new GsonBuilder()
+      .setDateFormat(dataaccess.mySqlFormat.toPattern)
+      .create()
 
     implicit def roomToJsonObject(room: Room): JsonObject = JsonHelper.toJsonObject(gson, room)
 
-    implicit def participationToJsonObject(participation: Participation): JsonObject = {
-      new JsonObject()
-        .put("username", participation.username)
-        .put("name", participation.room.name)
-        .put("join_date", participation.joinDate)
-    }
+    implicit def participationToJsonObject(participation: Participation): JsonObject =
+      JsonHelper.toJsonObject(gson, participation)
+
   }
 
 }

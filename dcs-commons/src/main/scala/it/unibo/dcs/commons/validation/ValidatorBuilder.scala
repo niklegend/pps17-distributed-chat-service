@@ -19,7 +19,7 @@ final class ValidatorBuilder[T] private[validation]() {
       Observable.just(_)
         .filter(predicate)
         .singleOption
-        .map(opt => opt.getOrElse(throw error))
+        .map(_.getOrElse(throw error))
     }
   }
 

@@ -37,7 +37,7 @@ final class ValidatorTest extends FlatSpec {
     val thrown = intercept[IllegalStateException] {
       builder.build
     }
-    assert(thrown.getMessage == "builder has already been built")
+    assert(thrown.getMessage == "ValidatorBuilder has already been built")
   }
 
 }

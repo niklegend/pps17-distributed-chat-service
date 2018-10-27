@@ -1,0 +1,36 @@
+package it.unibo.dcs.commons
+
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
+
+import scala.collection.JavaConverters._
+import scala.reflect.ClassTag
+
+import ReflectionHelper.asClassOf
+
+object JsonHelper {
+
+  def toJsonArray(gson: Gson, src: Iterable[_]): JsonArray = Json.fromArrayString(toJsonString(gson, src))
+
+  def toJsonObject(gson: Gson, src: AnyRef): JsonObject = Json.fromObjectString(gson.toJson(src))
+
+  def toJsonString(gson: Gson, src: Iterable[_]): String = gson.toJson(src.asJava)
+
+  def fromJson[T](gson: Gson, json: JsonArray)(implicit ct: ClassTag[Array[T]]): List[T] =
+    fromJson[T](gson, json.encode())
+
+  def fromJson[T](gson: Gson, json: JsonObject)(implicit ct: ClassTag[T]): T = gson.fromJson[T](json.encode(), asClassOf(ct))
+
+  def fromJson[T](gson: Gson, json: String)(implicit ct: ClassTag[Array[T]]): List[T] =
+    gson.fromJson(json, asClassOf(ct)).toList
+
+  object Implicits {
+
+    implicit def jsonArrayToString(json: JsonArray): String = json.encode()
+
+    implicit def jsonObjectToString(json: JsonObject): String = json.encode()
+
+  }
+
+}

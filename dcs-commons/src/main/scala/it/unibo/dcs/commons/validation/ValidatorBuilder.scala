@@ -36,7 +36,7 @@ final class ValidatorBuilder[T] private[validation]() {
 
 object ValidatorBuilder {
 
-  private[validation] val EXCEPTION = new IllegalStateException("builder has already been built")
+  private[validation] val EXCEPTION = new IllegalStateException("ValidatorBuilder has already been built")
 
 
 }

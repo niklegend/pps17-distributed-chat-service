@@ -1,8 +1,10 @@
 package it.unibo.dcs.service.room
 
+import com.google.gson.Gson
 import io.vertx.lang.scala.ScalaLogger
 import io.vertx.lang.scala.json.{Json, JsonObject}
 import io.vertx.scala.core.http.HttpServerResponse
+import it.unibo.dcs.commons.JsonHelper
 import it.unibo.dcs.commons.VertxWebHelper.Implicits.jsonObjectToString
 import it.unibo.dcs.exceptions.ErrorSubscriber
 import it.unibo.dcs.service.room.interactor.usecases.{CreateRoomUseCase, CreateUserUseCase, DeleteRoomUseCase}
@@ -69,10 +71,9 @@ package object subscriber {
 
   object Implicits {
 
-    implicit def roomToJsonObject(room: Room): JsonObject = {
-      new JsonObject()
-        .put("name", room.name)
-    }
+    private val gson = new Gson
+
+    implicit def roomToJsonObject(room: Room): JsonObject = JsonHelper.toJsonObject(gson, room)
 
   }
 

@@ -1,8 +1,10 @@
 package it.unibo.dcs.service.room.data.impl
 
+import com.google.gson.Gson
 import io.vertx.core.json.JsonArray
 import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.ext.sql.SQLConnection
+import it.unibo.dcs.commons.JsonHelper
 import it.unibo.dcs.commons.dataaccess.{DataStoreDatabase, ResultSetHelper}
 import it.unibo.dcs.exceptions.RoomNotFoundException
 import it.unibo.dcs.service.room.data.RoomDataStore
@@ -31,6 +33,7 @@ final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
           ResultSetHelper.getRows(resultSet).head
         }
       }
+
 }
 
 private[impl] object RoomDataStoreDatabase {
@@ -44,6 +47,8 @@ private[impl] object RoomDataStoreDatabase {
   val selectRoomByName = "SELECT * FROM `rooms` WHERE `name` = ? "
 
   object Implicits {
+
+    private val gson = new Gson
 
     implicit def requestToParams(request: CreateUserRequest): JsonArray = {
       new JsonArray().add(request.username)
@@ -61,9 +66,8 @@ private[impl] object RoomDataStoreDatabase {
       new JsonArray().add(request.name).add(request.username)
     }
 
-    implicit def jsonObjectToRoom(roomJsonObject: JsonObject): Room = {
-      Room(roomJsonObject.getString("name"))
-    }
+    implicit def jsonObjectToRoom(json: JsonObject): Room = JsonHelper.fromJson[Room](gson, json)
+
   }
 
 }

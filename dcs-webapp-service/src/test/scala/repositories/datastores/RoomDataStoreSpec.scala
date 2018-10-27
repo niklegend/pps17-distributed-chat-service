@@ -2,7 +2,7 @@ package repositories.datastores
 
 import java.util.Date
 
-import it.unibo.dcs.service.webapp.interaction.Requests.{CreateRoomRequest, DeleteRoomRequest, RoomJoinRequest}
+import it.unibo.dcs.service.webapp.interaction.Requests.{CreateRoomRequest, DeleteRoomRequest, RoomJoinRequest, GetRoomsRequest}
 import it.unibo.dcs.service.webapp.model.{Participation, Room}
 import it.unibo.dcs.service.webapp.repositories.datastores.RoomDataStore
 import it.unibo.dcs.service.webapp.repositories.datastores.api.RoomApi
@@ -17,16 +17,19 @@ class RoomDataStoreSpec extends DataStoreSpec {
   private val dataStore: RoomDataStore = new RoomDataStoreNetwork(roomApi)
 
   private val room = Room("Room 1")
+  private val rooms: List[Room]  = List(room, room, room)
   private val token = "token"
   private val participation = Participation(new Date(), room, user)
 
   private val roomCreationRequest = CreateRoomRequest("Room 1", user.username, token)
   private val roomDeletionRequest = DeleteRoomRequest(room.name, user.username, token)
+  private val getRoomsRequest = GetRoomsRequest("martynha", token)
   private val joinRoomRequest = RoomJoinRequest(room.name, user.username, token)
 
   private val deleteRoomSubscriber = stub[Subscriber[String]]
   private val createRoomSubscriber = stub[Subscriber[Room]]
   private val registrationSubscriber = stub[Subscriber[Unit]]
+  private val getRoomsSubscriber: Subscriber[List[Room]] = stub[Subscriber[List[Room]]]
   private val joinRoomSubscriber = stub[Subscriber[Participation]]
 
   it should "create a new room" in {
@@ -83,5 +86,20 @@ class RoomDataStoreSpec extends DataStoreSpec {
     (deleteRoomSubscriber onNext _) verify room.name once()
     // Verify that `subscriber.onCompleted` has been called once
     (() => deleteRoomSubscriber onCompleted) verify() once()
+  }
+
+  it should "gets a list of rooms" in {
+    //Given
+    (roomApi getRooms _) expects getRoomsRequest returns Observable.just(rooms)
+
+    //When
+    dataStore getRooms getRoomsRequest subscribe getRoomsSubscriber
+
+    //Then
+    //Verify that 'suscriber.onNext' has been callen once
+    (getRoomsSubscriber onNext _) verify rooms once()
+    // Verify that `subscriber.onCompleted` has been called once
+    (() => getRoomsSubscriber onCompleted) verify() once()
+    //
   }
 }

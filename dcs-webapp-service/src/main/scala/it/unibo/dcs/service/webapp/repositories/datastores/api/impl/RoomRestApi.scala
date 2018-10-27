@@ -1,9 +1,10 @@
 package it.unibo.dcs.service.webapp.repositories.datastores.api.impl
 
+import io.vertx.lang.scala.json.{JsonArray, JsonObject}
+import it.unibo.dcs.commons.dataaccess.Implicits.stringToDate
 import com.google.gson.Gson
-import io.vertx.lang.scala.json.JsonObject
 import it.unibo.dcs.commons.service.{AbstractApi, HttpEndpointDiscovery}
-import it.unibo.dcs.exceptions.{InternalException, RoomServiceErrorException, bodyAsJsonObject}
+import it.unibo.dcs.exceptions.{InternalException, RoomServiceErrorException, bodyAsJsonArray, bodyAsJsonObject}
 import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
 import it.unibo.dcs.service.webapp.interaction.Requests._
 import it.unibo.dcs.service.webapp.model.{Participation, Room}
@@ -44,6 +45,13 @@ class RoomRestApi(private[this] val discovery: HttpEndpointDiscovery)
       .map(bodyAsJsonObject(throw InternalException("Room service returned an empty body")))
       .map(getParticipation)
   }
+
+  override def getRooms(request: GetRoomsRequest): Observable[List[Room]] = {
+    makeRequest(client =>
+      Observable.from(client.get(RoomRestApi.getRooms).sendJsonObjectFuture(request)))
+      .map(bodyAsJsonArray(throw InternalException("Room service returned an empty body")))
+      .map(getRoomList)
+  }
 }
 
 private[impl] object RoomRestApi {
@@ -54,6 +62,8 @@ private[impl] object RoomRestApi {
 
   val createUser = "/createUser"
 
+  val getRooms = "/rooms"
+
   private def joinRoomURI(roomName: String) = s"/joinRoom/$roomName"
 
   private[impl] def getRoom(json: JsonObject) = {
@@ -63,4 +73,21 @@ private[impl] object RoomRestApi {
   private[impl] def getParticipation(json: JsonObject): Participation = {
     new Gson().fromJson(json, Participation.getClass)
   }
+
+  private[impl] def getRoomList(jsonArray: JsonArray): List[Room] = {
+    Stream.range(0, jsonArray.size)
+      .map(jsonArray.getJsonObject)
+      .map(_.getJsonObject("room"))
+      .map(_.getString("name"))
+      .map(Room)
+      .toList
+    /*
+    val roomList: List[Room] = List()
+    for (i <- 0 to jsonArray.size) {
+      roomList :+ Room(jsonArray.getJsonObject(i).getString("name"))
+    }
+    roomList
+    */
+  }
+
 }

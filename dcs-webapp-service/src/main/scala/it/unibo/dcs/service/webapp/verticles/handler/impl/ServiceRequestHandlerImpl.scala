@@ -58,7 +58,23 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
       useCase(_, JoinRoomSubscriber(context.response()))
     }
 
-  private[this] def handleRequestBody(context: RoutingContext)(handler: JsonObject => Unit): Unit =
+  override def handleGetRooms(context: RoutingContext)(implicit ctx: Context): Unit = {
+    handleRequestParam(context, "user") {
+      username => {
+        handleRequestParam(context, "token") {
+         token => {
+           val useCase = GetRoomsUseCase(authRepository, roomRepository)
+           useCase (new JsonObject().put("username", username).put("token", token), GetRoomsSubscriber(context.response))
+         }
+        }
+      }
+    }
+  }
+
+  private[this] def handleRequestBody(context: RoutingContext)(handler: JsonObject => Unit): Unit = 
     context.getBodyAsJson().fold(throw InternalException("Request body required"))(handler)
+
+  private[this] def handleRequestParam(context: RoutingContext, param: String)(handler: String => Unit): Unit =
+    context.request().getParam(param).fold(throw InternalException(s"Request param required: $param"))(handler)
 
 }

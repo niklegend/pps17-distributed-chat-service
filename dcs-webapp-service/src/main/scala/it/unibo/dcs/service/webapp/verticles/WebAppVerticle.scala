@@ -12,7 +12,8 @@ import it.unibo.dcs.commons.VertxWebHelper.Implicits.contentTypeToString
 import it.unibo.dcs.commons.service.{HttpEndpointPublisher, HttpEndpointPublisherImpl, ServiceVerticle}
 import it.unibo.dcs.service.webapp.verticles.Addresses.rooms
 import it.unibo.dcs.service.webapp.verticles.handler.ServiceRequestHandler
-import org.apache.http.entity.ContentType.APPLICATION_JSON
+import org.apache.http.entity.ContentType
+import org.apache.http.entity.ContentType._
 
 /** Verticle that runs the WebApp Service */
 final class WebAppVerticle extends ServiceVerticle {
@@ -105,6 +106,11 @@ final class WebAppVerticle extends ServiceVerticle {
       .consumes(APPLICATION_JSON)
       .produces(APPLICATION_JSON)
       .handler(context => requestHandler handleRoomDeletion context)
+
+    apiRouter.get("/rooms")
+      .consumes(ContentType.APPLICATION_JSON)
+      .produces(ContentType.APPLICATION_JSON)
+      .handler(context => requestHandler handleGetRooms context)
 
     router.mountSubRouter("/api", apiRouter)
   }

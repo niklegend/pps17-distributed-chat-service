@@ -105,15 +105,15 @@ object RoomDataStoreSpec extends App {
 
   private def testGetRoomsMethod(context: TestContext): Unit = {
     val exampleRoom = "TestExampleRoom1"
-    val exampleUser = "mvandi"
+    val exampleUser = "TestExampleUser1"
     val selectAsync = context.async(1)
-    roomDataStore.createRoom(CreateRoomRequest(exampleRoom, exampleUser))
-      .subscribe(_ => roomDataStore.getRooms(GetRoomsRequest())
-        .subscribe(result => roomDataStore.deleteRoom(DeleteRoomRequest(exampleRoom, exampleUser))
-            .subscribe(_ => {
-              assert(result.contains(Room(exampleRoom)))
-              selectAsync.countDown()
-            }), context.fail))
+    roomDataStore.createUser(CreateUserRequest(exampleUser))
+      .subscribe(_ => roomDataStore.createRoom(CreateRoomRequest(exampleRoom, exampleUser))
+        .subscribe(_ => roomDataStore.getRooms(GetRoomsRequest())
+          .subscribe(result => {
+            assert(result.contains(Room(exampleRoom)))
+            selectAsync.countDown()
+          }, context.fail)))
     selectAsync.await()
   }
 

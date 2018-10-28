@@ -15,7 +15,6 @@ final class CreateUserUseCase(private[this] val threadExecutor: ThreadExecutor,
   extends UseCase[User, CreateUserRequest](threadExecutor, postExecutionThread) {
 
   override protected[this] def createObservable(request: CreateUserRequest): Observable[User] =
-    validation(request)
-      .flatMap(_ => userRepository.createUser(request))
+    validation(request).flatMap(_ => userRepository.createUser(request))
 
 }

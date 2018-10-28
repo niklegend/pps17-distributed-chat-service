@@ -15,7 +15,6 @@ class JoinRoomUseCase (threadExecutor: ThreadExecutor,
   extends UseCase[Participation, JoinRoomRequest](threadExecutor, postExecutionThread){
 
   override protected[this] def createObservable(request: JoinRoomRequest): Observable[Participation] =
-    joinRoomValidation(request)
-      .flatMap(_ => roomRepository.joinRoom(request))
+    joinRoomValidation(request).flatMap(_ => roomRepository.joinRoom(request))
 
 }

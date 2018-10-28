@@ -11,8 +11,9 @@ import it.unibo.dcs.service.room.data.impl.RoomDataStoreDatabase.{deleteRoomQuer
 import it.unibo.dcs.service.room.model._
 import it.unibo.dcs.service.room.request._
 import rx.lang.scala.Observable
-
 import it.unibo.dcs.commons.dataaccess.Implicits.stringToDate
+
+import scala.language.implicitConversions
 
 final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDatabase(connection) with RoomDataStore {
 

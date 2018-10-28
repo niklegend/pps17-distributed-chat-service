@@ -10,14 +10,14 @@ import org.scalatest.{FlatSpec, OneInstancePerTest}
 import rx.lang.scala.{Observable, Subscriber}
 
 final class CreateRoomUseCaseSpec extends FlatSpec with MockFactory with OneInstancePerTest {
-  val threadExecutor = mock[ThreadExecutor]
-  val postExecutionThread = mock[PostExecutionThread]
-  val roomRepository = mock[RoomRepository]
+  val threadExecutor: ThreadExecutor = mock[ThreadExecutor]
+  val postExecutionThread: PostExecutionThread = mock[PostExecutionThread]
+  val roomRepository: RoomRepository = mock[RoomRepository]
   val createRoomUseCase = new CreateRoomUseCase(threadExecutor, postExecutionThread, roomRepository)
 
   val request = CreateRoomRequest("Aula Magna", "aulamagna")
 
-  val subscriber = stub[Subscriber[Room]]
+  val subscriber: Subscriber[Room] = stub[Subscriber[Room]]
 
   it should "Create a room when the CreateRoomUseCase is execute" in {
     //Given

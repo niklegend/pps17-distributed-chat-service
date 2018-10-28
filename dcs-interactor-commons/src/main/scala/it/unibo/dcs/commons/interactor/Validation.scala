@@ -8,6 +8,7 @@ abstract class Validation[Unit, P](private[this] val threadExecutor: ThreadExecu
                                    private[this] val postExecutionThread: PostExecutionThread)
   extends Interactor[Unit, P] {
 
+  //noinspection TypeAnnotation
   override final def apply(parameters: P, subscriber: Subscriber[Unit]) =
     createObservable(parameters)
       .subscribeOn(threadExecutor)

@@ -10,12 +10,14 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, OneInstancePerTest}
 import rx.lang.scala.{Observable, Subscriber}
 
+import scala.language.postfixOps
+
 class UserRepositorySpec extends FlatSpec with MockFactory with OneInstancePerTest {
 
   val createUserRequest = CreateUserRequest("martynha", "Martina", "Magnani")
   val getUserRequest = GetUserRequest("martyha")
 
-  val expectedUser = User("martynha", "Martina", "Magnani", "", true, new Date())
+  val expectedUser = User("martynha", "Martina", "Magnani", "", visible = true, new Date())
 
   val userDataStore: UserDataStore = mock[UserDataStore]
   val userRepository = new UserRepositoryImpl(userDataStore)

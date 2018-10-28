@@ -10,7 +10,7 @@ import rx.lang.scala.{Observable, Subscriber}
 
 final class RoomRepositorySpec extends FlatSpec with MockFactory with OneInstancePerTest {
 
-  val roomDataStore = mock[RoomDataStore]
+  val roomDataStore: RoomDataStore = mock[RoomDataStore]
   val roomRepository = new RoomRepositoryImpl(roomDataStore)
 
   private val username = "mvandi"
@@ -57,7 +57,7 @@ final class RoomRepositorySpec extends FlatSpec with MockFactory with OneInstanc
     roomRepository.deleteRoom(request).subscribe(subscriber)
 
     // Then
-    (subscriber.onNext _) verify roomName once()
+    subscriber.onNext _ verify roomName once()
   }
 
 }

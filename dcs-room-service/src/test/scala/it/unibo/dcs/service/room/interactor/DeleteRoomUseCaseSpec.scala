@@ -10,22 +10,22 @@ import rx.lang.scala.{Observable, Subscriber}
 
 final class DeleteRoomUseCaseSpec extends FlatSpec with MockFactory with OneInstancePerTest {
 
-  val threadExecutor = mock[ThreadExecutor]
-  val postExecutionThread = mock[PostExecutionThread]
-  val roomRepository = mock[RoomRepository]
+  val threadExecutor: ThreadExecutor = mock[ThreadExecutor]
+  val postExecutionThread: PostExecutionThread = mock[PostExecutionThread]
+  val roomRepository: RoomRepository = mock[RoomRepository]
   val deleteRoomUseCase = new DeleteRoomUseCase(threadExecutor, postExecutionThread, roomRepository)
 
   private val roomName = "Test room"
   val request = DeleteRoomRequest(roomName, "mvandi")
 
-  val subscriber = stub[Subscriber[String]]
+  val subscriber: Subscriber[String] = stub[Subscriber[String]]
 
   it should "Delete a room if the user who is trying to delete the room is also the user who created the room" in {
     (roomRepository deleteRoom _) expects request returns Observable.just(roomName)
 
     deleteRoomUseCase(request).subscribe(subscriber)
 
-    (subscriber.onNext _) verify roomName once()
+    subscriber.onNext _ verify roomName once()
   }
 
 }

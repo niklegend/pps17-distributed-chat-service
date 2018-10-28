@@ -10,12 +10,12 @@ import rx.lang.scala.{Observable, Subscriber}
 
 final class CreateUserUseCaseSpec extends FlatSpec with MockFactory with OneInstancePerTest {
 
-  val threadExecutor = mock[ThreadExecutor]
-  val postExecutionThread = mock[PostExecutionThread]
-  val roomRepository = mock[RoomRepository]
+  val threadExecutor: ThreadExecutor = mock[ThreadExecutor]
+  val postExecutionThread: PostExecutionThread = mock[PostExecutionThread]
+  val roomRepository: RoomRepository = mock[RoomRepository]
   val createUserUseCase = new CreateUserUseCase(threadExecutor, postExecutionThread, roomRepository)
 
-  val subscriber = stub[Subscriber[Unit]]
+  val subscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
 
   val request = CreateUserRequest("mvandi")
 

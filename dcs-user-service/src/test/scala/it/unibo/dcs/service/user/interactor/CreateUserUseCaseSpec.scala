@@ -11,10 +11,12 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
 import rx.lang.scala.{Observable, Subscriber}
 
+import scala.language.postfixOps
+
 class CreateUserUseCaseSpec extends FlatSpec with MockFactory {
 
   val request = CreateUserRequest("martynha", "Martina", "Magnani")
-  val expectedUser = User("martynha", "Martina", "Magnani", "", true, new Date())
+  val expectedUser = User("martynha", "Martina", "Magnani", "", visible = true, new Date())
 
   val threadExecutor: ThreadExecutor = mock[ThreadExecutor]
   val postExecutionThread: PostExecutionThread = mock[PostExecutionThread]

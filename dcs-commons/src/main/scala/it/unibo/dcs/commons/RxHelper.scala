@@ -6,6 +6,8 @@ import it.unibo.dcs.commons.RxHelper.Implicits._
 import it.unibo.dcs.commons.VertxHelper.Implicits._
 import rx.lang.scala.{Observable, Scheduler}
 
+import scala.language.implicitConversions
+
 object RxHelper {
 
   def scheduler(context: Context): Scheduler = JRxHelper.scheduler(context)

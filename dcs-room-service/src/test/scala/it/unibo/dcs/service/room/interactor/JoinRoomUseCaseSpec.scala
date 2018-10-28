@@ -10,14 +10,14 @@ import org.scalatest.{FlatSpec, OneInstancePerTest}
 import rx.lang.scala.{Observable, Subscriber}
 
 final class JoinRoomUseCaseSpec extends FlatSpec with MockFactory with OneInstancePerTest {
-  val threadExecutor = mock[ThreadExecutor]
-  val postExecutionThread = mock[PostExecutionThread]
-  val roomRepository = mock[RoomRepository]
+  val threadExecutor: ThreadExecutor = mock[ThreadExecutor]
+  val postExecutionThread: PostExecutionThread = mock[PostExecutionThread]
+  val roomRepository: RoomRepository = mock[RoomRepository]
   val joinRoomUseCase = new JoinRoomUseCase(threadExecutor, postExecutionThread, roomRepository)
 
   val request = JoinRoomRequest("Aula Magna", "martynha")
 
-  val subscriber = stub[Subscriber[Participation]]
+  val subscriber: Subscriber[Participation] = stub[Subscriber[Participation]]
 
   it should "create a new participation when the use case is executed" in {
     //Given

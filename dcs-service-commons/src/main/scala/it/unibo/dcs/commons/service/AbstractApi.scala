@@ -24,7 +24,7 @@ abstract class AbstractApi(private[this] val discovery: HttpEndpointDiscovery,
   protected final def makeRequest[T](action: WebClient => Observable[HttpResponse[T]]): Observable[HttpResponse[T]] =
     clientOption match {
       case Some(c) => action(c)
-        .onErrorResumeNext { cause =>
+        .onErrorResumeNext { _ =>
           clientOption = None
           discoverClient()
           errorObservable

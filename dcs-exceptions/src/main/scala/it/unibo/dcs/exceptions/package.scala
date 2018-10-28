@@ -6,6 +6,8 @@ import io.vertx.scala.ext.web.client.HttpResponse
 import it.unibo.dcs.exceptions.ErrorType._
 import it.unibo.dcs.exceptions.Implicits.jsonObjectToDcsException
 
+import scala.language.implicitConversions
+
 /** It contains all the exceptions used by the APIs */
 package object exceptions {
 

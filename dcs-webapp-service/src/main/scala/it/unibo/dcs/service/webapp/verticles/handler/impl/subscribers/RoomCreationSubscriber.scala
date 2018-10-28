@@ -13,8 +13,6 @@ import rx.lang.scala.Subscriber
 final class RoomCreationSubscriber(protected override val response: HttpServerResponse) extends Subscriber[RoomCreationResult]
   with ErrorSubscriber {
 
-  private val log = ScalaLogger.getLogger(getClass.getName)
-
   override def onNext(result: RoomCreationResult): Unit = {
     val json: JsonObject = result
     response.setStatus(HttpResponseStatus.CREATED).end(json)

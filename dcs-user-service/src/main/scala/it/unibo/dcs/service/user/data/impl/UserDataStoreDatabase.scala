@@ -12,6 +12,8 @@ import it.unibo.dcs.service.user.model.User
 import it.unibo.dcs.service.user.request.{CreateUserRequest, GetUserRequest}
 import rx.lang.scala.Observable
 
+import scala.language.implicitConversions
+
 final class UserDataStoreDatabase(connection: SQLConnection) extends DataStoreDatabase(connection) with UserDataStore {
 
   override def checkIfUserExists(request: GetUserRequest): Observable[Unit] =

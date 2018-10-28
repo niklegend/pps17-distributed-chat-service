@@ -3,6 +3,8 @@ package it.unibo.dcs.commons
 import java.text.SimpleDateFormat
 import java.util.Date
 
+import scala.language.implicitConversions
+
 package object dataaccess {
   private val mySqlFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
 

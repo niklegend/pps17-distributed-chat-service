@@ -54,39 +54,6 @@ package object subscriber {
 
   }
 
-  final class CreateRoomValiditySubscriber(protected override val response: HttpServerResponse,
-                                           request: CreateRoomRequest,
-                                           createRoomUseCase: CreateRoomUseCase) extends Subscriber[Unit]
-    with ErrorSubscriber {
-
-    override def onCompleted(): Unit = createRoomUseCase(request, new CreateRoomSubscriber(response))
-
-  }
-
-  final class CreateUserValiditySubscriber(protected override val response: HttpServerResponse,
-                                           request: CreateUserRequest,
-                                           createUserUseCase: CreateUserUseCase) extends Subscriber[Unit]
-    with ErrorSubscriber {
-
-    override def onCompleted(): Unit = createUserUseCase(request, new CreateUserSubscriber(response))
-
-  }
-
-  class DeleteRoomValiditySubscriber(protected override val response: HttpServerResponse,
-                                     request: DeleteRoomRequest,
-                                     deleteRoomUseCase: DeleteRoomUseCase) extends Subscriber[Unit]
-    with ErrorSubscriber {
-
-    override def onCompleted(): Unit = deleteRoomUseCase(request, new DeleteRoomSubscriber(response))
-
-  }
-
-  class JoinRoomValiditySubscriber(protected override val response: HttpServerResponse,
-                                   request: JoinRoomRequest,
-                                   joinRoomUseCase: JoinRoomUseCase) extends Subscriber[Unit] with ErrorSubscriber {
-    override def onCompleted(): Unit = joinRoomUseCase(request, new JoinRoomSubscriber(response))
-  }
-
   object Implicits {
 
     private val gson = new GsonBuilder()

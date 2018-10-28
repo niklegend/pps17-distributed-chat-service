@@ -12,12 +12,12 @@ import it.unibo.dcs.commons.interactor.ThreadExecutorExecutionContext
 import it.unibo.dcs.commons.interactor.executor.PostExecutionThread
 import it.unibo.dcs.commons.service.{HttpEndpointPublisher, ServiceVerticle}
 import it.unibo.dcs.service.room.RoomVerticle.Implicits._
-import it.unibo.dcs.service.room.interactor.usecases.{CreateRoomUseCase, CreateUserUseCase, DeleteRoomUseCase, JoinRoomUseCase}
-import it.unibo.dcs.service.room.interactor.validations.{CreateRoomValidation, CreateUserValidation, DeleteRoomValidation, JoinRoomValidation}
+import it.unibo.dcs.service.room.interactor.usecases._
+import it.unibo.dcs.service.room.interactor.validations._
 import it.unibo.dcs.service.room.repository.RoomRepository
-import it.unibo.dcs.service.room.request.{CreateRoomRequest, CreateUserRequest, DeleteRoomRequest, JoinRoomRequest}
-import it.unibo.dcs.service.room.subscriber.{CreateRoomValiditySubscriber, CreateUserValiditySubscriber, DeleteRoomValiditySubscriber, JoinRoomValiditySubscriber}
-import it.unibo.dcs.service.room.validator.{CreateRoomValidator, CreateUserValidator, DeleteRoomValidator, JoinRoomValidator}
+import it.unibo.dcs.service.room.request._
+import it.unibo.dcs.service.room.subscriber._
+import it.unibo.dcs.service.room.validator._
 import org.apache.http.entity.ContentType
 
 import scala.language.implicitConversions
@@ -51,28 +51,30 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
     val threadExecutor = ThreadExecutorExecutionContext(vertx)
     val postExecutionThread = PostExecutionThread(RxHelper.scheduler(this.ctx))
 
-    val createUserUseCase = new CreateUserUseCase(threadExecutor, postExecutionThread, roomRepository)
-    val createRoomUseCase = new CreateRoomUseCase(threadExecutor, postExecutionThread, roomRepository)
-    val deleteRoomUseCase = new DeleteRoomUseCase(threadExecutor, postExecutionThread, roomRepository)
-    val joinRoomUseCase = new JoinRoomUseCase(threadExecutor, postExecutionThread, roomRepository)
-
-    val deleteRoomValidator = DeleteRoomValidator()
-    val createRoomValidator = CreateRoomValidator()
-    val createUserValidator = CreateUserValidator()
-    val joinRoomValidator = JoinRoomValidator()
-
-    val deleteRoomValidation = new DeleteRoomValidation(threadExecutor, postExecutionThread, deleteRoomValidator)
-    val createRoomValidation = new CreateRoomValidation(threadExecutor, postExecutionThread, createRoomValidator)
-    val createUserValidation = new CreateUserValidation(threadExecutor, postExecutionThread, createUserValidator)
-    val joinRoomValidation = new JoinRoomValidation(threadExecutor, postExecutionThread, joinRoomValidator)
+    val createUserUseCase = {
+      val validation = new CreateUserValidation(threadExecutor, postExecutionThread, CreateUserValidator())
+      new CreateUserUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
+    }
+    val createRoomUseCase = {
+      val validation = new CreateRoomValidation(threadExecutor, postExecutionThread, CreateRoomValidator())
+      new CreateRoomUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
+    }
+    val deleteRoomUseCase = {
+      val validation = new DeleteRoomValidation(threadExecutor, postExecutionThread, DeleteRoomValidator())
+      new DeleteRoomUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
+    }
+    val joinRoomUseCase = {
+      val validation = new JoinRoomValidation(threadExecutor, postExecutionThread, JoinRoomValidator())
+      new JoinRoomUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
+    }
 
     router.post("/createUser")
       .consumes(ContentType.APPLICATION_JSON)
       .consumes(ContentType.APPLICATION_JSON)
       .handler(routingContext => {
         val request = routingContext.getBodyAsJson.head
-        val checkSubscriber = new CreateUserValiditySubscriber(routingContext.response(), request, createUserUseCase)
-        createUserValidation(request, checkSubscriber)
+        val subscriber = new CreateUserSubscriber(routingContext.response())
+        createUserUseCase(request, subscriber)
       })
 
     router.post("/createRoom")
@@ -80,8 +82,8 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
       .consumes(ContentType.APPLICATION_JSON)
       .handler(routingContext => {
         val request = routingContext.getBodyAsJson.head
-        val checkSubscriber = new CreateRoomValiditySubscriber(routingContext.response(), request, createRoomUseCase)
-        createRoomValidation(request, checkSubscriber)
+        val subscriber = new CreateRoomSubscriber(routingContext.response())
+        createRoomUseCase(request, subscriber)
       })
 
     router.post("/deleteRoom")
@@ -89,8 +91,8 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
       .consumes(ContentType.APPLICATION_JSON)
       .handler(routingContext => {
         val request = routingContext.getBodyAsJson.head
-        val checkSubscriber = new DeleteRoomValiditySubscriber(routingContext.response(), request, deleteRoomUseCase)
-        deleteRoomValidation(request, checkSubscriber)
+        val subscriber = new DeleteRoomSubscriber(routingContext.response())
+        deleteRoomUseCase(request, subscriber)
       })
 
     router.post("/joinRoom")
@@ -98,8 +100,8 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
       .produces("application/json")
       .handler(routingContext => {
         val request = routingContext.getBodyAsJson.head
-        val checkSubscriber = new JoinRoomValiditySubscriber(routingContext.response(), request, joinRoomUseCase)
-        joinRoomValidation(request, checkSubscriber)
+        val subscriber = new JoinRoomSubscriber(routingContext.response())
+        joinRoomUseCase(request, subscriber)
       })
   }
 

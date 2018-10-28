@@ -1,4 +1,4 @@
-package repositories.datastores
+package it.unibo.dcs.service.webapp.repositories.datastores
 
 import it.unibo.dcs.service.webapp.interaction.Requests._
 import it.unibo.dcs.service.webapp.repositories.datastores.AuthenticationDataStore

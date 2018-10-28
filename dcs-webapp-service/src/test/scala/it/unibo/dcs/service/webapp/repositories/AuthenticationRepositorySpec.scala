@@ -1,4 +1,4 @@
-package repositories
+package it.unibo.dcs.service.webapp.repositories
 
 import it.unibo.dcs.service.webapp.interaction.Requests._
 import it.unibo.dcs.service.webapp.repositories.AuthenticationRepository

@@ -1,5 +1,6 @@
 package it.unibo.dcs.service.webapp.verticles.handler.impl
 
+import io.vertx.core.http.HttpHeaders
 import io.vertx.lang.scala.json.{Json, JsonObject}
 import io.vertx.scala.core.Context
 import io.vertx.scala.core.eventbus.EventBus
@@ -32,9 +33,13 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
     }
 
   override def handleLogout(context: RoutingContext)(implicit ctx: Context): Unit =
-    handleRequestBody(context) {
-      val useCase = LogoutUserUseCase.create(authRepository)
-      useCase(_, LogoutUserSubscriber(context.response()))
+    handleRequestToken(context) {
+      token =>
+        handleRequestBody(context) {
+          request =>
+            val useCase = LogoutUserUseCase.create(authRepository)
+            useCase(request.put(authenticationLabel, token), LogoutUserSubscriber(context.response()))
+        }
     }
 
   override def handleLogin(context: RoutingContext)(implicit ctx: Context): Unit =
@@ -44,29 +49,40 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
     }
 
   override def handleRoomCreation(context: RoutingContext)(implicit ctx: Context): Unit =
-    handleRequestBody(context) {
-      val useCase = CreateRoomUseCase(authRepository, roomRepository)
-      useCase(_, RoomCreationSubscriber(context.response))
+    handleRequestToken(context) {
+      token =>
+        handleRequestBody(context) {
+          request =>
+            val useCase = CreateRoomUseCase(authRepository, roomRepository)
+            useCase(request.put(authenticationLabel, token), RoomCreationSubscriber(context.response))
+        }
     }
 
   override def handleRoomDeletion(context: RoutingContext)(implicit ctx: Context): Unit =
-    handleRequestParam(context, ParamLabels.roomNameLabel) {
-      roomName =>
-        handleRequestBody(context) {
-          request =>
-            val useCase = DeleteRoomUseCase.create(authRepository, roomRepository)
-            useCase(request.put(JsonLabels.roomNameLabel, roomName),
-              RoomDeletionSubscriber(context.response, roomDeleted))
+    handleRequestToken(context) {
+      token =>
+        handleRequestParam(context, ParamLabels.roomNameLabel) {
+          roomName =>
+            handleRequestBody(context) {
+              request =>
+                val useCase = DeleteRoomUseCase.create(authRepository, roomRepository)
+                useCase(request.put(JsonLabels.roomNameLabel, roomName).put(JsonLabels.authenticationLabel, token),
+                  RoomDeletionSubscriber(context.response, roomDeleted))
+            }
         }
     }
 
   override def handleJoinRoom(context: RoutingContext)(implicit ctx: Context): Unit =
-    handleRequestParam(context, ParamLabels.roomNameLabel) {
-      roomName =>
-        handleRequestBody(context) {
-          request =>
-            val useCase = JoinRoomUseCase(authRepository, roomRepository)
-            useCase(request.put(JsonLabels.roomNameLabel, roomName), JoinRoomSubscriber(context.response(), roomJoined))
+    handleRequestToken(context) {
+      token =>
+        handleRequestParam(context, ParamLabels.roomNameLabel) {
+          roomName =>
+            handleRequestBody(context) {
+              request =>
+                val useCase = JoinRoomUseCase(authRepository, roomRepository)
+                useCase(request.put(JsonLabels.roomNameLabel, roomName).put(JsonLabels.authenticationLabel, token),
+                  JoinRoomSubscriber(context.response(), roomJoined))
+            }
         }
     }
 
@@ -88,4 +104,10 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
   private[this] def handleRequestParam(context: RoutingContext, param: String)(handler: String => Unit): Unit =
     context.request().getParam(param).fold(throw InternalException(s"Request param required: $param"))(handler)
 
+  private[this] def handleRequestHeader(context: RoutingContext, header: String)(handler: String => Unit): Unit =
+    context.request().getHeader(header).fold(throw InternalException("Authorization token required"))(handler)
+
+  private[this] def handleRequestToken(context: RoutingContext)(handler: String => Unit): Unit = {
+    handleRequestHeader(context, HttpHeaders.AUTHORIZATION.toString)(handler)
+  }
 }

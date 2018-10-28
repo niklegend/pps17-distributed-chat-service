@@ -28,7 +28,7 @@ class AuthenticationRepositorySpec extends RepositorySpec {
 
   it should "create a new room" in {
     // Given
-    (dataStore checkToken _) expects roomCreationRequest returns (Observable just token) noMoreThanOnce()
+    (dataStore checkToken _) expects roomCreationRequest returns (Observable just token) once()
 
     // When
     repository.checkToken(roomCreationRequest).subscribe(roomCreationSubscriber)

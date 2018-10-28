@@ -87,7 +87,7 @@ final class WebAppVerticle extends ServiceVerticle {
       .produces(APPLICATION_JSON)
       .handler(context => requestHandler handleLogin context)
 
-    apiRouter.post("/logout")
+    apiRouter.delete("/logout")
       .consumes(APPLICATION_JSON)
       .produces(APPLICATION_JSON)
       .handler(context => requestHandler handleLogout context)
@@ -97,12 +97,12 @@ final class WebAppVerticle extends ServiceVerticle {
       .produces(APPLICATION_JSON)
       .handler(context => requestHandler handleRoomCreation context)
 
-    apiRouter.post("/rooms/:room")
+    apiRouter.post("/rooms/:room/participations")
       .consumes(APPLICATION_JSON)
       .produces(APPLICATION_JSON)
       .handler(context => requestHandler handleJoinRoom context)
 
-    apiRouter.delete("/rooms")
+    apiRouter.delete("/rooms/:room")
       .consumes(APPLICATION_JSON)
       .produces(APPLICATION_JSON)
       .handler(context => requestHandler handleRoomDeletion context)

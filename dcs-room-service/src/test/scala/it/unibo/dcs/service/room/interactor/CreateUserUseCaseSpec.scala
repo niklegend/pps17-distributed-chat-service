@@ -2,18 +2,22 @@ package it.unibo.dcs.service.room.interactor
 
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
 import it.unibo.dcs.service.room.interactor.usecases.CreateUserUseCase
+import it.unibo.dcs.service.room.interactor.validations.CreateUserValidation
 import it.unibo.dcs.service.room.repository.RoomRepository
 import it.unibo.dcs.service.room.request.CreateUserRequest
+import it.unibo.dcs.service.room.validator.CreateUserValidator
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, OneInstancePerTest}
 import rx.lang.scala.{Observable, Subscriber}
 
 final class CreateUserUseCaseSpec extends FlatSpec with MockFactory with OneInstancePerTest {
 
-  val threadExecutor: ThreadExecutor = mock[ThreadExecutor]
-  val postExecutionThread: PostExecutionThread = mock[PostExecutionThread]
-  val roomRepository: RoomRepository = mock[RoomRepository]
-  val createUserUseCase = new CreateUserUseCase(threadExecutor, postExecutionThread, roomRepository)
+  val threadExecutor = mock[ThreadExecutor]
+  val postExecutionThread = mock[PostExecutionThread]
+  val roomRepository = mock[RoomRepository]
+
+  val validation = new CreateUserValidation(threadExecutor, postExecutionThread, CreateUserValidator())
+  val createUserUseCase = new CreateUserUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
 
   val subscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
 
@@ -27,7 +31,7 @@ final class CreateUserUseCaseSpec extends FlatSpec with MockFactory with OneInst
     createUserUseCase(request).subscribe(subscriber)
 
     // Then
-    (() => subscriber.onCompleted) verify() once()
+    (() => subscriber onCompleted) verify() once()
   }
 
 }

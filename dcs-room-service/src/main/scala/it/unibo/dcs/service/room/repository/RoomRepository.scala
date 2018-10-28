@@ -1,6 +1,6 @@
 package it.unibo.dcs.service.room.repository
 
-import it.unibo.dcs.service.room.model.Room
+import it.unibo.dcs.service.room.model.{Participation, Room}
 import it.unibo.dcs.service.room.request._
 import rx.lang.scala.Observable
 
@@ -15,4 +15,8 @@ trait RoomRepository {
   def getRoomByName(request: GetRoomRequest): Observable[Room]
 
   def getRooms(request: GetRoomsRequest): Observable[Set[Room]]
+  
+  def joinRoom(request: JoinRoomRequest): Observable[Participation]
+
+  def getParticipationByKey(request: JoinRoomRequest): Observable[Participation]
 }

@@ -12,4 +12,5 @@ package object request {
 
   final case class GetRoomsRequest()
 
+  final case class JoinRoomRequest(name: String, username: String)
 }

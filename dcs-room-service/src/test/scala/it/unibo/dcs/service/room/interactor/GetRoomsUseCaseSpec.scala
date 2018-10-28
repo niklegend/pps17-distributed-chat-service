@@ -2,9 +2,11 @@ package it.unibo.dcs.service.room.interactor
 
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
 import it.unibo.dcs.service.room.interactor.usecases.GetRoomsUseCase
+import it.unibo.dcs.service.room.interactor.validations.GetRoomsValidation
 import it.unibo.dcs.service.room.model.Room
 import it.unibo.dcs.service.room.repository.RoomRepository
 import it.unibo.dcs.service.room.request.GetRoomsRequest
+import it.unibo.dcs.service.room.validator.GetRoomsValidator
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, OneInstancePerTest}
 import rx.lang.scala.{Observable, Subscriber}
@@ -14,7 +16,8 @@ final class GetRoomsUseCaseSpec extends FlatSpec with MockFactory with OneInstan
   private val threadExecutor = mock[ThreadExecutor]
   private val postExecutionThread = mock[PostExecutionThread]
   private val roomRepository = mock[RoomRepository]
-  private val getRoomsUseCase = new GetRoomsUseCase(threadExecutor, postExecutionThread, roomRepository)
+  val validation = new GetRoomsValidation(threadExecutor, postExecutionThread, GetRoomsValidator())
+  private val getRoomsUseCase = new GetRoomsUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
 
   private val expectedResult = Set(Room("Room 01"), Room("Room 02"), Room("Room 03"))
   val request = GetRoomsRequest()

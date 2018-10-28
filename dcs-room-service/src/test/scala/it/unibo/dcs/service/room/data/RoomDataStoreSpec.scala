@@ -8,7 +8,8 @@ import io.vertx.scala.ext.jdbc.JDBCClient
 import io.vertx.scala.ext.sql.SQLConnection
 import it.unibo.dcs.commons.IoHelper
 import it.unibo.dcs.service.room.data.impl.RoomDataStoreDatabase
-import it.unibo.dcs.service.room.request.{CreateUserRequest, DeleteRoomRequest, GetRoomsRequest}
+import it.unibo.dcs.service.room.model.Room
+import it.unibo.dcs.service.room.request.{CreateRoomRequest, CreateUserRequest, DeleteRoomRequest, GetRoomsRequest}
 
 object RoomDataStoreSpec extends App {
 
@@ -103,12 +104,16 @@ object RoomDataStoreSpec extends App {
     .run(new TestOptions().addReporter(new ReportOptions().setTo("console")))
 
   private def testGetRoomsMethod(context: TestContext): Unit = {
+    val exampleRoom = "TestExampleRoom1"
+    val exampleUser = "mvandi"
     val selectAsync = context.async(1)
-    roomDataStore.getRooms(GetRoomsRequest())
-      .subscribe(result => {
-        assert(result.nonEmpty)
-        selectAsync.countDown()
-      }, context.fail)
+    roomDataStore.createRoom(CreateRoomRequest(exampleRoom, exampleUser))
+      .subscribe(_ => roomDataStore.getRooms(GetRoomsRequest())
+        .subscribe(result => roomDataStore.deleteRoom(DeleteRoomRequest(exampleRoom, exampleUser))
+            .subscribe(_ => {
+              assert(result.contains(Room(exampleRoom)))
+              selectAsync.countDown()
+            }), context.fail))
     selectAsync.await()
   }
 

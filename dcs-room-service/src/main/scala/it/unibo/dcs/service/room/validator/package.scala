@@ -2,7 +2,7 @@ package it.unibo.dcs.service.room
 
 import it.unibo.dcs.commons.validation.{Conditions, Validator}
 import it.unibo.dcs.exceptions.{RoomNameRequiredException, UsernameRequiredException}
-import it.unibo.dcs.service.room.request.{CreateRoomRequest, CreateUserRequest, DeleteRoomRequest, GetRoomsRequest}
+import it.unibo.dcs.service.room.request._
 
 package object validator {
 
@@ -49,4 +49,17 @@ package object validator {
     }
   }
 
+  object JoinRoomValidator {
+    def apply(): Validator[JoinRoomRequest] = Validator[JoinRoomRequest] {
+      builder => builder
+          .addRule(request =>
+            Conditions.stringNotEmpty(request.name),
+            RoomNameRequiredException
+          )
+          .addRule(request =>
+            Conditions.stringNotEmpty(request.username),
+            UsernameRequiredException
+          )
+    }
+  }
 }

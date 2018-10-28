@@ -1,16 +1,14 @@
 package it.unibo.dcs.service.room
 
 import io.vertx.lang.scala.ScalaLogger
-import io.vertx.lang.scala.json.{Json, JsonObject}
+import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
 import io.vertx.scala.core.http.HttpServerResponse
+import it.unibo.dcs.commons.JsonHelper
 import it.unibo.dcs.commons.VertxWebHelper.Implicits.jsonObjectToString
 import it.unibo.dcs.exceptions.ErrorSubscriber
-import it.unibo.dcs.service.room.interactor.usecases.{CreateRoomUseCase, CreateUserUseCase, DeleteRoomUseCase, GetRoomsUseCase}
-import it.unibo.dcs.service.room.model.Room
-import it.unibo.dcs.service.room.request.{CreateRoomRequest, CreateUserRequest, DeleteRoomRequest, GetRoomsRequest}
+import it.unibo.dcs.service.room.model.{Participation, Room}
 import it.unibo.dcs.service.room.subscriber.Implicits._
 import rx.lang.scala.Subscriber
-
 package object subscriber {
 
   final class CreateRoomSubscriber(protected override val response: HttpServerResponse) extends Subscriber[Room]
@@ -26,19 +24,22 @@ package object subscriber {
 
   }
 
+  final class JoinRoomSubscriber(protected override val response: HttpServerResponse) extends Subscriber[Participation]
+    with ErrorSubscriber {
+
+    private[this] val log = ScalaLogger.getLogger(getClass.getName)
+
+    override def onNext(participation: Participation): Unit = {
+      val json: JsonObject = participation
+      log.info(s"Answering with participation: $json")
+      response.end(json)
+    }
+  }
+
   final class CreateUserSubscriber(protected override val response: HttpServerResponse) extends Subscriber[Unit]
     with ErrorSubscriber {
 
     override def onCompleted(): Unit = response.end()
-
-  }
-
-  final class CreateRoomValiditySubscriber(protected override val response: HttpServerResponse,
-                                           request: CreateRoomRequest,
-                                           createRoomUseCase: CreateRoomUseCase) extends Subscriber[Unit]
-    with ErrorSubscriber {
-
-    override def onCompleted(): Unit = createRoomUseCase(request, new CreateRoomSubscriber(response))
 
   }
 
@@ -52,42 +53,20 @@ package object subscriber {
   class GetRoomsSubscriber(protected override val response: HttpServerResponse) extends Subscriber[Set[Room]]
     with ErrorSubscriber {
 
-    override def onNext(rooms: Set[Room]): Unit = response.end(Json.obj(("rooms", rooms)))
-
-  }
-
-  final class CreateUserValiditySubscriber(protected override val response: HttpServerResponse,
-                                           request: CreateUserRequest,
-                                           createUserUseCase: CreateUserUseCase) extends Subscriber[Unit]
-    with ErrorSubscriber {
-
-    override def onCompleted(): Unit = createUserUseCase(request, new CreateUserSubscriber(response))
-
-  }
-
-  class DeleteRoomValiditySubscriber(protected override val response: HttpServerResponse,
-                                     request: DeleteRoomRequest,
-                                     deleteRoomUseCase: DeleteRoomUseCase) extends Subscriber[Unit]
-    with ErrorSubscriber {
-
-    override def onCompleted(): Unit = deleteRoomUseCase(request, new DeleteRoomSubscriber(response))
-
-  }
-
-  class GetRoomsValiditySubscriber(protected override val response: HttpServerResponse, request: GetRoomsRequest,
-                                   getRoomsUseCase: GetRoomsUseCase) extends Subscriber[Unit]
-    with ErrorSubscriber {
-
-    override def onCompleted(): Unit = getRoomsUseCase(request, new GetRoomsSubscriber(response))
+    override def onNext(rooms: Set[Room]): Unit = {
+      val results = new JsonArray()
+      rooms.foreach(room => results.add(roomToJsonObject(room)))
+      response.end(results.encodePrettily())
+    }
 
   }
 
   object Implicits {
 
-    implicit def roomToJsonObject(room: Room): JsonObject = {
-      new JsonObject()
-        .put("name", room.name)
-    }
+    implicit def roomToJsonObject(room: Room): JsonObject = JsonHelper.toJsonObject(gson, room)
+
+    implicit def participationToJsonObject(participation: Participation): JsonObject =
+      JsonHelper.toJsonObject(gson, participation)
 
   }
 

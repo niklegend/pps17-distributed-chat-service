@@ -1,7 +1,7 @@
 package it.unibo.dcs.service.webapp.repositories.datastores.api.impl
 
 import io.vertx.lang.scala.json.{Json, JsonObject}
-import it.unibo.dcs.commons.RxHelper.asUnit
+import it.unibo.dcs.commons.RxHelper.unit
 import it.unibo.dcs.commons.service.{AbstractApi, HttpEndpointDiscovery}
 import it.unibo.dcs.exceptions.{AuthServiceErrorException, InternalException, bodyAsJsonObject}
 import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
@@ -37,7 +37,7 @@ class AuthenticationRestApi(private[this] val discovery: HttpEndpointDiscovery)
         .putHeader(authenticationKeyLabel, tokenPrefix + request.token)
         .sendJsonObjectFuture(request)))
       .map(bodyAsJsonObject(Json.emptyObj()))
-      .map(asUnit)
+      .map(unit)
   }
 
   override def checkToken(request: CheckTokenRequest): Observable[Unit] =
@@ -46,13 +46,13 @@ class AuthenticationRestApi(private[this] val discovery: HttpEndpointDiscovery)
         .putHeader(authenticationKeyLabel, tokenPrefix + request.token)
         .sendJsonObjectFuture(Json.obj())))
       .map(bodyAsJsonObject())
-      .map(asUnit)
+      .map(unit)
 
   override def deleteUser(request: DeleteUserRequest): Observable[Unit] = {
     makeRequest(client =>
       Observable.from(client.post(deleteUserURI(request.username)).sendJsonObjectFuture(request)))
       .map(bodyAsJsonObject())
-      .map(asUnit)
+      .map(unit)
       .onErrorResumeNext(cause => Observable.error(AuthServiceErrorException(cause)))
   }
 

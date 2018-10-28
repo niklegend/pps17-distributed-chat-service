@@ -14,7 +14,7 @@ object RxHelper {
 
   def blockingScheduler(vertx: Vertx, ordered: Boolean = DEFAULT_ORDERED): Scheduler = JRxHelper.blockingScheduler(vertx, ordered)
 
-  def asUnit[T](t: T): Unit = ()
+  def unit[T](t: T): Unit = ()
 
   private val DEFAULT_ORDERED: Boolean = false
 

@@ -1,13 +1,11 @@
 package it.unibo.dcs.commons
 
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
+import it.unibo.dcs.commons.ReflectionHelper.asClassOf
 
 import scala.collection.JavaConverters._
 import scala.reflect.ClassTag
-
-import ReflectionHelper.asClassOf
 
 object JsonHelper {
 

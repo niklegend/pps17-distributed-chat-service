@@ -1,18 +1,16 @@
 package it.unibo.dcs.service.room.data.impl
 
-import java.util.Date
-
-import com.google.gson.GsonBuilder
 import io.vertx.core.json.JsonArray
-import io.vertx.lang.scala.json.{Json, JsonObject}
+import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.ext.sql.SQLConnection
+import it.unibo.dcs.commons.JsonHelper
 import it.unibo.dcs.commons.dataaccess.{DataStoreDatabase, ResultSetHelper}
-import it.unibo.dcs.commons.{JsonHelper, dataaccess}
 import it.unibo.dcs.exceptions.{ParticipationNotFoundException, RoomNotFoundException}
 import it.unibo.dcs.service.room.data.RoomDataStore
 import it.unibo.dcs.service.room.data.impl.Implicits.participationDtoToParticipation
 import it.unibo.dcs.service.room.data.impl.RoomDataStoreDatabase.Implicits._
 import it.unibo.dcs.service.room.data.impl.RoomDataStoreDatabase._
+import it.unibo.dcs.service.room.gson
 import it.unibo.dcs.service.room.model._
 import it.unibo.dcs.service.room.request._
 import rx.lang.scala.Observable
@@ -66,10 +64,6 @@ private[impl] object RoomDataStoreDatabase {
   val selectParticipationByKey = "SELECT * FROM `participations` WHERE `username` = ? AND `name` = ?"
 
   object Implicits {
-
-    private val gson = new GsonBuilder()
-      .setDateFormat(dataaccess.mySqlFormat.toPattern)
-      .create()
 
     implicit def requestToParams(request: CreateUserRequest): JsonArray = {
       new JsonArray().add(request.username)

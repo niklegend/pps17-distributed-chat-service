@@ -3,8 +3,13 @@ package it.unibo.dcs.commons
 import java.text.SimpleDateFormat
 import java.util.Date
 
+import com.google.gson.GsonBuilder
+
 package object dataaccess {
-  val mySqlFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+
+  private val mySqlFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+
+  val gsonConfiguration: GsonBuilder => Unit = _.setDateFormat(mySqlFormat.toPattern)
 
   object Implicits {
 

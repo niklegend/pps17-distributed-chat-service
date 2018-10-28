@@ -27,10 +27,6 @@ final class UserVerticle(private[this] val userRepository: UserRepository, priva
   private var host: String = _
   private var port: Int = _
 
-  private var getUserUseCase: GetUserUseCase = _
-  private var createUserUseCase: CreateUserUseCase = _
-  private var validateUserCreation: ValidateUserCreation = _
-
   override def init(jVertx: Vertx, context: Context, verticle: AbstractVerticle): Unit = {
     super.init(jVertx, context, verticle)
 

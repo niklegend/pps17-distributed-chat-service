@@ -5,6 +5,8 @@ import java.util.Date
 import it.unibo.dcs.commons.dataaccess.Implicits.stringToBoolean
 import it.unibo.dcs.service.user.model.User
 
+import scala.language.implicitConversions
+
 package object impl {
 
   private[impl] final case class UserDto(username: String, first_name: String, last_name: String, bio: String, visible: String, last_seen: Date)

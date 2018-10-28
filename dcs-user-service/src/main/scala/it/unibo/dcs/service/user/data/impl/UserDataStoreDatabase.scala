@@ -12,8 +12,9 @@ import it.unibo.dcs.service.user.gson
 import it.unibo.dcs.service.user.model.User
 import it.unibo.dcs.service.user.request.{CreateUserRequest, GetUserRequest}
 import rx.lang.scala.Observable
-
 import Implicits.userDtoToUser
+
+import scala.language.implicitConversions
 
 final class UserDataStoreDatabase(connection: SQLConnection) extends DataStoreDatabase(connection) with UserDataStore {
 

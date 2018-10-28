@@ -2,7 +2,7 @@ package it.unibo.dcs.service.user.repository
 
 import java.util.Date
 
-import it.unibo.dcs.service.user.data.UserDataStore
+import it.unibo.dcs.service.user.Mocks._
 import it.unibo.dcs.service.user.model.User
 import it.unibo.dcs.service.user.repository.impl.UserRepositoryImpl
 import it.unibo.dcs.service.user.request.{CreateUserRequest, GetUserRequest}
@@ -13,11 +13,10 @@ import rx.lang.scala.{Observable, Subscriber}
 class UserRepositorySpec extends FlatSpec with MockFactory with OneInstancePerTest {
 
   val createUserRequest = CreateUserRequest("martynha", "Martina", "Magnani")
-  val getUserRequest = GetUserRequest("martyha")
+  val getUserRequest = GetUserRequest(createUserRequest.username)
 
-  val expectedUser = User("martynha", "Martina", "Magnani", "", true, new Date())
+  val expectedUser = User(createUserRequest.username, createUserRequest.firstName, createUserRequest.lastName, "", visible = true, new Date())
 
-  val userDataStore: UserDataStore = mock[UserDataStore]
   val userRepository = new UserRepositoryImpl(userDataStore)
 
   val subscriber: Subscriber[User] = stub[Subscriber[User]]
@@ -45,4 +44,5 @@ class UserRepositorySpec extends FlatSpec with MockFactory with OneInstancePerTe
     (subscriber onNext _) verify expectedUser once()
     (() => subscriber onCompleted) verify() once()
   }
+
 }

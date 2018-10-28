@@ -5,12 +5,14 @@ import java.util.Date
 
 import com.google.gson.GsonBuilder
 
+import scala.language.implicitConversions
+
 package object dataaccess {
 
-  private val pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'"
-  private val mySqlFormat = new SimpleDateFormat(pattern)
+  private val mySqlPattern = "yyyy-MM-dd'T'HH:mm:ss'Z'"
+  private val mySqlFormat = new SimpleDateFormat(mySqlPattern)
 
-  def gsonConfiguration(builder: GsonBuilder ): Unit = builder.setDateFormat(pattern)
+  def gsonConfiguration(builder: GsonBuilder ): Unit = builder.setDateFormat(mySqlPattern)
 
   object Implicits {
 

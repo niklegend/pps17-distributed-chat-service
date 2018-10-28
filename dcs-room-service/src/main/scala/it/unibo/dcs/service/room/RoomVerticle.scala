@@ -1,16 +1,15 @@
 package it.unibo.dcs.service.room
 
-import com.google.gson.Gson
 import io.vertx.core.http.HttpMethod._
 import io.vertx.core.{AbstractVerticle, Context, Vertx => JVertx}
 import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.ext.web.Router
 import io.vertx.scala.ext.web.handler.{BodyHandler, CorsHandler}
-import it.unibo.dcs.commons.{JsonHelper, RxHelper}
 import it.unibo.dcs.commons.VertxWebHelper.Implicits.contentTypeToString
 import it.unibo.dcs.commons.interactor.ThreadExecutorExecutionContext
 import it.unibo.dcs.commons.interactor.executor.PostExecutionThread
 import it.unibo.dcs.commons.service.{HttpEndpointPublisher, ServiceVerticle}
+import it.unibo.dcs.commons.{JsonHelper, RxHelper}
 import it.unibo.dcs.service.room.RoomVerticle.Implicits._
 import it.unibo.dcs.service.room.interactor.usecases._
 import it.unibo.dcs.service.room.interactor.validations._
@@ -118,8 +117,6 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
 object RoomVerticle {
 
   object Implicits {
-
-    private val gson = new Gson
 
     implicit def jsonObjectToCreateUserRequest(json: JsonObject): CreateUserRequest =
       JsonHelper.fromJson[CreateUserRequest](gson, json)

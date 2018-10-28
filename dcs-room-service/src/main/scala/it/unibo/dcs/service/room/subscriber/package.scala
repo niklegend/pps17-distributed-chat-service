@@ -9,6 +9,8 @@ import it.unibo.dcs.exceptions.ErrorSubscriber
 import it.unibo.dcs.service.room.model.{Participation, Room}
 import it.unibo.dcs.service.room.subscriber.Implicits._
 import rx.lang.scala.Subscriber
+
+import scala.language.implicitConversions
 package object subscriber {
 
   final class CreateRoomSubscriber(protected override val response: HttpServerResponse) extends Subscriber[Room]

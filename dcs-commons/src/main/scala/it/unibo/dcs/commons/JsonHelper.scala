@@ -5,6 +5,7 @@ import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
 import it.unibo.dcs.commons.ReflectionHelper.asClassOf
 
 import scala.collection.JavaConverters._
+import scala.language.implicitConversions
 import scala.reflect.ClassTag
 
 object JsonHelper {

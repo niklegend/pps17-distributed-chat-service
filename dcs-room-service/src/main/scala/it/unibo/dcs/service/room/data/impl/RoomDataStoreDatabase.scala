@@ -15,6 +15,8 @@ import it.unibo.dcs.service.room.model._
 import it.unibo.dcs.service.room.request._
 import rx.lang.scala.Observable
 
+import scala.language.implicitConversions
+
 final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDatabase(connection) with RoomDataStore {
 
   override def createUser(request: CreateUserRequest): Observable[Unit] = execute(insertUserQuery, request)

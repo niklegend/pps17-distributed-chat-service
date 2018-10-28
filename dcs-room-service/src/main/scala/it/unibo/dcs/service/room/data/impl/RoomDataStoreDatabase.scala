@@ -3,16 +3,17 @@ package it.unibo.dcs.service.room.data.impl
 import io.vertx.core.json.JsonArray
 import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.ext.sql.SQLConnection
+import it.unibo.dcs.commons.JsonHelper
 import it.unibo.dcs.commons.dataaccess.{DataStoreDatabase, ResultSetHelper}
 import it.unibo.dcs.exceptions.{ParticipationNotFoundException, RoomNotFoundException}
 import it.unibo.dcs.service.room.data.RoomDataStore
+import it.unibo.dcs.service.room.data.impl.Implicits.participationDtoToParticipation
 import it.unibo.dcs.service.room.data.impl.RoomDataStoreDatabase.Implicits._
-import it.unibo.dcs.service.room.data.impl.RoomDataStoreDatabase.{deleteRoomQuery, insertParticipationQuery, insertRoomQuery, insertUserQuery, selectParticipationByKey, selectRoomByName}
+import it.unibo.dcs.service.room.data.impl.RoomDataStoreDatabase._
+import it.unibo.dcs.service.room.gson
 import it.unibo.dcs.service.room.model._
 import it.unibo.dcs.service.room.request._
 import rx.lang.scala.Observable
-
-import it.unibo.dcs.commons.dataaccess.Implicits.stringToDate
 
 final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDatabase(connection) with RoomDataStore {
 
@@ -80,19 +81,16 @@ private[impl] object RoomDataStoreDatabase {
       new JsonArray().add(request.name).add(request.username)
     }
 
+    implicit def jsonObjectToRoom(json: JsonObject): Room = JsonHelper.fromJson[Room](gson, json)
+
     implicit def requestToParams(request: JoinRoomRequest): JsonArray = {
       new JsonArray().add(request.username).add(request.name)
     }
 
-    implicit def jsonObjectToRoom(roomJsonObject: JsonObject): Room = {
-      Room(roomJsonObject.getString("name"))
+    implicit def jsonObjectToParticipation(json: JsonObject): Participation = {
+      JsonHelper.fromJson[ParticipationDto](gson, json)
     }
 
-    implicit def jsonObjectToParticipation(participationJsonObject: JsonObject): Participation = {
-      Participation(Room(participationJsonObject.getString("name")),
-        participationJsonObject.getString("username"),
-        participationJsonObject.getString("join_date"))
-    }
   }
 
 }

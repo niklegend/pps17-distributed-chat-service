@@ -11,9 +11,9 @@ import rx.lang.scala.Observable
   * @param postExecutionThread thread that will be notified of the subscription result
   * @param validator           object containing the rules needed to validate
   * @usecase                   check that a request follows all the rules */
-abstract class SimpleValidation[R](private[this] val threadExecutor: ThreadExecutor,
-                                   private[this] val postExecutionThread: PostExecutionThread,
-                                   private[this] val validator: Validator[R])
+abstract class Validation[R](private[this] val threadExecutor: ThreadExecutor,
+                             private[this] val postExecutionThread: PostExecutionThread,
+                             private[this] val validator: Validator[R])
   extends UseCase[Unit, R](threadExecutor, postExecutionThread) {
 
   override final protected[this] def createObservable(request: R): Observable[Unit] =

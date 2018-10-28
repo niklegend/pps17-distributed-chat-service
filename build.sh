@@ -7,6 +7,8 @@ cd dcs-client
 cd ..
 
 echo "Removing build directories"
-find . -maxdepth 2 -type d -name "build" -exec rm -r -- {} \;
+for dir in `find . -maxdepth 2 -type d -name "build"`; do
+    srm -r -- $dir || rmdir $dir
+done
 
 ./gradlew clean check test stage

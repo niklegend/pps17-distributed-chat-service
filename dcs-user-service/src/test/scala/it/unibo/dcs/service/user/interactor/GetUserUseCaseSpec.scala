@@ -15,7 +15,7 @@ class GetUserUseCaseSpec extends FlatSpec with MockFactory {
   private val request = GetUserRequest("martyha")
   private val expectedUser = User(request.username, "Martina", "Magnani", "", visible = true, new Date())
 
-  private val subscriber: Subscriber[User] = stub[Subscriber[User]]
+  private val subscriber = stub[Subscriber[User]]
 
   private val getUserUseCase = new GetUserUseCase(threadExecutor, postExecutionThread, userRepository)
 

@@ -57,6 +57,7 @@ final class RoomRepositorySpec extends FlatSpec with MockFactory with OneInstanc
 
     // Then
     subscriber.onNext _ verify request.name once()
+    (() => subscriber.onCompleted()) verify() once()
   }
 
 }

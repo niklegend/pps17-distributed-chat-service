@@ -18,10 +18,10 @@ class CreateUserUseCaseSpec extends FlatSpec with MockFactory {
   private val request = CreateUserRequest("martynha", "Martina", "Magnani")
   private val expectedUser = User(request.username, request.firstName, request.lastName, "", visible = true, new Date())
 
-  private val subscriber: Subscriber[User] = stub[Subscriber[User]]
+  private val subscriber = stub[Subscriber[User]]
 
   private val createUserUseCase = {
-    val validator: Validator[CreateUserRequest] = UserCreationValidator(userRepository)
+    val validator = UserCreationValidator(userRepository)
     val validation = new ValidateUserCreation(threadExecutor, postExecutionThread, validator)
     new CreateUserUseCase(threadExecutor, postExecutionThread, userRepository, validation)
   }

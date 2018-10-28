@@ -12,14 +12,14 @@ import rx.lang.scala.{Observable, Subscriber}
 
 class UserRepositorySpec extends FlatSpec with MockFactory with OneInstancePerTest {
 
-  val createUserRequest = CreateUserRequest("martynha", "Martina", "Magnani")
-  val getUserRequest = GetUserRequest(createUserRequest.username)
+  private val createUserRequest = CreateUserRequest("martynha", "Martina", "Magnani")
+  private val getUserRequest = GetUserRequest(createUserRequest.username)
 
-  val expectedUser = User(createUserRequest.username, createUserRequest.firstName, createUserRequest.lastName, "", visible = true, new Date())
+  private val expectedUser = User(createUserRequest.username, createUserRequest.firstName, createUserRequest.lastName, "", visible = true, new Date())
 
-  val userRepository = new UserRepositoryImpl(userDataStore)
+  private val userRepository = new UserRepositoryImpl(userDataStore)
 
-  val subscriber: Subscriber[User] = stub[Subscriber[User]]
+  private val subscriber = stub[Subscriber[User]]
 
   it should "create new user" in {
     //Given

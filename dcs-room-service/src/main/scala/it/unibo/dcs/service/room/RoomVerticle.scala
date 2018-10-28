@@ -1,15 +1,14 @@
 package it.unibo.dcs.service.room
 
-import io.vertx.core.http.HttpMethod._
 import io.vertx.core.{AbstractVerticle, Context, Vertx => JVertx}
 import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.ext.web.Router
-import io.vertx.scala.ext.web.handler.{BodyHandler, CorsHandler}
+import io.vertx.scala.ext.web.handler.BodyHandler
 import it.unibo.dcs.commons.VertxWebHelper.Implicits.contentTypeToString
 import it.unibo.dcs.commons.interactor.ThreadExecutorExecutionContext
 import it.unibo.dcs.commons.interactor.executor.PostExecutionThread
 import it.unibo.dcs.commons.service.{HttpEndpointPublisher, ServiceVerticle}
-import it.unibo.dcs.commons.{JsonHelper, RxHelper}
+import it.unibo.dcs.commons.{JsonHelper, RxHelper, VertxWebHelper}
 import it.unibo.dcs.service.room.RoomVerticle.Implicits._
 import it.unibo.dcs.service.room.interactor.usecases._
 import it.unibo.dcs.service.room.interactor.validations._
@@ -35,17 +34,7 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
 
   override protected def initializeRouter(router: Router): Unit = {
     router.route().handler(BodyHandler.create())
-
-    router.route().handler(CorsHandler.create("*")
-      .allowedMethod(GET)
-      .allowedMethod(POST)
-      .allowedMethod(PATCH)
-      .allowedMethod(PUT)
-      .allowedMethod(DELETE)
-      .allowedHeader("Access-Control-Allow-Method")
-      .allowedHeader("Access-Control-Allow-Origin")
-      .allowedHeader("Access-Control-Allow-Credentials")
-      .allowedHeader("Content-Type"))
+    VertxWebHelper.setupCors(router)
 
     val threadExecutor = ThreadExecutorExecutionContext(vertx)
     val postExecutionThread = PostExecutionThread(RxHelper.scheduler(this.ctx))
@@ -53,6 +42,10 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
     val createUserUseCase = {
       val validation = new CreateUserValidation(threadExecutor, postExecutionThread, CreateUserValidator())
       new CreateUserUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
+    }
+    val getRoomsUseCase = {
+      val validation = new GetRoomsValidation(threadExecutor, postExecutionThread, GetRoomsValidator())
+      new GetRoomsUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
     }
     val createRoomUseCase = {
       val validation = new CreateRoomValidation(threadExecutor, postExecutionThread, CreateRoomValidator())
@@ -95,12 +88,20 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
       })
 
     router.post("/joinRoom")
-      .consumes("application/json")
-      .produces("application/json")
+      .consumes(ContentType.APPLICATION_JSON)
+      .produces(ContentType.APPLICATION_JSON)
       .handler(routingContext => {
         val request = routingContext.getBodyAsJson.head
         val subscriber = new JoinRoomSubscriber(routingContext.response())
         joinRoomUseCase(request, subscriber)
+      })
+
+    router.get("/rooms")
+      .produces(ContentType.APPLICATION_JSON)
+      .handler(routingContext => {
+        val request = GetRoomsRequest()
+        val subscriber = new GetRoomsSubscriber(routingContext.response())
+        getRoomsUseCase(request, subscriber)
       })
   }
 

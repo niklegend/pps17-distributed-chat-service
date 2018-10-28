@@ -37,6 +37,12 @@ final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
         }
       }
 
+  override def getRooms(request: GetRoomsRequest): Observable[Set[Room]] =
+    query(selectAllRooms, request)
+    .map { resultSet =>
+      ResultSetHelper.getRows(resultSet).map(row => jsonObjectToRoom(row)).toSet
+    }
+    
   override def joinRoom(request: JoinRoomRequest): Observable[Participation] = execute(insertParticipationQuery, request)
     .flatMap(_ => getParticipationByKey(request))
 
@@ -63,6 +69,8 @@ private[impl] object RoomDataStoreDatabase {
 
   val selectRoomByName = "SELECT * FROM `rooms` WHERE `name` = ? "
 
+  val selectAllRooms = "SELECT * FROM `rooms`"
+  
   val selectParticipationByKey = "SELECT * FROM `participations` WHERE `username` = ? AND `name` = ?"
 
   object Implicits {
@@ -77,6 +85,10 @@ private[impl] object RoomDataStoreDatabase {
 
     implicit def requestToParams(request: GetRoomRequest): JsonArray = {
       new JsonArray().add(request.name)
+    }
+
+    implicit def requestToParams(request: GetRoomsRequest): JsonArray = {
+      new JsonArray()
     }
 
     implicit def requestToParams(request: DeleteRoomRequest): JsonArray = {

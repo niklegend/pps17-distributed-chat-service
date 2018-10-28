@@ -1,7 +1,7 @@
 package it.unibo.dcs.service.room
 
 import io.vertx.lang.scala.ScalaLogger
-import io.vertx.lang.scala.json.{Json, JsonObject}
+import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
 import io.vertx.scala.core.http.HttpServerResponse
 import it.unibo.dcs.commons.JsonHelper
 import it.unibo.dcs.commons.JsonHelper.Implicits.jsonObjectToString
@@ -49,6 +49,17 @@ package object subscriber {
     with ErrorSubscriber {
 
     override def onNext(name: String): Unit = response.end(Json.obj(("name", name)))
+
+  }
+
+  class GetRoomsSubscriber(protected override val response: HttpServerResponse) extends Subscriber[Set[Room]]
+    with ErrorSubscriber {
+
+    override def onNext(rooms: Set[Room]): Unit = {
+      val results = new JsonArray()
+      rooms.foreach(room => results.add(roomToJsonObject(room)))
+      response.end(results.encodePrettily())
+    }
 
   }
 

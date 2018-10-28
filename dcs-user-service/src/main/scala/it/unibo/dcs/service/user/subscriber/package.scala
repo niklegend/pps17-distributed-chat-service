@@ -31,15 +31,6 @@ package object subscriber {
 
   }
 
-  final class ValidateUserCreationSubscriber(protected override val response: HttpServerResponse,
-                                             private[this] val request: CreateUserRequest,
-                                             private[this] val createUserUseCase: CreateUserUseCase) extends Subscriber[Unit]
-      with ErrorSubscriber {
-
-    override def onCompleted(): Unit = createUserUseCase(request, new CreateUserSubscriber(response))
-
-  }
-
   final class GetUserSubscriber(protected override val response: HttpServerResponse) extends Subscriber[User]
     with ErrorSubscriber {
 

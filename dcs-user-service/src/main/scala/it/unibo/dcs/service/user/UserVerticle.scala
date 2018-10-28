@@ -16,7 +16,7 @@ import it.unibo.dcs.service.user.interactor.usecases.{CreateUserUseCase, GetUser
 import it.unibo.dcs.service.user.interactor.validations.ValidateUserCreation
 import it.unibo.dcs.service.user.repository.UserRepository
 import it.unibo.dcs.service.user.request.{CreateUserRequest, GetUserRequest}
-import it.unibo.dcs.service.user.subscriber.{GetUserSubscriber, ValidateUserCreationSubscriber}
+import it.unibo.dcs.service.user.subscriber._
 import it.unibo.dcs.service.user.validator.UserCreationValidator
 import org.apache.http.entity.ContentType
 
@@ -66,11 +66,14 @@ final class UserVerticle(private[this] val userRepository: UserRepository, priva
     val threadExecutor: ThreadExecutor = ThreadExecutorExecutionContext(vertx)
     val postExecutionThread: PostExecutionThread = PostExecutionThread(RxHelper.scheduler(this.ctx))
 
-    val validator: Validator[CreateUserRequest] = UserCreationValidator(userRepository)
 
     val getUserUseCase = new GetUserUseCase(threadExecutor, postExecutionThread, userRepository)
-    val createUserUseCase = new CreateUserUseCase(threadExecutor, postExecutionThread, userRepository)
-    val validateUserCreation = new ValidateUserCreation(threadExecutor, postExecutionThread, validator)
+
+    val createUserUseCase = {
+      val validator: Validator[CreateUserRequest] = UserCreationValidator(userRepository)
+      val validation = new ValidateUserCreation(threadExecutor, postExecutionThread, validator)
+      new CreateUserUseCase(threadExecutor, postExecutionThread, userRepository, validation)
+    }
 
     router.get("/getUser/:username")
       .produces(ContentType.APPLICATION_JSON)
@@ -87,8 +90,8 @@ final class UserVerticle(private[this] val userRepository: UserRepository, priva
       .handler(routingContext => {
         val request = routingContext.getBodyAsJson().head
         log.info(s"Received request: $request")
-        val checkSubscriber = new ValidateUserCreationSubscriber(routingContext.response(), request, createUserUseCase)
-        validateUserCreation(request, checkSubscriber)
+        val subscriber = new CreateUserSubscriber(routingContext.response())
+        createUserUseCase(request, subscriber)
       })
   }
 

@@ -14,8 +14,9 @@ import rx.lang.scala.Observable
 abstract class SimpleValidation[R](private[this] val threadExecutor: ThreadExecutor,
                                    private[this] val postExecutionThread: PostExecutionThread,
                                    private[this] val validator: Validator[R])
-  extends Validation[Unit, R](threadExecutor, postExecutionThread) {
+  extends UseCase[Unit, R](threadExecutor, postExecutionThread) {
 
-  override protected[this] def createObservable(request: R): Observable[Unit] =
+  override final protected[this] def createObservable(request: R): Observable[Unit] =
     validator.validate(request)
+
 }

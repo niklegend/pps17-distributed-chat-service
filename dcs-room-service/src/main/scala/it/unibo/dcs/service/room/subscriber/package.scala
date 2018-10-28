@@ -4,7 +4,7 @@ import io.vertx.lang.scala.ScalaLogger
 import io.vertx.lang.scala.json.{Json, JsonObject}
 import io.vertx.scala.core.http.HttpServerResponse
 import it.unibo.dcs.commons.JsonHelper
-import it.unibo.dcs.commons.VertxWebHelper.Implicits.jsonObjectToString
+import it.unibo.dcs.commons.JsonHelper.Implicits.jsonObjectToString
 import it.unibo.dcs.exceptions.ErrorSubscriber
 import it.unibo.dcs.service.room.model.{Participation, Room}
 import it.unibo.dcs.service.room.subscriber.Implicits._

@@ -12,7 +12,7 @@ package object dataaccess {
   private val mySqlPattern = "yyyy-MM-dd'T'HH:mm:ss'Z'"
   private val mySqlFormat = new SimpleDateFormat(mySqlPattern)
 
-  def gsonConfiguration(builder: GsonBuilder ): Unit = builder.setDateFormat(mySqlPattern)
+  def gsonConfiguration(builder: GsonBuilder): Unit = builder.setDateFormat(mySqlPattern)
 
   object Implicits {
 

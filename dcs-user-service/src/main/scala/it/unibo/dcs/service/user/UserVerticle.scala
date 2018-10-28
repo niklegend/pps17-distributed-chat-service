@@ -2,10 +2,10 @@ package it.unibo.dcs.service.user
 
 import io.vertx.core.http.HttpMethod._
 import io.vertx.core.{AbstractVerticle, Context, Vertx}
-import io.vertx.lang.scala.json.JsonObject
+import io.vertx.lang.scala.json.{Json, JsonObject}
 import io.vertx.scala.ext.web.Router
 import io.vertx.scala.ext.web.handler.{BodyHandler, CorsHandler}
-import it.unibo.dcs.commons.RxHelper
+import it.unibo.dcs.commons.{JsonHelper, RxHelper}
 import it.unibo.dcs.commons.VertxWebHelper.Implicits.contentTypeToString
 import it.unibo.dcs.commons.interactor.ThreadExecutorExecutionContext
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
@@ -76,8 +76,9 @@ final class UserVerticle(private[this] val userRepository: UserRepository, priva
       .produces(ContentType.APPLICATION_JSON)
       .handler(routingContext => {
         val username = routingContext.request().getParam("username").head
+        val request = Json.obj(("username", username))
         val subscriber = new GetUserSubscriber(routingContext.response())
-        getUserUseCase(username, subscriber)
+        getUserUseCase(request, subscriber)
       })
 
     router.post("/createUser")
@@ -97,12 +98,11 @@ object UserVerticle {
 
   object Implicits {
 
-    implicit def jsonObjectToRequest(json: JsonObject): CreateUserRequest =
-      CreateUserRequest(json.getString("username"),
-        json.getString("firstName"), json.getString("lastName"))
+    implicit def jsonObjectToCreateUserRequest(json: JsonObject): CreateUserRequest =
+      JsonHelper.fromJson[CreateUserRequest](gson, json)
 
-    implicit def stringToRequest(username: String): GetUserRequest =
-      GetUserRequest(username)
+    implicit def jsonObjectToGetUserRequest(json: JsonObject): GetUserRequest =
+      JsonHelper.fromJson[GetUserRequest](gson, json)
 
   }
 

@@ -4,6 +4,7 @@ import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.lang.scala.ScalaLogger
 import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.core.http.HttpServerResponse
+import it.unibo.dcs.commons.JsonHelper
 import it.unibo.dcs.commons.VertxWebHelper.Implicits.{RichHttpServerResponse, jsonObjectToString}
 import it.unibo.dcs.commons.dataaccess.Implicits.dateToString
 import it.unibo.dcs.exceptions.ErrorSubscriber
@@ -54,15 +55,7 @@ package object subscriber {
 
   object Implicits {
 
-    implicit def userToJsonObject(user: User): JsonObject = {
-      new JsonObject()
-        .put("username", user.username)
-        .put("firstName", user.firstName)
-        .put("lastName", user.lastName)
-        .put("bio", user.bio)
-        .put("visible", user.visible)
-        .put("lastSeen", dateToString(user.lastSeen))
-    }
+    implicit def userToJsonObject(user: User): JsonObject = JsonHelper.toJsonObject(gson, user)
 
   }
 

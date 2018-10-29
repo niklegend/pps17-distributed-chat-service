@@ -100,7 +100,8 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
     router.get("/rooms")
       .produces(ContentType.APPLICATION_JSON)
       .handler(routingContext => {
-        val request = GetRoomsRequest()
+        val username = routingContext.request().getParam("username").head
+        val request = GetRoomsRequest(username)
         val subscriber = new GetRoomsSubscriber(routingContext.response())
         getRoomsUseCase(request, subscriber)
       })

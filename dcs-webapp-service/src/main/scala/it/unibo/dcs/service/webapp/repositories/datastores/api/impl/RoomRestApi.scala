@@ -77,17 +77,9 @@ private[impl] object RoomRestApi {
   private[impl] def getRoomList(jsonArray: JsonArray): List[Room] = {
     Stream.range(0, jsonArray.size)
       .map(jsonArray.getJsonObject)
-      .map(_.getJsonObject("room"))
       .map(_.getString("name"))
       .map(Room)
       .toList
-    /*
-    val roomList: List[Room] = List()
-    for (i <- 0 to jsonArray.size) {
-      roomList :+ Room(jsonArray.getJsonObject(i).getString("name"))
-    }
-    roomList
-    */
   }
 
 }

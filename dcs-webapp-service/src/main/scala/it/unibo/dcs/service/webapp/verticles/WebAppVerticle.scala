@@ -18,16 +18,14 @@ import org.apache.http.entity.ContentType._
 /** Verticle that runs the WebApp Service */
 final class WebAppVerticle extends ServiceVerticle {
 
-  private val wartRemoverSuppressedWarnings = Array("org.wartremover.warts.Var", "org.wartremover.warts.Null")
-
-  @SuppressWarnings(wartRemoverSuppressedWarnings)
+  @SuppressWarnings(Array("org.wartremover.warts.Var", "org.wartremover.warts.Null"))
   private var host: String = _
-  @SuppressWarnings(wartRemoverSuppressedWarnings)
+  @SuppressWarnings(Array("org.wartremover.warts.Var", "org.wartremover.warts.Null"))
   private var port: Int = _
 
-  @SuppressWarnings(wartRemoverSuppressedWarnings)
+  @SuppressWarnings(Array("org.wartremover.warts.Var", "org.wartremover.warts.Null"))
   private var publisher: HttpEndpointPublisher = _
-  @SuppressWarnings(wartRemoverSuppressedWarnings)
+  @SuppressWarnings(Array("org.wartremover.warts.Var", "org.wartremover.warts.Null"))
   private var requestHandler: ServiceRequestHandler = _
 
   private val serviceRecordName = "webapp-service"
@@ -65,8 +63,6 @@ final class WebAppVerticle extends ServiceVerticle {
 
     val apiRouter = Router.router(vertx)
 
-    implicit val ctx: core.Context = this.ctx
-
     apiRouter.route("/events/*")
       .handler(sockJSHandler)
 
@@ -75,6 +71,8 @@ final class WebAppVerticle extends ServiceVerticle {
   }
 
   private def defineServiceApi(apiRouter: Router) = {
+    implicit val ctx: core.Context = this.ctx
+
     apiRouter.post("/register")
       .consumes(APPLICATION_JSON)
       .produces(APPLICATION_JSON)

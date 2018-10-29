@@ -4,7 +4,8 @@ import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.lang.scala.ScalaLogger
 import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.core.http.HttpServerResponse
-import it.unibo.dcs.commons.VertxWebHelper.Implicits.{RichHttpServerResponse, jsonObjectToString}
+import it.unibo.dcs.commons.JsonHelper.Implicits.jsonObjectToString
+import it.unibo.dcs.commons.VertxWebHelper.Implicits.RichHttpServerResponse
 import it.unibo.dcs.exceptions._
 import it.unibo.dcs.service.webapp.interaction.Results.Implicits._
 import it.unibo.dcs.service.webapp.interaction.Results.RoomCreationResult

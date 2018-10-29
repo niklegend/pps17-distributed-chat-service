@@ -4,6 +4,7 @@ import io.vertx.core.json.JsonArray
 import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.ext.sql.SQLConnection
 import it.unibo.dcs.commons.JsonHelper
+import it.unibo.dcs.commons.JsonHelper.Implicits.RichGson
 import it.unibo.dcs.commons.dataaccess.{DataStoreDatabase, ResultSetHelper}
 import it.unibo.dcs.exceptions.{ParticipationNotFoundException, RoomNotFoundException}
 import it.unibo.dcs.service.room.data.RoomDataStore
@@ -15,6 +16,8 @@ import it.unibo.dcs.service.room.model._
 import it.unibo.dcs.service.room.request._
 import rx.lang.scala.Observable
 import it.unibo.dcs.commons.dataaccess.Implicits.stringToDate
+
+import scala.language.implicitConversions
 
 import scala.language.implicitConversions
 
@@ -43,7 +46,7 @@ final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
     .map { resultSet =>
       ResultSetHelper.getRows(resultSet).map(row => jsonObjectToRoom(row)).toSet
     }
-    
+
   override def joinRoom(request: JoinRoomRequest): Observable[Participation] = execute(insertParticipationQuery, request)
     .flatMap(_ => getParticipationByKey(request))
 
@@ -56,6 +59,7 @@ final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
           ResultSetHelper.getRows(resultSet).head
         }
       }
+
 }
 
 private[impl] object RoomDataStoreDatabase {
@@ -76,35 +80,28 @@ private[impl] object RoomDataStoreDatabase {
 
   object Implicits {
 
-    implicit def requestToParams(request: CreateUserRequest): JsonArray = {
+    implicit def requestToParams(request: CreateUserRequest): JsonArray =
       new JsonArray().add(request.username)
-    }
 
-    implicit def requestToParams(request: CreateRoomRequest): JsonArray = {
+    implicit def requestToParams(request: CreateRoomRequest): JsonArray =
       new JsonArray().add(request.name).add(request.username)
-    }
 
-    implicit def requestToParams(request: GetRoomRequest): JsonArray = {
+    implicit def requestToParams(request: GetRoomRequest): JsonArray =
       new JsonArray().add(request.name)
-    }
 
-    implicit def requestToParams(request: GetRoomsRequest): JsonArray = {
+    implicit def requestToParams(request: GetRoomsRequest): JsonArray =
       new JsonArray()
-    }
 
-    implicit def requestToParams(request: DeleteRoomRequest): JsonArray = {
+    implicit def requestToParams(request: DeleteRoomRequest): JsonArray =
       new JsonArray().add(request.name).add(request.username)
-    }
 
-    implicit def jsonObjectToRoom(json: JsonObject): Room = JsonHelper.fromJson[Room](gson, json)
-
-    implicit def requestToParams(request: JoinRoomRequest): JsonArray = {
+    implicit def requestToParams(request: JoinRoomRequest): JsonArray =
       new JsonArray().add(request.username).add(request.name)
-    }
 
-    implicit def jsonObjectToParticipation(json: JsonObject): Participation = {
-      JsonHelper.fromJson[ParticipationDto](gson, json)
-    }
+    implicit def jsonObjectToRoom(json: JsonObject): Room = gson fromJsonObject[Room] json
+
+    implicit def jsonObjectToParticipation(json: JsonObject): Participation =
+      gson.fromJsonObject[ParticipationDto](json)
 
   }
 

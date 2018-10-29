@@ -42,7 +42,7 @@ final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
     .map { resultSet =>
       ResultSetHelper.getRows(resultSet).map(row => jsonObjectToRoom(row)).toSet
     }
-    
+
   override def joinRoom(request: JoinRoomRequest): Observable[Participation] = execute(insertParticipationQuery, request)
     .flatMap(_ => getParticipationByKey(request))
 
@@ -55,6 +55,7 @@ final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
           ResultSetHelper.getRows(resultSet).head
         }
       }
+
 }
 
 private[impl] object RoomDataStoreDatabase {

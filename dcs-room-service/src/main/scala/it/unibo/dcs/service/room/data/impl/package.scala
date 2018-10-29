@@ -13,7 +13,11 @@ package object impl {
   private[impl] object Implicits {
 
     implicit def participationDtoToParticipation(dto: ParticipationDto): Participation =
-      Participation(dto.room, dto.username, dto.join_date)
+      Participation(
+        room = dto.room,
+        username = dto.username,
+        joinDate = dto.join_date
+      )
 
   }
 

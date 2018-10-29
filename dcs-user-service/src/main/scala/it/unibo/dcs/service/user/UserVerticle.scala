@@ -1,7 +1,7 @@
 package it.unibo.dcs.service.user
 
 import io.vertx.core.http.HttpMethod._
-import io.vertx.core.{AbstractVerticle, Context, Vertx}
+import io.vertx.core.{AbstractVerticle, Context => JContext, Vertx => JVertx}
 import io.vertx.lang.scala.json.{Json, JsonObject}
 import io.vertx.scala.ext.web.Router
 import io.vertx.scala.ext.web.handler.{BodyHandler, CorsHandler}
@@ -27,9 +27,8 @@ final class UserVerticle(private[this] val userRepository: UserRepository, priva
   private var host: String = _
   private var port: Int = _
 
-  override def init(jVertx: Vertx, context: Context, verticle: AbstractVerticle): Unit = {
+  override def init(jVertx: JVertx, context: JContext, verticle: AbstractVerticle): Unit = {
     super.init(jVertx, context, verticle)
-
 
     host = config getString "host"
     port = config getInteger "port"
@@ -61,7 +60,6 @@ final class UserVerticle(private[this] val userRepository: UserRepository, priva
 
     val threadExecutor: ThreadExecutor = ThreadExecutorExecutionContext(vertx)
     val postExecutionThread: PostExecutionThread = PostExecutionThread(RxHelper.scheduler(this.ctx))
-
 
     val getUserUseCase = new GetUserUseCase(threadExecutor, postExecutionThread, userRepository)
 

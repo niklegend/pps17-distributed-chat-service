@@ -15,6 +15,9 @@ import it.unibo.dcs.service.room.gson
 import it.unibo.dcs.service.room.model._
 import it.unibo.dcs.service.room.request._
 import rx.lang.scala.Observable
+import it.unibo.dcs.commons.dataaccess.Implicits.stringToDate
+
+import scala.language.implicitConversions
 
 import scala.language.implicitConversions
 

@@ -10,6 +10,8 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, OneInstancePerTest}
 import rx.lang.scala.{Observable, Subscriber}
 
+import scala.language.postfixOps
+
 class UserRepositorySpec extends FlatSpec with MockFactory with OneInstancePerTest {
 
   private val createUserRequest = CreateUserRequest("martynha", "Martina", "Magnani")

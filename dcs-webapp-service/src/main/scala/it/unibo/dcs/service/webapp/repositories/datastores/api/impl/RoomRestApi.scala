@@ -56,13 +56,13 @@ class RoomRestApi(private[this] val discovery: HttpEndpointDiscovery)
 
 private[impl] object RoomRestApi {
 
-  val createRoomURI = "/createRoom"
+  private val createRoomURI = "/createRoom"
 
-  val deleteRoomURI = "/deleteRoom"
+  private val deleteRoomURI = "/deleteRoom"
 
-  val createUser = "/createUser"
+  private val createUser = "/createUser"
 
-  val getRooms = "/rooms"
+  private val getRooms = "/rooms"
 
   private def joinRoomURI(roomName: String) = s"/joinRoom/$roomName"
 

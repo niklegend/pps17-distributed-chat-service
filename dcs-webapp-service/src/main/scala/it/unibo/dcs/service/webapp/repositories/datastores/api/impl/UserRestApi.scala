@@ -37,10 +37,10 @@ class UserRestApi(private[this] val discovery: HttpEndpointDiscovery)
 
 private[impl] object UserRestApi {
 
-  val createUserURI = "/createUser"
-  val validateRegistration = "/validateRegistration"
+  private val createUserURI = "/createUser"
+  private val validateRegistration = "/validateRegistration"
 
-  def deleteUserURI(username: String) = s"/deleteUser/$username"
+  private def deleteUserURI(username: String) = s"/deleteUser/$username"
 
-  def getUserURI(username: String) = s"/getUser/$username"
+  private def getUserURI(username: String) = s"/getUser/$username"
 }

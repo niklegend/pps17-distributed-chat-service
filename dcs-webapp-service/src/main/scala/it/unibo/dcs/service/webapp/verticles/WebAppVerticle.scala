@@ -10,6 +10,7 @@ import io.vertx.scala.ext.web.handler.{BodyHandler, CorsHandler, StaticHandler}
 import io.vertx.servicediscovery.ServiceDiscovery
 import it.unibo.dcs.commons.VertxWebHelper.Implicits.contentTypeToString
 import it.unibo.dcs.commons.service.{HttpEndpointPublisher, HttpEndpointPublisherImpl, ServiceVerticle}
+import it.unibo.dcs.service.webapp.interaction.Labels._
 import it.unibo.dcs.service.webapp.verticles.Addresses.Rooms
 import it.unibo.dcs.service.webapp.verticles.handler.ServiceRequestHandler
 import org.apache.http.entity.ContentType
@@ -93,12 +94,12 @@ final class WebAppVerticle extends ServiceVerticle {
       .produces(APPLICATION_JSON)
       .handler(context => requestHandler handleRoomCreation context)
 
-    apiRouter.post("/rooms/:room/participations")
+    apiRouter.post("/rooms/:" + ParamLabels.roomNameLabel + "/participations")
       .consumes(APPLICATION_JSON)
       .produces(APPLICATION_JSON)
       .handler(context => requestHandler handleJoinRoom context)
 
-    apiRouter.delete("/rooms/:room")
+    apiRouter.delete("/rooms/:" + ParamLabels.roomNameLabel)
       .consumes(APPLICATION_JSON)
       .produces(APPLICATION_JSON)
       .handler(context => requestHandler handleRoomDeletion context)

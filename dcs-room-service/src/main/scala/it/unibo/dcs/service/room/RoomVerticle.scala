@@ -70,7 +70,7 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
         createUserUseCase(request, subscriber)
       })
 
-    router.post("/createRoom")
+    router.post("/rooms")
       .consumes(ContentType.APPLICATION_JSON)
       .consumes(ContentType.APPLICATION_JSON)
       .handler(routingContext => {
@@ -79,11 +79,12 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
         createRoomUseCase(request, subscriber)
       })
 
-    router.post("/deleteRoom")
+    router.delete("/rooms/:name")
       .consumes(ContentType.APPLICATION_JSON)
       .consumes(ContentType.APPLICATION_JSON)
       .handler(routingContext => {
-        val request = routingContext.getBodyAsJson.head
+        val roomName = routingContext.request().getParam("name").head
+        val request: JsonObject = routingContext.getBodyAsJson.head.put("name", roomName)
         val subscriber = new DeleteRoomSubscriber(routingContext.response())
         deleteRoomUseCase(request, subscriber)
       })

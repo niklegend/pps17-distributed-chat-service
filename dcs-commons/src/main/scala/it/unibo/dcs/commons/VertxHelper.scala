@@ -11,8 +11,9 @@ import rx.lang.scala.Observable
 import scala.collection.mutable
 import scala.reflect.ClassTag
 import scala.util.{Failure, Success, Try}
-
 import ReflectionHelper.asClassOf
+
+import scala.language.implicitConversions
 
 object VertxHelper {
 

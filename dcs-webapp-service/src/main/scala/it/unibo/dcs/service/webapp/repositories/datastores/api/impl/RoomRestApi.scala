@@ -1,8 +1,8 @@
 package it.unibo.dcs.service.webapp.repositories.datastores.api.impl
 
-import io.vertx.lang.scala.json.{JsonArray, JsonObject}
-import it.unibo.dcs.commons.dataaccess.Implicits.stringToDate
 import com.google.gson.Gson
+import io.vertx.lang.scala.json.{JsonArray, JsonObject}
+import it.unibo.dcs.commons.RxHelper.unit
 import it.unibo.dcs.commons.service.{AbstractApi, HttpEndpointDiscovery}
 import it.unibo.dcs.exceptions.{InternalException, RoomServiceErrorException, bodyAsJsonArray, bodyAsJsonObject}
 import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
@@ -35,7 +35,7 @@ class RoomRestApi(private[this] val discovery: HttpEndpointDiscovery)
     makeRequest(client =>
       Observable.from(client.post(createUser).sendJsonObjectFuture(userRegistrationRequest)))
       .map(bodyAsJsonObject())
-      .map(_ => {})
+      .map(unit)
       .onErrorResumeNext(cause => Observable.error(RoomServiceErrorException(cause)))
   }
 

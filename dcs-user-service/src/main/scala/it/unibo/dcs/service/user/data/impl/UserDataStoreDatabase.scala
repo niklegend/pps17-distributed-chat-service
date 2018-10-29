@@ -2,17 +2,17 @@ package it.unibo.dcs.service.user.data.impl
 
 import io.vertx.lang.scala.json.{JsonArray, JsonObject}
 import io.vertx.scala.ext.sql.SQLConnection
-import it.unibo.dcs.commons.JsonHelper
+import it.unibo.dcs.commons.JsonHelper.Implicits.RichGson
 import it.unibo.dcs.commons.dataaccess.{DataStoreDatabase, ResultSetHelper}
 import it.unibo.dcs.exceptions.{UserAlreadyExistsException, UserNotFoundException}
 import it.unibo.dcs.service.user.data.UserDataStore
+import it.unibo.dcs.service.user.data.impl.Implicits.userDtoToUser
 import it.unibo.dcs.service.user.data.impl.UserDataStoreDatabase.Implicits._
 import it.unibo.dcs.service.user.data.impl.UserDataStoreDatabase._
 import it.unibo.dcs.service.user.gson
 import it.unibo.dcs.service.user.model.User
 import it.unibo.dcs.service.user.request.{CreateUserRequest, GetUserRequest}
 import rx.lang.scala.Observable
-import Implicits.userDtoToUser
 
 import scala.language.implicitConversions
 
@@ -56,7 +56,7 @@ private[impl] object UserDataStoreDatabase {
     implicit def requestToParams(request: GetUserRequest): JsonArray =
       new JsonArray().add(request.username)
 
-    implicit def jsonObjectToUser(json: JsonObject): User = JsonHelper.fromJson[UserDto](gson, json)
+    implicit def jsonObjectToUser(json: JsonObject): User = gson.fromJsonObject[UserDto](json)
 
   }
 

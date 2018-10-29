@@ -26,10 +26,6 @@ object RxHelper {
 
     private[commons] implicit final class RxObservable[T](val asJavaObservable: rx.Observable[T]) extends Observable[T]
 
-    implicit def map[A, B](observable: Observable[A])(implicit f: A => B): Observable[B] = observable.map(f)
-
-    implicit def mapToUnit[T](observable: Observable[T]): Observable[Unit] = observable.map(_ => ())
-
   }
 
 }

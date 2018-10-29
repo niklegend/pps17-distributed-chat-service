@@ -5,7 +5,8 @@ import io.vertx.core.{AbstractVerticle, Context => JContext, Vertx => JVertx}
 import io.vertx.lang.scala.json.{Json, JsonObject}
 import io.vertx.scala.ext.web.Router
 import io.vertx.scala.ext.web.handler.{BodyHandler, CorsHandler}
-import it.unibo.dcs.commons.{JsonHelper, RxHelper}
+import it.unibo.dcs.commons.JsonHelper.Implicits.RichGson
+import it.unibo.dcs.commons.RxHelper
 import it.unibo.dcs.commons.VertxWebHelper.Implicits.contentTypeToString
 import it.unibo.dcs.commons.interactor.ThreadExecutorExecutionContext
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
@@ -96,10 +97,10 @@ object UserVerticle {
   object Implicits {
 
     implicit def jsonObjectToCreateUserRequest(json: JsonObject): CreateUserRequest =
-      JsonHelper.fromJson[CreateUserRequest](gson, json)
+      gson fromJsonObject[CreateUserRequest] json
 
     implicit def jsonObjectToGetUserRequest(json: JsonObject): GetUserRequest =
-      JsonHelper.fromJson[GetUserRequest](gson, json)
+      gson fromJsonObject[GetUserRequest] json
 
   }
 

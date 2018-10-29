@@ -4,13 +4,10 @@ import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.lang.scala.ScalaLogger
 import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.core.http.HttpServerResponse
-import it.unibo.dcs.commons.JsonHelper
-import it.unibo.dcs.commons.VertxWebHelper.Implicits.{RichHttpServerResponse, jsonObjectToString}
-import it.unibo.dcs.commons.dataaccess.Implicits.dateToString
+import it.unibo.dcs.commons.JsonHelper.Implicits.{RichGson, jsonObjectToString}
+import it.unibo.dcs.commons.VertxWebHelper.Implicits.RichHttpServerResponse
 import it.unibo.dcs.exceptions.ErrorSubscriber
-import it.unibo.dcs.service.user.interactor.usecases.CreateUserUseCase
 import it.unibo.dcs.service.user.model.User
-import it.unibo.dcs.service.user.request.CreateUserRequest
 import it.unibo.dcs.service.user.subscriber.Implicits._
 import rx.lang.scala.Subscriber
 
@@ -46,7 +43,7 @@ package object subscriber {
 
   object Implicits {
 
-    implicit def userToJsonObject(user: User): JsonObject = JsonHelper.toJsonObject(gson, user)
+    implicit def userToJsonObject(user: User): JsonObject = gson toJsonObject user
 
   }
 

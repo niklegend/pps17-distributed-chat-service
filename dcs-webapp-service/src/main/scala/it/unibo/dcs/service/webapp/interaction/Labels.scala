@@ -4,7 +4,7 @@ object Labels {
 
   object ParamLabels {
 
-    val roomNameLabel = "name"
+    val roomNameLabel = "room"
     val userLabel = "user"
     val tokenLabel = "token"
 

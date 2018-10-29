@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {LoginRequest, LogoutRequest, RegisterRequest} from '../requests';
 import {Observable} from 'rxjs';
 import {User} from '../model';
@@ -26,8 +26,17 @@ export class AuthService {
     return this._user;
   }
 
+  get authOptions() {
+    return {
+      headers: new HttpHeaders({
+        'Authorization' : 'Bearer ' + this.user.token
+      })
+    }
+  }
+
   constructor(private http: HttpClient) {
   }
+
 
   isAuthenticated(): boolean {
     return !(!this._user);
@@ -44,8 +53,10 @@ export class AuthService {
   }
 
   logout(): Observable<void> {
-    return this.http.post<void>(AuthService.LOGOUT, new LogoutRequest(this.user.token))
-      .pipe(tap(
+    return this.http.request<void>('delete', AuthService.LOGOUT, {
+      body: new LogoutRequest(this.user.username),
+      headers: this.authOptions.headers
+    }).pipe(tap(
         _ => {},
         _ => {},
         () => this._user = undefined));

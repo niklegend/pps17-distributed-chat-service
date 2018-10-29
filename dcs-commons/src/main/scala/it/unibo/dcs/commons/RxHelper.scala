@@ -16,8 +16,6 @@ object RxHelper {
 
   def blockingScheduler(vertx: Vertx, ordered: Boolean = DEFAULT_ORDERED): Scheduler = JRxHelper.blockingScheduler(vertx, ordered)
 
-  def unit[T](t: T): Unit = ()
-
   private val DEFAULT_ORDERED: Boolean = false
 
   object Implicits {
@@ -25,6 +23,14 @@ object RxHelper {
     private[commons] implicit final class RxScheduler(val asJavaScheduler: rx.Scheduler) extends Scheduler
 
     private[commons] implicit final class RxObservable[T](val asJavaObservable: rx.Observable[T]) extends Observable[T]
+
+    implicit class RichObservable[+A](observable: Observable[A]) {
+
+      def mapImplicitly[B](implicit f: A => B): Observable[B] = observable.map(f)
+
+      def toCompletable: Observable[Unit] = observable.toList.map(_ =>())
+
+    }
 
   }
 

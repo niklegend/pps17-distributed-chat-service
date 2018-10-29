@@ -92,10 +92,10 @@ private[impl] object RoomDataStoreDatabase {
     implicit def requestToParams(request: DeleteRoomRequest): JsonArray =
       new JsonArray().add(request.name).add(request.username)
 
-    implicit def jsonObjectToRoom(json: JsonObject): Room = gson fromJsonObject json
-
     implicit def requestToParams(request: JoinRoomRequest): JsonArray =
       new JsonArray().add(request.username).add(request.name)
+
+    implicit def jsonObjectToRoom(json: JsonObject): Room = gson fromJsonObject[Room] json
 
     implicit def jsonObjectToParticipation(json: JsonObject): Participation =
       gson.fromJsonObject[ParticipationDto](json)

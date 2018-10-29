@@ -1,7 +1,7 @@
 package it.unibo.dcs.service.webapp.repositories.datastores.api.impl
 
 import io.vertx.lang.scala.json.{Json, JsonObject}
-import it.unibo.dcs.commons.RxHelper.unit
+import it.unibo.dcs.commons.RxHelper.Implicits.RichObservable
 import it.unibo.dcs.commons.service.{AbstractApi, HttpEndpointDiscovery}
 import it.unibo.dcs.exceptions.{AuthServiceErrorException, InternalException, bodyAsJsonObject}
 import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
@@ -18,13 +18,13 @@ class AuthenticationRestApi(private[this] val discovery: HttpEndpointDiscovery)
   override def loginUser(request: LoginUserRequest): Observable[String] = makeRequest(client =>
     Observable.from(client.post(loginUserURI).sendJsonObjectFuture(request)))
     .map(bodyAsJsonObject(throw InternalException("Authentication service returned an empty body")))
-    .map(getToken)
+    .mapImplicitly
 
   override def registerUser(request: RegisterUserRequest): Observable[String] = {
     makeRequest(client =>
       Observable.from(client.post(registerUserURI).sendJsonObjectFuture(request)))
       .map(bodyAsJsonObject(throw InternalException("Authentication service returned an empty body")))
-      .map(getToken)
+      .mapImplicitly
   }
 
   override def logoutUser(request: LogoutUserRequest): Observable[Unit] = {
@@ -33,7 +33,7 @@ class AuthenticationRestApi(private[this] val discovery: HttpEndpointDiscovery)
         .putHeader(authenticationKeyLabel, bearer(request.token))
         .sendJsonObjectFuture(request)))
       .map(bodyAsJsonObject(Json.emptyObj()))
-      .map(unit)
+      .toCompletable
   }
 
   override def checkToken(request: CheckTokenRequest): Observable[Unit] =
@@ -42,7 +42,7 @@ class AuthenticationRestApi(private[this] val discovery: HttpEndpointDiscovery)
         .putHeader(authenticationKeyLabel, bearer(request.token))
         .sendJsonObjectFuture(Json.obj())))
       .map(bodyAsJsonObject())
-      .map(unit)
+      .toCompletable
 
   override def deleteUser(request: DeleteUserRequest): Observable[Unit] = {
     makeRequest(client =>
@@ -50,8 +50,8 @@ class AuthenticationRestApi(private[this] val discovery: HttpEndpointDiscovery)
         .putHeader(authenticationKeyLabel, bearer(request.token))
         .sendJsonObjectFuture(request)))
       .map(bodyAsJsonObject())
-      .map(unit)
       .onErrorResumeNext(cause => Observable.error(AuthServiceErrorException(cause)))
+      .toCompletable
   }
 
 }

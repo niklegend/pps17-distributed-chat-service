@@ -40,6 +40,6 @@ abstract class ServiceVerticle extends ScalaVerticle with Logging {
 
 object ServiceVerticle {
 
-  def DEFAULT_OPTIONS = HttpServerOptions()
+  def DEFAULT_OPTIONS: HttpServerOptions = HttpServerOptions()
 
 }

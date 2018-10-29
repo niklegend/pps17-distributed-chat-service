@@ -18,7 +18,7 @@ class UserRestApi(private[this] val discovery: HttpEndpointDiscovery)
   override def createUser(registrationRequest: RegisterUserRequest): Observable[User] = {
     makeRequest(client =>
       Observable.from(client.post(createUserURI).sendJsonObjectFuture(registrationRequest)))
-      .map(bodyAsJsonObject(throw InternalException("User service returned an empty body")))
+      .map(bodyAsJsonObject(throw InternalException(emptyBodyErrorMessage)))
       .onErrorResumeNext(cause => Observable.error(UserServiceErrorException(cause)))
       .mapImplicitly
   }
@@ -26,22 +26,24 @@ class UserRestApi(private[this] val discovery: HttpEndpointDiscovery)
   override def getUserByUsername(username: String): Observable[User] =
     makeRequest(client =>
       Observable.from(client.get(getUserURI(username)).sendFuture()))
-      .map(bodyAsJsonObject(throw InternalException("User service returned an empty body")))
+      .map(bodyAsJsonObject(throw InternalException(emptyBodyErrorMessage)))
       .mapImplicitly
 
   override def deleteUser(username: String): Observable[String] = makeRequest(client =>
     Observable.from(client.get(deleteUserURI(username)).sendFuture()))
-    .map(bodyAsJsonObject(throw InternalException("User service returned an empty body")))
+    .map(bodyAsJsonObject(throw InternalException(emptyBodyErrorMessage)))
     .onErrorResumeNext(cause => Observable.error(UserServiceErrorException(cause)))
     .map(_.getString("username"))
 }
 
 private[impl] object UserRestApi {
 
+  private val emptyBodyErrorMessage = "User service returned an empty body"
+
   private val createUserURI = "/createUser"
-  private val validateRegistration = "/validateRegistration"
 
   private def deleteUserURI(username: String) = s"/deleteUser/$username"
 
   private def getUserURI(username: String) = s"/getUser/$username"
+
 }

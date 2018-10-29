@@ -62,7 +62,6 @@ private[impl] object AuthenticationRestApi {
   private val registerUserURI = "/register"
   private val logoutUserURI = "/protected/logout"
   private val checkTokenURI = "/protected/tokenValidity"
-  private val checkLogoutURI = "/validateLogout"
 
   /* JWT Token labels */
   private val authenticationKeyLabel = "Authorization"
@@ -72,6 +71,6 @@ private[impl] object AuthenticationRestApi {
     json.getString("token")
   }
 
-  def deleteUserURI(username: String) = s"/user/$username"
+  def deleteUserURI(username: String): String = s"/user/$username"
 
 }

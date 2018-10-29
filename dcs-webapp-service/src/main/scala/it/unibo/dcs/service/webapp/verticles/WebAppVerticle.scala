@@ -18,14 +18,16 @@ import org.apache.http.entity.ContentType._
 /** Verticle that runs the WebApp Service */
 final class WebAppVerticle extends ServiceVerticle {
 
-  @SuppressWarnings(Array("org.wartremover.warts.Var", "org.wartremover.warts.Null"))
+  private val wartRemoverSuppressedWarnings = Array("org.wartremover.warts.Var", "org.wartremover.warts.Null")
+
+  @SuppressWarnings(wartRemoverSuppressedWarnings)
   private var host: String = _
-  @SuppressWarnings(Array("org.wartremover.warts.Var", "org.wartremover.warts.Null"))
+  @SuppressWarnings(wartRemoverSuppressedWarnings)
   private var port: Int = _
 
-  @SuppressWarnings(Array("org.wartremover.warts.Var", "org.wartremover.warts.Null"))
+  @SuppressWarnings(wartRemoverSuppressedWarnings)
   private var publisher: HttpEndpointPublisher = _
-  @SuppressWarnings(Array("org.wartremover.warts.Var", "org.wartremover.warts.Null"))
+  @SuppressWarnings(wartRemoverSuppressedWarnings)
   private var requestHandler: ServiceRequestHandler = _
 
   private val serviceRecordName = "webapp-service"
@@ -57,16 +59,7 @@ final class WebAppVerticle extends ServiceVerticle {
     router.route()
       .handler(BodyHandler.create())
 
-    router.route().handler(CorsHandler.create("*")
-      .allowedMethod(GET)
-      .allowedMethod(POST)
-      .allowedMethod(PATCH)
-      .allowedMethod(PUT)
-      .allowedMethod(DELETE)
-      .allowedHeader("Access-Control-Allow-Method")
-      .allowedHeader("Access-Control-Allow-Origin")
-      .allowedHeader("Access-Control-Allow-Credentials")
-      .allowedHeader("Content-Type"))
+    disableCors(router)
 
     router.route().handler(StaticHandler.create())
 
@@ -77,6 +70,11 @@ final class WebAppVerticle extends ServiceVerticle {
     apiRouter.route("/events/*")
       .handler(sockJSHandler)
 
+    defineServiceApi(apiRouter)
+    router.mountSubRouter("/api", apiRouter)
+  }
+
+  private def defineServiceApi(apiRouter: Router) = {
     apiRouter.post("/register")
       .consumes(APPLICATION_JSON)
       .produces(APPLICATION_JSON)
@@ -111,8 +109,19 @@ final class WebAppVerticle extends ServiceVerticle {
       .consumes(ContentType.APPLICATION_JSON)
       .produces(ContentType.APPLICATION_JSON)
       .handler(context => requestHandler handleGetRooms context)
+  }
 
-    router.mountSubRouter("/api", apiRouter)
+  private def disableCors(router: Router) = {
+    router.route().handler(CorsHandler.create("*")
+      .allowedMethod(GET)
+      .allowedMethod(POST)
+      .allowedMethod(PATCH)
+      .allowedMethod(PUT)
+      .allowedMethod(DELETE)
+      .allowedHeader("Access-Control-Allow-Method")
+      .allowedHeader("Access-Control-Allow-Origin")
+      .allowedHeader("Access-Control-Allow-Credentials")
+      .allowedHeader("Content-Type"))
   }
 
   override def start(): Unit = {

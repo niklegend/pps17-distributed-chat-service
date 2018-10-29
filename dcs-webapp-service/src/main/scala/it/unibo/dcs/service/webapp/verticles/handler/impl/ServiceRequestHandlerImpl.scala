@@ -23,8 +23,8 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
                                       private[this] val authRepository: AuthenticationRepository,
                                       private[this] val roomRepository: RoomRepository) extends ServiceRequestHandler {
 
-  private[this] lazy val roomDeleted = eventBus.address(rooms.deleted)
-  private[this] lazy val roomJoined = eventBus.address(rooms.joined)
+  private[this] lazy val roomDeleted = eventBus.address(Rooms.deleted)
+  private[this] lazy val roomJoined = eventBus.address(Rooms.joined)
 
   override def handleRegistration(context: RoutingContext)(implicit ctx: Context): Unit =
     handleRequestBody(context) {

@@ -1,9 +1,9 @@
 package it.unibo.dcs.service.room
 
-import io.vertx.lang.scala.ScalaLogger
 import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
 import io.vertx.scala.core.http.HttpServerResponse
 import it.unibo.dcs.commons.JsonHelper.Implicits.{RichGson, jsonObjectToString}
+import it.unibo.dcs.commons.Logging
 import it.unibo.dcs.exceptions.ErrorSubscriber
 import it.unibo.dcs.service.room.model.{Participation, Room}
 import it.unibo.dcs.service.room.subscriber.Implicits._
@@ -14,9 +14,7 @@ import scala.language.implicitConversions
 package object subscriber {
 
   final class CreateRoomSubscriber(protected override val response: HttpServerResponse) extends Subscriber[Room]
-    with ErrorSubscriber {
-
-    private[this] val log = ScalaLogger.getLogger(getClass.getName)
+    with ErrorSubscriber with Logging {
 
     override def onNext(room: Room): Unit = {
       val json: JsonObject = room
@@ -27,9 +25,7 @@ package object subscriber {
   }
 
   final class JoinRoomSubscriber(protected override val response: HttpServerResponse) extends Subscriber[Participation]
-    with ErrorSubscriber {
-
-    private[this] val log = ScalaLogger.getLogger(getClass.getName)
+    with ErrorSubscriber with Logging {
 
     override def onNext(participation: Participation): Unit = {
       val json: JsonObject = participation
@@ -39,7 +35,7 @@ package object subscriber {
   }
 
   final class CreateUserSubscriber(protected override val response: HttpServerResponse) extends Subscriber[Unit]
-    with ErrorSubscriber {
+    with ErrorSubscriber with Logging {
 
     override def onCompleted(): Unit = response.end()
 

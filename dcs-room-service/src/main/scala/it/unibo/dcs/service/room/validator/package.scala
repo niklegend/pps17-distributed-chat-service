@@ -3,6 +3,7 @@ package it.unibo.dcs.service.room
 import it.unibo.dcs.commons.validation.{Conditions, Validator}
 import it.unibo.dcs.exceptions.{RoomNameRequiredException, UsernameRequiredException}
 import it.unibo.dcs.service.room.request._
+import Predef.identity
 
 package object validator {
 
@@ -45,7 +46,7 @@ package object validator {
 
   object GetRoomsValidator {
     def apply(): Validator[GetRoomsRequest] = Validator[GetRoomsRequest] {
-      builder => builder // no rules to specify
+      _ => {} // no rules to specify
     }
   }
 

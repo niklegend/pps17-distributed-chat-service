@@ -52,7 +52,7 @@ export class ChatService {
   createRoom(name: string): Observable<string> {
     const user = this.auth.user;
     return this.http
-      .post<Room>('/api/rooms', new CreateRoomRequest(name, user.username, user.token))
+      .post<Room>(ChatService.ROOMS, new CreateRoomRequest(name, user.username, user.token))
       .pipe(tap(room => this.roomCreated.next(room)))
       .pipe(map(room => room.name));
   }
@@ -60,7 +60,7 @@ export class ChatService {
   deleteRoom(name: string): Observable<void> {
     const user = this.auth.user;
     const body = new DeleteRoomRequest(name, user.username, user.token);
-    return this.http.request<void>('delete', ChatService.ROOMS, {
+    return this.http.request<void>('delete', ChatService.ROOMS + "/" + name, {
       body
     });
   }
@@ -68,7 +68,7 @@ export class ChatService {
   joinRoom(name: string): Observable<Participation> {
     const user = this.auth.user;
     const body = new JoinRoomRequest(name, user.username, user.token);
-    return this.http.post<Participation>(ChatService.ROOMS + "/" + name, body);
+    return this.http.post<Participation>(ChatService.ROOMS + "/" + name + "/participations", body);
   }
 
   onRoomCreated(): Observable<Room> {

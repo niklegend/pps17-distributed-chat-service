@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { LoginRequest, RegisterRequest, LogoutRequest } from '../requests';
-import { Observable } from 'rxjs';
-import { User } from '../model';
+import {Injectable} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {LoginRequest, LogoutRequest, RegisterRequest} from '../requests';
+import {Observable} from 'rxjs';
+import {User} from '../model';
 
-import { map, tap } from 'rxjs/operators';
+import {tap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -26,7 +26,8 @@ export class AuthService {
     return this._user;
   }
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+  }
 
   isAuthenticated(): boolean {
     return !(!this._user);

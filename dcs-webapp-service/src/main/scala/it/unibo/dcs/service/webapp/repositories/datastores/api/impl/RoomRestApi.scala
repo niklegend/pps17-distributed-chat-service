@@ -1,7 +1,7 @@
 package it.unibo.dcs.service.webapp.repositories.datastores.api.impl
 
 import com.google.gson.Gson
-import io.vertx.lang.scala.json.{JsonArray, JsonObject}
+import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
 import it.unibo.dcs.commons.RxHelper.Implicits.RichObservable
 import it.unibo.dcs.commons.service.{AbstractApi, HttpEndpointDiscovery}
 import it.unibo.dcs.exceptions.{InternalException, RoomServiceErrorException, bodyAsJsonArray, bodyAsJsonObject}
@@ -37,7 +37,7 @@ class RoomRestApi(private[this] val discovery: HttpEndpointDiscovery)
 
   override def registerUser(userRegistrationRequest: RegisterUserRequest): Observable[Unit] = {
     makeRequest(client =>
-      Observable.from(client.post(createUser).sendJsonObjectFuture(userRegistrationRequest)))
+      Observable.from(client.post(usersURI).sendJsonObjectFuture(toCreateUserRequest(userRegistrationRequest))))
       .map(bodyAsJsonObject())
       .onErrorResumeNext(cause => Observable.error(RoomServiceErrorException(cause)))
       .toCompletable
@@ -63,9 +63,7 @@ private[impl] object RoomRestApi {
 
   private val roomsURI = "/rooms"
 
-  private def bearer(token: String) = s"Bearer $token"
-
-  private val createUser = "/createUser"
+  private val usersURI = "/users"
 
   private val emptyBodyErrorMessage = "Room service returned an empty body"
 
@@ -74,17 +72,15 @@ private[impl] object RoomRestApi {
   private def deleteRoomURI(roomName: String) = roomsURI + "/" + roomName
 
   private def toDeleteRoomRequest(deleteRoomRequest: DeleteRoomRequest): JsonObject = {
-    val deleteRoomJson: JsonObject = deleteRoomRequest
-    deleteRoomJson.remove(JsonLabels.roomNameLabel)
-    deleteRoomJson.remove(JsonLabels.tokenLabel)
-    deleteRoomJson
+    Json.obj((JsonLabels.usernameLabel, deleteRoomRequest.username))
+  }
+
+  private def toCreateUserRequest(registerUserRequest: RegisterUserRequest): JsonObject = {
+    Json.obj((JsonLabels.usernameLabel, registerUserRequest.username))
   }
 
   private def toJoinRoomRequest(joinRoomRequest: RoomJoinRequest): JsonObject = {
-    val joinRoomJson: JsonObject = joinRoomRequest
-    joinRoomJson.remove(JsonLabels.roomNameLabel)
-    joinRoomJson.remove(JsonLabels.tokenLabel)
-    joinRoomJson
+    Json.obj((JsonLabels.usernameLabel, joinRoomRequest.username))
   }
 
   object Implicits {

@@ -61,7 +61,7 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
       new JoinRoomUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
     }
 
-    router.post("/createUser")
+    router.post("/users")
       .consumes(ContentType.APPLICATION_JSON)
       .consumes(ContentType.APPLICATION_JSON)
       .handler(routingContext => {

@@ -32,7 +32,7 @@ class AuthenticationRestApi(private[this] val discovery: HttpEndpointDiscovery)
     makeRequest(client =>
       Observable.from(client.delete(logoutUserURI)
         .putHeader(authenticationKeyLabel, bearer(request.token))
-        .sendJsonObjectFuture(toLogou tUserRequest(request))))
+        .sendJsonObjectFuture(toLogoutUserRequest(request))))
       .map(bodyAsJsonObject(Json.emptyObj()))
       .toCompletable
   }

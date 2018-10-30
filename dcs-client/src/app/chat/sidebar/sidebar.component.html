@@ -1,0 +1,25 @@
+<div id="sidebar">
+  <mat-nav-list>
+    <div mat-list-item>
+      <form style="margin-left: 20px;">
+        <mat-form-field>
+          <input matInput [placeholder]="'Search a room' | translate">
+        </mat-form-field>
+      </form>
+    </div>
+    <app-rooms *ngIf="!search"></app-rooms>
+    <app-search-rooms *ngIf="search" [query]="query"></app-search-rooms>
+  </mat-nav-list>
+</div>
+
+<div id="sidebar">
+  <mat-nav-list>
+    <div mat-list-item>
+      <form style="margin-left: 20px;">
+        <mat-form-field>
+          <input matInput id="query" name="query" [(ngModel)]="query" [placeholder]="'Search a room' | translate" (focus)="search = true;" (focusout)="search = false;" />
+        </mat-form-field>
+      </form>
+    </div>
+  </mat-nav-list>
+</div>

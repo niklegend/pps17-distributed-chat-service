@@ -39,7 +39,7 @@ class AuthenticationRestApi(private[this] val discovery: HttpEndpointDiscovery)
 
   override def checkToken(request: CheckTokenRequest): Observable[Unit] =
     makeRequest(client =>
-      Observable.from(client.get(checkTokenURI)
+      Observable.from(client.get(checkTokenURI(request.username))
         .putHeader(authenticationKeyLabel, bearer(request.token))
         .sendJsonObjectFuture(Json.obj())))
       .map(bodyAsJsonObject())
@@ -62,7 +62,8 @@ private[impl] object AuthenticationRestApi {
   private val loginUserURI = "/login"
   private val registerUserURI = "/register"
   private val logoutUserURI = "/protected/logout"
-  private val checkTokenURI = "/protected/tokenValidity"
+
+  private def checkTokenURI(username: String) = "/protected/verify/" + username
 
   /* JWT Token labels */
   private val authenticationKeyLabel = "Authorization"
@@ -82,6 +83,6 @@ private[impl] object AuthenticationRestApi {
     Json.obj((JsonLabels.usernameLabel, request.username))
   }
 
-  def deleteUserURI(username: String): String = s"/user/$username"
+  def deleteUserURI(username: String): String = s"/protected/users/$username"
 
 }

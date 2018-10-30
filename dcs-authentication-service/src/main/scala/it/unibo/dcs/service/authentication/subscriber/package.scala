@@ -21,6 +21,18 @@ package object subscriber {
       response.setStatus(HttpResponseStatus.CREATED).end(Json.obj(("token", token)))
   }
 
+  class LoginUserSubscriber(protected override val response: HttpServerResponse)
+    extends Subscriber[String] with ErrorSubscriber {
+
+    override def onNext(token: String): Unit = response.end(Json.obj(("token", token)))
+  }
+
+  class DeleteUserSubscriber(protected override val response: HttpServerResponse)
+    extends Subscriber[Unit] with ErrorSubscriber {
+
+    override def onCompleted(): Unit = response.setStatus(HttpResponseStatus.NO_CONTENT).end()
+  }
+
   class OkSubscriber(protected override val response: HttpServerResponse)
     extends Subscriber[Unit] with ErrorSubscriber {
 
@@ -44,7 +56,7 @@ package object subscriber {
     with ErrorSubscriber {
 
     override def onCompleted(): Unit =
-      deleteUserUseCase(request).subscribe(new OkSubscriber(response))
+      deleteUserUseCase(request).subscribe(new DeleteUserSubscriber(response))
   }
 
   class LoginValiditySubscriber(protected override val response: HttpServerResponse,

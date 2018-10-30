@@ -87,7 +87,7 @@ paths:
                 type: string
           required: true
       responses:
-        204:
+        200:
           description: The room was successfully deleted.
           schema:
             required:

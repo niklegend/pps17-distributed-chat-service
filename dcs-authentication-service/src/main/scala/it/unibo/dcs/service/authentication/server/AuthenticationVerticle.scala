@@ -61,7 +61,7 @@ final class AuthenticationVerticle(private[this] val authenticationRepository: A
       .produces(ContentType.APPLICATION_JSON)
       .handler(requestHandler.handleLogin(_))
 
-    router.post("/protected/logout")
+    router.delete("/protected/logout")
       .produces(ContentType.APPLICATION_JSON)
       .handler(requestHandler.handleLogout(_))
 

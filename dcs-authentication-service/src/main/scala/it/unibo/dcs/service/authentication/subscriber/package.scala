@@ -17,7 +17,8 @@ package object subscriber {
   class TokenSubscriber(protected override val response: HttpServerResponse)
     extends Subscriber[String] with ErrorSubscriber {
 
-    override def onNext(token: String): Unit = response.end(Json.obj(("token", token)))
+    override def onNext(token: String): Unit =
+      response.setStatus(HttpResponseStatus.CREATED).end(Json.obj(("token", token)))
   }
 
   class OkSubscriber(protected override val response: HttpServerResponse)
@@ -27,9 +28,9 @@ package object subscriber {
   }
 
   class LogoutValiditySubscriber(protected override val response: HttpServerResponse,
-                                         logoutUserUseCase: LogoutUserUseCase,
-                                         request: LogoutUserRequest)
-                                        (implicit context: RoutingContext) extends Subscriber[Unit]
+                                 logoutUserUseCase: LogoutUserUseCase,
+                                 request: LogoutUserRequest)
+                                (implicit context: RoutingContext) extends Subscriber[Unit]
     with ErrorSubscriber {
 
     override def onCompleted(): Unit =
@@ -39,7 +40,7 @@ package object subscriber {
   class DeleteUserValiditySubscriber(protected override val response: HttpServerResponse,
                                      deleteUserUseCase: DeleteUserUseCase,
                                      request: DeleteUserRequest)
-                                (implicit context: RoutingContext) extends Subscriber[Unit]
+                                    (implicit context: RoutingContext) extends Subscriber[Unit]
     with ErrorSubscriber {
 
     override def onCompleted(): Unit =
@@ -47,9 +48,9 @@ package object subscriber {
   }
 
   class LoginValiditySubscriber(protected override val response: HttpServerResponse,
-                                        credentials: (Option[String], Option[String]),
-                                        loginUserUseCase: LoginUserUseCase,
-                                        request: LoginUserRequest)
+                                credentials: (Option[String], Option[String]),
+                                loginUserUseCase: LoginUserUseCase,
+                                request: LoginUserRequest)
     extends Subscriber[Unit] with ErrorSubscriber {
 
     override def onCompleted(): Unit =
@@ -57,9 +58,9 @@ package object subscriber {
   }
 
   class RegistrationValiditySubscriber(protected override val response: HttpServerResponse,
-                                               credentials: (Option[String], Option[String]),
-                                               registerUserUseCase: RegisterUserUseCase,
-                                               request: RegisterUserRequest)
+                                       credentials: (Option[String], Option[String]),
+                                       registerUserUseCase: RegisterUserUseCase,
+                                       request: RegisterUserRequest)
     extends Subscriber[Unit] with ErrorSubscriber {
 
     override def onCompleted(): Unit =

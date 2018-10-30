@@ -89,11 +89,12 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
         deleteRoomUseCase(request, subscriber)
       })
 
-    router.post("/joinRoom")
+    router.post("/rooms/:name/participations")
       .consumes(ContentType.APPLICATION_JSON)
       .produces(ContentType.APPLICATION_JSON)
       .handler(routingContext => {
-        val request = routingContext.getBodyAsJson.head
+        val roomName = routingContext.request().getParam("name").head
+        val request = routingContext.getBodyAsJson.head.put("name", roomName)
         val subscriber = new JoinRoomSubscriber(routingContext.response())
         joinRoomUseCase(request, subscriber)
       })

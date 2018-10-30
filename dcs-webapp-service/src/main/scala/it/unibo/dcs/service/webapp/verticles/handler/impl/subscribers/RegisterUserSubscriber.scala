@@ -1,7 +1,6 @@
 package it.unibo.dcs.service.webapp.verticles.handler.impl.subscribers
 
 import io.netty.handler.codec.http.HttpResponseStatus
-import io.vertx.lang.scala.ScalaLogger
 import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.core.http.HttpServerResponse
 import it.unibo.dcs.commons.Logging
@@ -14,12 +13,10 @@ import rx.lang.scala.Subscriber
 final class RegisterUserSubscriber(protected override val response: HttpServerResponse) extends Subscriber[RegisterResult]
   with ErrorSubscriber with Logging {
 
-  private val logger = ScalaLogger.getLogger(getClass.getName)
-
   override def onNext(result: RegisterResult): Unit = {
     val res: JsonObject = result
     log.info(s"Retrieving result: $res")
-    response setStatus HttpResponseStatus.CREATED end res.encode()
+    response.setStatus(HttpResponseStatus.CREATED).end(res.encode())
   }
 
 }

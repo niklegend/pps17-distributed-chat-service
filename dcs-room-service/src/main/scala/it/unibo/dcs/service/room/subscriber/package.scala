@@ -21,7 +21,7 @@ package object subscriber {
     override def onNext(room: Room): Unit = {
       val json: JsonObject = room
       log.info(s"Answering with room: $json")
-      response.end(json)
+      response.setStatus(HttpResponseStatus.CREATED).end(json)
     }
 
   }
@@ -39,14 +39,15 @@ package object subscriber {
   final class CreateUserSubscriber(protected override val response: HttpServerResponse) extends Subscriber[Unit]
     with ErrorSubscriber with Logging {
 
-    override def onCompleted(): Unit = response.end()
+    override def onCompleted(): Unit = response.setStatus(HttpResponseStatus.CREATED).end()
 
   }
 
   class DeleteRoomSubscriber(protected override val response: HttpServerResponse) extends Subscriber[String]
     with ErrorSubscriber {
 
-    override def onNext(name: String): Unit = response.end(Json.obj(("name", name)))
+    override def onNext(name: String): Unit =
+      response.end(Json.obj(("name", name)))
 
   }
 

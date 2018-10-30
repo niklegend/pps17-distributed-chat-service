@@ -44,10 +44,10 @@ export class ChatService {
   getRooms(): Observable<Room[]> {
     const user = this.auth.user;
     return this.http.get<Room[]>(ChatService.ROOMS, {
+      headers: this.auth.authOptions,
       params: {
-        user: user.username,
-        token: user.token
-      },
+        user: user.username
+      }
     });
   }
 

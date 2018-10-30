@@ -53,7 +53,7 @@ class RoomRestApi(private[this] val discovery: HttpEndpointDiscovery)
 
   override def getRooms(request: GetRoomsRequest): Observable[List[Room]] = {
     makeRequest(client =>
-      Observable.from(client.get(RoomRestApi.roomsURI).sendJsonObjectFuture(request)))
+      Observable.from(client.get(s"${RoomRestApi.roomsURI}?user=${request.username}").sendJsonObjectFuture(request)))
       .map(bodyAsJsonArray(throw InternalException(emptyBodyErrorMessage)))
       .mapImplicitly
   }

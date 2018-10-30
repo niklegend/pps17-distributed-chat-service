@@ -26,15 +26,12 @@ export class AuthService {
     return this._user;
   }
 
-  get authOptions() {
-    return new HttpHeaders({
-        'Authorization' : 'Bearer ' + this.user.token
-      });
+  get authOptions(): HttpHeaders {
+    return new HttpHeaders({ Authorization: this.user.token });
   }
 
   constructor(private http: HttpClient) {
   }
-
 
   isAuthenticated(): boolean {
     return !(!this._user);

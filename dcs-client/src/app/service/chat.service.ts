@@ -74,7 +74,8 @@ export class ChatService {
   }
 
   getRoomParticipations(name: string): Observable<Participation[]> {
-    return this.http.get<Participation[]>(ChatService.ROOMS + "/" + name + "/participations", this.auth.authOptions)
+    return this.http.get<Participation[]>(
+      ChatService.ROOMS + "/" + name + "/participations?user=" + this.auth.user.username, this.auth.authOptions)
   }
 
   onRoomCreated(): Observable<Room> {

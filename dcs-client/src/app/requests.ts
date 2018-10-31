@@ -48,3 +48,10 @@ export class JoinRoomRequest {
 
 }
 
+export class GetRoomParticipationsRequest {
+
+  constructor(public username: string) {
+  }
+
+}
+

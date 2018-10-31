@@ -105,10 +105,10 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
       roomName => {
         handleRequestToken(context) {
           token => {
-            handleRequestBody(context) {
-              request =>
+            handleRequestParam(context, ParamLabels.userLabel) {
+              username =>
                 val useCase = GetRoomParticipationsUseCase(authRepository, roomRepository)
-                useCase(GetRoomParticipationsRequest(roomName, request.getString(JsonLabels.usernameLabel), token),
+                useCase(GetRoomParticipationsRequest(roomName, username, token),
                   GetRoomParticipationsSubscriber(context.response()))
             }
           }

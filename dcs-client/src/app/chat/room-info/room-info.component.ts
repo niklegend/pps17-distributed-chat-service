@@ -12,7 +12,7 @@ export class RoomInfoComponent implements OnInit {
 
   name: string;
 
-  participations: Participation[];
+  participations: Participation[] = [];
 
   constructor(private route: ActivatedRoute, private service: ChatService) {
   }
@@ -20,7 +20,7 @@ export class RoomInfoComponent implements OnInit {
   ngOnInit() {
     this.route.params.subscribe(params => {
       this.name = params['name'];
-      this.getRoomParticipations(this.name)
+      this.getRoomParticipations()
     });
 
 
@@ -30,7 +30,7 @@ export class RoomInfoComponent implements OnInit {
       })
   }
 
-  getRoomParticipations(roomName: string) {
+  getRoomParticipations() {
     this.service.getRoomParticipations(this.name)
       .subscribe(participations => this.participations = participations)
   }

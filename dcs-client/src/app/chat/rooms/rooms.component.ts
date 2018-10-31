@@ -54,7 +54,7 @@ export class RoomsComponent implements OnInit {
   }
 
   private removeRoom(name: String) {
-    remove(this.rooms, room => room.name === name)
+    remove(this.rooms, room => room.name === name);
   }
 
 }

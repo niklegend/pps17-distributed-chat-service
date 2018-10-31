@@ -23,4 +23,9 @@ export class SidebarComponent {
     }
   }
 
+  onFocusout() {
+    if (this.query.length === 0)
+      this.search = false;
+  }
+
 }

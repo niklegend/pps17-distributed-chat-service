@@ -100,8 +100,9 @@ private[impl] object RoomDataStoreDatabase {
 
     implicit def jsonObjectToRoom(json: JsonObject): Room = gson fromJsonObject[Room] json
 
-    implicit def jsonObjectToParticipation(json: JsonObject): Participation =
+    implicit def jsonObjectToParticipation(json: JsonObject): Participation = {
       gson.fromJsonObject[ParticipationDto](json)
+    }
 
   }
 

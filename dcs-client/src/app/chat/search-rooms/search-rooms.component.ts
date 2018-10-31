@@ -36,6 +36,7 @@ export class SearchRoomsComponent implements OnInit {
 
   joinRoom(room: Room) {
     console.log(`joined room: ${room.name}`);
+    this.query = '';
     this.chat
       .joinRoom(room.name)
       .subscribe(participation => {

@@ -1,10 +1,10 @@
 package it.unibo.dcs.service.webapp.interaction
 
 import com.google.gson.Gson
-import io.vertx.lang.scala.json.{Json, JsonObject}
+import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
 import it.unibo.dcs.commons.dataaccess.Implicits.stringToDate
 import it.unibo.dcs.service.webapp.interaction.Labels.JsonLabels._
-import it.unibo.dcs.service.webapp.model.{Room, User}
+import it.unibo.dcs.service.webapp.model.{Participation, Room, User}
 
 import scala.language.implicitConversions
 
@@ -32,6 +32,8 @@ object Requests {
 
   final case class GetRoomsRequest(username: String, token: String) extends DcsRequest
 
+  final case class GetRoomParticipationsRequest(name: String, username: String, token: String) extends DcsRequest
+
   final case class CheckTokenRequest(token: String, username: String) extends DcsRequest
 
   /** It enables implicit conversions in order to clean code that deals with requests. */
@@ -39,7 +41,7 @@ object Requests {
 
     private val gson = new Gson()
 
-    implicit def requestToJson(request: DcsRequest): JsonObject = Json.fromObjectString(gson.toJson(request))
+    implicit def requestToJsonObject(request: DcsRequest): JsonObject = Json.fromObjectString(gson.toJson(request))
 
     implicit def jsonToDeleteRoomRequest(json: JsonObject): DeleteRoomRequest = {
       DeleteRoomRequest(json.getString(roomNameLabel), json.getString(usernameLabel), json.getString(tokenLabel))
@@ -75,6 +77,9 @@ object Requests {
     implicit def jsonObjectToRoom(json: JsonObject): Room = {
       Room(json.getString(roomNameLabel))
     }
+
+    implicit def jsonArrayToParticipationSet(array: JsonArray): Set[Participation] =
+      gson.fromJson(array.encode(), classOf[Set[Participation]])
 
     implicit def jsonObjectToCreateRoomRequest(json: JsonObject): CreateRoomRequest = {
       CreateRoomRequest(json.getString(roomNameLabel), json.getString(usernameLabel),

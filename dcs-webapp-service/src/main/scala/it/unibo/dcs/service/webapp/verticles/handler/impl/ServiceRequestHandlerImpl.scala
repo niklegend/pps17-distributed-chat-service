@@ -9,6 +9,7 @@ import it.unibo.dcs.commons.VertxHelper.Implicits.RichEventBus
 import it.unibo.dcs.exceptions.InternalException
 import it.unibo.dcs.service.webapp.interaction.Labels.JsonLabels._
 import it.unibo.dcs.service.webapp.interaction.Labels.{JsonLabels, ParamLabels}
+import it.unibo.dcs.service.webapp.interaction.Requests.GetRoomParticipationsRequest
 import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
 import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, RoomRepository, UserRepository}
 import it.unibo.dcs.service.webapp.usecases._
@@ -93,6 +94,23 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
           token => {
             val useCase = GetRoomsUseCase(authRepository, roomRepository)
             useCase(Json.obj((usernameLabel, username), (tokenLabel, token)), GetRoomsSubscriber(context.response))
+          }
+        }
+      }
+    }
+
+
+  override def handleGetRoomParticipations(context: RoutingContext)(implicit ctx: Context): Unit =
+    handleRequestParam(context, ParamLabels.roomNameLabel) {
+      roomName => {
+        handleRequestToken(context) {
+          token => {
+            handleRequestBody(context) {
+              request =>
+                val useCase = GetRoomParticipationsUseCase(authRepository, roomRepository)
+                useCase(GetRoomParticipationsRequest(roomName, request.getString(JsonLabels.usernameLabel), token),
+                  GetRoomParticipationsSubscriber(context.response()))
+            }
           }
         }
       }

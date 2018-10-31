@@ -57,9 +57,18 @@ class RoomRestApi(private[this] val discovery: HttpEndpointDiscovery)
       .map(bodyAsJsonArray(throw InternalException(emptyBodyErrorMessage)))
       .mapImplicitly
   }
+
+  override def getRoomParticipations(request: GetRoomParticipationsRequest): Observable[Set[Participation]] = {
+    makeRequest(client =>
+      Observable.from(client.get(RoomRestApi.roomParticipationsURI(request.name)).sendFuture()))
+      .map(bodyAsJsonArray(throw InternalException(emptyBodyErrorMessage)))
+      .mapImplicitly
+  }
 }
 
 private[impl] object RoomRestApi {
+
+  private val uriSeparator = "/"
 
   private val roomsURI = "/rooms"
 
@@ -67,9 +76,11 @@ private[impl] object RoomRestApi {
 
   private val emptyBodyErrorMessage = "Room service returned an empty body"
 
-  private def joinRoomURI(roomName: String) = roomsURI + "/" + roomName
+  private def roomParticipationsURI(roomName: String) = roomsURI + uriSeparator + roomName + "/participations"
 
-  private def deleteRoomURI(roomName: String) = roomsURI + "/" + roomName
+  private def joinRoomURI(roomName: String) = roomsURI + uriSeparator + roomName
+
+  private def deleteRoomURI(roomName: String) = roomsURI + uriSeparator + roomName
 
   private def toDeleteRoomRequest(deleteRoomRequest: DeleteRoomRequest): JsonObject = {
     Json.obj((JsonLabels.usernameLabel, deleteRoomRequest.username))

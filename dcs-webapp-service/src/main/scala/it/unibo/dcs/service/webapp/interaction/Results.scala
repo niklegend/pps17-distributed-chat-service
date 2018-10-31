@@ -23,6 +23,8 @@ object Results {
 
   final case class GetRoomsResult(rooms: List[Room]) extends DcsResult
 
+  final case class GetRoomParticipationsResult(participations: Set[Participation]) extends DcsResult
+
   /** It enables implicit conversions in order to clean code that deals with results. */
   object Implicits {
 
@@ -61,6 +63,10 @@ object Results {
       result.rooms
         .map(x => Json.fromObjectString(gson.toJson(x)))
         .foldLeft(new JsonArray)(_ add _)
+    }
+
+    implicit def roomParticipationsToJsonArray(result: GetRoomParticipationsResult): JsonArray = {
+      Json.arr(result.participations)
     }
 
   }

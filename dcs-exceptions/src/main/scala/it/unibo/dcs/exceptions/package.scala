@@ -55,6 +55,8 @@ package object exceptions {
 
     val ParticipationNotFound = "PARTICIPATION_NOT_FOUND"
 
+    val ParticipationsNotFound = "PARTICIPATIONS_NOT_FOUND"
+
     val ParticipationAlreadyExists = "PARTICIPATION_ALREADY_EXISTS"
   }
 
@@ -86,9 +88,11 @@ package object exceptions {
 
   final case class RoomNotFoundException(name: String) extends DcsException(RoomNotFound)
 
-  final case class ParticipationAlreadyExistsException(username:String, name: String) extends DcsException(ParticipationAlreadyExists)
+  final case class ParticipationAlreadyExistsException(username: String, name: String) extends DcsException(ParticipationAlreadyExists)
 
   final case class ParticipationNotFoundException(username: String, name: String) extends DcsException(ParticipationNotFound)
+
+  final case class ParticipationsNotFoundException(name: String) extends DcsException(ParticipationsNotFound)
 
   final case object InvalidTokenException extends DcsException(InvalidToken)
 
@@ -276,7 +280,7 @@ package object exceptions {
            | TokenRequiredException
            | RoomNameRequiredException =>
         HttpResponseStatus.PRECONDITION_FAILED
-        // HttpResponseStatus.UNPROCESSABLE_ENTITY
+      // HttpResponseStatus.UNPROCESSABLE_ENTITY
       case InvalidTokenException
            | WrongUsernameOrPasswordException =>
         HttpResponseStatus.UNAUTHORIZED

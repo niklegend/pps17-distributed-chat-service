@@ -6,6 +6,8 @@ import rx.lang.scala.Observable
 
 trait RoomDataStore {
 
+  def getRoomParticipations(request: GetRoomParticipationsRequest): Observable[Set[Participation]]
+
   def createUser(request: CreateUserRequest): Observable[Unit]
 
   def getRoomByName(request: GetRoomRequest): Observable[Room]

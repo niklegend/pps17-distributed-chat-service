@@ -4,7 +4,7 @@ import com.google.gson.Gson
 import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
 import it.unibo.dcs.service.webapp.interaction.Labels.JsonLabels.tokenLabel
 import it.unibo.dcs.service.webapp.model.{Participation, Room, User}
-
+import scala.collection.JavaConverters._
 import scala.language.implicitConversions
 
 /** It wraps all results produced by the use cases executions. */
@@ -65,10 +65,10 @@ object Results {
         .foldLeft(new JsonArray)(_ add _)
     }
 
-    implicit def roomParticipationsToJsonArray(result: GetRoomParticipationsResult): JsonArray = {
-      Json.arr(result.participations)
-    }
-
+    implicit def roomParticipationsToJsonArray(result: GetRoomParticipationsResult): JsonArray =
+      result.participations
+        .map(x => Json.fromObjectString(gson.toJson(x)))
+        .foldLeft(Json.emptyArr())(_ add _)
   }
 
 }

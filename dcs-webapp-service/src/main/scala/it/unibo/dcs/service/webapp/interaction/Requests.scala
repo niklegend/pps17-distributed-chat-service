@@ -5,7 +5,8 @@ import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
 import it.unibo.dcs.commons.dataaccess.Implicits.stringToDate
 import it.unibo.dcs.service.webapp.interaction.Labels.JsonLabels._
 import it.unibo.dcs.service.webapp.model.{Participation, Room, User}
-import it.unibo.dcs.commons.JsonHelper.Implicits.RichGson
+import net.liftweb.json._
+import net.liftweb.json.DefaultFormats._
 
 import scala.language.implicitConversions
 
@@ -79,8 +80,12 @@ object Requests {
       Room(json.getString(roomNameLabel))
     }
 
-    implicit def jsonArrayToParticipationSet(array: JsonArray): Set[Participation] =
-      gson.fromJsonArray[Participation](array).toSet
+    implicit def jsonArrayToParticipationSet(array: JsonArray): Set[Participation] = {
+      println(array.encodePrettily())
+      implicit val formats: DefaultFormats.type = DefaultFormats
+      val participations = parse(array.encode()).children //gson.fromJson(array.encode(), classOf[java.util.Set[Participation]])
+      participations.map(_.extract[Participation]).toSet
+    }
 
     implicit def jsonObjectToCreateRoomRequest(json: JsonObject): CreateRoomRequest = {
       CreateRoomRequest(json.getString(roomNameLabel), json.getString(usernameLabel),

@@ -105,7 +105,6 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
       })
 
     router.get("/rooms/:name/participations")
-      .consumes(ContentType.APPLICATION_JSON)
       .produces(ContentType.APPLICATION_JSON)
       .handler(routingContext => {
         val roomName = routingContext.request().getParam("name").head

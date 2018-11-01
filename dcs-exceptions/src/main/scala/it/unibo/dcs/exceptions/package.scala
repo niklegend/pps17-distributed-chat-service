@@ -215,6 +215,20 @@ package object exceptions {
                 throw KeyRequiredException(KEY_NAME, ParticipationNotFound)
               }
               throw KeyRequiredException(KEY_EXTRAS, ParticipationNotFound)
+            case ParticipationsNotFound =>
+              if (error.containsKey(KEY_EXTRAS)) {
+                val extras = error.getJsonObject(KEY_EXTRAS)
+                if (extras.containsKey(KEY_NAME)) {
+                  val name = extras.getString(KEY_NAME)
+                  if (extras.containsKey(KEY_USERNAME)) {
+                    val username = extras.getString(KEY_USERNAME)
+                    throw ParticipationNotFoundException(username, name)
+                  }
+                  throw KeyRequiredException(KEY_USERNAME, ParticipationsNotFound)
+                }
+                throw KeyRequiredException(KEY_NAME, ParticipationsNotFound)
+              }
+              throw KeyRequiredException(KEY_EXTRAS, ParticipationsNotFound)
             case ParticipationAlreadyExists =>
               if (error.containsKey(KEY_EXTRAS)) {
                 val extras = error.getJsonObject(KEY_EXTRAS)
@@ -292,17 +306,18 @@ package object exceptions {
     jsonObjectToDcsException(response.bodyAsJsonObject().getOrElse(default))
 
   def bodyAsJsonArray[T](default: => JsonArray = Json.emptyArr()): HttpResponse[T] => JsonArray = response =>
-    if (isJsonArray(response))
+    if (isJsonArray(response)) {
       response.bodyAsJsonArray().getOrElse(default)
+    }
     else {
+      println(response.bodyAsJsonObject().head.encodePrettily())
       jsonObjectToDcsException(response.bodyAsJsonObject().head)
       default
     }
 
   private def isJsonArray[T](response: HttpResponse[T]): Boolean = {
     response.bodyAsString().fold(false) { s =>
-      if (s.startsWith("[")) true
-      else false
+      if (s.startsWith("[")) true else false
     }
   }
 

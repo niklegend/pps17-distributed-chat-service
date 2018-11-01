@@ -47,7 +47,7 @@ package object subscriber {
     extends Subscriber[Set[Participation]] with ErrorSubscriber with Logging {
 
     override def onNext(participations: Set[Participation]): Unit = {
-      val results = Json.arr(participations.map(participationToJsonObject).seq)
+      val results = Json.arr(participations.map(participationToJsonObject).toArray)
       response.end(results.encodePrettily())
     }
   }

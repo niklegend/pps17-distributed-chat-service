@@ -7,7 +7,6 @@ import it.unibo.dcs.commons.JsonHelper.Implicits.RichGson
 import it.unibo.dcs.commons.dataaccess.{DataStoreDatabase, ResultSetHelper}
 import it.unibo.dcs.exceptions.{ParticipationNotFoundException, ParticipationsNotFoundException, RoomNotFoundException}
 import it.unibo.dcs.service.room.data.RoomDataStore
-import it.unibo.dcs.service.room.data.impl.Implicits.participationDtoToParticipation
 import it.unibo.dcs.service.room.data.impl.RoomDataStoreDatabase.Implicits._
 import it.unibo.dcs.service.room.data.impl.RoomDataStoreDatabase._
 import it.unibo.dcs.service.room.gson
@@ -53,6 +52,7 @@ final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
         if (resultSet.getResults.isEmpty) {
           throw ParticipationNotFoundException(request.username, request.name)
         } else {
+          println(ResultSetHelper.getRows(resultSet).head.encodePrettily())
           ResultSetHelper.getRows(resultSet).head
         }
       }
@@ -63,7 +63,13 @@ final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
         if (resultSet.getResults.isEmpty) {
           throw ParticipationsNotFoundException(request.name)
         } else {
-          resultSet.getResults.head
+          // Debug
+          ResultSetHelper.getRows(resultSet).foreach(row => println(row.encodePrettily()))
+
+          ResultSetHelper.getRows(resultSet)
+            .map(row => jsonObjectToParticipationDto(row))
+            .map(dto => Participation(dto.room, dto.username, dto.join_date))
+            .toSet
         }
       }
   }
@@ -112,11 +118,14 @@ private[impl] object RoomDataStoreDatabase {
 
     implicit def jsonObjectToRoom(json: JsonObject): Room = gson fromJsonObject[Room] json
 
-    implicit def jsonObjectToParticipation(json: JsonObject): Participation =
+    implicit def jsonObjectToParticipationDto(json: JsonObject): ParticipationDto =
       gson.fromJsonObject[ParticipationDto](json)
 
-    implicit def jsonArrayToParticipationSet(json: JsonArray): Set[Participation] =
-      gson.fromJsonArray[Participation](json).toSet
+    implicit def jsonObjectToParticipation(json: JsonObject): Participation =
+      gson.fromJsonObject[Participation](json)
+
+    implicit def participationDtoToParticipation(participationDto: ParticipationDto): Participation =
+      Participation(participationDto.room, participationDto.username, participationDto.join_date)
   }
 
 }

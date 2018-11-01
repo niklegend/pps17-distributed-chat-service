@@ -112,6 +112,11 @@ final class WebAppVerticle extends ServiceVerticle {
       .produces(ContentType.APPLICATION_JSON)
       .handler(context => requestHandler handleGetRooms context)
 
+    apiRouter.delete("/rooms/:name/participations/:username")
+      .consumes(ContentType.APPLICATION_JSON)
+      .produces(ContentType.APPLICATION_JSON)
+      .handler(context => requestHandler handleLeaveRoom context)
+
     router.mountSubRouter("/api", apiRouter)
   }
 

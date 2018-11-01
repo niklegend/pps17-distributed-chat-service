@@ -5,17 +5,24 @@ import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExec
 import it.unibo.dcs.service.authentication.interactor.usecases._
 import it.unibo.dcs.service.authentication.interactor.validations._
 import it.unibo.dcs.service.authentication.repository.AuthenticationRepository
-import it.unibo.dcs.service.authentication.validator.{DeleteUserValidator, LoginValidator, LogoutUserValidator, RegistrationValidator}
+import it.unibo.dcs.service.authentication.validator._
 
 package object containers {
 
   def createUseCases(threadExecutor: ThreadExecutor, postExecutionThread: PostExecutionThread,
-                     authenticationRepository: AuthenticationRepository, jwtAuth: JWTAuth): UseCaseContainer = {
-    val loginUseCase = LoginUserUseCase(threadExecutor, postExecutionThread, authenticationRepository, jwtAuth)
-    val logoutUseCase = LogoutUserUseCase(threadExecutor, postExecutionThread, authenticationRepository)
-    val registerUseCase = RegisterUserUseCase(threadExecutor, postExecutionThread, authenticationRepository, jwtAuth)
-    val checkTokenUseCase = CheckTokenUseCase(threadExecutor, postExecutionThread, authenticationRepository)
-    val deleteUserUseCase = DeleteUserUseCase(threadExecutor, postExecutionThread, authenticationRepository)
+                     authenticationRepository: AuthenticationRepository, jwtAuth: JWTAuth,
+                     validations: ValidationContainer): UseCaseContainer = {
+    val loginUseCase = LoginUserUseCase(threadExecutor, postExecutionThread, authenticationRepository,
+      jwtAuth, validations.loginUserValidation)
+    val logoutUseCase = LogoutUserUseCase(threadExecutor, postExecutionThread, authenticationRepository,
+      validations.logoutUserValidation)
+    val registerUseCase = RegisterUserUseCase(threadExecutor, postExecutionThread, authenticationRepository,
+      jwtAuth, validations.registerUserValidation)
+    val checkTokenUseCase = CheckTokenUseCase(threadExecutor, postExecutionThread, authenticationRepository,
+      validations.checkTokenValidation)
+    val deleteUserUseCase = DeleteUserUseCase(threadExecutor, postExecutionThread, authenticationRepository,
+      validations.deleteUserValidation)
+
     UseCaseContainer(loginUseCase, logoutUseCase, registerUseCase, checkTokenUseCase, deleteUserUseCase)
   }
 
@@ -28,7 +35,10 @@ package object containers {
     val loginValidation = LoginUserValidation(threadExecutor, postExecutionThread, loginValidator)
     val deleteUserValidator = DeleteUserValidator(authenticationRepository)
     val deleteUserValidation = DeleteUserValidation(threadExecutor, postExecutionThread, deleteUserValidator)
-    ValidationContainer(logoutUserValidation, registrationValidation, loginValidation, deleteUserValidation)
+    val checkTokenValidation = CheckTokenValidation(threadExecutor, postExecutionThread, CheckTokenValidator.apply)
+
+    ValidationContainer(logoutUserValidation, registrationValidation, loginValidation,
+      deleteUserValidation, checkTokenValidation)
   }
 
   case class UseCaseContainer(loginUserUseCase: LoginUserUseCase,
@@ -38,8 +48,9 @@ package object containers {
                               deleteUserUseCase: DeleteUserUseCase)
 
   case class ValidationContainer(logoutUserValidation: LogoutUserValidation,
-                                 registrationValidation: RegisterUserValidation,
+                                 registerUserValidation: RegisterUserValidation,
                                  loginUserValidation: LoginUserValidation,
-                                 deleteUserValidation: DeleteUserValidation)
+                                 deleteUserValidation: DeleteUserValidation,
+                                 checkTokenValidation: CheckTokenValidation)
 
 }

@@ -19,7 +19,7 @@ object Requests {
   final case class RegisterUserRequest(username: String, password: String) extends TokenRequest
 
   /** Request that contains user credentials */
-  trait TokenRequest {
+  sealed trait TokenRequest {
     def username: String
     def password: String
   }

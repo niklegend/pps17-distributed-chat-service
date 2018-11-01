@@ -58,6 +58,12 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
       useCase(_, JoinRoomSubscriber(context.response()))
     }
 
+  override def handleLeaveRoom(context: RoutingContext)(implicit ctx: Context): Unit =
+    handleRequestBody(context) {
+      val useCase = LeaveRoomUseCase(authRepository, roomRepository)
+      useCase(_, LeaveRoomSubscriber(context.response()))
+    }
+
   override def handleGetRooms(context: RoutingContext)(implicit ctx: Context): Unit = {
     handleRequestParam(context, "user") {
       username => {
@@ -71,7 +77,7 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
     }
   }
 
-  private[this] def handleRequestBody(context: RoutingContext)(handler: JsonObject => Unit): Unit = 
+  private[this] def handleRequestBody(context: RoutingContext)(handler: JsonObject => Unit): Unit =
     context.getBodyAsJson().fold(throw InternalException("Request body required"))(handler)
 
   private[this] def handleRequestParam(context: RoutingContext, param: String)(handler: String => Unit): Unit =

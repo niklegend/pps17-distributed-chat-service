@@ -26,16 +26,6 @@ package object subscriber {
     override def onCompleted(): Unit = response.setStatus(HttpResponseStatus.OK).end()
   }
 
-  class LogoutValiditySubscriber(protected override val response: HttpServerResponse,
-                                         logoutUserUseCase: LogoutUserUseCase,
-                                         request: LogoutUserRequest)
-                                        (implicit context: RoutingContext) extends Subscriber[Unit]
-    with ErrorSubscriber {
-
-    override def onCompleted(): Unit =
-      logoutUserUseCase(request).subscribe(new OkSubscriber(response))
-  }
-
   class DeleteUserValiditySubscriber(protected override val response: HttpServerResponse,
                                      deleteUserUseCase: DeleteUserUseCase,
                                      request: DeleteUserRequest)
@@ -45,27 +35,6 @@ package object subscriber {
     override def onCompleted(): Unit =
       deleteUserUseCase(request).subscribe(new OkSubscriber(response))
   }
-
-  class LoginValiditySubscriber(protected override val response: HttpServerResponse,
-                                        credentials: (Option[String], Option[String]),
-                                        loginUserUseCase: LoginUserUseCase,
-                                        request: LoginUserRequest)
-    extends Subscriber[Unit] with ErrorSubscriber {
-
-    override def onCompleted(): Unit =
-      loginUserUseCase(request).subscribe(new TokenSubscriber(response))
-  }
-
-  class RegistrationValiditySubscriber(protected override val response: HttpServerResponse,
-                                               credentials: (Option[String], Option[String]),
-                                               registerUserUseCase: RegisterUserUseCase,
-                                               request: RegisterUserRequest)
-    extends Subscriber[Unit] with ErrorSubscriber {
-
-    override def onCompleted(): Unit =
-      registerUserUseCase(request, new TokenSubscriber(response))
-  }
-
 
   class TokenCheckSubscriber(protected override val response: HttpServerResponse)
                             (implicit routingContext: RoutingContext)

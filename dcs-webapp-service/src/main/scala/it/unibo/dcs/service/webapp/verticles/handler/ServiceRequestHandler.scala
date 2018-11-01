@@ -24,6 +24,13 @@ trait ServiceRequestHandler {
     */
   def handleJoinRoom(context: RoutingContext)(implicit ctx: Context): Unit
 
+  /** User leaves the specified room
+    *
+    * @param context Vertx routing context
+    * @param ctx     Vertx context passed implicitly
+    */
+  def handleLeaveRoom(context: RoutingContext)(implicit ctx: Context): Unit
+
   /** Login request handler
     *
     * @param context Vertx routing context

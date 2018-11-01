@@ -15,20 +15,14 @@ import rx.lang.scala.Observable
   * @param authRepository      authentication repository reference
   * @param jwtAuth             jwt authentication provider
   * @usecase creation of a jwt token */
-abstract class ReturningTokenUseCase(private[this] val threadExecutor: ThreadExecutor,
-                                     private[this] val postExecutionThread: PostExecutionThread,
-                                     private[this] val authRepository: AuthenticationRepository,
-                                     private[this] val jwtAuth: JWTAuth)
-  extends UseCase[String, TokenRequest](threadExecutor, postExecutionThread) {
+trait ReturningTokenUseCase {
 
-  val tokenGenerator = JwtTokenGenerator(jwtAuth)
-
-  override protected[this] def createObservable(request: TokenRequest): Observable[String] =
-    getMainObservable(request.username, request.password).map(_ => tokenGenerator.generateToken(request.username))
-
-  /** Method to override to define the observable that the use case generates
+  /** Method that maps the unit result to a new token
     *
-    * @param username the username of the user
-    * @param password the password of the user */
-  protected def getMainObservable(username: String, password: String): Observable[Unit]
+    * @param observable the observable to map
+    * @param username the provided username
+    * */
+  def createToken(username: String, jwtAuth: JWTAuth): String =
+    JwtTokenGenerator(jwtAuth).generateToken(username)
+
 }

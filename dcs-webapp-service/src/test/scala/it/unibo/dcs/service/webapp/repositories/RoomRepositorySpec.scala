@@ -2,7 +2,7 @@ package it.unibo.dcs.service.webapp.repositories
 
 import java.util.Date
 
-import it.unibo.dcs.service.webapp.interaction.Requests.{CreateRoomRequest, DeleteRoomRequest, GetRoomsRequest, RoomJoinRequest}
+import it.unibo.dcs.service.webapp.interaction.Requests._
 import it.unibo.dcs.service.webapp.model.{Participation, Room}
 import it.unibo.dcs.service.webapp.repositories.RoomRepository
 import it.unibo.dcs.service.webapp.repositories.datastores.RoomDataStore
@@ -25,8 +25,10 @@ class RoomRepositorySpec extends RepositorySpec {
   private val deleteRoomRequest = DeleteRoomRequest(room.name, user.username, token)
   private val getRoomsRequest = GetRoomsRequest("martynha", token)
   private val joinRoomRequest = RoomJoinRequest(room.name, user.username, token)
+  private val leaveRoomRequest = RoomLeaveRequest(room.name, user.username, token)
 
   private val joinRoomSubscriber = stub[Subscriber[Participation]]
+  private val leaveRoomSubscriber = stub[Subscriber[Participation]]
   private val createRoomSubscriber: Subscriber[Room] = stub[Subscriber[Room]]
   private val deleteRoomSubscriber: Subscriber[String] = stub[Subscriber[String]]
   private val registerUserSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
@@ -58,6 +60,20 @@ class RoomRepositorySpec extends RepositorySpec {
     (joinRoomSubscriber onNext _) verify participation once()
     // Verify that `subscriber.onCompleted` has been called once
     (() => joinRoomSubscriber onCompleted) verify() once()
+  }
+
+  it should "return the old participation when a user leaves a room" in {
+    // Given
+    (roomDataStore leaveRoom _) expects leaveRoomRequest returns Observable.just(participation) once()
+
+    // When
+    repository leaveRoom leaveRoomRequest subscribe leaveRoomSubscriber
+
+    // Then
+    // Verify that `subscriber.onNext` has been called once with `token` as argument
+    (leaveRoomSubscriber onNext _) verify participation once()
+    // Verify that `subscriber.onCompleted` has been called once
+    (() => leaveRoomSubscriber onCompleted) verify() once()
   }
 
   it should "delete an existing room" in {

@@ -2,7 +2,7 @@ package it.unibo.dcs.service.webapp.repositories.datastores
 
 import java.util.Date
 
-import it.unibo.dcs.service.webapp.interaction.Requests.{CreateRoomRequest, DeleteRoomRequest, GetRoomsRequest, RoomJoinRequest}
+import it.unibo.dcs.service.webapp.interaction.Requests._
 import it.unibo.dcs.service.webapp.model.{Participation, Room}
 import it.unibo.dcs.service.webapp.repositories.datastores.RoomDataStore
 import it.unibo.dcs.service.webapp.repositories.datastores.api.RoomApi
@@ -25,12 +25,14 @@ class RoomDataStoreSpec extends DataStoreSpec {
   private val roomDeletionRequest = DeleteRoomRequest(room.name, user.username, token)
   private val getRoomsRequest = GetRoomsRequest("martynha", token)
   private val joinRoomRequest = RoomJoinRequest(room.name, user.username, token)
+  private val leaveRoomRequest = RoomLeaveRequest(room.name, user.username, token)
 
   private val deleteRoomSubscriber = stub[Subscriber[String]]
   private val createRoomSubscriber = stub[Subscriber[Room]]
   private val registrationSubscriber = stub[Subscriber[Unit]]
   private val getRoomsSubscriber: Subscriber[List[Room]] = stub[Subscriber[List[Room]]]
   private val joinRoomSubscriber = stub[Subscriber[Participation]]
+  private val leaveRoomSubscriber = stub[Subscriber[Participation]]
 
   it should "create a new room" in {
     // Given
@@ -46,7 +48,7 @@ class RoomDataStoreSpec extends DataStoreSpec {
     (() => createRoomSubscriber onCompleted) verify() once()
   }
 
-  it should "create a new participation when a user join a room" in {
+  it should "create a new participation when a user joins a room" in {
     // Given
     (roomApi joinRoom _) expects joinRoomRequest returns Observable.just(participation) once()
 
@@ -58,6 +60,20 @@ class RoomDataStoreSpec extends DataStoreSpec {
     (joinRoomSubscriber onNext _) verify participation once()
     // Verify that `subscriber.onCompleted` has been called once
     (() => joinRoomSubscriber onCompleted) verify() once()
+  }
+
+  it should "return the old participation when a user leaves a room" in {
+    // Given
+    (roomApi leaveRoom _) expects leaveRoomRequest returns Observable.just(participation) once()
+
+    // When
+    dataStore.leaveRoom(leaveRoomRequest).subscribe(leaveRoomSubscriber)
+
+    // Then
+    // Verify that `subscriber.onNext` has been called once with `token` as argument
+    (leaveRoomSubscriber onNext _) verify participation once()
+    // Verify that `subscriber.onCompleted` has been called once
+    (() => leaveRoomSubscriber onCompleted) verify() once()
   }
 
   it should "save a new user" in {

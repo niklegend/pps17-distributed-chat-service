@@ -25,6 +25,7 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
 
   private[this] lazy val roomDeleted = eventBus.address(Rooms.deleted)
   private[this] lazy val roomJoined = eventBus.address(Rooms.joined)
+  private[this] lazy val roomLeaved = eventBus.address(Rooms.leaved)
 
   override def handleRegistration(context: RoutingContext)(implicit ctx: Context): Unit =
     handleRequestBody(context) {
@@ -87,9 +88,17 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
     }
 
   override def handleLeaveRoom(context: RoutingContext)(implicit ctx: Context): Unit =
-    handleRequestBody(context) {
-      val useCase = LeaveRoomUseCase(authRepository, roomRepository)
-      useCase(_, LeaveRoomSubscriber(context.response()))
+    handleRequestToken(context) {
+      token =>
+        handleRequestParam(context, ParamLabels.roomNameLabel) {
+          roomName =>
+            handleRequestBody(context) {
+              request =>
+                val useCase = LeaveRoomUseCase(authRepository, roomRepository)
+                useCase(request.put(JsonLabels.roomNameLabel, roomName).put(JsonLabels.authenticationLabel, token),
+                  LeaveRoomSubscriber(context.response(), roomLeaved))
+            }
+        }
     }
 
   override def handleGetRooms(context: RoutingContext)(implicit ctx: Context): Unit = {

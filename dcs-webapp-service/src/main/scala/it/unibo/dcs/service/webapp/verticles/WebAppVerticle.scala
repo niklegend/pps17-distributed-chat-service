@@ -71,7 +71,7 @@ final class WebAppVerticle extends ServiceVerticle {
     router.mountSubRouter("/api", apiRouter)
   }
 
-  private def defineServiceApi(apiRouter: Router) = {
+  private def defineServiceApi(apiRouter: Router): Unit = {
     implicit val ctx: core.Context = this.ctx
 
     apiRouter.post("/register")
@@ -108,12 +108,10 @@ final class WebAppVerticle extends ServiceVerticle {
       .produces(ContentType.APPLICATION_JSON)
       .handler(context => requestHandler handleGetRooms context)
 
-      apiRouter.delete("/rooms/:name/participations/:username")
+    apiRouter.delete("/rooms/:" + ParamLabels.roomNameLabel + "/participations/:" + ParamLabels.userLabel)
       .consumes(ContentType.APPLICATION_JSON)
       .produces(ContentType.APPLICATION_JSON)
       .handler(context => requestHandler handleLeaveRoom context)
-
-    router.mountSubRouter("/api", apiRouter)
   }
     
   private def disableCors(router: Router) = {

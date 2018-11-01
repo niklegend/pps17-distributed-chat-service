@@ -99,19 +99,20 @@ final class WebAppVerticle extends ServiceVerticle {
       .produces(APPLICATION_JSON)
       .handler(context => requestHandler handleJoinRoom context)
 
+    apiRouter.delete("/rooms/:" + ParamLabels.roomNameLabel + "/participations/:" + ParamLabels.userLabel)
+      .produces(ContentType.APPLICATION_JSON)
+      .handler(context => requestHandler handleLeaveRoom context)
+
     apiRouter.delete("/rooms/:" + ParamLabels.roomNameLabel)
       .consumes(APPLICATION_JSON)
       .produces(APPLICATION_JSON)
       .handler(context => requestHandler handleRoomDeletion context)
 
     apiRouter.get("/rooms")
+      .consumes(APPLICATION_JSON)
       .produces(ContentType.APPLICATION_JSON)
       .handler(context => requestHandler handleGetRooms context)
 
-    apiRouter.delete("/rooms/:" + ParamLabels.roomNameLabel + "/participations/:" + ParamLabels.userLabel)
-      .consumes(ContentType.APPLICATION_JSON)
-      .produces(ContentType.APPLICATION_JSON)
-      .handler(context => requestHandler handleLeaveRoom context)
   }
     
   private def disableCors(router: Router) = {

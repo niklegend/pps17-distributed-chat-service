@@ -45,7 +45,11 @@ package object validator {
 
   object GetRoomsValidator {
     def apply(): Validator[GetRoomsRequest] = Validator[GetRoomsRequest] {
-      _ => {} // no rules to specify
+      builder => builder
+        .addRule(request =>
+          Conditions.stringNotEmpty(request.username),
+          UsernameRequiredException
+        )
     }
   }
 
@@ -60,6 +64,20 @@ package object validator {
             Conditions.stringNotEmpty(request.username),
             UsernameRequiredException
           )
+    }
+  }
+
+  object LeaveRoomValidator {
+    def apply(): Validator[LeaveRoomRequest] = Validator[LeaveRoomRequest] {
+      builder => builder
+        .addRule(request =>
+          Conditions.stringNotEmpty(request.name),
+          RoomNameRequiredException
+        )
+        .addRule(request =>
+          Conditions.stringNotEmpty(request.username),
+          UsernameRequiredException
+        )
     }
   }
 }

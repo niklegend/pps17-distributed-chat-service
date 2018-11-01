@@ -18,5 +18,7 @@ trait RoomRepository {
   
   def joinRoom(request: JoinRoomRequest): Observable[Participation]
 
+  def leaveRoom(request: LeaveRoomRequest): Observable[Participation]
+
   def getParticipationByKey(request: JoinRoomRequest): Observable[Participation]
 }

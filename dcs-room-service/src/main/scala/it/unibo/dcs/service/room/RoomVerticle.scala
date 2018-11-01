@@ -60,6 +60,10 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
       val validation = new JoinRoomValidation(threadExecutor, postExecutionThread, JoinRoomValidator())
       new JoinRoomUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
     }
+    val leaveRoomUseCase = {
+      val validation = new LeaveRoomValidation(threadExecutor, postExecutionThread, LeaveRoomValidator())
+      new LeaveRoomUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
+    }
 
     router.post("/users")
       .consumes(ContentType.APPLICATION_JSON)
@@ -99,6 +103,16 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
         joinRoomUseCase(request, subscriber)
       })
 
+    router.delete("/rooms/:name/participations")
+      .consumes(ContentType.APPLICATION_JSON)
+      .produces(ContentType.APPLICATION_JSON)
+      .handler(routingContext => {
+        val roomName = routingContext.request().getParam("name").head
+        val request = routingContext.getBodyAsJson.head.put("name", roomName)
+        val subscriber = new LeaveRoomSubscriber(routingContext.response())
+        leaveRoomUseCase(request, subscriber)
+      })
+
     router.get("/rooms")
       .produces(ContentType.APPLICATION_JSON)
       .handler(routingContext => {
@@ -135,6 +149,8 @@ object RoomVerticle {
     implicit def jsonObjectToJoinRoomRequest(json: JsonObject): JoinRoomRequest =
       gson fromJsonObject[JoinRoomRequest] json
 
+    implicit def jsonObjectToLeaveRoomRequest(json: JsonObject): LeaveRoomRequest =
+      gson fromJsonObject[LeaveRoomRequest] json
   }
 
 }

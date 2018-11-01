@@ -26,13 +26,21 @@ package object subscriber {
 
   }
 
-  final class JoinRoomSubscriber(protected override val response: HttpServerResponse) extends Subscriber[Participation]
+  final class JoinRoomSubscriber(protected override val response: HttpServerResponse)
+    extends ParticipationSubscriber(response, HttpResponseStatus.CREATED)
+
+  final class LeaveRoomSubscriber(protected override val response: HttpServerResponse)
+    extends ParticipationSubscriber(response, HttpResponseStatus.NO_CONTENT)
+
+  abstract class ParticipationSubscriber(protected override val response: HttpServerResponse,
+                                         responseStatus: HttpResponseStatus)
+    extends Subscriber[Participation]
     with ErrorSubscriber with Logging {
 
     override def onNext(participation: Participation): Unit = {
       val json: JsonObject = participation
       log.info(s"Answering with participation: $json")
-      response.setStatus(HttpResponseStatus.CREATED).end(json)
+      response.setStatus(responseStatus).end(json)
     }
   }
 

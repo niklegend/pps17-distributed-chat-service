@@ -12,5 +12,12 @@ package object request {
 
   final case class GetRoomsRequest(username: String)
 
-  final case class JoinRoomRequest(name: String, username: String)
+  final case class JoinRoomRequest(name: String, username: String) extends RoomRequest
+
+  final case class LeaveRoomRequest(name: String, username: String) extends RoomRequest
+
+  sealed trait RoomRequest {
+    val name: String
+    val username: String
+  }
 }

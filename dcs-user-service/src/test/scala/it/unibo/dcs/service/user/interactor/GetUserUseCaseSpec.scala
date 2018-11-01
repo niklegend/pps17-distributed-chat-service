@@ -10,6 +10,8 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
 import rx.lang.scala.{Observable, Subscriber}
 
+import scala.language.postfixOps
+
 class GetUserUseCaseSpec extends FlatSpec with MockFactory {
 
   private val request = GetUserRequest("martyha")

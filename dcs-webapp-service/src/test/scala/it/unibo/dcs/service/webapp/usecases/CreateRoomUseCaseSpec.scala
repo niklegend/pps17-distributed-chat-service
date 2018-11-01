@@ -1,4 +1,4 @@
-package usecases
+package it.unibo.dcs.service.webapp.usecases
 
 import it.unibo.dcs.service.webapp.interaction.Requests.{CheckTokenRequest, CreateRoomRequest}
 import it.unibo.dcs.service.webapp.interaction.Results.RoomCreationResult
@@ -14,7 +14,7 @@ class CreateRoomUseCaseSpec extends UseCaseSpec {
   private val room = Room("Room 1")
 
   private val createRoomRequest = CreateRoomRequest("Room 1", user.username, token)
-  private val checkTokenRequest = CheckTokenRequest(token)
+  private val checkTokenRequest = CheckTokenRequest(token, user.username)
 
   private val roomCreationResult = RoomCreationResult(room)
 

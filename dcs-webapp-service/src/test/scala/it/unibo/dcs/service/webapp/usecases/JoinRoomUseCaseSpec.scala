@@ -1,4 +1,4 @@
-package usecases
+package it.unibo.dcs.service.webapp.usecases
 
 import java.util.Date
 
@@ -16,7 +16,7 @@ class JoinRoomUseCaseSpec extends UseCaseSpec {
   private val roomRepository: RoomRepository = mock[RoomRepository]
 
   private val room = Room("Room 1")
-  private val participation = Participation(new Date(), room, user)
+  private val participation = Participation(new Date(), room, user.username)
 
   private val joinRoomRequest = RoomJoinRequest(room.name, user.username, token)
 
@@ -28,7 +28,7 @@ class JoinRoomUseCaseSpec extends UseCaseSpec {
 
   it should "execute the room join use case" in {
     // Given
-    (authRepository checkToken _) expects CheckTokenRequest(token) returns (Observable empty) once()
+    (authRepository checkToken _) expects CheckTokenRequest(token, user.username) returns (Observable empty) once()
     (roomRepository joinRoom _) expects joinRoomRequest returns (Observable just participation) once()
 
     // When

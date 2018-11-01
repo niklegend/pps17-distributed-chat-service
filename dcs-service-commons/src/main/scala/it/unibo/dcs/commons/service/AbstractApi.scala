@@ -1,11 +1,14 @@
 package it.unibo.dcs.commons.service
 
+import io.vertx.lang.scala.ScalaLogger
 import io.vertx.scala.ext.web.client.{HttpResponse, WebClient}
 import it.unibo.dcs.exceptions.ServiceUnavailableException
 import rx.lang.scala.Observable
 
 abstract class AbstractApi(private[this] val discovery: HttpEndpointDiscovery,
                            private[this] val serviceName: String) {
+
+  private[this] val logger = ScalaLogger.getLogger(getClass.getName)
 
   private[this] val errorObservable = Observable error ServiceUnavailableException(serviceName)
 
@@ -16,7 +19,7 @@ abstract class AbstractApi(private[this] val discovery: HttpEndpointDiscovery,
   private[this] def discoverClient(): Unit = {
     discovery.getWebClient(serviceName)
       .subscribe(c => {
-        println("Got web client")
+        logger.info("Got web client")
         clientOption = Some(c)
       })
   }

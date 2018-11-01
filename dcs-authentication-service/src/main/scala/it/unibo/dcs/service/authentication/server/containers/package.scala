@@ -28,12 +28,12 @@ package object containers {
 
   def createValidations(threadExecutor: ThreadExecutor, postExecutionThread: PostExecutionThread,
                         authenticationRepository: AuthenticationRepository): ValidationContainer = {
-    val logoutValidator = LogoutUserValidator(authenticationRepository)
+    val logoutValidator = LogoutUserValidator()
     val logoutUserValidation = LogoutUserValidation(threadExecutor, postExecutionThread, logoutValidator)
-    val registrationValidation = RegisterUserValidation(threadExecutor, postExecutionThread, RegistrationValidator())
-    val loginValidator = LoginValidator(authenticationRepository)
+    val registrationValidation = RegisterUserValidation(threadExecutor, postExecutionThread, RegisterUserValidator())
+    val loginValidator = LoginUserValidator()
     val loginValidation = LoginUserValidation(threadExecutor, postExecutionThread, loginValidator)
-    val deleteUserValidator = DeleteUserValidator(authenticationRepository)
+    val deleteUserValidator = DeleteUserValidator()
     val deleteUserValidation = DeleteUserValidation(threadExecutor, postExecutionThread, deleteUserValidator)
     val checkTokenValidation = CheckTokenValidation(threadExecutor, postExecutionThread, CheckTokenValidator.apply)
 

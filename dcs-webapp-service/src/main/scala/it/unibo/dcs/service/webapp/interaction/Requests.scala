@@ -1,14 +1,14 @@
 package it.unibo.dcs.service.webapp.interaction
 
-import com.google.gson.Gson
 import io.vertx.lang.scala.json.{Json, JsonObject}
 import it.unibo.dcs.commons.dataaccess.Implicits.stringToDate
-import it.unibo.dcs.service.webapp.interaction.JsonLabels._
+import it.unibo.dcs.service.webapp.gson
+import it.unibo.dcs.service.webapp.interaction.Labels.JsonLabels._
 import it.unibo.dcs.service.webapp.model.{Room, User}
 
 import scala.language.implicitConversions
 
-/** It wraps all requests used by request handler, use cases, repositories, datastores and APIs */
+/** It wraps all requests used by request handler, use cases, it.unibo.dcs.service.webapp.repositories, datastores and APIs */
 object Requests {
 
   /** Sum type representing all the specific requests for Distributed Chat Service application */
@@ -32,12 +32,10 @@ object Requests {
 
   final case class GetRoomsRequest(username: String, token: String) extends DcsRequest
 
-  final case class CheckTokenRequest(token: String) extends DcsRequest
+  final case class CheckTokenRequest(token: String, username: String) extends DcsRequest
 
   /** It enables implicit conversions in order to clean code that deals with requests. */
   object Implicits {
-
-    private val gson = new Gson()
 
     implicit def requestToJson(request: DcsRequest): JsonObject = Json.fromObjectString(gson.toJson(request))
 
@@ -46,7 +44,7 @@ object Requests {
     }
 
     implicit def jsonToCheckTokenRequest(json: JsonObject): CheckTokenRequest = {
-      CheckTokenRequest(json.getString(tokenLabel))
+      CheckTokenRequest(json.getString(tokenLabel), json.getString(usernameLabel))
     }
 
     implicit def jsonObjectToRegisterUserRequest(json: JsonObject): RegisterUserRequest = {

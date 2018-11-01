@@ -1,5 +1,6 @@
 package it.unibo.dcs.service.authentication.server.handlers
 
+import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.scala.ext.web.RoutingContext
 import it.unibo.dcs.commons.VertxWebHelper._
 import it.unibo.dcs.service.authentication.interactor.usecases._
@@ -14,23 +15,22 @@ class ServiceRequestHandlerImpl(loginUserUseCase: LoginUserUseCase, logoutUserUs
   override def handleRegistration(implicit context: RoutingContext): Unit = {
     val credentials: (Option[String], Option[String]) = getCredentials
     val request = RegisterUserRequest(credentials._1.get, credentials._2.get)
-    registerUserUseCase(request, new TokenSubscriber(context.response))
+    registerUserUseCase(request, new TokenSubscriber(context.response, HttpResponseStatus.CREATED))
   }
 
   override def handleLogin(implicit context: RoutingContext): Unit = {
     val credentials = getCredentials
     val request = LoginUserRequest(credentials._1.get, credentials._2.get)
-    loginUserUseCase(request, new TokenSubscriber(context.response))
+    loginUserUseCase(request, new TokenSubscriber(context.response, HttpResponseStatus.OK))
   }
 
   override def handleLogout(implicit context: RoutingContext): Unit = {
-    val request = LogoutUserRequest(getTokenFromHeader.get)
-    /* Request check before executing logout*/
+    val request = LogoutUserRequest(getUsername.get, getTokenFromHeader.get)
     logoutUserUseCase(request, new OkSubscriber(context.response))
   }
 
   override def handleTokenCheck(implicit context: RoutingContext): Unit = {
-    val request = CheckTokenRequest(getTokenFromHeader.get)
+    val request = CheckTokenRequest(getTokenFromHeader.get, getUsername.get)
     checkTokenUseCase(request, new TokenCheckSubscriber(context.response()))
   }
 

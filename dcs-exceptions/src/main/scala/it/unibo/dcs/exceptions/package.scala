@@ -306,9 +306,6 @@ package object exceptions {
     jsonObjectToDcsException(response.bodyAsJsonObject().getOrElse(default))
 
   def bodyAsJsonArray[T](default: => JsonArray = Json.emptyArr()): HttpResponse[T] => JsonArray = response => {
-    // debug
-    println(response.bodyAsJsonArray().head.encodePrettily())
-
     if (isJsonArray(response)) {
       response.bodyAsJsonArray().getOrElse(default)
     }

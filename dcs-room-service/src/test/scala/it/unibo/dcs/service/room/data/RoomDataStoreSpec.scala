@@ -110,8 +110,8 @@ object RoomDataStoreSpec extends App {
   private def testGetRoomsMethod(context: TestContext): Unit = {
     val selectAsync = context.async(1)
     roomDataStore.createUser(CreateUserRequest(exampleUser))
-      .subscribe(_ => roomDataStore.createRoom(CreateRoomRequest(exampleRoom, exampleUser))
-        .subscribe(_ => roomDataStore.getRooms(GetRoomsRequest(exampleUser))
+      .map(_ => roomDataStore.createRoom(CreateRoomRequest(exampleRoom, exampleUser))
+        .map(_ => roomDataStore.getRooms(GetRoomsRequest(exampleUser))
           .subscribe(result => {
             assert(result.contains(Room(exampleRoom)))
             selectAsync.countDown()
@@ -122,13 +122,13 @@ object RoomDataStoreSpec extends App {
   private def testRoomLeaveMethod(context: TestContext): Unit = {
     val selectAsync = context.async(1)
     roomDataStore.createUser(CreateUserRequest(exampleUser))
-      .subscribe(_ => roomDataStore.createRoom(CreateRoomRequest(exampleRoom, exampleUser))
-        .subscribe(_ => roomDataStore.joinRoom(JoinRoomRequest(exampleRoom, exampleUser))
-          .subscribe(_ => roomDataStore.leaveRoom(LeaveRoomRequest(exampleRoom, exampleUser))
+      .map(_ => roomDataStore.createRoom(CreateRoomRequest(exampleRoom, exampleUser))
+        .map(_ => roomDataStore.joinRoom(JoinRoomRequest(exampleRoom, exampleUser))
+          .map(_ => roomDataStore.leaveRoom(LeaveRoomRequest(exampleRoom, exampleUser))
             .subscribe(result => {
               assert((result.username equals exampleUser) && (result.room.name equals exampleRoom))
               selectAsync.countDown()
-            }), context.fail)))
+            }))))
     selectAsync.await()
   }
 

@@ -57,7 +57,7 @@ final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
   override def getParticipationByKey(request: JoinRoomRequest): Observable[Participation] =
     getRoomParticipation(request)
 
-  private def getRoomParticipation(request: RoomRequest): Observable[Participation] =
+  private def getRoomParticipation(request: JoinOrLeaveRoomRequest): Observable[Participation] =
     query(selectParticipationByKey, request)
       .map { resultSet =>
         if (resultSet.getResults.isEmpty) {
@@ -76,7 +76,7 @@ private[impl] object RoomDataStoreDatabase {
 
   val insertParticipationQuery = "INSERT INTO `participations` (`username`, `name`) VALUES (?, ?)"
 
-  val removeParticipationQuery = "DELETE FROM `participations` WHERE name = ? AND username = ?"
+  val removeParticipationQuery = "DELETE FROM `participations` WHERE `username` = ? AND `name` = ? "
 
   val deleteRoomQuery = "DELETE FROM `rooms` WHERE `name` = ? AND `owner_username` = ?;"
 
@@ -104,7 +104,10 @@ private[impl] object RoomDataStoreDatabase {
     implicit def requestToParams(request: DeleteRoomRequest): JsonArray =
       new JsonArray().add(request.name).add(request.username)
 
-    implicit def requestToParams(request: RoomRequest): JsonArray =
+    /**
+    * Useful for JoinRoomRequest and LeaveRoomRequest
+    * */
+    implicit def requestToParams(request: JoinOrLeaveRoomRequest): JsonArray =
       new JsonArray().add(request.username).add(request.name)
 
     implicit def jsonObjectToRoom(json: JsonObject): Room = gson fromJsonObject[Room] json

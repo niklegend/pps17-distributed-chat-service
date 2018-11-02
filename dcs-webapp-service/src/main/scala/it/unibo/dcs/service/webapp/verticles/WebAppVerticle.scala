@@ -109,7 +109,6 @@ final class WebAppVerticle extends ServiceVerticle {
       .handler(context => requestHandler handleRoomDeletion context)
 
     apiRouter.get("/rooms")
-      .consumes(APPLICATION_JSON)
       .produces(ContentType.APPLICATION_JSON)
       .handler(context => requestHandler handleGetRooms context)
 
@@ -125,7 +124,8 @@ final class WebAppVerticle extends ServiceVerticle {
       .allowedHeader("Access-Control-Allow-Method")
       .allowedHeader("Access-Control-Allow-Origin")
       .allowedHeader("Access-Control-Allow-Credentials")
-      .allowedHeader("Content-Type"))
+      .allowedHeader("Content-Type")
+      .allowedHeader("Authorization"))
   }
 
   override def start(): Unit = {

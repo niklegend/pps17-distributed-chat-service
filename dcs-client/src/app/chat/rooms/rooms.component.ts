@@ -23,7 +23,8 @@ export class RoomsComponent implements OnInit {
   ngOnInit() {
     console.log('Getting user rooms...');
 
-    const participationFilter = filter<Participation>(participation => participation.username === this.auth.user.username);
+    const participationFilter =
+      filter<Participation>(participation => participation.username === this.auth.user.username);
 
     this.chat.onRoomJoined()
       .pipe(participationFilter)

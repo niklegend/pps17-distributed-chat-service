@@ -99,7 +99,7 @@ private[impl] object RoomDataStoreDatabase {
       new JsonArray().add(request.name)
 
     implicit def requestToParams(request: GetRoomsRequest): JsonArray =
-      new JsonArray()
+      new JsonArray().add(request.username)
 
     implicit def requestToParams(request: DeleteRoomRequest): JsonArray =
       new JsonArray().add(request.name).add(request.username)

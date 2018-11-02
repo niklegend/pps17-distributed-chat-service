@@ -86,7 +86,7 @@ package object exceptions {
 
   final case class RoomNotFoundException(name: String) extends DcsException(RoomNotFound)
 
-  final case class ParticipationAlreadyExistsException(username:String, name: String) extends DcsException(ParticipationAlreadyExists)
+  final case class ParticipationAlreadyExistsException(username: String, name: String) extends DcsException(ParticipationAlreadyExists)
 
   final case class ParticipationNotFoundException(username: String, name: String) extends DcsException(ParticipationNotFound)
 
@@ -276,7 +276,7 @@ package object exceptions {
            | TokenRequiredException
            | RoomNameRequiredException =>
         HttpResponseStatus.PRECONDITION_FAILED
-        // HttpResponseStatus.UNPROCESSABLE_ENTITY
+      // HttpResponseStatus.UNPROCESSABLE_ENTITY
       case InvalidTokenException
            | WrongUsernameOrPasswordException =>
         HttpResponseStatus.UNAUTHORIZED
@@ -288,18 +288,16 @@ package object exceptions {
     jsonObjectToDcsException(response.bodyAsJsonObject().getOrElse(default))
 
   def bodyAsJsonArray[T](default: => JsonArray = Json.emptyArr()): HttpResponse[T] => JsonArray = response =>
-    if (isJsonArray(response))
+    if (isJsonArray(response)) {
       response.bodyAsJsonArray().getOrElse(default)
+    }
     else {
       jsonObjectToDcsException(response.bodyAsJsonObject().head)
       default
     }
 
   private def isJsonArray[T](response: HttpResponse[T]): Boolean = {
-    response.bodyAsString().fold(false) { s =>
-      if (s.startsWith("[")) true
-      else false
-    }
+    response.bodyAsString().fold(false) (_.startsWith("["))
   }
 
 }

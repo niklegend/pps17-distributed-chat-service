@@ -3,6 +3,7 @@ import { Router, NavigationEnd } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
 import { ChatService } from '../../service/chat.service';
 import { AuthService } from '../../service/auth.service';
+import {Room} from "../../model";
 
 @Component({
   selector: 'app-topnav',

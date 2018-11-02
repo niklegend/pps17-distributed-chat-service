@@ -10,6 +10,7 @@ import it.unibo.dcs.exceptions.InternalException
 import it.unibo.dcs.service.webapp.interaction.Labels.JsonLabels._
 import it.unibo.dcs.service.webapp.interaction.Labels.{JsonLabels, ParamLabels}
 import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
+import it.unibo.dcs.service.webapp.interaction.Requests.RoomLeaveRequest
 import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, RoomRepository, UserRepository}
 import it.unibo.dcs.service.webapp.usecases._
 import it.unibo.dcs.service.webapp.verticles.Addresses._
@@ -92,11 +93,11 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
       token =>
         handleRequestParam(context, ParamLabels.roomNameLabel) {
           roomName =>
-            handleRequestBody(context) {
-              request =>
+            handleRequestParam(context, ParamLabels.userLabel) {
+              userName =>
                 val useCase = LeaveRoomUseCase(authRepository, roomRepository)
-                useCase(request.put(JsonLabels.roomNameLabel, roomName).put(JsonLabels.authenticationLabel, token),
-                  LeaveRoomSubscriber(context.response(), roomLeaved))
+                val request = RoomLeaveRequest(roomName, userName, token)
+                useCase(request, LeaveRoomSubscriber(context.response(), roomLeaved))
             }
         }
     }

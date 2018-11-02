@@ -30,7 +30,7 @@ class ServiceRequestHandlerImpl(loginUserUseCase: LoginUserUseCase, logoutUserUs
   }
 
   override def handleTokenCheck(implicit context: RoutingContext): Unit = {
-    val request = CheckTokenRequest(getTokenFromHeader.get, getUsername.get)
+    val request = CheckTokenRequest(getTokenFromHeader.get, getContextData("username").get)
     checkTokenUseCase(request, new TokenCheckSubscriber(context.response()))
   }
 

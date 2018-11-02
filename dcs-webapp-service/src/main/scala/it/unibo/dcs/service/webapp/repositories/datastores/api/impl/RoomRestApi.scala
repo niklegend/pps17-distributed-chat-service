@@ -57,7 +57,7 @@ class RoomRestApi(private[this] val discovery: HttpEndpointDiscovery)
   override def leaveRoom(request: RoomLeaveRequest): Observable[Participation] = {
     makeRequest(client =>
       Observable.from(client.delete(leaveRoomURI(request.name, request.username))
-        .sendJsonObjectFuture(toLeaveRoomRequest(request))))
+        .sendFuture()))
       .map(bodyAsJsonObject(throw InternalException(emptyBodyErrorMessage)))
       .mapImplicitly
   }
@@ -82,7 +82,10 @@ private[impl] object RoomRestApi {
 
   private def joinRoomURI(roomName: String) = s"$roomsURI/$roomName/participations"
 
-  private def leaveRoomURI(roomName: String, username: String) = joinRoomURI(roomName) + "/" + username
+  private def leaveRoomURI(roomName: String, username: String) = {
+    println(joinRoomURI(roomName) + "/" + username)
+    joinRoomURI(roomName) + "/" + username
+  }
 
   private def deleteRoomURI(roomName: String) = roomsURI + "/" + roomName
 
@@ -95,15 +98,7 @@ private[impl] object RoomRestApi {
   }
 
   private def toJoinRoomRequest(joinRoomRequest: RoomJoinRequest): JsonObject = {
-    toJoinOrLeaveRoomRequest(joinRoomRequest.username)
-  }
-
-  private def toLeaveRoomRequest(leaveRoomRequest: RoomLeaveRequest): JsonObject = {
-    toJoinOrLeaveRoomRequest(leaveRoomRequest.username)
-  }
-
-  private def toJoinOrLeaveRoomRequest(username: String): JsonObject = {
-    Json.obj((JsonLabels.usernameLabel, username))
+    Json.obj((JsonLabels.usernameLabel, joinRoomRequest.username))
   }
 
   object Implicits {

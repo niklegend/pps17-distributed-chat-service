@@ -90,6 +90,14 @@ export class ChatService {
       });
   }
 
+  leaveRoom(name: string): Observable<void> {
+    const user = this.auth.user;
+    return this.http.delete<void>(
+      ChatService.ROOMS + '/' + name + '/participations/' + user.username, {
+        headers: this.auth.authOptions
+      });
+  }
+
   onRoomCreated(): Observable<Room> {
     return this.roomCreated
       .asObservable()

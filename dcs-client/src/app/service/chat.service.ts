@@ -17,6 +17,8 @@ export class ChatService {
 
   private static ROOMS = ChatService.API_PREFIX + '/rooms';
 
+  private static USERS = ChatService.API_PREFIX + '/users';
+
   private static ROOM_DELETED = 'rooms.deleted';
   private static ROOM_JOINED = 'rooms.joined';
 
@@ -48,6 +50,13 @@ export class ChatService {
       params: {
         user: user.username
       }
+    });
+  }
+
+  getParticipations(): Observable<Room[]> {
+    const user = this.auth.user;
+    return this.http.get<Room[]>(`${ChatService.USERS}/${user.username}/participations`, {
+      headers: this.auth.authOptions
     });
   }
 

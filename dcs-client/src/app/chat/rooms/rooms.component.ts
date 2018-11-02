@@ -25,17 +25,20 @@ export class RoomsComponent implements OnInit {
 
     const participationFilter = filter<Participation>(participation => participation.username === this.auth.user.username);
 
-    this.chat.onRoomJoined()
+    /*this.chat.onRoomJoined()
       .pipe(participationFilter)
       .subscribe(participation => {
         this.rooms.unshift(participation.room);
       });
 
-    /*this.chat.onRoomLeft()
+    this.chat.onRoomLeft()
       .pipe(participationFilter)
       .subscribe(participation => {
         this.removeRoom(participation.room.name);
       });*/
+
+    this.chat.getParticipations()
+      .subscribe(rooms => this.rooms = rooms);
 
     this.chat.onRoomDeleted()
       .subscribe(name => this.removeRoom(name));

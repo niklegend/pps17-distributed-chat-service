@@ -37,7 +37,7 @@ export class RoomsComponent implements OnInit {
         this.removeRoom(participation.room.name);
       });*/
 
-    this.chat.getParticipations()
+    this.chat.getUserParticipations()
       .subscribe(rooms => this.rooms = rooms);
 
     this.chat.onRoomDeleted()

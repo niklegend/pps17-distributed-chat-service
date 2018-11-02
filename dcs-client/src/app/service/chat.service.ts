@@ -53,7 +53,7 @@ export class ChatService {
     });
   }
 
-  getParticipations(): Observable<Room[]> {
+  getUserParticipations(): Observable<Room[]> {
     const user = this.auth.user;
     return this.http.get<Room[]>(`${ChatService.USERS}/${user.username}/participations`, {
       headers: this.auth.authOptions

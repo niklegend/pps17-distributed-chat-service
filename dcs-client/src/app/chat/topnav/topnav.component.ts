@@ -15,12 +15,15 @@ export class TopnavComponent implements OnInit {
 
   selectedRoom: string;
 
+  roomInfoOpened: boolean;
+
   constructor(
     private router: Router,
     private auth: AuthService,
     private chat: ChatService,
     private translate: TranslateService
   ) {
+    this.roomInfoOpened = false;
   }
 
   ngOnInit() {
@@ -39,7 +42,7 @@ export class TopnavComponent implements OnInit {
 
     this.chat.onRoomDeleted().subscribe(name => {
       if (name === this.selectedRoom) {
-        this.selectedRoom = ''
+        this.selectedRoom = '';
         this.router.navigateByUrl('/')
       }
     });
@@ -57,8 +60,7 @@ export class TopnavComponent implements OnInit {
 
   logout() {
     this.auth.logout().subscribe(
-      _ => {
-      },
+      _ => {},
       err => console.error(err),
       () => this.router.navigateByUrl('/login'));
   }
@@ -72,7 +74,13 @@ export class TopnavComponent implements OnInit {
   }
 
   roomInfo() {
-    this.router.navigate(['/rooms', this.selectedRoom, 'info']);
+    if (!this.roomInfoOpened){
+      this.router.navigate(['/rooms', this.selectedRoom, 'info']);
+      this.roomInfoOpened = true;
+    }else {
+      this.router.navigate(['/rooms', this.selectedRoom]);
+      this.roomInfoOpened = false;
+    }
   }
 
 }

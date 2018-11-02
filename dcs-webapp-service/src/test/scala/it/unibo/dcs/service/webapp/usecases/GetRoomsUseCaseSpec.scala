@@ -25,7 +25,7 @@ class GetRoomsUseCaseSpec extends UseCaseSpec {
 
   private val getRoomsUseCase = new GetRoomsUseCase(threadExecutor, postExecutionThread, authRepository, roomRepository)
 
-  it should "returns all rooms when the use case is executed" in {
+  it should "return all rooms when the use case is executed" in {
     // Given
     (authRepository checkToken _) expects checkTokenRequest returns (Observable just token)
 

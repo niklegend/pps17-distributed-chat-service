@@ -4,7 +4,6 @@ import com.google.gson.Gson
 import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
 import it.unibo.dcs.service.webapp.interaction.Labels.JsonLabels.tokenLabel
 import it.unibo.dcs.service.webapp.model.{Participation, Room, User}
-import scala.collection.JavaConverters._
 import scala.language.implicitConversions
 
 /** It wraps all results produced by the use cases executions. */

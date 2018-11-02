@@ -81,9 +81,8 @@ object Requests {
     }
 
     implicit def jsonArrayToParticipationSet(array: JsonArray): Set[Participation] = {
-      println(array.encodePrettily())
       implicit val formats: DefaultFormats.type = DefaultFormats
-      val participations = parse(array.encode()).children //gson.fromJson(array.encode(), classOf[java.util.Set[Participation]])
+      val participations = parse(array.encode()).children
       participations.map(_.extract[Participation]).toSet
     }
 

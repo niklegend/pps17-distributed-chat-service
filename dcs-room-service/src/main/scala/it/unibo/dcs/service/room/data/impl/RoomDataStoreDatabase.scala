@@ -1,5 +1,7 @@
 package it.unibo.dcs.service.room.data.impl
 
+import java.util.Date
+
 import io.vertx.core.json.JsonArray
 import io.vertx.lang.scala.json.{Json, JsonObject}
 import io.vertx.scala.ext.sql.SQLConnection
@@ -12,6 +14,8 @@ import it.unibo.dcs.service.room.data.impl.RoomDataStoreDatabase._
 import it.unibo.dcs.service.room.gson
 import it.unibo.dcs.service.room.model._
 import it.unibo.dcs.service.room.request._
+import it.unibo.dcs.commons.dataaccess.Implicits.stringToDate
+import net.liftweb.json.{DefaultFormats, parse}
 import rx.lang.scala.Observable
 
 import scala.language.implicitConversions
@@ -67,8 +71,7 @@ final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
           ResultSetHelper.getRows(resultSet).foreach(row => println(row.encodePrettily()))
 
           ResultSetHelper.getRows(resultSet)
-            .map(row => jsonObjectToParticipationDto(row))
-            .map(dto => Participation(dto.room, dto.username, dto.join_date))
+            .map(json => jsonObjectToParticipation(json))
             .toSet
         }
       }
@@ -118,14 +121,13 @@ private[impl] object RoomDataStoreDatabase {
 
     implicit def jsonObjectToRoom(json: JsonObject): Room = gson fromJsonObject[Room] json
 
-    implicit def jsonObjectToParticipationDto(json: JsonObject): ParticipationDto =
-      gson.fromJsonObject[ParticipationDto](json)
+    implicit def jsonObjectToParticipation(json: JsonObject): Participation = {
+      val room = Room(json.getString("name"))
+      val date = json.getString("join_date")
+      val username = json.getString("username")
+      Participation(room, username, date)
+    }
 
-    implicit def jsonObjectToParticipation(json: JsonObject): Participation =
-      gson.fromJsonObject[Participation](json)
-
-    implicit def participationDtoToParticipation(participationDto: ParticipationDto): Participation =
-      Participation(participationDto.room, participationDto.username, participationDto.join_date)
   }
 
 }

@@ -5,13 +5,15 @@ import java.util.Date
 import com.google.gson.Gson
 import io.vertx.lang.scala.json.{Json, JsonObject}
 
+import scala.language.implicitConversions
+
 /** Model class that represents a user participation in a room
   *
   * @param joinDate date of the room join
   * @param room     the room joined by the user
-  * @param user     the user who joined the room
+  * @param username the user who joined the room
   */
-case class Participation(joinDate: Date, room: Room, user: User)
+case class Participation(joinDate: Date, room: Room, username: String)
 
 object Participation {
 

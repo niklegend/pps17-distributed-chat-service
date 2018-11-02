@@ -17,6 +17,9 @@ import scala.language.implicitConversions
 
 object VertxWebHelper {
 
+  def getParam(context: RoutingContext, paramName: String)(error: => Throwable): String =
+    context.request().getParam(paramName).getOrElse(throw error)
+
   def getContextData(urlParameter: String)(implicit context: RoutingContext): Option[String] =
     context.request.getParam(urlParameter)
 

@@ -19,4 +19,7 @@ trait RoomRepository {
   def joinRoom(request: JoinRoomRequest): Observable[Participation]
 
   def getParticipationByKey(request: JoinRoomRequest): Observable[Participation]
+
+  def getParticipationsByUsername(request: GetUserParticipationsRequest): Observable[List[Room]]
+
 }

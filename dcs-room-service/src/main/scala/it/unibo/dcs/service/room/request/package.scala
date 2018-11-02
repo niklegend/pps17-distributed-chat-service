@@ -2,7 +2,7 @@ package it.unibo.dcs.service.room
 
 package object request {
 
-  final case class CreateUserRequest(username: String) extends AnyVal
+  final case class CreateUserRequest(username: String)
 
   final case class GetRoomRequest(name: String)
 
@@ -13,4 +13,7 @@ package object request {
   final case class GetRoomsRequest(username: String)
 
   final case class JoinRoomRequest(name: String, username: String)
+
+  final case class GetUserParticipationsRequest(username: String)
+
 }

@@ -14,7 +14,7 @@ final class RoomRepositorySpec extends FlatSpec with MockFactory with OneInstanc
 
   private val username = "mvandi"
   private val roomName = "Test room"
-  private val rooms = Set(Room("Room 01"), Room("Room 02"))
+  private val rooms = List(Room("Room 01"), Room("Room 02"))
 
   it should "create a new user on the data store" in {
     val request = CreateUserRequest(username)
@@ -64,7 +64,7 @@ final class RoomRepositorySpec extends FlatSpec with MockFactory with OneInstanc
   it should "Get all the rooms on the data store" in {
     val request = GetRoomsRequest(username)
 
-    val subscriber = stub[Subscriber[Set[Room]]]
+    val subscriber = stub[Subscriber[List[Room]]]
 
     //Given
     (roomDataStore getRooms _) expects request returns Observable.just(rooms)

@@ -51,13 +51,12 @@ package object subscriber {
 
   }
 
-  class GetRoomsSubscriber(protected override val response: HttpServerResponse) extends Subscriber[Set[Room]]
+  class GetRoomsSubscriber(protected override val response: HttpServerResponse) extends Subscriber[List[Room]]
     with ErrorSubscriber {
 
-    override def onNext(rooms: Set[Room]): Unit = {
-      val results = new JsonArray()
-      rooms.foreach(room => results.add(roomToJsonObject(room)))
-      response.end(results)
+    override def onNext(rooms: List[Room]): Unit = {
+      val res: JsonArray = rooms
+      response.end(res)
     }
 
   }
@@ -66,9 +65,8 @@ package object subscriber {
     with ErrorSubscriber {
 
     override def onNext(rooms: List[Room]): Unit = {
-      response.end(rooms
-        .map(roomToJsonObject)
-        .foldLeft(new JsonArray)(_ add _))
+      val res: JsonArray = rooms
+      response.end(res)
     }
 
   }
@@ -76,6 +74,8 @@ package object subscriber {
   object Implicits {
 
     implicit def roomToJsonObject(room: Room): JsonObject = gson toJsonObject room
+
+    implicit def roomsToJsonObject(rooms: Iterable[Room]): JsonArray = gson toJsonArray rooms
 
     implicit def participationToJsonObject(participation: Participation): JsonObject = gson toJsonObject participation
 

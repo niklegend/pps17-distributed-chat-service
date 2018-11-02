@@ -36,10 +36,10 @@ final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
         }
       }
 
-  override def getRooms(request: GetRoomsRequest): Observable[Set[Room]] =
+  override def getRooms(request: GetRoomsRequest): Observable[List[Room]] =
     query(selectAllRooms, request)
     .map { resultSet =>
-      ResultSetHelper.getRows(resultSet).map(row => jsonObjectToRoom(row)).toSet
+      ResultSetHelper.getRows(resultSet).map(jsonObjectToRoom).toList
     }
 
   override def joinRoom(request: JoinRoomRequest): Observable[Participation] = execute(insertParticipationQuery, request)

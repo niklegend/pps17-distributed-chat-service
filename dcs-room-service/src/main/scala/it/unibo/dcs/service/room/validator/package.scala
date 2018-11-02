@@ -17,7 +17,8 @@ package object validator {
 
   object CreateRoomValidator {
     def apply(): Validator[CreateRoomRequest] = Validator[CreateRoomRequest] {
-      builder => builder
+      builder =>
+        builder
           .addRule(request =>
             Conditions.stringNotEmpty(request.name),
             RoomNameRequiredException
@@ -31,7 +32,8 @@ package object validator {
 
   object DeleteRoomValidator {
     def apply(): Validator[DeleteRoomRequest] = Validator[DeleteRoomRequest] {
-      builder => builder
+      builder =>
+        builder
           .addRule(request =>
             Conditions.stringNotEmpty(request.name),
             RoomNameRequiredException
@@ -51,7 +53,8 @@ package object validator {
 
   object JoinRoomValidator {
     def apply(): Validator[JoinRoomRequest] = Validator[JoinRoomRequest] {
-      builder => builder
+      builder =>
+        builder
           .addRule(request =>
             Conditions.stringNotEmpty(request.name),
             RoomNameRequiredException
@@ -65,8 +68,10 @@ package object validator {
 
   object GetRoomParticipationsValidator {
     def apply(): Validator[GetRoomParticipationsRequest] = Validator[GetRoomParticipationsRequest] {
-      builder => builder
+      builder =>
+        builder
           .addRule(request => Conditions.stringNotEmpty(request.name), RoomNameRequiredException)
     }
   }
+
 }

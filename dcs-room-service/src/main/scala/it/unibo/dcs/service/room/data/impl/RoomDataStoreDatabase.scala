@@ -1,11 +1,10 @@
 package it.unibo.dcs.service.room.data.impl
 
-import java.util.Date
-
 import io.vertx.core.json.JsonArray
 import io.vertx.lang.scala.json.{Json, JsonObject}
 import io.vertx.scala.ext.sql.SQLConnection
 import it.unibo.dcs.commons.JsonHelper.Implicits.RichGson
+import it.unibo.dcs.commons.dataaccess.Implicits.stringToDate
 import it.unibo.dcs.commons.dataaccess.{DataStoreDatabase, ResultSetHelper}
 import it.unibo.dcs.exceptions.{ParticipationNotFoundException, ParticipationsNotFoundException, RoomNotFoundException}
 import it.unibo.dcs.service.room.data.RoomDataStore
@@ -14,8 +13,6 @@ import it.unibo.dcs.service.room.data.impl.RoomDataStoreDatabase._
 import it.unibo.dcs.service.room.gson
 import it.unibo.dcs.service.room.model._
 import it.unibo.dcs.service.room.request._
-import it.unibo.dcs.commons.dataaccess.Implicits.stringToDate
-import net.liftweb.json.{DefaultFormats, parse}
 import rx.lang.scala.Observable
 
 import scala.language.implicitConversions

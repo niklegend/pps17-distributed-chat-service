@@ -48,9 +48,6 @@ package object subscriber {
 
     override def onNext(participations: Set[Participation]): Unit = {
       val results = Json.arr(participations.map(participationToJsonObject).toArray)
-
-      // DEBUG
-      println(results.encodePrettily())
       response.end(results.encodePrettily())
     }
   }

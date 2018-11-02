@@ -6,7 +6,6 @@ import it.unibo.dcs.commons.dataaccess.Implicits.stringToDate
 import it.unibo.dcs.service.webapp.interaction.Labels.JsonLabels._
 import it.unibo.dcs.service.webapp.model.{Participation, Room, User}
 import net.liftweb.json._
-import net.liftweb.json.DefaultFormats._
 
 import scala.language.implicitConversions
 

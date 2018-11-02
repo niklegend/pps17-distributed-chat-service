@@ -19,6 +19,7 @@ export class ChatService {
 
   private static ROOM_DELETED = 'rooms.deleted';
   private static ROOM_JOINED = 'rooms.joined';
+  private static ROOM_CREATED = 'rooms.created';
 
   private roomCreated = new Subject<Room>();
   private roomDeleted = new Subject<string>();
@@ -37,7 +38,11 @@ export class ChatService {
     });
 
     eventBus.registerHandler(ChatService.ROOM_JOINED, (err, msg) => {
-      this.roomJoined.next(msg.body);
+      this.roomJoined.next(msg.body)
+    });
+
+    eventBus.registerHandler(ChatService.ROOM_CREATED, (err, msg) => {
+      this.roomCreated.next(msg.body)
     });
   }
 
@@ -62,19 +67,15 @@ export class ChatService {
   createRoom(name: string): Observable<string> {
     const user = this.auth.user;
     return this.http
-      .post<Room>(
-        ChatService.ROOMS,
-        new CreateRoomRequest(name, user.username), {
-          headers: this.auth.authOptions.headers
-        })
-      .pipe(tap(room => this.roomCreated.next(room)))
+      .post<Room>(ChatService.ROOMS, new CreateRoomRequest(name, user.username), this.auth.authOptions)
+      //.pipe(tap(room => this.roomCreated.next(room)))
       .pipe(map(room => room.name));
   }
 
   deleteRoom(name: string): Observable<void> {
     const user = this.auth.user;
     const body = new DeleteRoomRequest(name, user.username);
-    return this.http.request<void>('delete', ChatService.ROOMS + '/' + name, {
+    return this.http.request<void>('delete', ChatService.ROOMS + "/" + name, {
       body: body,
       headers: this.auth.authOptions.headers
     });
@@ -83,8 +84,8 @@ export class ChatService {
   joinRoom(name: string): Observable<Participation> {
     const user = this.auth.user;
     const body = new JoinRoomRequest(user.username);
-    return this.http.post<Participation>(
-      ChatService.ROOMS + "/" + name + "/participations", body, this.auth.authOptions);
+    return this.http.post<Participation>(ChatService.ROOMS + "/" + name + "/participations", body,
+      this.auth.authOptions);
   }
 
   getRoomParticipations(name: string): Observable<Participation[]> {
@@ -93,9 +94,8 @@ export class ChatService {
   }
 
   onRoomCreated(): Observable<Room> {
-    return this.roomCreated
-      .asObservable()
-      .pipe(tap(room => this.selectRoom(room)));
+    return this.roomCreated.asObservable();
+      //.pipe(tap(room => this.selectRoom(room)));
   }
 
   onRoomDeleted(): Observable<string> {

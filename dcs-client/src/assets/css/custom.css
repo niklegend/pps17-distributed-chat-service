@@ -10,6 +10,10 @@ footer {
   margin-left: 0;
 }
 
+.participants-number {
+  margin-left: 12px !important;
+}
+
 .full-width {
 
   width: 100%;
@@ -3746,7 +3750,6 @@ ul.project_files li a i {
 }
 
 .thumbnail {
-  height: 190px;
   overflow: hidden
 }
 

@@ -28,7 +28,14 @@ export class RoomsComponent implements OnInit {
     this.chat.onRoomJoined()
       .pipe(participationFilter)
       .subscribe(participation => {
+        console.log("received participation for room: " + participation.room.name);
         this.rooms.unshift(participation.room);
+      });
+
+    this.chat.onRoomCreated()
+      .subscribe(room => {
+        console.log("created room: " + room.name);
+        this.rooms.unshift(room)
       });
 
     /*this.chat.onRoomLeft()

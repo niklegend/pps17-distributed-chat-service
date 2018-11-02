@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { Router, NavigationEnd } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
-import { ChatService } from '../../service/chat.service';
-import { AuthService } from '../../service/auth.service';
+import {Component, OnInit} from '@angular/core';
+import {NavigationEnd, Router} from '@angular/router';
+import {TranslateService} from '@ngx-translate/core';
+import {ChatService} from '../../service/chat.service';
+import {AuthService} from '../../service/auth.service';
 
 @Component({
   selector: 'app-topnav',
@@ -20,7 +20,8 @@ export class TopnavComponent implements OnInit {
     private auth: AuthService,
     private chat: ChatService,
     private translate: TranslateService
-  ) {}
+  ) {
+  }
 
   ngOnInit() {
     this.router.events.subscribe(val => {
@@ -35,6 +36,13 @@ export class TopnavComponent implements OnInit {
 
     this.chat.onRoomSelected()
       .subscribe(room => (this.selectedRoom = room.name));
+
+    this.chat.onRoomDeleted().subscribe(name => {
+      if (name === this.selectedRoom) {
+        this.selectedRoom = ''
+        this.router.navigateByUrl('/')
+      }
+    });
   }
 
   isToggled(): boolean {
@@ -49,7 +57,8 @@ export class TopnavComponent implements OnInit {
 
   logout() {
     this.auth.logout().subscribe(
-      _ => {},
+      _ => {
+      },
       err => console.error(err),
       () => this.router.navigateByUrl('/login'));
   }

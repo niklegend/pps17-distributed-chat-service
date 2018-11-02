@@ -26,6 +26,7 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
 
   private[this] lazy val roomDeleted = eventBus.address(Rooms.deleted)
   private[this] lazy val roomJoined = eventBus.address(Rooms.joined)
+  private[this] lazy val roomCreated = eventBus.address(Rooms.created)
 
   override def handleRegistration(context: RoutingContext)(implicit ctx: Context): Unit =
     handleRequestBody(context) {
@@ -55,7 +56,7 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
         handleRequestBody(context) {
           request =>
             val useCase = CreateRoomUseCase(authRepository, roomRepository)
-            useCase(request.put(authenticationLabel, token), RoomCreationSubscriber(context.response))
+            useCase(request.put(authenticationLabel, token), RoomCreationSubscriber(context.response, roomCreated))
         }
     }
 

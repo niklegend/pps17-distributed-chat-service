@@ -3,7 +3,7 @@ package it.unibo.dcs.service.room.repository
 import it.unibo.dcs.service.room.Mocks._
 import it.unibo.dcs.service.room.model.Room
 import it.unibo.dcs.service.room.repository.impl.RoomRepositoryImpl
-import it.unibo.dcs.service.room.request.{CreateRoomRequest, CreateUserRequest, DeleteRoomRequest, GetRoomsRequest}
+import it.unibo.dcs.service.room.request._
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, OneInstancePerTest}
 import rx.lang.scala.{Observable, Subscriber}
@@ -73,6 +73,19 @@ final class RoomRepositorySpec extends FlatSpec with MockFactory with OneInstanc
 
     //Then
     subscriber.onNext _ verify rooms once()
+  }
+
+  it should "Get all the participations for a given user" in {
+    val request = GetUserParticipationsRequest(username)
+
+    val subscriber = stub[Subscriber[List[Room]]]
+
+    (roomDataStore getParticipationsByUsername _) expects request returns Observable.just(rooms)
+
+    roomRepository.getParticipationsByUsername(request).subscribe(subscriber)
+
+    subscriber.onNext _ verify rooms once()
+    (() => subscriber onCompleted) verify() once()
   }
 
 }

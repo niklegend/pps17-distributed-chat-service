@@ -107,6 +107,10 @@ final class WebAppVerticle extends ServiceVerticle {
     apiRouter.get("/rooms")
       .produces(ContentType.APPLICATION_JSON)
       .handler(context => requestHandler handleGetRooms context)
+
+    apiRouter.get(s"/users/:${ParamLabels.usernameLabel}/participations")
+      .produces(APPLICATION_JSON)
+      .handler(context => requestHandler handleGetUserParticipations context)
   }
 
   private def disableCors(router: Router) = {

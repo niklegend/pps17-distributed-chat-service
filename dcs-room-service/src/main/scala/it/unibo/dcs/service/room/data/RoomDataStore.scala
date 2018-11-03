@@ -10,7 +10,7 @@ trait RoomDataStore {
 
   def getRoomByName(request: GetRoomRequest): Observable[Room]
 
-  def getRooms(request: GetRoomsRequest): Observable[Set[Room]]
+  def getRooms(request: GetRoomsRequest): Observable[List[Room]]
 
   def createRoom(request: CreateRoomRequest): Observable[Room]
 
@@ -19,5 +19,7 @@ trait RoomDataStore {
   def joinRoom(request: JoinRoomRequest): Observable[Participation]
 
   def getParticipationByKey(request: JoinRoomRequest): Observable[Participation]
+
+  def getParticipationsByUsername(request: GetUserParticipationsRequest): Observable[List[Room]]
 
 }

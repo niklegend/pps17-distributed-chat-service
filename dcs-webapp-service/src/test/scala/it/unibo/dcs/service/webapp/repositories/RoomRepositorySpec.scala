@@ -2,7 +2,7 @@ package it.unibo.dcs.service.webapp.repositories
 
 import java.util.Date
 
-import it.unibo.dcs.service.webapp.interaction.Requests.{CreateRoomRequest, DeleteRoomRequest, GetRoomsRequest, RoomJoinRequest}
+import it.unibo.dcs.service.webapp.interaction.Requests._
 import it.unibo.dcs.service.webapp.model.{Participation, Room}
 import it.unibo.dcs.service.webapp.repositories.RoomRepository
 import it.unibo.dcs.service.webapp.repositories.datastores.RoomDataStore
@@ -99,5 +99,23 @@ class RoomRepositorySpec extends RepositorySpec {
     // Verify that `subscriber.onCompleted` has been called once
     (() => getRoomsSubscriber onCompleted) verify() once()
     //
+  }
+
+  it should "retrieve all the participations for the given user" in {
+    val request = GetUserParticipationsRequest(user.username, token)
+
+    val subscriber = stub[Subscriber[List[Room]]]
+
+    //Given
+    (roomDataStore getUserParticipations  _) expects request returns Observable.just(rooms)
+
+    //When
+    repository getUserParticipations  request subscribe subscriber
+
+    //Then
+    //Verify that 'suscriber.onNext' has been callen once
+    (subscriber onNext _) verify rooms once()
+    // Verify that `subscriber.onCompleted` has been called once
+    (() => subscriber onCompleted) verify() once()
   }
 }

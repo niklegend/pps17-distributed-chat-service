@@ -17,7 +17,7 @@ export class TopnavComponent implements OnInit {
 
   roomInfoOpened: boolean;
 
-  constructor(
+ constructor(
     private router: Router,
     private auth: AuthService,
     private chat: ChatService,
@@ -83,4 +83,7 @@ export class TopnavComponent implements OnInit {
     }
   }
 
+  get infoButtonCondition(): boolean {
+    return this.selectedRoom != undefined && this.selectedRoom != '' && !this.roomInfoOpened
+  }
 }

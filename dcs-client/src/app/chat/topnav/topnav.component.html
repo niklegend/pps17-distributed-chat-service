@@ -27,8 +27,11 @@
     {{ selectedRoom }}
   </div>
   <span class="nav-spacer"></span>
-  <button *ngIf="selectedRoom != undefined && selectedRoom != ''" mat-icon-button (click)="roomInfo()">
+  <button *ngIf="infoButtonCondition" mat-icon-button (click)="roomInfo()">
     <mat-icon>info</mat-icon>
+  </button>
+  <button *ngIf="roomInfoOpened" mat-icon-button (click)="roomInfo()">
+    <mat-icon>arrow_back</mat-icon>
   </button>
   <!-- <button mat-icon-button (click)="logout()">
     <mat-icon>exit_to_app</mat-icon>

@@ -1,13 +1,20 @@
 
 html, body {
-
   height: 100%;
   color: black !important;
   background: white !important;
 }
 
-footer {
-  margin-left: 0;
+.mat-toolbar-row, .mat-toolbar-single-row {
+  height: 80px !important;
+}
+
+.mat-form-field-infix {
+  border-top: 35px solid transparent !important;
+}
+
+i.material-icons.close-link {
+  padding-left: 35% !important;
 }
 
 .participants-number {
@@ -1109,8 +1116,8 @@ a:focus {
 
 footer {
   background: #fff;
-  padding: 15px 20px;
-  display: block
+  display: block;
+  margin-left: 0;
 }
 
 .nav-sm footer {
@@ -1311,7 +1318,7 @@ h2 {
 }
 
 .x_title h2 {
-  margin: 5px 0 6px;
+  margin-top: 22px !important;
   float: left;
   display: block;
   text-overflow: ellipsis;

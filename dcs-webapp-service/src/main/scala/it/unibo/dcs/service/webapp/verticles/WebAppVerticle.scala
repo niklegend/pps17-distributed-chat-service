@@ -89,6 +89,11 @@ final class WebAppVerticle extends ServiceVerticle {
       .produces(APPLICATION_JSON)
       .handler(context => requestHandler handleLogout context)
 
+    apiRouter.put("/users/:" + ParamLabels.userLabel)
+      .consumes(APPLICATION_JSON)
+      .produces(APPLICATION_JSON)
+      .handler(context => requestHandler handleUserEditing context)
+
     apiRouter.post("/rooms")
       .consumes(APPLICATION_JSON)
       .produces(APPLICATION_JSON)

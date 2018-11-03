@@ -15,24 +15,23 @@ import scala.language.implicitConversions
 
 package object subscriber {
 
-  final class CreateUserSubscriber(protected override val response: HttpServerResponse) extends Subscriber[User]
-    with ErrorSubscriber with Logging {
+  final class CreateUserSubscriber(protected override val response: HttpServerResponse)
+    extends BaseUserSubscriber(response, HttpResponseStatus.CREATED)
+
+  final class GetUserSubscriber(protected override val response: HttpServerResponse)
+    extends BaseUserSubscriber(response, HttpResponseStatus.OK)
+
+  final class EditUserSubscriber(protected override val response: HttpServerResponse)
+    extends BaseUserSubscriber(response, HttpResponseStatus.OK)
+
+  abstract class BaseUserSubscriber(protected override val response: HttpServerResponse,
+                                    private val responseStatus: HttpResponseStatus)
+    extends Subscriber[User] with ErrorSubscriber with Logging {
 
     override def onNext(user: User): Unit = {
       val json: JsonObject = user
       log.info(s"Answering with user: $json")
-      response.setStatus(HttpResponseStatus.CREATED).end(json)
-    }
-
-  }
-
-  final class GetUserSubscriber(protected override val response: HttpServerResponse) extends Subscriber[User]
-    with ErrorSubscriber with Logging {
-
-    override def onNext(user: User): Unit = {
-      val json: JsonObject = user
-      log.info(s"Answering with user: $json")
-      response.end(json)
+      response.setStatus(responseStatus).end(json)
     }
 
   }

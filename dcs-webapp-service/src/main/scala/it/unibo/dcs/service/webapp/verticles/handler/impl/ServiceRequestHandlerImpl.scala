@@ -50,6 +50,16 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
       useCase(_, LoginUserSubscriber(context.response))
     }
 
+  override def handleUserEditing(context: RoutingContext)(implicit ctx: Context): Unit =
+    handleRequestToken(context) {
+      token =>
+      handleRequestBody(context) {
+        request =>
+          val useCase = EditUserUseCase.create(authRepository)
+          useCase(request.put(authenticationLabel, token), EditUserSubscriber(context.response()))
+      }
+  }
+
   override def handleRoomCreation(context: RoutingContext)(implicit ctx: Context): Unit =
     handleRequestToken(context) {
       token =>
@@ -127,5 +137,4 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
   private[this] def handleRequestToken(context: RoutingContext)(handler: String => Unit): Unit = {
     handleRequestHeader(context, HttpHeaders.AUTHORIZATION.toString)(handler)
   }
-
 }

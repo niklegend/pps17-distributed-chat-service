@@ -11,6 +11,7 @@ import {map, tap} from 'rxjs/operators';
   providedIn: 'root'
 })
 export class ChatService {
+
   private static API_PREFIX = '/api';
 
   private static EVENTS = ChatService.API_PREFIX + '/events';
@@ -116,4 +117,5 @@ export class ChatService {
   onRoomLeft(): Observable<Participation> {
     return null;
   }
+
 }

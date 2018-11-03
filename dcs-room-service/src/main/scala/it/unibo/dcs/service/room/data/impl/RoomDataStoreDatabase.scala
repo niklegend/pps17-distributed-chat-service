@@ -81,7 +81,7 @@ private[impl] object RoomDataStoreDatabase {
 
   val selectAllRooms = "SELECT `name` FROM `rooms`"
 
-  val selectParticipationsByUsername = "SELECT DISTINCT r.`name` FROM rooms AS r JOIN participations AS p WHERE p.username = ?"
+  val selectParticipationsByUsername = "SELECT `name` FROM participations WHERE username = ?"
 
   val selectParticipationByKey = "SELECT * FROM `participations` WHERE `username` = ? AND `name` = ?"
 

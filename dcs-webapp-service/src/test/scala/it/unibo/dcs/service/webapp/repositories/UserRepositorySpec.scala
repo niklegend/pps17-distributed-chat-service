@@ -1,7 +1,6 @@
 package it.unibo.dcs.service.webapp.repositories
 
 import it.unibo.dcs.service.webapp.model.User
-import it.unibo.dcs.service.webapp.repositories.UserRepository
 import it.unibo.dcs.service.webapp.repositories.datastores.UserDataStore
 import it.unibo.dcs.service.webapp.repositories.impl.UserRepositoryImpl
 import rx.lang.scala.{Observable, Subscriber}
@@ -67,6 +66,6 @@ class UserRepositorySpec extends RepositorySpec {
 
     // Then
     (editUserSubscriber onNext _) verify user once()
-    (() => deleteUserSubscriber onCompleted) verify() once()
+    (() => editUserSubscriber onCompleted) verify() once()
   }
 }

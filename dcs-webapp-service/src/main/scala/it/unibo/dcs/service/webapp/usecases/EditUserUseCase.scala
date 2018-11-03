@@ -4,9 +4,9 @@ import io.vertx.scala.core.Context
 import it.unibo.dcs.commons.RxHelper
 import it.unibo.dcs.commons.interactor.{ThreadExecutorExecutionContext, UseCase}
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
-import it.unibo.dcs.service.webapp.interaction.Requests.{CheckTokenRequest, CreateRoomRequest}
-import it.unibo.dcs.service.webapp.interaction.Results.{RoomCreationResult, UserEditingResult}
-import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, RoomRepository, UserRepository}
+import it.unibo.dcs.service.webapp.interaction.Requests.{CheckTokenRequest, EditUserRequest}
+import it.unibo.dcs.service.webapp.interaction.Results.UserEditingResult
+import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, UserRepository}
 import rx.lang.scala.Observable
 
 /** It represents the user editing functionality.
@@ -22,9 +22,9 @@ final class EditUserUseCase(private[this] val threadExecutor: ThreadExecutor,
                               private[this] val postExecutionThread: PostExecutionThread,
                               private[this] val authRepository: AuthenticationRepository,
                               private[this] val userRepository: UserRepository)
-  extends UseCase[RoomCreationResult, CreateRoomRequest](threadExecutor, postExecutionThread) {
+  extends UseCase[UserEditingResult, EditUserRequest](threadExecutor, postExecutionThread) {
 
-  override protected[this] def createObservable(request: CreateRoomRequest): Observable[RoomCreationResult] =
+  override protected[this] def createObservable(request: EditUserRequest): Observable[UserEditingResult] =
     for {
       _ <- authRepository.checkToken(CheckTokenRequest(request.token, request.username))
       user <- userRepository.editUser(request)
@@ -32,7 +32,7 @@ final class EditUserUseCase(private[this] val threadExecutor: ThreadExecutor,
 }
 
 /** Companion object */
-object EditUserUseCaseUseCase {
+object EditUserUseCase {
 
   /** Factory method to create the use case
     *
@@ -40,7 +40,7 @@ object EditUserUseCaseUseCase {
     * @param userRepository user repository reference
     * @param ctx            Vertx context
     * @return the use case object */
-  def apply(authRepository: AuthenticationRepository, userRepository: UserRepository)
+  def create(authRepository: AuthenticationRepository, userRepository: UserRepository)
            (implicit ctx: Context): EditUserUseCase = {
     val threadExecutor: ThreadExecutor = ThreadExecutorExecutionContext(ctx.owner())
     val postExecutionThread: PostExecutionThread = PostExecutionThread(RxHelper.scheduler(ctx))

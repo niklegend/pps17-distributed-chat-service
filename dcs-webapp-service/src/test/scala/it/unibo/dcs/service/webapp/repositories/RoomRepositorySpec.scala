@@ -4,7 +4,6 @@ import java.util.Date
 
 import it.unibo.dcs.service.webapp.interaction.Requests._
 import it.unibo.dcs.service.webapp.model.{Participation, Room}
-import it.unibo.dcs.service.webapp.repositories.RoomRepository
 import it.unibo.dcs.service.webapp.repositories.datastores.RoomDataStore
 import it.unibo.dcs.service.webapp.repositories.impl.RoomRepositoryImpl
 import rx.lang.scala.{Observable, Subscriber}
@@ -18,7 +17,6 @@ class RoomRepositorySpec extends RepositorySpec {
 
   private val room = Room("Room 1")
   private val rooms: List[Room] = List(room, room, room)
-  private val token = "token"
   private val participation = Participation(new Date(), room, user.username)
 
   private val roomCreationRequest = CreateRoomRequest("Room 1", user.username, token)

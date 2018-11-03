@@ -1,7 +1,6 @@
 package it.unibo.dcs.service.webapp.repositories.datastores
 
 import it.unibo.dcs.service.webapp.interaction.Requests._
-import it.unibo.dcs.service.webapp.repositories.datastores.AuthenticationDataStore
 import it.unibo.dcs.service.webapp.repositories.datastores.api.AuthenticationApi
 import it.unibo.dcs.service.webapp.repositories.datastores.impl.AuthenticationDataStoreNetwork
 import rx.lang.scala.{Observable, Subscriber}
@@ -12,8 +11,6 @@ class AuthenticationDataStoreSpec extends DataStoreSpec {
 
   private val authApi: AuthenticationApi = mock[AuthenticationApi]
   private val dataStore: AuthenticationDataStore = new AuthenticationDataStoreNetwork(authApi)
-
-  private val token = "token"
 
   private val loginUserRequest = LoginUserRequest(user.username, "password")
   private val logoutUserRequest = LogoutUserRequest(user.username, token)

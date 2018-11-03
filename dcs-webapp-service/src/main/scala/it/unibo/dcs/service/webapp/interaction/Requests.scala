@@ -8,7 +8,8 @@ import it.unibo.dcs.service.webapp.model.{Room, User}
 
 import scala.language.implicitConversions
 
-/** It wraps all requests used by request handler, use cases, it.unibo.dcs.service.webapp.repositories, datastores and APIs */
+/** It wraps all requests used by request handler, use cases, it.unibo.dcs.service.webapp.repositories,
+  * datastores and APIs */
 object Requests {
 
   /** Sum type representing all the specific requests for Distributed Chat Service application */
@@ -21,6 +22,9 @@ object Requests {
   final case class RegisterUserRequest(username: String, firstName: String,
                                        lastName: String, password: String,
                                        passwordConfirm: String) extends DcsRequest
+
+  final case class EditUserRequest(username: String, firstName: String,
+                                   lastName: String, password: String, token: String) extends DcsRequest
 
   final case class LogoutUserRequest(username: String, token: String) extends DcsRequest
 
@@ -52,6 +56,11 @@ object Requests {
     implicit def jsonObjectToRegisterUserRequest(json: JsonObject): RegisterUserRequest = {
       RegisterUserRequest(json.getString(usernameLabel), json.getString(firstNameLabel),
         json.getString(lastNameLabel), json.getString(passwordLabel), json.getString(passwordConfirmLabel))
+    }
+
+    implicit def jsonObjectToEditUserRequest(json: JsonObject): EditUserRequest = {
+      EditUserRequest(json.getString(usernameLabel), json.getString(firstNameLabel),
+        json.getString(lastNameLabel), json.getString(passwordLabel), json.getString(tokenLabel))
     }
 
     implicit def jsonObjectToUsername(json: JsonObject): String = {

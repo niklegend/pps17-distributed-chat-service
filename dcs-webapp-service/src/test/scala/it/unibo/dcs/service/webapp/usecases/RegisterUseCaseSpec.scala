@@ -3,7 +3,6 @@ package it.unibo.dcs.service.webapp.usecases
 import it.unibo.dcs.service.webapp.interaction.Requests.RegisterUserRequest
 import it.unibo.dcs.service.webapp.interaction.Results.RegisterResult
 import it.unibo.dcs.service.webapp.repositories.{RoomRepository, UserRepository}
-import it.unibo.dcs.service.webapp.usecases.RegisterUserUseCase
 import rx.lang.scala.{Observable, Subscriber}
 
 import scala.language.postfixOps

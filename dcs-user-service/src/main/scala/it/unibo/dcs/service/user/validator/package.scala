@@ -12,7 +12,10 @@ package object validator {
 
   object UserCreationValidator {
     def apply(userRepository: UserRepository): Validator[CreateUserRequest] = Validator[CreateUserRequest] {
-      builder => applyCommonRules(builder, userRepository)
+      builder =>
+        applyCommonRules(builder, userRepository)
+        .addRule(request =>
+          userRepository.checkIfUserExists(request))
     }
   }
 
@@ -35,8 +38,6 @@ package object validator {
       .addRule(request =>
         Conditions.stringNotEmpty(request.username), UsernameRequiredException
       )
-      .addRule(request =>
-        userRepository.checkIfUserExists(request))
   }
 
   object Implicits {

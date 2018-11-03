@@ -1,7 +1,6 @@
 package it.unibo.dcs.service.webapp.repositories.datastores
 
 import it.unibo.dcs.service.webapp.model.User
-import it.unibo.dcs.service.webapp.repositories.datastores.UserDataStore
 import it.unibo.dcs.service.webapp.repositories.datastores.api.UserApi
 import it.unibo.dcs.service.webapp.repositories.datastores.impl.UserDataStoreNetwork
 import rx.lang.scala.{Observable, Subscriber}
@@ -74,6 +73,6 @@ class UserDataStoreSpec extends DataStoreSpec {
     // Verify that `subscriber.onNext` has been called once with `token` as argument
     (editUserSubscriber onNext _) verify user once()
     // Verify that `subscriber.onCompleted` has been called once
-    (() => deleteUserSubscriber onCompleted) verify() once()
+    (() => editUserSubscriber onCompleted) verify() once()
   }
 }

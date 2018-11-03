@@ -79,9 +79,9 @@ private[impl] object RoomDataStoreDatabase {
 
   val selectRoomByName = "SELECT `name` FROM `rooms` WHERE `name` = ? "
 
-  val selectAllRooms = "SELECT `name` FROM `rooms`"
+  val selectParticipationsByUsername = "SELECT `name` FROM `participations` WHERE `username` = ?"
 
-  val selectParticipationsByUsername = "SELECT `name` FROM participations WHERE username = ?"
+  val selectAllRooms = s"SELECT `name` FROM `rooms` WHERE `name` NOT IN ($selectParticipationsByUsername)"
 
   val selectParticipationByKey = "SELECT * FROM `participations` WHERE `username` = ? AND `name` = ?"
 
@@ -97,7 +97,7 @@ private[impl] object RoomDataStoreDatabase {
       new JsonArray().add(request.name)
 
     implicit def requestToParams(request: GetRoomsRequest): JsonArray =
-      new JsonArray()
+      new JsonArray().add(request.username)
 
     implicit def requestToParams(request: DeleteRoomRequest): JsonArray =
       new JsonArray().add(request.name).add(request.username)

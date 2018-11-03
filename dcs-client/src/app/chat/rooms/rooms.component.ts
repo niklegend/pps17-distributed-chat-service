@@ -17,15 +17,18 @@ export class RoomsComponent implements OnInit {
 
   rooms: Room[] = [];
 
-  constructor(private chat: ChatService, private auth: AuthService, private router: Router) {
-  }
+  constructor(
+    private chat: ChatService,
+    private auth: AuthService,
+    private router: Router
+  ) {}
 
   ngOnInit() {
     console.log('Getting user rooms...');
+    /*
+    const participationFilter = filter<Participation>(p => p.username === this.auth.user.username);
 
-    const participationFilter = filter<Participation>(participation => participation.username === this.auth.user.username);
-
-    /*this.chat.onRoomJoined()
+    this.chat.onRoomJoined()
       .pipe(participationFilter)
       .subscribe(participation => {
         this.rooms.unshift(participation.room);
@@ -35,8 +38,8 @@ export class RoomsComponent implements OnInit {
       .pipe(participationFilter)
       .subscribe(participation => {
         this.removeRoom(participation.room.name);
-      });*/
-
+      });
+    */
     this.chat.getUserParticipations()
       .subscribe(rooms => this.rooms = rooms);
 

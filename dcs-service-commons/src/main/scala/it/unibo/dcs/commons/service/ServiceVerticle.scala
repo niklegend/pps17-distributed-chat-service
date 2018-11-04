@@ -7,7 +7,8 @@ import io.vertx.scala.core.http.{HttpServer, HttpServerOptions}
 import io.vertx.scala.ext.web.Router
 import it.unibo.dcs.commons.VertxHelper.Implicits._
 import it.unibo.dcs.commons.service.ServiceVerticle._
-import it.unibo.dcs.commons.{Logging, VertxHelper}
+import it.unibo.dcs.commons.VertxHelper
+import it.unibo.dcs.commons.logging.Logging
 import rx.lang.scala.Observable
 
 abstract class ServiceVerticle extends ScalaVerticle with Logging {

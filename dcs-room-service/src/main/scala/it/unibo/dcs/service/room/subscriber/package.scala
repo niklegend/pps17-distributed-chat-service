@@ -4,8 +4,8 @@ import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
 import io.vertx.scala.core.http.HttpServerResponse
 import it.unibo.dcs.commons.JsonHelper.Implicits.RichGson
-import it.unibo.dcs.commons.Logging
 import it.unibo.dcs.commons.VertxWebHelper.Implicits.RichHttpServerResponse
+import it.unibo.dcs.commons.logging.Logging
 import it.unibo.dcs.exceptions.ErrorSubscriber
 import it.unibo.dcs.service.room.model.{Participation, Room}
 import it.unibo.dcs.service.room.subscriber.Implicits._

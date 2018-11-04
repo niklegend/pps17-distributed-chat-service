@@ -12,6 +12,7 @@ package object containers {
   def createUseCases(threadExecutor: ThreadExecutor, postExecutionThread: PostExecutionThread,
                      authenticationRepository: AuthenticationRepository, jwtAuth: JWTAuth,
                      validations: ValidationContainer): UseCaseContainer = {
+
     val loginUseCase = LoginUserUseCase(threadExecutor, postExecutionThread, authenticationRepository,
       jwtAuth, validations.loginUserValidation)
     val logoutUseCase = LogoutUserUseCase(threadExecutor, postExecutionThread, authenticationRepository,
@@ -28,13 +29,11 @@ package object containers {
 
   def createValidations(threadExecutor: ThreadExecutor, postExecutionThread: PostExecutionThread,
                         authenticationRepository: AuthenticationRepository): ValidationContainer = {
-    val logoutValidator = LogoutUserValidator()
-    val logoutUserValidation = LogoutUserValidation(threadExecutor, postExecutionThread, logoutValidator)
+
+    val logoutUserValidation = LogoutUserValidation(threadExecutor, postExecutionThread, LogoutUserValidator())
     val registrationValidation = RegisterUserValidation(threadExecutor, postExecutionThread, RegisterUserValidator())
-    val loginValidator = LoginUserValidator()
-    val loginValidation = LoginUserValidation(threadExecutor, postExecutionThread, loginValidator)
-    val deleteUserValidator = DeleteUserValidator()
-    val deleteUserValidation = DeleteUserValidation(threadExecutor, postExecutionThread, deleteUserValidator)
+    val loginValidation = LoginUserValidation(threadExecutor, postExecutionThread, LoginUserValidator())
+    val deleteUserValidation = DeleteUserValidation(threadExecutor, postExecutionThread, DeleteUserValidator())
     val checkTokenValidation = CheckTokenValidation(threadExecutor, postExecutionThread, CheckTokenValidator.apply)
 
     ValidationContainer(logoutUserValidation, registrationValidation, loginValidation,

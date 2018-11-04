@@ -23,8 +23,8 @@ object Requests {
                                        lastName: String, password: String,
                                        passwordConfirm: String) extends DcsRequest
 
-  final case class EditUserRequest(username: String, firstName: String,
-                                   lastName: String, password: String, token: String) extends DcsRequest
+  final case class EditUserRequest(username: String, firstName: String, lastName: String, bio: String,
+                                   visible: Boolean, token: String) extends DcsRequest
 
   final case class LogoutUserRequest(username: String, token: String) extends DcsRequest
 
@@ -59,8 +59,8 @@ object Requests {
     }
 
     implicit def jsonObjectToEditUserRequest(json: JsonObject): EditUserRequest = {
-      EditUserRequest(json.getString(usernameLabel), json.getString(firstNameLabel),
-        json.getString(lastNameLabel), json.getString(passwordLabel), json.getString(tokenLabel))
+      EditUserRequest(json.getString(usernameLabel), json.getString(firstNameLabel), json.getString(lastNameLabel),
+        json.getString(bioLabel), json.getBoolean(visibleLabel), json.getString(tokenLabel))
     }
 
     implicit def jsonObjectToUsername(json: JsonObject): String = {

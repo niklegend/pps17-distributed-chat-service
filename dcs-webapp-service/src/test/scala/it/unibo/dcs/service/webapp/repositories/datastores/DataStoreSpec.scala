@@ -15,5 +15,6 @@ abstract class DataStoreSpec extends FlatSpec with MockFactory with OneInstanceP
   protected val registerRequest = RegisterUserRequest(user.username, user.firstName, user.lastName,
     "password", "password")
 
-  protected val editUserRequest = EditUserRequest(user.username, user.firstName, user.lastName, user.bio, token)
+  protected val editUserRequest =
+    EditUserRequest(user.username, user.firstName, user.lastName, user.bio, user.visible, token)
 }

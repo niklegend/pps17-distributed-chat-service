@@ -55,8 +55,13 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
       token =>
       handleRequestBody(context) {
         request =>
-          val useCase = EditUserUseCase.create(authRepository, userRepository)
-          useCase(request.put(authenticationLabel, token), EditUserSubscriber(context.response()))
+          handleRequestParam(context, ParamLabels.userLabel){
+            userName => {
+              val useCase = EditUserUseCase.create(authRepository, userRepository)
+              useCase(request.put(authenticationLabel, token).put(usernameLabel, userName),
+                EditUserSubscriber(context.response()))
+            }
+          }
       }
   }
 

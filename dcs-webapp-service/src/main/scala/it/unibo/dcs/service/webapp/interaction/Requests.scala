@@ -2,6 +2,9 @@ package it.unibo.dcs.service.webapp.interaction
 
 import com.google.gson.Gson
 import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
+import io.vertx.lang.scala.json.{Json, JsonObject}
+
+import it.unibo.dcs.commons.JsonHelper.Implicits.RichGson
 import it.unibo.dcs.commons.dataaccess.Implicits.stringToDate
 import it.unibo.dcs.service.webapp.interaction.Labels.JsonLabels._
 import it.unibo.dcs.service.webapp.model.{Participation, Room, User}
@@ -36,6 +39,8 @@ object Requests {
   final case class GetRoomParticipationsRequest(name: String, username: String, token: String) extends DcsRequest
 
   final case class CheckTokenRequest(token: String, username: String) extends DcsRequest
+
+  final case class GetUserParticipationsRequest(username: String, token: String) extends DcsRequest
 
   /** It enables implicit conversions in order to clean code that deals with requests. */
   object Implicits {
@@ -96,6 +101,10 @@ object Requests {
 
     implicit def jsonObjectToGetRoomsRequest(json: JsonObject): GetRoomsRequest = {
       GetRoomsRequest(json.getString("username"), json.getString("token"))
+    }
+
+    implicit def jsonObjectToGetUserParticipationsRequest(json: JsonObject): GetUserParticipationsRequest = {
+      gson fromJsonObject[GetUserParticipationsRequest] json
     }
   }
 

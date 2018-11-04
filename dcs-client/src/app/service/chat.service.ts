@@ -11,11 +11,14 @@ import {map, tap} from 'rxjs/operators';
   providedIn: 'root'
 })
 export class ChatService {
+
   private static API_PREFIX = '/api';
 
   private static EVENTS = ChatService.API_PREFIX + '/events';
 
   private static ROOMS = ChatService.API_PREFIX + '/rooms';
+
+  private static USERS = ChatService.API_PREFIX + '/users';
 
   private static ROOM_DELETED = 'rooms.deleted';
   private static ROOM_JOINED = 'rooms.joined';
@@ -53,6 +56,13 @@ export class ChatService {
       params: {
         user: user.username
       }
+    });
+  }
+
+  getUserParticipations(): Observable<Room[]> {
+    const user = this.auth.user;
+    return this.http.get<Room[]>(`${ChatService.USERS}/${user.username}/participations`, {
+      headers: this.auth.authOptions
     });
   }
 
@@ -109,4 +119,5 @@ export class ChatService {
   onRoomLeft(): Observable<Participation> {
     return null;
   }
+
 }

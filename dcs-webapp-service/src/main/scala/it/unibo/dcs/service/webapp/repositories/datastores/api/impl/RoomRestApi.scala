@@ -55,7 +55,7 @@ class RoomRestApi(private[this] val discovery: HttpEndpointDiscovery)
 
   override def getRooms(request: GetRoomsRequest): Observable[List[Room]] = {
     makeRequest(client =>
-      Observable.from(client.get(s"${RoomRestApi.roomsURI}?user=${request.username}").sendJsonObjectFuture(request)))
+      Observable.from(client.get(s"${RoomRestApi.roomsURI}?user=${request.username}").sendFuture()))
       .map(bodyAsJsonArray(throw InternalException(emptyBodyErrorMessage)))
       .mapImplicitly
   }
@@ -66,6 +66,12 @@ class RoomRestApi(private[this] val discovery: HttpEndpointDiscovery)
       .map(bodyAsJsonArray(throw InternalException(emptyBodyErrorMessage)))
       .mapImplicitly
   }
+  
+  override def getUserParticipations(request: GetUserParticipationsRequest): Observable[List[Room]] =
+    makeRequest(client =>
+      Observable.from(client.get(userParticipationsURI(request.username)).sendFuture()))
+      .map(bodyAsJsonArray(throw InternalException(emptyBodyErrorMessage)))
+      .mapImplicitly
 }
 
 private[impl] object RoomRestApi {
@@ -75,6 +81,8 @@ private[impl] object RoomRestApi {
   private val roomsURI = "/rooms"
 
   private val usersURI = "/users"
+
+  private def userParticipationsURI(username: String): String = s"$usersURI/$username/participations"
 
   private val emptyBodyErrorMessage = "Room service returned an empty body"
 

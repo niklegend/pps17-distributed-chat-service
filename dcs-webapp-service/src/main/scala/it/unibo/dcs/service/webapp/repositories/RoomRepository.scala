@@ -49,6 +49,9 @@ trait RoomRepository {
     * @return an observable stream of the new participation
     */
   def joinRoom(request: RoomJoinRequest): Observable[Participation]
+
+  def getUserParticipations(request: GetUserParticipationsRequest): Observable[List[Room]]
+
 }
 
 /** Companion object */

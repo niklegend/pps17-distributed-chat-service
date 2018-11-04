@@ -55,6 +55,9 @@ trait RoomApi {
     * @return an observable stream of the list of rooms
     */
   def getRooms(request: GetRoomsRequest): Observable[List[Room]]
+
+  def getUserParticipations(request: GetUserParticipationsRequest): Observable[List[Room]]
+
 }
 
 /** Companion object */

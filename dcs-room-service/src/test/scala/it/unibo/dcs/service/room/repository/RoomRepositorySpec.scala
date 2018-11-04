@@ -17,7 +17,7 @@ final class RoomRepositorySpec extends FlatSpec with MockFactory with OneInstanc
   private val username = "mvandi"
   private val secondUsername = "mvandi"
   private val roomName = "Test room"
-  private val rooms = Set(Room("Room 01"), Room("Room 02"))
+  private val rooms = List(Room("Room 01"), Room("Room 02"))
   private val firstParticipation = Participation(rooms.head, username, new Date())
   private val secondParticipation = Participation(rooms.head, secondUsername , new Date())
   private val participations = Set(firstParticipation, secondParticipation)
@@ -83,7 +83,7 @@ final class RoomRepositorySpec extends FlatSpec with MockFactory with OneInstanc
   it should "Get all the rooms on the data store" in {
     val request = GetRoomsRequest(username)
 
-    val subscriber = stub[Subscriber[Set[Room]]]
+    val subscriber = stub[Subscriber[List[Room]]]
 
     //Given
     (roomDataStore getRooms _) expects request returns Observable.just(rooms)
@@ -92,6 +92,19 @@ final class RoomRepositorySpec extends FlatSpec with MockFactory with OneInstanc
 
     //Then
     subscriber.onNext _ verify rooms once()
+  }
+
+  it should "Get all the participations for a given user" in {
+    val request = GetUserParticipationsRequest(username)
+
+    val subscriber = stub[Subscriber[List[Room]]]
+
+    (roomDataStore getParticipationsByUsername _) expects request returns Observable.just(rooms)
+
+    roomRepository.getParticipationsByUsername(request).subscribe(subscriber)
+
+    subscriber.onNext _ verify rooms once()
+    (() => subscriber onCompleted) verify() once()
   }
 
 }

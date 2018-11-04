@@ -97,7 +97,7 @@ private[impl] object RoomRestApi {
 
   private def roomParticipationsURI(roomName: String) = roomsURI + uriSeparator + roomName + "/participations"
 
-  private def joinRoomURI(roomName: String) = roomsURI + uriSeparator + roomName
+  private def joinRoomURI(roomName: String) = s"$roomsURI/$roomName/participations"
 
   private def leaveRoomURI(roomName: String, username: String) = {
     joinRoomURI(roomName) + "/" + username

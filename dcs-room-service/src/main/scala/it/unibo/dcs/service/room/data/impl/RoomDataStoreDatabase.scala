@@ -1,7 +1,6 @@
 package it.unibo.dcs.service.room.data.impl
 
-import io.vertx.lang.scala.json.Json
-import io.vertx.lang.scala.json.{JsonArray, JsonObject}
+import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
 import io.vertx.scala.ext.sql.SQLConnection
 import it.unibo.dcs.commons.JsonHelper.Implicits.RichGson
 import it.unibo.dcs.commons.dataaccess.Implicits.stringToDate
@@ -139,7 +138,7 @@ private[impl] object RoomDataStoreDatabase {
 
     implicit def requestToParams(request: GetRoomParticipationsRequest): JsonArray =
       Json.arr(request.name)
-      
+
     implicit def requestToParams(request: GetUserParticipationsRequest): JsonArray =
       new JsonArray().add(request.username)
 

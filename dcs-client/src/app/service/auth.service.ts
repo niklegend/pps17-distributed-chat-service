@@ -27,11 +27,9 @@ export class AuthService {
   }
 
   get authOptions() {
-    return {
-      headers: new HttpHeaders({
+    return new HttpHeaders({
         'Authorization' : 'Bearer ' + this.user.token
-      })
-    }
+      });
   }
 
   constructor(private http: HttpClient) {
@@ -46,7 +44,7 @@ export class AuthService {
     return this.http.post<User>(AuthService.LOGIN, request)
       .pipe(tap(user => {
         console.log(user);
-        this._user = user
+        this._user = user;
       }));
   }
 
@@ -58,7 +56,7 @@ export class AuthService {
   logout(): Observable<void> {
     return this.http.request<void>('delete', AuthService.LOGOUT, {
       body: new LogoutRequest(this.user.username),
-      headers: this.authOptions.headers
+      headers: this.authOptions
     }).pipe(tap(
       _ => {},
       _ => {},

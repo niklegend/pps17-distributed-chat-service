@@ -1,13 +1,15 @@
 package it.unibo.dcs.service.room.data.impl
 
+import io.vertx.core.json.JsonArray
+import io.vertx.lang.scala.json.{Json, JsonObject}
 import io.vertx.lang.scala.json.{JsonArray, JsonObject}
 import io.vertx.scala.ext.sql.SQLConnection
 import it.unibo.dcs.commons.JsonHelper.Implicits.RichGson
+import it.unibo.dcs.commons.dataaccess.Implicits.stringToDate
 import it.unibo.dcs.commons.dataaccess.{DataStoreDatabase, ResultSetHelper}
-import it.unibo.dcs.exceptions.{ParticipationNotFoundException, RoomNotFoundException}
+import it.unibo.dcs.exceptions.{ParticipationNotFoundException, ParticipationsNotFoundException, RoomNotFoundException}
 import it.unibo.dcs.service.room.data.RoomDataStore
 import it.unibo.dcs.service.room.data.impl.RoomDataStoreDatabase.Implicits._
-import it.unibo.dcs.service.room.data.impl.Implicits._
 import it.unibo.dcs.service.room.data.impl.RoomDataStoreDatabase._
 import it.unibo.dcs.service.room.gson
 import it.unibo.dcs.service.room.model._
@@ -42,8 +44,9 @@ final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
       ResultSetHelper.getRows(resultSet).map(jsonObjectToRoom).toList
     }
 
-  override def joinRoom(request: JoinRoomRequest): Observable[Participation] = execute(insertParticipationQuery, request)
-    .flatMap(_ => getParticipationByKey(request))
+  override def joinRoom(request: JoinRoomRequest): Observable[Participation] =
+    execute(insertParticipationQuery, request)
+      .flatMap(_ => getParticipationByKey(request))
 
   override def getParticipationByKey(request: JoinRoomRequest): Observable[Participation] =
     query(selectParticipationByKey, request)
@@ -51,10 +54,26 @@ final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
         if (resultSet.getResults.isEmpty) {
           throw ParticipationNotFoundException(request.username, request.name)
         } else {
+          println(ResultSetHelper.getRows(resultSet).head.encodePrettily())
           ResultSetHelper.getRows(resultSet).head
         }
       }
 
+  override def getRoomParticipations(request: GetRoomParticipationsRequest): Observable[Set[Participation]] = {
+    query(selectParticipationsByRoomName, request)
+      .map { resultSet =>
+        if (resultSet.getResults.isEmpty) {
+          throw ParticipationsNotFoundException(request.name)
+        } else {
+          // Debug
+          ResultSetHelper.getRows(resultSet).foreach(row => println(row.encodePrettily()))
+
+          ResultSetHelper.getRows(resultSet)
+            .map(json => jsonObjectToParticipation(json))
+            .toSet
+        }
+      }
+  }
   override def getParticipationsByUsername(request: GetUserParticipationsRequest): Observable[List[Room]] =
     query(selectParticipationsByUsername, request)
       .map { resultSet =>
@@ -85,6 +104,8 @@ private[impl] object RoomDataStoreDatabase {
 
   val selectParticipationByKey = "SELECT * FROM `participations` WHERE `username` = ? AND `name` = ?"
 
+  val selectParticipationsByRoomName = "SELECT * FROM `participations` WHERE `name` = ?"
+
   object Implicits {
 
     implicit def requestToParams(request: CreateUserRequest): JsonArray =
@@ -105,13 +126,19 @@ private[impl] object RoomDataStoreDatabase {
     implicit def requestToParams(request: JoinRoomRequest): JsonArray =
       new JsonArray().add(request.username).add(request.name)
 
+    implicit def requestToParams(request: GetRoomParticipationsRequest): JsonArray =
+      Json.arr(request.name)
+      
     implicit def requestToParams(request: GetUserParticipationsRequest): JsonArray =
       new JsonArray().add(request.username)
 
     implicit def jsonObjectToRoom(json: JsonObject): Room = gson fromJsonObject[Room] json
 
     implicit def jsonObjectToParticipation(json: JsonObject): Participation = {
-      gson.fromJsonObject[ParticipationDto](json)
+      val room = Room(json.getString("name"))
+      val date = json.getString("join_date")
+      val username = json.getString("username")
+      Participation(room, username, date)
     }
 
   }

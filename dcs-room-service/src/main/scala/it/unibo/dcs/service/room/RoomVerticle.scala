@@ -62,6 +62,11 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
       val validation = new JoinRoomValidation(threadExecutor, postExecutionThread, JoinRoomValidator())
       new JoinRoomUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
     }
+    val getRoomParticipationsUseCase = {
+      val validation = new GetRoomParticipationsValidation(threadExecutor, postExecutionThread,
+        GetRoomParticipationsValidator())
+      new GetRoomParticipationsUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
+    }
     val getUserParticipationsUseCase = {
       val validation = new GetUserParticipationsValidation(threadExecutor, postExecutionThread, GetUserParticipationsValidator())
       new GetUserParticipationsUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
@@ -95,6 +100,14 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
         val request = routingContext.getBodyAsJson.head.put("name", roomName)
         val subscriber = new JoinRoomSubscriber(routingContext.response())
         joinRoomUseCase(request, subscriber)
+      })
+
+    router.get("/rooms/:name/participations")
+      .produces(ContentType.APPLICATION_JSON)
+      .handler(routingContext => {
+        val roomName = routingContext.request().getParam("name").head
+        val subscriber = new RoomParticipationsSubscriber(routingContext.response())
+        getRoomParticipationsUseCase(GetRoomParticipationsRequest(roomName), subscriber)
       })
 
     router.get("/rooms")

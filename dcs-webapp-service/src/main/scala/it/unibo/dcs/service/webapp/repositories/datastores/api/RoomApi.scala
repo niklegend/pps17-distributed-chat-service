@@ -12,6 +12,14 @@ import rx.lang.scala.Observable
 /** Utility wrapper for making requests to the Room Service via the network */
 trait RoomApi {
 
+  /** It retrieves all the participations for a given room
+    *
+    * @param request needed data to retrieve all the participations for a given room
+    * @return an observable stream of all the participations
+    */
+  def getRoomParticipations(request: GetRoomParticipationsRequest): Observable[Set[Participation]]
+
+
   /** It adds the user to the list of participants in the room
     *
     * @param request needed info to join a room

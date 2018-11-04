@@ -41,6 +41,15 @@ package object subscriber {
 
   }
 
+  final class RoomParticipationsSubscriber(protected override val response: HttpServerResponse)
+    extends Subscriber[Set[Participation]] with ErrorSubscriber with Logging {
+
+    override def onNext(participations: Set[Participation]): Unit = {
+      val results = Json.arr(participations.map(participationToJsonObject).toArray)
+      response.end(results.encodePrettily())
+    }
+  }
+
   class DeleteRoomSubscriber(protected override val response: HttpServerResponse) extends Subscriber[String]
     with ErrorSubscriber {
 

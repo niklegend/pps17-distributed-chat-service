@@ -4,7 +4,10 @@ import it.unibo.dcs.service.webapp.interaction.Requests.{CheckTokenRequest, GetU
 import it.unibo.dcs.service.webapp.interaction.Results.GetUserParticipationsResult
 import it.unibo.dcs.service.webapp.model.Room
 import it.unibo.dcs.service.webapp.repositories.RoomRepository
+import it.unibo.dcs.service.webapp.usecases.commons.UseCaseSpec
 import rx.lang.scala.{Observable, Subscriber}
+import it.unibo.dcs.service.webapp.usecases.commons.Mocks._
+import scala.language.postfixOps
 
 class GetUserParticipationsUseCaseSpec extends UseCaseSpec {
 

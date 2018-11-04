@@ -9,6 +9,7 @@ import it.unibo.dcs.commons.VertxHelper.Implicits.RichEventBus
 import it.unibo.dcs.exceptions.InternalException
 import it.unibo.dcs.service.webapp.interaction.Labels.JsonLabels._
 import it.unibo.dcs.service.webapp.interaction.Labels.{JsonLabels, ParamLabels}
+import it.unibo.dcs.service.webapp.interaction.Requests.GetRoomParticipationsRequest
 import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
 import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, RoomRepository, UserRepository}
 import it.unibo.dcs.service.webapp.usecases._
@@ -25,6 +26,7 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
 
   private[this] lazy val roomDeleted = eventBus.address(Rooms.deleted)
   private[this] lazy val roomJoined = eventBus.address(Rooms.joined)
+  private[this] lazy val roomCreated = eventBus.address(Rooms.created)
 
   override def handleRegistration(context: RoutingContext)(implicit ctx: Context): Unit =
     handleRequestBody(context) {
@@ -54,7 +56,7 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
         handleRequestBody(context) {
           request =>
             val useCase = CreateRoomUseCase(authRepository, roomRepository)
-            useCase(request.put(authenticationLabel, token), RoomCreationSubscriber(context.response))
+            useCase(request.put(authenticationLabel, token), RoomCreationSubscriber(context.response, roomCreated))
         }
     }
 
@@ -98,6 +100,22 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
       }
     }
 
+  override def handleGetRoomParticipations(context: RoutingContext)(implicit ctx: Context): Unit =
+    handleRequestParam(context, ParamLabels.roomNameLabel) {
+      roomName => {
+        handleRequestToken(context) {
+          token => {
+            handleRequestParam(context, ParamLabels.userLabel) {
+              username =>
+                val useCase = GetRoomParticipationsUseCase(authRepository, roomRepository)
+                useCase(GetRoomParticipationsRequest(roomName, username, token),
+                  GetRoomParticipationsSubscriber(context.response()))
+            }
+          }
+        }
+      }
+    }
+            
   override def handleGetUserParticipations(context: RoutingContext)(implicit ctx: Context): Unit = {
     handleRequestParam(context, ParamLabels.usernameLabel) {
       username => {

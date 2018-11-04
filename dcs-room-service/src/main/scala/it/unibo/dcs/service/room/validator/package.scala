@@ -74,4 +74,14 @@ package object validator {
     }
   }
 
+  object GetRoomParticipationsValidator {
+    def apply(): Validator[GetRoomParticipationsRequest] = Validator[GetRoomParticipationsRequest] {
+      builder => builder
+        .addRule(request =>
+          Conditions.stringNotEmpty(request.name),
+          RoomNameRequiredException
+        )
+    }
+  }
+
 }

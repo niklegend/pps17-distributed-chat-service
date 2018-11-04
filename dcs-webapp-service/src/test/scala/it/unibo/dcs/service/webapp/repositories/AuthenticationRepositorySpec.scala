@@ -1,7 +1,7 @@
 package it.unibo.dcs.service.webapp.repositories
 
 import it.unibo.dcs.service.webapp.interaction.Requests._
-import it.unibo.dcs.service.webapp.repositories.AuthenticationRepository
+import it.unibo.dcs.service.webapp.repositories.commons.RepositorySpec
 import it.unibo.dcs.service.webapp.repositories.datastores.AuthenticationDataStore
 import it.unibo.dcs.service.webapp.repositories.impl.AuthenticationRepositoryImpl
 import rx.lang.scala.{Observable, Subscriber}

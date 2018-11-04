@@ -8,9 +8,8 @@ import io.vertx.ext.unit.{TestContext, TestOptions, TestSuite}
 import io.vertx.lang.scala.ScalaVerticle._
 import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.core.{DeploymentOptions, Vertx, VertxOptions}
-import it.unibo.dcs.commons.{Logging, VertxHelper}
 import it.unibo.dcs.commons.VertxHelper.Implicits._
-import it.unibo.dcs.service.webapp.verticles.WebAppVerticle
+import it.unibo.dcs.commons.{Logging, VertxHelper}
 
 import scala.language.postfixOps
 

@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Observable, Subject} from 'rxjs';
-import {HttpClient, HttpParams} from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
 import {EventBusService} from './event-bus.service';
 import {Participation, Room} from '../model';
 import {CreateRoomRequest, DeleteRoomRequest, JoinRoomRequest} from '../requests';
@@ -22,6 +22,7 @@ export class ChatService {
 
   private static ROOM_DELETED = 'rooms.deleted';
   private static ROOM_JOINED = 'rooms.joined';
+  private static ROOM_CREATED = 'rooms.created';
 
   private roomCreated = new Subject<Room>();
   private roomDeleted = new Subject<string>();
@@ -40,14 +41,18 @@ export class ChatService {
     });
 
     eventBus.registerHandler(ChatService.ROOM_JOINED, (err, msg) => {
-      this.roomJoined.next(msg.body);
+      this.roomJoined.next(msg.body)
+    });
+
+    eventBus.registerHandler(ChatService.ROOM_CREATED, (err, msg) => {
+      this.roomCreated.next(msg.body)
     });
   }
 
   getRooms(): Observable<Room[]> {
     const user = this.auth.user;
     return this.http.get<Room[]>(ChatService.ROOMS, {
-      headers: this.auth.authOptions,
+      headers: this.auth.authOptions.headers,
       params: {
         user: user.username
       }
@@ -72,38 +77,35 @@ export class ChatService {
   createRoom(name: string): Observable<string> {
     const user = this.auth.user;
     return this.http
-      .post<Room>(
-        ChatService.ROOMS,
-        new CreateRoomRequest(name, user.username), {
-          headers: this.auth.authOptions
-        })
-      .pipe(tap(room => this.roomCreated.next(room)))
+      .post<Room>(ChatService.ROOMS, new CreateRoomRequest(name, user.username), this.auth.authOptions)
+      //.pipe(tap(room => this.roomCreated.next(room)))
       .pipe(map(room => room.name));
   }
 
   deleteRoom(name: string): Observable<void> {
     const user = this.auth.user;
     const body = new DeleteRoomRequest(name, user.username);
-    return this.http.request<void>('delete', ChatService.ROOMS + '/' + name, {
+    return this.http.request<void>('delete', ChatService.ROOMS + "/" + name, {
       body: body,
-      headers: this.auth.authOptions
+      headers: this.auth.authOptions.headers
     });
   }
 
   joinRoom(name: string): Observable<Participation> {
     const user = this.auth.user;
     const body = new JoinRoomRequest(user.username);
-    return this.http.post<Participation>(
-      ChatService.ROOMS + '/' + name + '/participations',
-      body, {
-        headers: this.auth.authOptions
-      });
+    return this.http.post<Participation>(ChatService.ROOMS + "/" + name + "/participations", body,
+      this.auth.authOptions);
+  }
+
+  getRoomParticipations(name: string): Observable<Participation[]> {
+    return this.http.get<Participation[]>(
+      ChatService.ROOMS + "/" + name + "/participations?user=" + this.auth.user.username, this.auth.authOptions)
   }
 
   onRoomCreated(): Observable<Room> {
-    return this.roomCreated
-      .asObservable()
-      .pipe(tap(room => this.selectRoom(room)));
+    return this.roomCreated.asObservable();
+      //.pipe(tap(room => this.selectRoom(room)));
   }
 
   onRoomDeleted(): Observable<string> {

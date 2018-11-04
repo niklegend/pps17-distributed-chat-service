@@ -34,6 +34,16 @@ package object subscriber {
     }
   }
 
+  final class LeaveRoomSubscriber(protected override val response: HttpServerResponse) extends Subscriber[Participation]
+    with ErrorSubscriber with Logging {
+
+    override def onNext(participation: Participation): Unit = {
+      val json = Json.obj(("name", participation.room.name), ("username", participation.username))
+      log.info(s"Answering with : $json")
+      response.setStatus(HttpResponseStatus.OK).end(json.encode())
+    }
+  }
+
   final class CreateUserSubscriber(protected override val response: HttpServerResponse) extends Subscriber[Unit]
     with ErrorSubscriber with Logging {
 

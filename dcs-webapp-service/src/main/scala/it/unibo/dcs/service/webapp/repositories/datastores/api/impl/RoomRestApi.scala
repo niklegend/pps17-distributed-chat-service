@@ -1,6 +1,8 @@
 package it.unibo.dcs.service.webapp.repositories.datastores.api.impl
 
+import io.vertx.core.buffer.Buffer
 import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
+import io.vertx.scala.ext.web.client.{HttpResponse, WebClient}
 import it.unibo.dcs.commons.RxHelper.Implicits.RichObservable
 import it.unibo.dcs.commons.service.{AbstractApi, HttpEndpointDiscovery}
 import it.unibo.dcs.exceptions.{InternalException, RoomServiceErrorException, bodyAsJsonArray, bodyAsJsonObject}
@@ -13,7 +15,6 @@ import it.unibo.dcs.service.webapp.repositories.datastores.api.RoomApi
 import it.unibo.dcs.service.webapp.repositories.datastores.api.impl.RoomRestApi.Implicits._
 import it.unibo.dcs.service.webapp.repositories.datastores.api.impl.RoomRestApi._
 import rx.lang.scala.Observable
-
 import it.unibo.dcs.commons.JsonHelper.Implicits.RichGson
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -49,6 +50,14 @@ class RoomRestApi(private[this] val discovery: HttpEndpointDiscovery)
     makeRequest(client =>
       Observable.from(client.post(joinRoomURI(request.name))
         .sendJsonObjectFuture(toJoinRoomRequest(request))))
+      .map(bodyAsJsonObject(throw InternalException(emptyBodyErrorMessage)))
+      .mapImplicitly
+  }
+
+  override def leaveRoom(request: RoomLeaveRequest): Observable[Participation] = {
+    makeRequest(client =>
+      Observable.from(client.delete(leaveRoomURI(request.name, request.username))
+        .sendFuture()))
       .map(bodyAsJsonObject(throw InternalException(emptyBodyErrorMessage)))
       .mapImplicitly
   }
@@ -89,6 +98,10 @@ private[impl] object RoomRestApi {
   private def roomParticipationsURI(roomName: String) = roomsURI + uriSeparator + roomName + "/participations"
 
   private def joinRoomURI(roomName: String) = roomsURI + uriSeparator + roomName
+
+  private def leaveRoomURI(roomName: String, username: String) = {
+    joinRoomURI(roomName) + "/" + username
+  }
 
   private def deleteRoomURI(roomName: String) = roomsURI + uriSeparator + roomName
 

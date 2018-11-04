@@ -22,6 +22,8 @@ object Results {
 
   final case class RoomJoinResult(participation: Participation) extends DcsResult
 
+  final case class RoomLeaveResult(participation: Participation) extends DcsResult
+
   final case class GetRoomsResult(rooms: List[Room]) extends DcsResult
 
   final case class GetRoomParticipationsResult(participations: Set[Participation]) extends DcsResult
@@ -41,6 +43,8 @@ object Results {
 
     implicit def roomJoinResultToJsonString(result: RoomJoinResult): String = resultToJsonString(result.participation)
 
+    implicit def roomLeaveResultToJsonString(result: RoomLeaveResult): String = resultToJsonString(result.participation)
+
     private def resultToJsonString(result: Product, transformations: JsonObject => JsonObject = identity): String =
       transformations(Json.fromObjectString(gson.toJson(result))) encode()
 
@@ -57,8 +61,15 @@ object Results {
     }
 
     implicit def roomJoinResultToJsonObject(result: RoomJoinResult): JsonObject = {
-      Json.fromObjectString(gson.toJson(result.participation))
+      roomResultToJsonObject(result.participation)
     }
+
+    implicit def roomLeaveResultToJsonObject(result: RoomLeaveResult): JsonObject = {
+      roomResultToJsonObject(result.participation)
+    }
+
+    private def roomResultToJsonObject(result: Product): JsonObject =
+      Json.fromObjectString(gson.toJson(result))
 
     implicit def getRoomsToJsonArray(result: GetRoomsResult): JsonArray = {
       result.rooms

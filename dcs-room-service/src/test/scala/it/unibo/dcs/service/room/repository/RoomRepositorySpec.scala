@@ -17,7 +17,9 @@ final class RoomRepositorySpec extends FlatSpec with MockFactory with OneInstanc
   private val username = "mvandi"
   private val secondUsername = "mvandi"
   private val roomName = "Test room"
+  private val room = Room(roomName)
   private val rooms = List(Room("Room 01"), Room("Room 02"))
+  val expectedParticipation = Participation(room, username, new Date())
   private val firstParticipation = Participation(rooms.head, username, new Date())
   private val secondParticipation = Participation(rooms.head, secondUsername , new Date())
   private val participations = Set(firstParticipation, secondParticipation)
@@ -94,6 +96,34 @@ final class RoomRepositorySpec extends FlatSpec with MockFactory with OneInstanc
     subscriber.onNext _ verify rooms once()
   }
 
+  it should "Let the user join the selected room on the data store" in {
+    val request = JoinRoomRequest(roomName, username)
+
+    val subscriber = stub[Subscriber[Participation]]
+
+    //Given
+    (roomDataStore joinRoom  _) expects request returns Observable.just(expectedParticipation)
+
+    roomRepository.joinRoom(request).subscribe(subscriber)
+
+    //Then
+    subscriber.onNext _ verify expectedParticipation once()
+  }
+
+  it should "Let the user leave the selected room on the data store" in {
+    val request = LeaveRoomRequest(roomName, username)
+
+    val subscriber = stub[Subscriber[Participation]]
+
+    //Given
+    (roomDataStore leaveRoom  _) expects request returns Observable.just(expectedParticipation)
+
+    roomRepository.leaveRoom(request).subscribe(subscriber)
+
+    //Then
+    subscriber.onNext _ verify expectedParticipation once()
+  }
+  
   it should "Get all the participations for a given user" in {
     val request = GetUserParticipationsRequest(username)
 

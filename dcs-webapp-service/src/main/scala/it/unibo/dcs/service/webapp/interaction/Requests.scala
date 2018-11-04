@@ -34,6 +34,8 @@ object Requests {
 
   final case class RoomJoinRequest(name: String, username: String, token: String) extends DcsRequest
 
+  final case class RoomLeaveRequest(name: String, username: String, token: String) extends DcsRequest
+
   final case class GetRoomsRequest(username: String, token: String) extends DcsRequest
 
   final case class GetRoomParticipationsRequest(name: String, username: String, token: String) extends DcsRequest
@@ -97,6 +99,10 @@ object Requests {
 
     implicit def jsonObjectToRoomJoinRequest(json: JsonObject): RoomJoinRequest = {
       RoomJoinRequest(json.getString(roomNameLabel), json.getString(usernameLabel), json.getString(tokenLabel))
+    }
+
+    implicit def jsonObjectToRoomLeaveRequest(json: JsonObject): RoomLeaveRequest = {
+      RoomLeaveRequest(json.getString(roomNameLabel), json.getString(usernameLabel), json.getString(tokenLabel))
     }
 
     implicit def jsonObjectToGetRoomsRequest(json: JsonObject): GetRoomsRequest = {

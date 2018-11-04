@@ -62,6 +62,10 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
       val validation = new JoinRoomValidation(threadExecutor, postExecutionThread, JoinRoomValidator())
       new JoinRoomUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
     }
+    val leaveRoomUseCase = {
+      val validation = new LeaveRoomValidation(threadExecutor, postExecutionThread, LeaveRoomValidator())
+      new LeaveRoomUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
+    }
     val getRoomParticipationsUseCase = {
       val validation = new GetRoomParticipationsValidation(threadExecutor, postExecutionThread,
         GetRoomParticipationsValidator())
@@ -71,6 +75,16 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
       val validation = new GetUserParticipationsValidation(threadExecutor, postExecutionThread, GetUserParticipationsValidator())
       new GetUserParticipationsUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
     }
+
+    router.post("/users")
+      .consumes(ContentType.APPLICATION_JSON)
+      .consumes(ContentType.APPLICATION_JSON)
+      .handler(routingContext => {
+        val request = routingContext.getBodyAsJson.head
+        val subscriber = new CreateUserSubscriber(routingContext.response())
+        createUserUseCase(request, subscriber)
+      })
+    
 
     router.post("/rooms")
       .consumes(ContentType.APPLICATION_JSON)
@@ -102,6 +116,16 @@ final class RoomVerticle(private[this] val roomRepository: RoomRepository, val p
         joinRoomUseCase(request, subscriber)
       })
 
+    router.delete("/rooms/:name/participations/:username")
+      .produces(ContentType.APPLICATION_JSON)
+      .handler(routingContext => {
+        val roomName = routingContext.request().getParam("name").head
+        val userName = routingContext.request().getParam("username").head
+        val request = LeaveRoomRequest(roomName, userName)
+        val subscriber = new LeaveRoomSubscriber(routingContext.response())
+        leaveRoomUseCase(request, subscriber)
+      })
+        
     router.get("/rooms/:name/participations")
       .produces(ContentType.APPLICATION_JSON)
       .handler(routingContext => {
@@ -163,6 +187,8 @@ object RoomVerticle {
     implicit def jsonObjectToJoinRoomRequest(json: JsonObject): JoinRoomRequest =
       gson fromJsonObject[JoinRoomRequest] json
 
+    implicit def jsonObjectToLeaveRoomRequest(json: JsonObject): LeaveRoomRequest =
+      gson fromJsonObject[LeaveRoomRequest] json
   }
 
 }

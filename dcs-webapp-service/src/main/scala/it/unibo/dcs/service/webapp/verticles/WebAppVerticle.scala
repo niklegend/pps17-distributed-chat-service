@@ -68,7 +68,7 @@ final class WebAppVerticle extends ServiceVerticle {
     router.mountSubRouter("/api", apiRouter)
   }
 
-  private def defineServiceApi(apiRouter: Router) = {
+  private def defineServiceApi(apiRouter: Router): Unit = {
     implicit val ctx: core.Context = this.ctx
 
     apiRouter.post("/register")
@@ -96,6 +96,10 @@ final class WebAppVerticle extends ServiceVerticle {
       .produces(APPLICATION_JSON)
       .handler(context => requestHandler handleJoinRoom context)
 
+    apiRouter.delete("/rooms/:" + ParamLabels.roomNameLabel + "/participations/:" + ParamLabels.userLabel)
+      .produces(APPLICATION_JSON)
+      .handler(context => requestHandler handleLeaveRoom context)
+
     apiRouter.delete("/rooms/:" + ParamLabels.roomNameLabel)
       .consumes(APPLICATION_JSON)
       .produces(APPLICATION_JSON)
@@ -113,7 +117,7 @@ final class WebAppVerticle extends ServiceVerticle {
       .produces(APPLICATION_JSON)
       .handler(context => requestHandler handleGetUserParticipations context)
   }
-
+    
   private def disableCors(router: Router) = {
     router.route().handler(CorsHandler.create("*")
       .allowedMethod(GET)
@@ -124,7 +128,8 @@ final class WebAppVerticle extends ServiceVerticle {
       .allowedHeader("Access-Control-Allow-Method")
       .allowedHeader("Access-Control-Allow-Origin")
       .allowedHeader("Access-Control-Allow-Credentials")
-      .allowedHeader("Content-Type"))
+      .allowedHeader("Content-Type")
+      .allowedHeader("Authorization"))
   }
 
   override def start(): Unit = {

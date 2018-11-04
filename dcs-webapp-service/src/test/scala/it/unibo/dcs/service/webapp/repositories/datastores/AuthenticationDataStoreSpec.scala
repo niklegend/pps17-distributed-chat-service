@@ -3,6 +3,7 @@ package it.unibo.dcs.service.webapp.repositories.datastores
 import it.unibo.dcs.service.webapp.interaction.Requests._
 import it.unibo.dcs.service.webapp.repositories.datastores.AuthenticationDataStore
 import it.unibo.dcs.service.webapp.repositories.datastores.api.AuthenticationApi
+import it.unibo.dcs.service.webapp.repositories.datastores.commons.DataStoreSpec
 import it.unibo.dcs.service.webapp.repositories.datastores.impl.AuthenticationDataStoreNetwork
 import rx.lang.scala.{Observable, Subscriber}
 

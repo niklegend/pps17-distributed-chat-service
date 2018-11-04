@@ -4,6 +4,8 @@ import it.unibo.dcs.service.webapp.interaction.Requests.LogoutUserRequest
 import rx.lang.scala.{Observable, Subscriber}
 
 import scala.language.postfixOps
+import it.unibo.dcs.service.webapp.usecases.commons.Mocks._
+import it.unibo.dcs.service.webapp.usecases.commons.UseCaseSpec
 
 class LogoutUseCaseSpec extends UseCaseSpec {
 

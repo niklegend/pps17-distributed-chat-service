@@ -13,7 +13,6 @@ import it.unibo.dcs.commons.service.{HttpEndpointPublisher, HttpEndpointPublishe
 import it.unibo.dcs.service.webapp.interaction.Labels._
 import it.unibo.dcs.service.webapp.verticles.Addresses.Rooms
 import it.unibo.dcs.service.webapp.verticles.handler.ServiceRequestHandler
-import org.apache.http.entity.ContentType
 import org.apache.http.entity.ContentType._
 
 /** Verticle that runs the WebApp Service */
@@ -55,8 +54,7 @@ final class WebAppVerticle extends ServiceVerticle {
 
   override protected def initializeRouter(router: Router): Unit = {
     /* Enables the fetching of request bodies */
-    router.route()
-      .handler(BodyHandler.create())
+    router.route().handler(BodyHandler.create())
 
     disableCors(router)
 
@@ -64,8 +62,7 @@ final class WebAppVerticle extends ServiceVerticle {
 
     val apiRouter = Router.router(vertx)
 
-    apiRouter.route("/events/*")
-      .handler(sockJSHandler)
+    apiRouter.route("/events/*").handler(sockJSHandler)
 
     defineServiceApi(apiRouter)
     router.mountSubRouter("/api", apiRouter)
@@ -105,9 +102,13 @@ final class WebAppVerticle extends ServiceVerticle {
       .handler(context => requestHandler handleRoomDeletion context)
 
     apiRouter.get("/rooms")
-      .produces(ContentType.APPLICATION_JSON)
+      .produces(APPLICATION_JSON)
       .handler(context => requestHandler handleGetRooms context)
 
+    apiRouter.get("/rooms/:" + ParamLabels.roomNameLabel + "/participations")
+      .produces(APPLICATION_JSON)
+      .handler(context => requestHandler handleGetRoomParticipations context)
+      
     apiRouter.get(s"/users/:${ParamLabels.usernameLabel}/participations")
       .produces(APPLICATION_JSON)
       .handler(context => requestHandler handleGetUserParticipations context)
@@ -140,6 +141,7 @@ final class WebAppVerticle extends ServiceVerticle {
     val options = BridgeOptions()
       .addOutboundPermitted(PermittedOptions().setAddress(Rooms.deleted))
       .addOutboundPermitted(PermittedOptions().setAddress(Rooms.joined))
+      .addOutboundPermitted(PermittedOptions().setAddress(Rooms.created))
 
     SockJSHandler.create(vertx).bridge(options)
   }

@@ -5,15 +5,13 @@ import java.util.Date
 import it.unibo.dcs.service.webapp.interaction.Requests.{CheckTokenRequest, RoomJoinRequest}
 import it.unibo.dcs.service.webapp.interaction.Results.RoomJoinResult
 import it.unibo.dcs.service.webapp.model.{Participation, Room}
-import it.unibo.dcs.service.webapp.repositories.RoomRepository
-import it.unibo.dcs.service.webapp.usecases.JoinRoomUseCase
+import it.unibo.dcs.service.webapp.usecases.commons.Mocks._
+import it.unibo.dcs.service.webapp.usecases.commons.UseCaseSpec
 import rx.lang.scala.{Observable, Subscriber}
 
 import scala.language.postfixOps
 
 class JoinRoomUseCaseSpec extends UseCaseSpec {
-
-  private val roomRepository: RoomRepository = mock[RoomRepository]
 
   private val room = Room("Room 1")
   private val participation = Participation(new Date(), room, user.username)

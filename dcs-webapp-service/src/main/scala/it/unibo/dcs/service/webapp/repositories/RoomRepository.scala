@@ -9,6 +9,13 @@ import rx.lang.scala.Observable
 /** Structure that handles Rooms data access and storage. */
 trait RoomRepository {
 
+  /** It retrieves all the participations for a given room
+    *
+    * @param request needed data to retrieve all the participations for a given room
+    * @return an observable stream of all the participations
+    */
+  def getRoomParticipations(request: GetRoomParticipationsRequest): Observable[Set[Participation]]
+
   /** Store a new user given its information
     *
     * @param request needed data to register a new user
@@ -36,6 +43,11 @@ trait RoomRepository {
     */
   def getRooms(request: GetRoomsRequest): Observable[List[Room]]
 
+  /** It creates a new user participation in a given room
+    *
+    * @param request needed data to join a room for a user
+    * @return an observable stream of the new participation
+    */
   def joinRoom(request: RoomJoinRequest): Observable[Participation]
 
   def getUserParticipations(request: GetUserParticipationsRequest): Observable[List[Room]]

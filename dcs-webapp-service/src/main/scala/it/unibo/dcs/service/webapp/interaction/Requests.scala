@@ -1,12 +1,14 @@
 package it.unibo.dcs.service.webapp.interaction
 
+import com.google.gson.Gson
+import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
 import io.vertx.lang.scala.json.{Json, JsonObject}
 
 import it.unibo.dcs.commons.JsonHelper.Implicits.RichGson
 import it.unibo.dcs.commons.dataaccess.Implicits.stringToDate
-import it.unibo.dcs.service.webapp.gson
 import it.unibo.dcs.service.webapp.interaction.Labels.JsonLabels._
-import it.unibo.dcs.service.webapp.model.{Room, User}
+import it.unibo.dcs.service.webapp.model.{Participation, Room, User}
+import net.liftweb.json._
 
 import scala.language.implicitConversions
 
@@ -34,6 +36,8 @@ object Requests {
 
   final case class GetRoomsRequest(username: String, token: String) extends DcsRequest
 
+  final case class GetRoomParticipationsRequest(name: String, username: String, token: String) extends DcsRequest
+
   final case class CheckTokenRequest(token: String, username: String) extends DcsRequest
 
   final case class GetUserParticipationsRequest(username: String, token: String) extends DcsRequest
@@ -41,7 +45,9 @@ object Requests {
   /** It enables implicit conversions in order to clean code that deals with requests. */
   object Implicits {
 
-    implicit def requestToJson(request: DcsRequest): JsonObject = Json.fromObjectString(gson.toJson(request))
+    private val gson = new Gson()
+
+    implicit def requestToJsonObject(request: DcsRequest): JsonObject = Json.fromObjectString(gson.toJson(request))
 
     implicit def jsonToDeleteRoomRequest(json: JsonObject): DeleteRoomRequest = {
       DeleteRoomRequest(json.getString(roomNameLabel), json.getString(usernameLabel), json.getString(tokenLabel))
@@ -76,6 +82,12 @@ object Requests {
 
     implicit def jsonObjectToRoom(json: JsonObject): Room = {
       Room(json.getString(roomNameLabel))
+    }
+
+    implicit def jsonArrayToParticipationSet(array: JsonArray): Set[Participation] = {
+      implicit val formats: DefaultFormats.type = DefaultFormats
+      val participations = parse(array.encode()).children
+      participations.map(_.extract[Participation]).toSet
     }
 
     implicit def jsonObjectToCreateRoomRequest(json: JsonObject): CreateRoomRequest = {

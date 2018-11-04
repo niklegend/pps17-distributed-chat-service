@@ -11,7 +11,6 @@ import io.vertx.scala.core.{DeploymentOptions, Vertx, VertxOptions}
 import it.unibo.dcs.commons.VertxHelper
 import it.unibo.dcs.commons.VertxHelper.Implicits._
 import it.unibo.dcs.commons.logging.Logging
-import it.unibo.dcs.service.webapp.verticles.WebAppVerticle
 
 import scala.language.postfixOps
 

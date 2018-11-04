@@ -50,6 +50,8 @@ trait RoomRepository {
     */
   def joinRoom(request: RoomJoinRequest): Observable[Participation]
 
+  def leaveRoom(request: RoomLeaveRequest): Observable[Participation]
+  
   def getUserParticipations(request: GetUserParticipationsRequest): Observable[List[Room]]
 
 }

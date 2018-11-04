@@ -10,7 +10,7 @@ object Requests {
   final case class LoginUserRequest(username: String, password: String) extends TokenRequest
 
   /** Request to logout the user, given the jwt token */
-  final case class LogoutUserRequest(token: String)
+  final case class LogoutUserRequest(username: String, token: String)
 
   /** Request to delete the user, given the username */
   final case class DeleteUserRequest(username: String, token: String)
@@ -19,7 +19,7 @@ object Requests {
   final case class RegisterUserRequest(username: String, password: String) extends TokenRequest
 
   /** Request that contains user credentials */
-  trait TokenRequest {
+  sealed trait TokenRequest {
     def username: String
     def password: String
   }

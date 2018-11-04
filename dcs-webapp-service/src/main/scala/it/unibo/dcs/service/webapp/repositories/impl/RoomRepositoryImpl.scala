@@ -20,6 +20,8 @@ class RoomRepositoryImpl(roomDataStore: RoomDataStore) extends RoomRepository {
 
   override def joinRoom(request: RoomJoinRequest): Observable[Participation] = roomDataStore.joinRoom(request)
 
+  override def leaveRoom(request: RoomLeaveRequest): Observable[Participation] = roomDataStore.leaveRoom(request)
+  
   override def getRoomParticipations(request: GetRoomParticipationsRequest): Observable[Set[Participation]] =
     roomDataStore.getRoomParticipations(request)
 

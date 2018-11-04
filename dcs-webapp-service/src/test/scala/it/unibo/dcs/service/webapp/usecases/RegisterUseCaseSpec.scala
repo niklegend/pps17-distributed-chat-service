@@ -25,7 +25,7 @@ class RegisterUseCaseSpec extends UseCaseSpec {
     (authRepository registerUser _) expects registerRequest returns (Observable just token)
     // userRepository is called with `registerRequest` as parameter returns an observable that contains only `user`
     (userRepository registerUser _) expects registerRequest returns (Observable just user)
-    (roomRepository registerUser _) expects registerRequest returns (Observable empty)
+    (roomRepository registerUser _) expects registerRequest returns (Observable just Unit)
 
     // When
     // createUserUseCase is executed with argument `request`

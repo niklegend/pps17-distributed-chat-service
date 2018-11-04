@@ -23,6 +23,12 @@ trait RoomDataStore {
     */
   def joinRoom(request: RoomJoinRequest): Observable[Participation]
 
+  /** It removes the user from the list of participants in the room
+    *
+    * @param request needed data to leave the room
+    * @return an observable stream of the old participation
+    */
+  def leaveRoom(request: RoomLeaveRequest): Observable[Participation]
 
   /** Register a new user given its info
     *

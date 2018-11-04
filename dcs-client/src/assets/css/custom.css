@@ -5,6 +5,18 @@ html, body {
   background: white !important;
 }
 
+@media screen and (max-width: 992px) {
+  .visible-md[_ngcontent-c5] {
+    display: block !important;
+  }
+}
+
+@media screen and (max-width: 992px) {
+  #sidebar[_ngcontent-c6] {
+    left: -250px !important;
+  }
+}
+
 .mat-toolbar-row, .mat-toolbar-single-row {
   height: 80px !important;
 }

@@ -27,7 +27,7 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
 
   private[this] lazy val roomDeleted = eventBus.address(Rooms.deleted)
   private[this] lazy val roomJoined = eventBus.address(Rooms.joined)
-  private[this] lazy val roomLeaved = eventBus.address(Rooms.leaved)
+  private[this] lazy val roomLeaved = eventBus.address(Rooms.left)
   private[this] lazy val roomCreated = eventBus.address(Rooms.created)
 
   override def handleRegistration(context: RoutingContext)(implicit ctx: Context): Unit =

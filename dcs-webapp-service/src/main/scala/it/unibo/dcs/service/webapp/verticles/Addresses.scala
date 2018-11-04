@@ -12,7 +12,7 @@ private[verticles] object Addresses {
 
     val joined = s"$prefix.joined"
 
-    val leaved = s"$prefix.leaved"
+    val left = s"$prefix.leaved"
 
   }
 

@@ -41,13 +41,6 @@ export class RoomsComponent implements OnInit {
         this.removeRoom(participation.room.name);
       });
     */
-
-    this.chat.onRoomCreated()
-      .subscribe(room => {
-        console.log("created room: " + room.name);
-        this.rooms.unshift(room)
-      });
-
     this.chat.getUserParticipations()
       .subscribe(rooms => this.rooms = rooms);
 

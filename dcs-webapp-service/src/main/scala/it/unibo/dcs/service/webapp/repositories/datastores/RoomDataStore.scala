@@ -9,6 +9,13 @@ import rx.lang.scala.Observable
 /** Structure that allows access to rooms data by different means (e.g. network, file, database, ecc) */
 trait RoomDataStore {
 
+  /** It retrieves all the participations for a given room
+    *
+    * @param request needed data to retrieve all the participations for a given room
+    * @return an observable stream of all the participations
+    */
+  def getRoomParticipations(request: GetRoomParticipationsRequest): Observable[Set[Participation]]
+
   /** It adds the user to the list of participants in the room
     *
     * @param request needed data to join a room
@@ -49,6 +56,13 @@ trait RoomDataStore {
     * @return an observable stream of the list of rooms
     */
   def getRooms(request: GetRoomsRequest): Observable[List[Room]]
+
+  /** Get the list of user participations
+    *
+    * @param request needed data to get the participations
+    * @return an observable stream of the list of participations
+    */
+  def getUserParticipations(request: GetUserParticipationsRequest): Observable[List[Room]]
 }
 
 /** Companion object */

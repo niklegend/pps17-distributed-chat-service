@@ -17,6 +17,13 @@ import it.unibo.dcs.service.webapp.verticles.handler.impl.ServiceRequestHandlerI
   * It handles all the incoming request to the service APIs. */
 trait ServiceRequestHandler {
 
+  /** It retrieves to the client all the participations for a given room
+    *
+    * @param context Vertx routing context
+    * @param ctx     Vertx context passed implicitly
+    */
+  def handleGetRoomParticipations(context: RoutingContext)(implicit ctx: Context): Unit
+
   /** Join a user in a specified room
     *
     * @param context Vertx routing context
@@ -68,6 +75,13 @@ trait ServiceRequestHandler {
     * @param context Vertx routing context
     * @param ctx     Vertx context passed implicitly */
   def handleGetRooms(context: RoutingContext)(implicit ctx: Context): Unit
+
+  /** Get user participations request handler
+    *
+    * @param context Vertx routing context
+    * @param ctx     Vertx context passed implicitly */
+  def handleGetUserParticipations(context: RoutingContext)(implicit ctx: Context): Unit
+
 }
 
 /** Companion object */

@@ -9,4 +9,5 @@ package object model {
   final case class Participation(room: Room, username: String, joinDate: Date)
 
   final case class User(username: String)
+
 }

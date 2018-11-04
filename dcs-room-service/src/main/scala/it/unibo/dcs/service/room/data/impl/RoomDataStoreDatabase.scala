@@ -1,22 +1,19 @@
 package it.unibo.dcs.service.room.data.impl
 
-import io.vertx.core.json.JsonArray
-import io.vertx.lang.scala.json.JsonObject
+import io.vertx.lang.scala.json.Json
+import io.vertx.lang.scala.json.{JsonArray, JsonObject}
 import io.vertx.scala.ext.sql.SQLConnection
 import it.unibo.dcs.commons.JsonHelper.Implicits.RichGson
+import it.unibo.dcs.commons.dataaccess.Implicits.stringToDate
 import it.unibo.dcs.commons.dataaccess.{DataStoreDatabase, ResultSetHelper}
-import it.unibo.dcs.exceptions.{ParticipationNotFoundException, RoomNotFoundException}
+import it.unibo.dcs.exceptions.{ParticipationNotFoundException, ParticipationsNotFoundException, RoomNotFoundException}
 import it.unibo.dcs.service.room.data.RoomDataStore
-import it.unibo.dcs.service.room.data.impl.Implicits.participationDtoToParticipation
 import it.unibo.dcs.service.room.data.impl.RoomDataStoreDatabase.Implicits._
 import it.unibo.dcs.service.room.data.impl.RoomDataStoreDatabase._
 import it.unibo.dcs.service.room.gson
 import it.unibo.dcs.service.room.model._
 import it.unibo.dcs.service.room.request._
 import rx.lang.scala.Observable
-import it.unibo.dcs.commons.dataaccess.Implicits.stringToDate
-
-import scala.language.implicitConversions
 
 import scala.language.implicitConversions
 
@@ -40,10 +37,10 @@ final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
         }
       }
 
-  override def getRooms(request: GetRoomsRequest): Observable[Set[Room]] =
-    query(selectRooms, request)
+  override def getRooms(request: GetRoomsRequest): Observable[List[Room]] =
+    query(selectAllRooms, request)
     .map { resultSet =>
-      ResultSetHelper.getRows(resultSet).map(row => jsonObjectToRoom(row)).toSet
+      ResultSetHelper.getRows(resultSet).map(jsonObjectToRoom).toList
     }
 
   override def joinRoom(request: JoinRoomRequest): Observable[Participation] =
@@ -63,9 +60,36 @@ final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
         if (resultSet.getResults.isEmpty) {
           throw ParticipationNotFoundException(request.username, request.name)
         } else {
+          println(ResultSetHelper.getRows(resultSet).head.encodePrettily())
           ResultSetHelper.getRows(resultSet).head
         }
       }
+
+  override def getRoomParticipations(request: GetRoomParticipationsRequest): Observable[Set[Participation]] = {
+    query(selectParticipationsByRoomName, request)
+      .map { resultSet =>
+        if (resultSet.getResults.isEmpty) {
+          throw ParticipationsNotFoundException(request.name)
+        } else {
+          // Debug
+          ResultSetHelper.getRows(resultSet).foreach(row => println(row.encodePrettily()))
+
+          ResultSetHelper.getRows(resultSet)
+            .map(json => jsonObjectToParticipation(json))
+            .toSet
+        }
+      }
+  }
+  override def getParticipationsByUsername(request: GetUserParticipationsRequest): Observable[List[Room]] =
+    query(selectParticipationsByUsername, request)
+      .map { resultSet =>
+        if (resultSet.getResults.isEmpty) {
+          List()
+        } else {
+          ResultSetHelper.getRows(resultSet).map(jsonObjectToRoom).toList
+        }
+      }
+
 }
 
 private[impl] object RoomDataStoreDatabase {
@@ -78,14 +102,17 @@ private[impl] object RoomDataStoreDatabase {
 
   val removeParticipationQuery = "DELETE FROM `participations` WHERE `username` = ? AND `name` = ? "
 
-  val deleteRoomQuery = "DELETE FROM `rooms` WHERE `name` = ? AND `owner_username` = ?;"
+  val deleteRoomQuery = "DELETE FROM `rooms` WHERE `name` = ? AND `owner_username` = ?"
 
-  val selectRoomByName = "SELECT * FROM `rooms` WHERE `name` = ? "
+  val selectRoomByName = "SELECT `name` FROM `rooms` WHERE `name` = ? "
 
-  val selectRooms: String = "SELECT name FROM `rooms` WHERE name NOT IN " +
-    "(SELECT R1.name FROM `participations` P, `rooms` R1 WHERE P.name = R1.name AND P.username = ?);"
-  
+  val selectParticipationsByUsername = "SELECT `name` FROM `participations` WHERE `username` = ?"
+
+  val selectAllRooms = s"SELECT `name` FROM `rooms` WHERE `name` NOT IN ($selectParticipationsByUsername)"
+
   val selectParticipationByKey = "SELECT * FROM `participations` WHERE `username` = ? AND `name` = ?"
+
+  val selectParticipationsByRoomName = "SELECT * FROM `participations` WHERE `name` = ?"
 
   object Implicits {
 
@@ -110,10 +137,19 @@ private[impl] object RoomDataStoreDatabase {
     implicit def requestToParams(request: JoinOrLeaveRoomRequest): JsonArray =
       new JsonArray().add(request.username).add(request.name)
 
+    implicit def requestToParams(request: GetRoomParticipationsRequest): JsonArray =
+      Json.arr(request.name)
+      
+    implicit def requestToParams(request: GetUserParticipationsRequest): JsonArray =
+      new JsonArray().add(request.username)
+
     implicit def jsonObjectToRoom(json: JsonObject): Room = gson fromJsonObject[Room] json
 
     implicit def jsonObjectToParticipation(json: JsonObject): Participation = {
-      gson.fromJsonObject[ParticipationDto](json)
+      val room = Room(json.getString("name"))
+      val date = json.getString("join_date")
+      val username = json.getString("username")
+      Participation(room, username, date)
     }
 
   }

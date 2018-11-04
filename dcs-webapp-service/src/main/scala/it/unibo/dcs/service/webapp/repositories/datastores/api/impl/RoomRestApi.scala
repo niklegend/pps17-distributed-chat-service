@@ -64,29 +64,46 @@ class RoomRestApi(private[this] val discovery: HttpEndpointDiscovery)
 
   override def getRooms(request: GetRoomsRequest): Observable[List[Room]] = {
     makeRequest(client =>
-      Observable.from(client.get(s"${RoomRestApi.roomsURI}?user=${request.username}")
-        .sendJsonObjectFuture(request)))
+      Observable.from(client.get(s"${RoomRestApi.roomsURI}?user=${request.username}").sendFuture()))
       .map(bodyAsJsonArray(throw InternalException(emptyBodyErrorMessage)))
       .mapImplicitly
   }
 
+  override def getRoomParticipations(request: GetRoomParticipationsRequest): Observable[Set[Participation]] = {
+    makeRequest(client =>
+      Observable.from(client.get(RoomRestApi.roomParticipationsURI(request.name)).sendFuture()))
+      .map(bodyAsJsonArray(throw InternalException(emptyBodyErrorMessage)))
+      .mapImplicitly
+  }
+  
+  override def getUserParticipations(request: GetUserParticipationsRequest): Observable[List[Room]] =
+    makeRequest(client =>
+      Observable.from(client.get(userParticipationsURI(request.username)).sendFuture()))
+      .map(bodyAsJsonArray(throw InternalException(emptyBodyErrorMessage)))
+      .mapImplicitly
 }
 
 private[impl] object RoomRestApi {
+
+  private val uriSeparator = "/"
 
   private val roomsURI = "/rooms"
 
   private val usersURI = "/users"
 
+  private def userParticipationsURI(username: String): String = s"$usersURI/$username/participations"
+
   private val emptyBodyErrorMessage = "Room service returned an empty body"
 
-  private def joinRoomURI(roomName: String) = s"$roomsURI/$roomName/participations"
+  private def roomParticipationsURI(roomName: String) = roomsURI + uriSeparator + roomName + "/participations"
+
+  private def joinRoomURI(roomName: String) = roomsURI + uriSeparator + roomName
 
   private def leaveRoomURI(roomName: String, username: String) = {
     joinRoomURI(roomName) + "/" + username
   }
 
-  private def deleteRoomURI(roomName: String) = roomsURI + "/" + roomName
+  private def deleteRoomURI(roomName: String) = roomsURI + uriSeparator + roomName
 
   private def toDeleteRoomRequest(deleteRoomRequest: DeleteRoomRequest): JsonObject = {
     Json.obj((JsonLabels.usernameLabel, deleteRoomRequest.username))

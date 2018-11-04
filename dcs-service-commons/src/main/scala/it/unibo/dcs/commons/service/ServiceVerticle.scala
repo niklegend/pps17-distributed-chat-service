@@ -25,7 +25,7 @@ abstract class ServiceVerticle extends ScalaVerticle with Logging {
 
   protected[this] final def startHttpServer(host: String,
                                             port: Int,
-                                            options: HttpServerOptions = DEFAULT_OPTIONS): Observable[HttpServer] =
+                                            options: HttpServerOptions = defaultOptions): Observable[HttpServer] =
     VertxHelper.toObservable[HttpServer] {
       vertx.createHttpServer(options)
         .requestHandler(_router accept _)
@@ -40,6 +40,6 @@ abstract class ServiceVerticle extends ScalaVerticle with Logging {
 
 object ServiceVerticle {
 
-  def DEFAULT_OPTIONS: HttpServerOptions = HttpServerOptions()
+  def defaultOptions: HttpServerOptions = HttpServerOptions()
 
 }

@@ -55,6 +55,8 @@ package object exceptions {
 
     val ParticipationNotFound = "PARTICIPATION_NOT_FOUND"
 
+    val ParticipationsNotFound = "PARTICIPATIONS_NOT_FOUND"
+
     val ParticipationAlreadyExists = "PARTICIPATION_ALREADY_EXISTS"
   }
 
@@ -89,6 +91,8 @@ package object exceptions {
   final case class ParticipationAlreadyExistsException(username: String, name: String) extends DcsException(ParticipationAlreadyExists)
 
   final case class ParticipationNotFoundException(username: String, name: String) extends DcsException(ParticipationNotFound)
+
+  final case class ParticipationsNotFoundException(name: String) extends DcsException(ParticipationsNotFound)
 
   final case object InvalidTokenException extends DcsException(InvalidToken)
 
@@ -211,6 +215,20 @@ package object exceptions {
                 throw KeyRequiredException(KEY_NAME, ParticipationNotFound)
               }
               throw KeyRequiredException(KEY_EXTRAS, ParticipationNotFound)
+            case ParticipationsNotFound =>
+              if (error.containsKey(KEY_EXTRAS)) {
+                val extras = error.getJsonObject(KEY_EXTRAS)
+                if (extras.containsKey(KEY_NAME)) {
+                  val name = extras.getString(KEY_NAME)
+                  if (extras.containsKey(KEY_USERNAME)) {
+                    val username = extras.getString(KEY_USERNAME)
+                    throw ParticipationNotFoundException(username, name)
+                  }
+                  throw KeyRequiredException(KEY_USERNAME, ParticipationsNotFound)
+                }
+                throw KeyRequiredException(KEY_NAME, ParticipationsNotFound)
+              }
+              throw KeyRequiredException(KEY_EXTRAS, ParticipationsNotFound)
             case ParticipationAlreadyExists =>
               if (error.containsKey(KEY_EXTRAS)) {
                 val extras = error.getJsonObject(KEY_EXTRAS)
@@ -287,7 +305,7 @@ package object exceptions {
   def bodyAsJsonObject[T](default: => JsonObject = Json.emptyObj()): HttpResponse[T] => JsonObject = response =>
     jsonObjectToDcsException(response.bodyAsJsonObject().getOrElse(default))
 
-  def bodyAsJsonArray[T](default: => JsonArray = Json.emptyArr()): HttpResponse[T] => JsonArray = response =>
+  def bodyAsJsonArray[T](default: => JsonArray = Json.emptyArr()): HttpResponse[T] => JsonArray = response => {
     if (isJsonArray(response)) {
       response.bodyAsJsonArray().getOrElse(default)
     }
@@ -295,9 +313,12 @@ package object exceptions {
       jsonObjectToDcsException(response.bodyAsJsonObject().head)
       default
     }
+  }
 
   private def isJsonArray[T](response: HttpResponse[T]): Boolean = {
-    response.bodyAsString().fold(false) (_.startsWith("["))
+    response.bodyAsString().fold(false) { s =>
+      if (s.startsWith("[")) true else false
+    }
   }
 
 }

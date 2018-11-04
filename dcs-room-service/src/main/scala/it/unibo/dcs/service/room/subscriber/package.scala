@@ -3,9 +3,9 @@ package it.unibo.dcs.service.room
 import io.netty.handler.codec.http.HttpResponseStatus
 import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
 import io.vertx.scala.core.http.HttpServerResponse
-import it.unibo.dcs.commons.JsonHelper.Implicits.{RichGson, jsonObjectToString}
+import it.unibo.dcs.commons.JsonHelper.Implicits.RichGson
 import it.unibo.dcs.commons.Logging
-import it.unibo.dcs.commons.VertxWebHelper.Implicits._
+import it.unibo.dcs.commons.VertxWebHelper.Implicits.RichHttpServerResponse
 import it.unibo.dcs.exceptions.ErrorSubscriber
 import it.unibo.dcs.service.room.model.{Participation, Room}
 import it.unibo.dcs.service.room.subscriber.Implicits._
@@ -19,9 +19,8 @@ package object subscriber {
     with ErrorSubscriber with Logging {
 
     override def onNext(room: Room): Unit = {
-      val json: JsonObject = room
-      log.info(s"Answering with room: $json")
-      response.setStatus(HttpResponseStatus.CREATED).end(json)
+      log.debug(s"Answering with room: $room")
+      response setStatus HttpResponseStatus.CREATED endWith room
     }
 
   }
@@ -30,9 +29,8 @@ package object subscriber {
     with ErrorSubscriber with Logging {
 
     override def onNext(participation: Participation): Unit = {
-      val json: JsonObject = participation
-      log.info(s"Answering with participation: $json")
-      response.setStatus(HttpResponseStatus.CREATED).end(json)
+      log.debug(s"Answering with participation: $participation")
+      response setStatus HttpResponseStatus.CREATED endWith participation
     }
   }
 
@@ -42,39 +40,53 @@ package object subscriber {
     override def onNext(participation: Participation): Unit = {
       val json = Json.obj(("name", participation.room.name), ("username", participation.username))
       log.info(s"Answering with : $json")
-      response.setStatus(HttpResponseStatus.OK).end(json)
+      response.setStatus(HttpResponseStatus.OK).end(json.encode())
     }
   }
 
   final class CreateUserSubscriber(protected override val response: HttpServerResponse) extends Subscriber[Unit]
     with ErrorSubscriber with Logging {
 
-    override def onCompleted(): Unit = response.setStatus(HttpResponseStatus.CREATED).end()
+    override def onCompleted(): Unit = response setStatus HttpResponseStatus.CREATED end()
 
+  }
+
+  final class RoomParticipationsSubscriber(protected override val response: HttpServerResponse)
+    extends Subscriber[Set[Participation]] with ErrorSubscriber with Logging {
+
+    override def onNext(participations: Set[Participation]): Unit = {
+      val results = Json.arr(participations.map(participationToJsonObject).toArray)
+      response.end(results.encodePrettily())
+    }
   }
 
   class DeleteRoomSubscriber(protected override val response: HttpServerResponse) extends Subscriber[String]
     with ErrorSubscriber {
 
     override def onNext(name: String): Unit =
-      response.end(Json.obj(("name", name)))
+      response endWith Json.obj(("name", name))
 
   }
 
-  class GetRoomsSubscriber(protected override val response: HttpServerResponse) extends Subscriber[Set[Room]]
+  class GetRoomsSubscriber(protected override val response: HttpServerResponse) extends Subscriber[List[Room]]
     with ErrorSubscriber {
 
-    override def onNext(rooms: Set[Room]): Unit = {
-      val results = new JsonArray()
-      rooms.foreach(room => results.add(roomToJsonObject(room)))
-      response.end(results.encodePrettily())
-    }
+    override def onNext(rooms: List[Room]): Unit = response endWith rooms
+
+  }
+
+  class GetUserParticipationsSubscriber(protected override val response: HttpServerResponse) extends Subscriber[List[Room]]
+    with ErrorSubscriber {
+
+    override def onNext(rooms: List[Room]): Unit = response endWith rooms
 
   }
 
   object Implicits {
 
     implicit def roomToJsonObject(room: Room): JsonObject = gson toJsonObject room
+
+    implicit def roomsToJsonObject(rooms: Iterable[Room]): JsonArray = gson toJsonArray rooms
 
     implicit def participationToJsonObject(participation: Participation): JsonObject = gson toJsonObject participation
 

@@ -6,11 +6,13 @@ import rx.lang.scala.Observable
 
 trait RoomDataStore {
 
+  def getRoomParticipations(request: GetRoomParticipationsRequest): Observable[Set[Participation]]
+
   def createUser(request: CreateUserRequest): Observable[Unit]
 
   def getRoomByName(request: GetRoomRequest): Observable[Room]
 
-  def getRooms(request: GetRoomsRequest): Observable[Set[Room]]
+  def getRooms(request: GetRoomsRequest): Observable[List[Room]]
 
   def createRoom(request: CreateRoomRequest): Observable[Room]
 
@@ -21,5 +23,7 @@ trait RoomDataStore {
   def leaveRoom(request: LeaveRoomRequest): Observable[Participation]
 
   def getParticipationByKey(request: JoinRoomRequest): Observable[Participation]
+
+  def getParticipationsByUsername(request: GetUserParticipationsRequest): Observable[List[Room]]
 
 }

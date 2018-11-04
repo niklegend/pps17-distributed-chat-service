@@ -4,8 +4,8 @@ import java.util.Date
 
 import it.unibo.dcs.service.webapp.interaction.Requests._
 import it.unibo.dcs.service.webapp.model.{Participation, Room}
-import it.unibo.dcs.service.webapp.repositories.datastores.RoomDataStore
 import it.unibo.dcs.service.webapp.repositories.datastores.api.RoomApi
+import it.unibo.dcs.service.webapp.repositories.datastores.commons.DataStoreSpec
 import it.unibo.dcs.service.webapp.repositories.datastores.impl.RoomDataStoreNetwork
 import rx.lang.scala.{Observable, Subscriber}
 
@@ -20,12 +20,14 @@ class RoomDataStoreSpec extends DataStoreSpec {
   private val rooms: List[Room] = List(room, room, room)
   private val token = "token"
   private val participation = Participation(new Date(), room, user.username)
+  private val participations = Set(participation)
 
   private val roomCreationRequest = CreateRoomRequest("Room 1", user.username, token)
   private val roomDeletionRequest = DeleteRoomRequest(room.name, user.username, token)
   private val getRoomsRequest = GetRoomsRequest("martynha", token)
   private val joinRoomRequest = RoomJoinRequest(room.name, user.username, token)
   private val leaveRoomRequest = RoomLeaveRequest(room.name, user.username, token)
+  private val getRoomParticipationsRequest = GetRoomParticipationsRequest(room.name, user.username, token)
 
   private val deleteRoomSubscriber = stub[Subscriber[String]]
   private val createRoomSubscriber = stub[Subscriber[Room]]
@@ -33,6 +35,21 @@ class RoomDataStoreSpec extends DataStoreSpec {
   private val getRoomsSubscriber: Subscriber[List[Room]] = stub[Subscriber[List[Room]]]
   private val joinRoomSubscriber = stub[Subscriber[Participation]]
   private val leaveRoomSubscriber = stub[Subscriber[Participation]]
+  private val getRoomParticipationsSubscriber: Subscriber[Set[Participation]] = stub[Subscriber[Set[Participation]]]
+
+  it should "gets a set of participations for a given room" in {
+    //Given
+    (roomApi getRoomParticipations _) expects getRoomParticipationsRequest returns Observable.just(participations)
+
+    //When
+    dataStore getRoomParticipations getRoomParticipationsRequest subscribe getRoomParticipationsSubscriber
+
+    //Then
+    //Verify that 'suscriber.onNext' has been callen once
+    (getRoomParticipationsSubscriber onNext _) verify participations once()
+    // Verify that `subscriber.onCompleted` has been called once
+    (() => getRoomParticipationsSubscriber onCompleted) verify() once()
+  }
 
   it should "create a new room" in {
     // Given

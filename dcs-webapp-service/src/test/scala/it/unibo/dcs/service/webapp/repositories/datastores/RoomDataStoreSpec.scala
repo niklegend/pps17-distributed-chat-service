@@ -16,11 +16,6 @@ class RoomDataStoreSpec extends DataStoreSpec {
   private val roomApi: RoomApi = mock[RoomApi]
   private val dataStore: RoomDataStore = new RoomDataStoreNetwork(roomApi)
 
-  private val room = Room("Room 1")
-  private val rooms: List[Room] = List(room, room, room)
-  private val participation = Participation(new Date(), room, user.username)
-  private val participations = Set(participation)
-
   private val roomCreationRequest = CreateRoomRequest("Room 1", user.username, token)
   private val roomDeletionRequest = DeleteRoomRequest(room.name, user.username, token)
   private val getRoomsRequest = GetRoomsRequest("martynha", token)

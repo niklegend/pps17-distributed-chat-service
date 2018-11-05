@@ -16,11 +16,6 @@ class RoomRepositorySpec extends RepositorySpec {
   private val roomDataStore: RoomDataStore = mock[RoomDataStore]
   private val repository: RoomRepository = new RoomRepositoryImpl(roomDataStore)
 
-  private val room = Room("Room 1")
-  private val rooms: List[Room] = List(room, room, room)
-  private val participation = Participation(new Date(), room, user.username)
-  private val participations = Set(participation)
-
   private val roomCreationRequest = CreateRoomRequest("Room 1", user.username, token)
   private val deleteRoomRequest = DeleteRoomRequest(room.name, user.username, token)
   private val getRoomsRequest = GetRoomsRequest("martynha", token)
@@ -140,10 +135,10 @@ class RoomRepositorySpec extends RepositorySpec {
     val subscriber = stub[Subscriber[List[Room]]]
 
     //Given
-    (roomDataStore getUserParticipations  _) expects request returns Observable.just(rooms)
+    (roomDataStore getUserParticipations _) expects request returns Observable.just(rooms)
 
     //When
-    repository getUserParticipations  request subscribe subscriber
+    repository getUserParticipations request subscribe subscriber
 
     //Then
     //Verify that 'suscriber.onNext' has been callen once

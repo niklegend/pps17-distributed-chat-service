@@ -1,8 +1,7 @@
 package it.unibo.dcs.service.webapp.usecases
 
-import it.unibo.dcs.service.webapp.interaction.Requests.{CheckTokenRequest, GetRoomsRequest}
+import it.unibo.dcs.service.webapp.interaction.Requests.GetRoomsRequest
 import it.unibo.dcs.service.webapp.interaction.Results.GetRoomsResult
-import it.unibo.dcs.service.webapp.model.Room
 import it.unibo.dcs.service.webapp.usecases.commons.Mocks._
 import it.unibo.dcs.service.webapp.usecases.commons.UseCaseSpec
 import rx.lang.scala.{Observable, Subscriber}
@@ -10,12 +9,8 @@ import rx.lang.scala.{Observable, Subscriber}
 import scala.language.postfixOps
 
 class GetRoomsUseCaseSpec extends UseCaseSpec {
-  private val room = Room("AulaMagna")
-  private val rooms = List(room, room, room)
 
   private val getRoomsRequest = GetRoomsRequest(user.username, token)
-
-  private val checkTokenRequest = CheckTokenRequest(token, user.username)
 
   private val getRoomsResult = GetRoomsResult(rooms)
 

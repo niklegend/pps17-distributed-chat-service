@@ -1,7 +1,5 @@
 package it.unibo.dcs.service.webapp.repositories
 
-import java.util.Date
-
 import it.unibo.dcs.service.webapp.interaction.Requests._
 import it.unibo.dcs.service.webapp.model.{Participation, Room}
 import it.unibo.dcs.service.webapp.repositories.commons.RepositorySpec
@@ -15,12 +13,6 @@ class RoomRepositorySpec extends RepositorySpec {
 
   private val roomDataStore: RoomDataStore = mock[RoomDataStore]
   private val repository: RoomRepository = new RoomRepositoryImpl(roomDataStore)
-
-  private val room = Room("Room 1")
-  private val rooms: List[Room] = List(room, room, room)
-  private val token = "token"
-  private val participation = Participation(new Date(), room, user.username)
-  private val participations = Set(participation)
 
   private val roomCreationRequest = CreateRoomRequest("Room 1", user.username, token)
   private val deleteRoomRequest = DeleteRoomRequest(room.name, user.username, token)
@@ -141,10 +133,10 @@ class RoomRepositorySpec extends RepositorySpec {
     val subscriber = stub[Subscriber[List[Room]]]
 
     //Given
-    (roomDataStore getUserParticipations  _) expects request returns Observable.just(rooms)
+    (roomDataStore getUserParticipations _) expects request returns Observable.just(rooms)
 
     //When
-    repository getUserParticipations  request subscribe subscriber
+    repository getUserParticipations request subscribe subscriber
 
     //Then
     //Verify that 'suscriber.onNext' has been callen once
@@ -153,21 +145,4 @@ class RoomRepositorySpec extends RepositorySpec {
     (() => subscriber onCompleted) verify() once()
   }
 
-  it should "retrieve all the participations for the given user" in {
-    val request = GetUserParticipationsRequest(user.username, token)
-
-    val subscriber = stub[Subscriber[List[Room]]]
-
-    //Given
-    (roomDataStore getUserParticipations  _) expects request returns Observable.just(rooms)
-
-    //When
-    repository getUserParticipations  request subscribe subscriber
-
-    //Then
-    //Verify that 'suscriber.onNext' has been callen once
-    (subscriber onNext _) verify rooms once()
-    // Verify that `subscriber.onCompleted` has been called once
-    (() => subscriber onCompleted) verify() once()
-  }
 }

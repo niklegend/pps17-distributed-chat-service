@@ -1,10 +1,7 @@
 package it.unibo.dcs.service.webapp.usecases
 
-import java.util.Date
-
-import it.unibo.dcs.service.webapp.interaction.Requests.{CheckTokenRequest, GetRoomParticipationsRequest}
+import it.unibo.dcs.service.webapp.interaction.Requests.GetRoomParticipationsRequest
 import it.unibo.dcs.service.webapp.interaction.Results.GetRoomParticipationsResult
-import it.unibo.dcs.service.webapp.model.{Participation, Room, User}
 import it.unibo.dcs.service.webapp.usecases.commons.Mocks._
 import it.unibo.dcs.service.webapp.usecases.commons.UseCaseSpec
 import rx.lang.scala.{Observable, Subscriber}
@@ -13,15 +10,7 @@ import scala.language.postfixOps
 
 class GetRoomParticipationsUseCaseSpec extends UseCaseSpec {
 
-  private val room = Room("AulaMagna")
-  private val secondUser = User("mvandi", "Mattia", "Vandi", "bio", visible = true, new Date)
-  private val firstParticipation = Participation(new Date(), room, user.username)
-  private val secondParticipation = Participation(new Date(), room, secondUser.username)
-  private val participations = Set(firstParticipation, secondParticipation)
-
   private val getRoomParticipationsRequest = GetRoomParticipationsRequest(room.name, user.username, token)
-
-  private val checkTokenRequest = CheckTokenRequest(token, user.username)
 
   private val getRoomsParticipationsResult = GetRoomParticipationsResult(participations)
 

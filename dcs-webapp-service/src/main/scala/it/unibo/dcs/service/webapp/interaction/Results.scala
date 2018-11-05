@@ -3,7 +3,7 @@ package it.unibo.dcs.service.webapp.interaction
 import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
 import it.unibo.dcs.commons.JsonHelper.Implicits.RichGson
 import it.unibo.dcs.service.webapp.gson
-import it.unibo.dcs.service.webapp.interaction.Labels.JsonLabels.{tokenLabel, roomNameLabel, usernameLabel}
+import it.unibo.dcs.service.webapp.interaction.Labels.JsonLabels.tokenLabel
 import it.unibo.dcs.service.webapp.model.{Participation, Room, User}
 
 import scala.language.implicitConversions
@@ -70,12 +70,15 @@ object Results {
     }
 
     implicit def roomJoinResultToJsonObject(result: RoomJoinResult): JsonObject = {
-      Json.fromObjectString(gson.toJson(result))
+      roomResultToJsonObject(result.participation)
     }
 
     implicit def roomLeaveResultToJsonObject(result: RoomLeaveResult): JsonObject = {
-      Json.obj((roomNameLabel, result.participation.room), (usernameLabel, result.participation.username))
+      roomResultToJsonObject(result.participation)
     }
+
+    private def roomResultToJsonObject(result: Product): JsonObject =
+      Json.fromObjectString(gson.toJson(result))
 
     implicit def getRoomsToJsonArray(result: GetRoomsResult): JsonArray = {
       result.rooms
@@ -87,7 +90,7 @@ object Results {
       result.participations
         .map(x => Json.fromObjectString(gson.toJson(x)))
         .foldLeft(Json.emptyArr())(_ add _)
-        
+
     implicit def getUserParticipationsToJsonArray(result: GetUserParticipationsResult): JsonArray =
       gson toJsonArray result.rooms
 

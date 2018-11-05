@@ -11,7 +11,7 @@ import io.vertx.servicediscovery.ServiceDiscovery
 import it.unibo.dcs.commons.VertxWebHelper.Implicits.contentTypeToString
 import it.unibo.dcs.commons.service.{HttpEndpointPublisher, HttpEndpointPublisherImpl, ServiceVerticle}
 import it.unibo.dcs.service.webapp.interaction.Labels._
-import it.unibo.dcs.service.webapp.verticles.Addresses.Rooms
+import it.unibo.dcs.service.webapp.verticles.Addresses.{Messages, Rooms}
 import it.unibo.dcs.service.webapp.verticles.handler.ServiceRequestHandler
 import org.apache.http.entity.ContentType._
 
@@ -114,6 +114,11 @@ final class WebAppVerticle extends ServiceVerticle {
       .produces(APPLICATION_JSON)
       .handler(context => requestHandler handleGetRooms context)
 
+    apiRouter.post("/rooms/:" + ParamLabels.roomNameLabel + "/messages")
+      .consumes(APPLICATION_JSON)
+      .produces(APPLICATION_JSON)
+      .handler(context => requestHandler handleSendMessage context)
+
     apiRouter.get("/rooms/:" + ParamLabels.roomNameLabel + "/participations")
       .produces(APPLICATION_JSON)
       .handler(context => requestHandler handleGetRoomParticipations context)
@@ -151,6 +156,7 @@ final class WebAppVerticle extends ServiceVerticle {
     val options = BridgeOptions()
       .addOutboundPermitted(PermittedOptions().setAddress(Rooms.deleted))
       .addOutboundPermitted(PermittedOptions().setAddress(Rooms.joined))
+      .addOutboundPermitted(PermittedOptions().setAddress(Messages.sent))
       .addOutboundPermitted(PermittedOptions().setAddress(Rooms.left))
       .addOutboundPermitted(PermittedOptions().setAddress(Rooms.created))
 

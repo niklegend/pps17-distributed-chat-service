@@ -4,7 +4,7 @@ import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
 import it.unibo.dcs.commons.JsonHelper.Implicits.RichGson
 import it.unibo.dcs.service.webapp.gson
 import it.unibo.dcs.service.webapp.interaction.Labels.JsonLabels.tokenLabel
-import it.unibo.dcs.service.webapp.model.{Participation, Room, User}
+import it.unibo.dcs.service.webapp.model.{Message, Participation, Room, User}
 
 import scala.language.implicitConversions
 
@@ -28,6 +28,8 @@ object Results {
 
   final case class GetRoomsResult(rooms: List[Room]) extends DcsResult
 
+  final case class SendMessageResult(message: Message) extends DcsResult
+  
   final case class GetRoomParticipationsResult(participations: Set[Participation]) extends DcsResult
   
   final case class GetUserParticipationsResult(rooms: List[Room]) extends DcsResult
@@ -72,6 +74,9 @@ object Results {
     implicit def roomJoinResultToJsonObject(result: RoomJoinResult): JsonObject = {
       roomResultToJsonObject(result.participation)
     }
+
+    implicit def sendMessageResultToJsonObject(result: SendMessageResult): JsonObject =
+      Json.fromObjectString(gson.toJson(result.message))
 
     implicit def roomLeaveResultToJsonObject(result: RoomLeaveResult): JsonObject = {
       roomResultToJsonObject(result.participation)

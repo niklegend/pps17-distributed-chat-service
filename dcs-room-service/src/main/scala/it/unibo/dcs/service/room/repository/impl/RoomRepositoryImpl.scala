@@ -22,6 +22,8 @@ final class RoomRepositoryImpl(private[this] val roomDataStore: RoomDataStore) e
 
   override def leaveRoom(request: LeaveRoomRequest): Observable[Participation] = roomDataStore.leaveRoom(request)
 
+  override def sendMessage(request: SendMessageRequest): Observable[Message] = roomDataStore.sendMessage(request)
+  
   override def getParticipationByKey(request: JoinRoomRequest): Observable[Participation] =
     roomDataStore.getParticipationByKey(request)
 

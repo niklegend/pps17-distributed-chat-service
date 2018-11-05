@@ -16,4 +16,10 @@ private[verticles] object Addresses {
 
   }
 
+  object Messages {
+    private val prefix = "messages"
+
+    val sent = s"$prefix.sent"
+  }
+
 }

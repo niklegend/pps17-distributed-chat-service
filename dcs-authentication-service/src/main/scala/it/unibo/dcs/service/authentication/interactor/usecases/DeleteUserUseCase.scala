@@ -2,6 +2,7 @@ package it.unibo.dcs.service.authentication.interactor.usecases
 
 import it.unibo.dcs.commons.interactor.UseCase
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
+import it.unibo.dcs.service.authentication.interactor.usecases.helpers.ValidationHandler.validateAndContinue
 import it.unibo.dcs.service.authentication.interactor.validations.DeleteUserValidation
 import it.unibo.dcs.service.authentication.repository.AuthenticationRepository
 import it.unibo.dcs.service.authentication.request.Requests.DeleteUserRequest
@@ -21,7 +22,7 @@ final class DeleteUserUseCase(private[this] val threadExecutor: ThreadExecutor,
   extends UseCase[Unit, DeleteUserRequest](threadExecutor, postExecutionThread) {
 
   override protected[this] def createObservable(request: DeleteUserRequest): Observable[Unit] =
-    deleteUserValidation(request).flatMap(_ => authRepository.deleteUser(request.username, request.token))
+    validateAndContinue(deleteUserValidation, request, _ => authRepository.deleteUser(request.username, request.token))
 }
 
 object DeleteUserUseCase {

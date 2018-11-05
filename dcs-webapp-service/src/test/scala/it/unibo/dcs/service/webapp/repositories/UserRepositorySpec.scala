@@ -16,6 +16,7 @@ class UserRepositorySpec extends RepositorySpec {
   private val createUserSubscriber: Subscriber[User] = stub[Subscriber[User]]
   private val getUserSubscriber: Subscriber[User] = stub[Subscriber[User]]
   private val deleteUserSubscriber: Subscriber[String] = stub[Subscriber[String]]
+  private val editUserSubscriber: Subscriber[User] = stub[Subscriber[User]]
 
   it should "register a new user" in {
     // Given
@@ -55,5 +56,17 @@ class UserRepositorySpec extends RepositorySpec {
     // Then
     (deleteUserSubscriber onNext _) verify user.username once()
     (() => deleteUserSubscriber onCompleted) verify() once()
+  }
+
+  it should "edit a registered user given its information" in {
+    // Given
+    (userDataStore editUser _) expects editUserRequest returns Observable.just(user) noMoreThanOnce()
+
+    // When
+    repository.editUser(editUserRequest).subscribe(editUserSubscriber)
+
+    // Then
+    (editUserSubscriber onNext _) verify user once()
+    (() => editUserSubscriber onCompleted) verify() once()
   }
 }

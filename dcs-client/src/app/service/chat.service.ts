@@ -2,8 +2,8 @@ import {Injectable} from '@angular/core';
 import {Observable, Subject} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {EventBusService} from './event-bus.service';
-import {Participation, Room} from '../model';
-import {CreateRoomRequest, DeleteRoomRequest, JoinRoomRequest} from '../requests';
+import {Participation, Room, Message} from '../model';
+import {CreateRoomRequest, DeleteRoomRequest, JoinRoomRequest, SendMessageRequest} from '../requests';
 import {AuthService} from './auth.service';
 import {map, tap} from 'rxjs/operators';
 
@@ -22,12 +22,14 @@ export class ChatService {
 
   private static ROOM_DELETED = 'rooms.deleted';
   private static ROOM_JOINED = 'rooms.joined';
+  private static MESSAGE_SENT = 'messages.sent';
   private static ROOM_CREATED = 'rooms.created';
 
   private roomCreated = new Subject<Room>();
   private roomDeleted = new Subject<string>();
   private roomSelected = new Subject<Room>();
   private roomJoined = new Subject<Participation>();
+  private messageSent = new Subject<Message>();
 
   constructor(
     private http: HttpClient,
@@ -44,6 +46,11 @@ export class ChatService {
       this.roomJoined.next(msg.body);
     });
 
+    eventBus.registerHandler(ChatService.MESSAGE_SENT, (err, msg) => {
+      console.log(msg.body);
+      this.messageSent.next(msg.body);
+    });
+    
     eventBus.registerHandler(ChatService.ROOM_CREATED, (err, msg) => {
       this.roomCreated.next(msg.body);
     });
@@ -113,7 +120,16 @@ export class ChatService {
     return this.http.delete<void>(
       ChatService.ROOMS + '/' + name + '/participations/' + user.username, {
         headers: this.auth.authOptions
-      });
+    });
+  }
+
+  sendMessage(name: string, message: string): Observable<void> {
+    const user = this.auth.user;
+    const body = new SendMessageRequest(user.username, message);
+    return this.http.post<void>(ChatService.ROOMS + '/' + name + '/messages',
+      body, {
+      headers: this.auth.authOptions
+    });
   }
 
   onRoomCreated(): Observable<Room> {
@@ -133,4 +149,7 @@ export class ChatService {
     return null;
   }
 
+  onMessageSent() : Observable<Message> {
+    return this.messageSent.asObservable();
+  }
 }

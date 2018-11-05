@@ -2,6 +2,7 @@ package it.unibo.dcs.service.authentication.interactor.usecases
 
 import it.unibo.dcs.commons.interactor.UseCase
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
+import it.unibo.dcs.service.authentication.interactor.usecases.helpers.ValidationHandler.validateAndContinue
 import it.unibo.dcs.service.authentication.interactor.validations.CheckTokenValidation
 import it.unibo.dcs.service.authentication.repository.AuthenticationRepository
 import it.unibo.dcs.service.authentication.request.Requests.CheckTokenRequest
@@ -21,7 +22,7 @@ final class CheckTokenUseCase(private[this] val threadExecutor: ThreadExecutor,
   extends UseCase[Boolean, CheckTokenRequest](threadExecutor, postExecutionThread) {
 
   override def createObservable(request: CheckTokenRequest): Observable[Boolean] =
-    checkTokenValidation(request).flatMap(_ => authRepository.isTokenValid(request.token))
+    validateAndContinue(checkTokenValidation, request, _ => authRepository.isTokenValid(request.token))
 }
 
 object CheckTokenUseCase {

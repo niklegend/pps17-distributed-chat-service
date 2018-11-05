@@ -1,7 +1,9 @@
 package it.unibo.dcs.service.webapp.repositories
 
+import java.util.Date
+
 import it.unibo.dcs.service.webapp.interaction.Requests._
-import it.unibo.dcs.service.webapp.model.{Participation, Room}
+import it.unibo.dcs.service.webapp.model.{Message, Participation, Room}
 import it.unibo.dcs.service.webapp.repositories.commons.RepositorySpec
 import it.unibo.dcs.service.webapp.repositories.datastores.RoomDataStore
 import it.unibo.dcs.service.webapp.repositories.impl.RoomRepositoryImpl
@@ -14,10 +16,15 @@ class RoomRepositorySpec extends RepositorySpec {
   private val roomDataStore: RoomDataStore = mock[RoomDataStore]
   private val repository: RoomRepository = new RoomRepositoryImpl(roomDataStore)
 
+  private val messageContent = "Message content"
+  private val messageTimestamp = new Date
+  private val message = Message(room, user.username, messageContent, messageTimestamp)
+
   private val roomCreationRequest = CreateRoomRequest("Room 1", user.username, token)
   private val deleteRoomRequest = DeleteRoomRequest(room.name, user.username, token)
   private val getRoomsRequest = GetRoomsRequest("martynha", token)
   private val joinRoomRequest = RoomJoinRequest(room.name, user.username, token)
+  private val sendMessageRequest = SendMessageRequest(room.name, user.username, messageContent, messageTimestamp, token)
   private val leaveRoomRequest = RoomLeaveRequest(room.name, user.username, token)
   private val getRoomParticipationsRequest = GetRoomParticipationsRequest(room.name, user.username, token)
 
@@ -27,6 +34,7 @@ class RoomRepositorySpec extends RepositorySpec {
   private val deleteRoomSubscriber: Subscriber[String] = stub[Subscriber[String]]
   private val registerUserSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
   private val getRoomsSubscriber: Subscriber[List[Room]] = stub[Subscriber[List[Room]]]
+  private val sendMessageSubscriber = stub[Subscriber[Message]]
   private val getRoomParticipationsSubscriber: Subscriber[Set[Participation]] = stub[Subscriber[Set[Participation]]]
 
 
@@ -125,6 +133,20 @@ class RoomRepositorySpec extends RepositorySpec {
     (getRoomsSubscriber onNext _) verify rooms once()
     // Verify that `subscriber.onCompleted` has been called once
     (() => getRoomsSubscriber onCompleted) verify() once()
+  }
+
+  it should "save a new message" in {
+    //Given
+    (roomDataStore sendMessage _) expects sendMessageRequest returns Observable.just(message)
+
+    //When
+    repository sendMessage sendMessageRequest subscribe sendMessageSubscriber
+
+    //Then
+    //Verify that 'suscriber.onNext' has been callen once
+    (sendMessageSubscriber onNext _) verify message once()
+    // Verify that `subscriber.onCompleted` has been called once
+    (() => sendMessageSubscriber onCompleted) verify() once()  
   }
 
   it should "retrieve all the participations for the given user" in {

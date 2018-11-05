@@ -12,6 +12,9 @@ class ServiceRequestHandlerImpl(loginUserUseCase: LoginUserUseCase, logoutUserUs
                                 registerUserUseCase: RegisterUserUseCase, checkTokenUseCase: CheckTokenUseCase,
                                 deleteUserUseCase: DeleteUserUseCase) extends ServiceRequestHandler {
 
+  private val usernameLabel = "username"
+  private val passwordLabel = "password"
+
   override def handleRegistration(implicit context: RoutingContext): Unit = {
     val credentials: (Option[String], Option[String]) = getCredentials
     val request = RegisterUserRequest(credentials._1.get, credentials._2.get)
@@ -30,20 +33,20 @@ class ServiceRequestHandlerImpl(loginUserUseCase: LoginUserUseCase, logoutUserUs
   }
 
   override def handleTokenCheck(implicit context: RoutingContext): Unit = {
-    val request = CheckTokenRequest(getTokenFromHeader.get, getContextData("username").get)
+    val request = CheckTokenRequest(getTokenFromHeader.get, getContextData(usernameLabel).get)
     checkTokenUseCase(request, new TokenCheckSubscriber(context.response()))
   }
 
   override def handleUserDeletion(implicit context: RoutingContext): Unit = {
-    val request = DeleteUserRequest(getContextData("username").get, getTokenFromHeader.get)
+    val request = DeleteUserRequest(getContextData(usernameLabel).get, getTokenFromHeader.get)
     deleteUserUseCase(request, new OkSubscriber(context.response))
   }
 
   private def getUsername(implicit context: RoutingContext): Option[String] =
-    getJsonBodyData("username")
+    getJsonBodyData(usernameLabel)
 
   private def getPassword(implicit context: RoutingContext): Option[String] =
-    getJsonBodyData("password")
+    getJsonBodyData(passwordLabel)
 
   private def getCredentials(implicit context: RoutingContext): (Option[String], Option[String]) =
     (getUsername, getPassword)

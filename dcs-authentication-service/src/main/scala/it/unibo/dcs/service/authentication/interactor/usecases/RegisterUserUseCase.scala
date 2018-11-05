@@ -3,6 +3,7 @@ package it.unibo.dcs.service.authentication.interactor.usecases
 import io.vertx.scala.ext.auth.jwt.JWTAuth
 import it.unibo.dcs.commons.interactor.UseCase
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
+import it.unibo.dcs.service.authentication.interactor.usecases.helpers.ValidationHandler.validateAndContinue
 import it.unibo.dcs.service.authentication.interactor.validations.RegisterUserValidation
 import it.unibo.dcs.service.authentication.repository.AuthenticationRepository
 import it.unibo.dcs.service.authentication.request.Requests.RegisterUserRequest
@@ -24,8 +25,8 @@ final class RegisterUserUseCase(private[this] val threadExecutor: ThreadExecutor
   extends UseCase[String, RegisterUserRequest](threadExecutor, postExecutionThread) with ReturningTokenUseCase {
 
   override protected[this] def createObservable(request: RegisterUserRequest): Observable[String] =
-    registerUserValidation(request)
-      .flatMap(_ => authRepository.createUser(request.username, request.password))
+    validateAndContinue(registerUserValidation, request,
+      _ => authRepository.createUser(request.username, request.password))
       .map(_ => createToken(request.username, jwtAuth))
 }
 

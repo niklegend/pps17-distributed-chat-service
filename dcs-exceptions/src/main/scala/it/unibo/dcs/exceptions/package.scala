@@ -58,6 +58,8 @@ package object exceptions {
     val ParticipationsNotFound = "PARTICIPATIONS_NOT_FOUND"
 
     val ParticipationAlreadyExists = "PARTICIPATION_ALREADY_EXISTS"
+
+    val MessageContentRequired = "MESSAGE_CONTENT_REQUIRED"
   }
 
   /** Sum type representing all the specific exceptions for Distributed Chat Service application */
@@ -112,6 +114,8 @@ package object exceptions {
   final case object TokenRequiredException extends DcsException(TokenRequired)
 
   final case object RoomNameRequiredException extends DcsException(RoomNameRequired)
+
+  final case object MessageContentRequiredExpection extends DcsException(MessageContentRequired)
 
   object Implicits {
 
@@ -259,6 +263,8 @@ package object exceptions {
               throw TokenRequiredException
             case RoomNameRequired =>
               throw RoomNameRequiredException
+            case MessageContentRequired =>
+              throw MessageContentRequiredExpection
             case Internal =>
               if (error.containsKey(KEY_EXTRAS)) {
                 val extras = error.getJsonObject(KEY_EXTRAS)

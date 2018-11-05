@@ -23,6 +23,8 @@ import org.apache.http.entity.ContentType
 
 import scala.language.implicitConversions
 
+import it.unibo.dcs.service.user.UserVerticle.Implicits._
+
 final class UserVerticle(private[this] val userRepository: UserRepository, private[this] val publisher: HttpEndpointPublisher) extends ServiceVerticle {
 
   private var host: String = _
@@ -33,6 +35,7 @@ final class UserVerticle(private[this] val userRepository: UserRepository, priva
 
     host = config getString "host"
     port = config getInteger "port"
+
   }
 
   override def start(): Unit = {

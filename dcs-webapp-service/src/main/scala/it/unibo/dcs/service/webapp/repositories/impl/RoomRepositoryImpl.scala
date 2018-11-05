@@ -1,7 +1,7 @@
 package it.unibo.dcs.service.webapp.repositories.impl
 
 import it.unibo.dcs.service.webapp.interaction.Requests._
-import it.unibo.dcs.service.webapp.model.{Participation, Room}
+import it.unibo.dcs.service.webapp.model.{Message, Participation, Room}
 import it.unibo.dcs.service.webapp.repositories.RoomRepository
 import it.unibo.dcs.service.webapp.repositories.datastores.RoomDataStore
 import rx.lang.scala.Observable
@@ -20,6 +20,8 @@ class RoomRepositoryImpl(roomDataStore: RoomDataStore) extends RoomRepository {
 
   override def joinRoom(request: RoomJoinRequest): Observable[Participation] = roomDataStore.joinRoom(request)
 
+  override def sendMessage(request: SendMessageRequest): Observable[Message] = roomDataStore.sendMessage(request)
+  
   override def leaveRoom(request: RoomLeaveRequest): Observable[Participation] = roomDataStore.leaveRoom(request)
   
   override def getRoomParticipations(request: GetRoomParticipationsRequest): Observable[Set[Participation]] =

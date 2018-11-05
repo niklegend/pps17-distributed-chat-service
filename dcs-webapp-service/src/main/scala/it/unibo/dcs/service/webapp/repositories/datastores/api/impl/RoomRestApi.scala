@@ -1,8 +1,6 @@
 package it.unibo.dcs.service.webapp.repositories.datastores.api.impl
 
-import io.vertx.core.buffer.Buffer
 import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
-import io.vertx.scala.ext.web.client.{HttpResponse, WebClient}
 import it.unibo.dcs.commons.RxHelper.Implicits.RichObservable
 import it.unibo.dcs.commons.service.{AbstractApi, HttpEndpointDiscovery}
 import it.unibo.dcs.exceptions.{InternalException, RoomServiceErrorException, bodyAsJsonArray, bodyAsJsonObject}
@@ -10,7 +8,7 @@ import it.unibo.dcs.service.webapp.gson
 import it.unibo.dcs.service.webapp.interaction.Labels.JsonLabels
 import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
 import it.unibo.dcs.service.webapp.interaction.Requests._
-import it.unibo.dcs.service.webapp.model.{Participation, Room}
+import it.unibo.dcs.service.webapp.model.{Message, Participation, Room}
 import it.unibo.dcs.service.webapp.repositories.datastores.api.RoomApi
 import it.unibo.dcs.service.webapp.repositories.datastores.api.impl.RoomRestApi.Implicits._
 import it.unibo.dcs.service.webapp.repositories.datastores.api.impl.RoomRestApi._
@@ -18,6 +16,7 @@ import rx.lang.scala.Observable
 import it.unibo.dcs.commons.JsonHelper.Implicits.RichGson
 
 import scala.concurrent.ExecutionContext.Implicits.global
+
 import scala.language.implicitConversions
 
 class RoomRestApi(private[this] val discovery: HttpEndpointDiscovery)
@@ -69,6 +68,14 @@ class RoomRestApi(private[this] val discovery: HttpEndpointDiscovery)
       .mapImplicitly
   }
 
+  override def sendMessage(request: SendMessageRequest): Observable[Message] = {
+    makeRequest(client =>
+      Observable.from(client.post(sendMessageURI(request.name))
+      .sendJsonObjectFuture(toSendMessageRequest(request))))
+      .map(bodyAsJsonObject(throw InternalException(emptyBodyErrorMessage)))
+      .mapImplicitly
+  }
+  
   override def getRoomParticipations(request: GetRoomParticipationsRequest): Observable[Set[Participation]] = {
     makeRequest(client =>
       Observable.from(client.get(RoomRestApi.roomParticipationsURI(request.name)).sendFuture()))
@@ -105,6 +112,10 @@ private[impl] object RoomRestApi {
 
   private def deleteRoomURI(roomName: String) = roomsURI + uriSeparator + roomName
 
+  private def getRoomsURI(username: String) = s"$roomsURI?user=$username"
+
+  private def sendMessageURI(roomName: String) = s"$roomsURI/$roomName/messages"
+
   private def toDeleteRoomRequest(deleteRoomRequest: DeleteRoomRequest): JsonObject = {
     Json.obj((JsonLabels.usernameLabel, deleteRoomRequest.username))
   }
@@ -117,11 +128,21 @@ private[impl] object RoomRestApi {
     Json.obj((JsonLabels.usernameLabel, joinRoomRequest.username))
   }
 
+  private def toSendMessageRequest(sendMessageRequest: SendMessageRequest): JsonObject = {
+      Json.obj((JsonLabels.usernameLabel, sendMessageRequest.username),
+        (JsonLabels.messageContentLabel, sendMessageRequest.content))
+  }
+
   object Implicits {
 
     implicit def jsonObjectToParticipation(json: JsonObject): Participation = {
       println(json)
       gson fromJsonObject[Participation] json
+    }
+
+    implicit def jsonObjectToMessage(json: JsonObject): Message = {
+      println(json)
+      gson fromJsonObject[Message] json
     }
 
     implicit def jsonArrayToRooms(json: JsonArray): List[Room] = {

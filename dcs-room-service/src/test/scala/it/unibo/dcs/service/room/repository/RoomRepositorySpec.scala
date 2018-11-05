@@ -3,7 +3,7 @@ package it.unibo.dcs.service.room.repository
 import java.util.Date
 
 import it.unibo.dcs.service.room.Mocks._
-import it.unibo.dcs.service.room.model.{Participation, Room}
+import it.unibo.dcs.service.room.model.{Message, Room, Participation}
 import it.unibo.dcs.service.room.repository.impl.RoomRepositoryImpl
 import it.unibo.dcs.service.room.request._
 import org.scalamock.scalatest.MockFactory
@@ -96,6 +96,25 @@ final class RoomRepositorySpec extends FlatSpec with MockFactory with OneInstanc
     subscriber.onNext _ verify rooms once()
   }
 
+  it should "Send a message to room on the data store" in {
+    val timestamp = new Date
+    val content = "Contenuto del messaggio"
+    val request = SendMessageRequest(roomName, username, content , timestamp)
+    val expectedResponse = Message(Room(roomName), username, content, timestamp)
+
+    val subscriber = stub[Subscriber[Message]]
+
+    //Given
+    (roomDataStore sendMessage _) expects request returns Observable.just(expectedResponse)
+
+    //When
+    roomRepository.sendMessage(request).subscribe(subscriber)
+
+    //Then
+    subscriber.onNext _ verify expectedResponse once()
+    (() => subscriber.onCompleted()) verify() once()
+  }
+  
   it should "Let the user join the selected room on the data store" in {
     val request = JoinRoomRequest(roomName, username)
 

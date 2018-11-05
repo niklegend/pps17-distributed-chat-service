@@ -1,7 +1,7 @@
 package it.unibo.dcs.service.webapp.interaction
 
 import com.google.gson.Gson
-import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
+import io.vertx.lang.scala.json.JsonArray
 import io.vertx.lang.scala.json.{Json, JsonObject}
 
 import it.unibo.dcs.commons.JsonHelper.Implicits.RichGson
@@ -97,7 +97,7 @@ object Requests {
 
     implicit def jsonArrayToParticipationSet(array: JsonArray): Set[Participation] = {
       implicit val formats: DefaultFormats.type = DefaultFormats
-      val participations = parse(array.encode()).children
+      val participations = parse(array.encode()).children.head.children
       participations.map(_.extract[Participation]).toSet
     }
 

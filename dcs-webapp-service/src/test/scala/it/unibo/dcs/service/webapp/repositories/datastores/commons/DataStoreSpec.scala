@@ -2,7 +2,7 @@ package it.unibo.dcs.service.webapp.repositories.datastores.commons
 
 import java.util.Date
 
-import it.unibo.dcs.service.webapp.interaction.Requests.RegisterUserRequest
+import it.unibo.dcs.service.webapp.interaction.Requests.{EditUserRequest, RegisterUserRequest}
 import it.unibo.dcs.service.webapp.model.{Participation, Room, User}
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, OneInstancePerTest}
@@ -30,4 +30,7 @@ abstract class DataStoreSpec extends FlatSpec with MockFactory with OneInstanceP
   /** ----------------- Requests ------------------------------------------------------------ */
   protected val registerRequest = RegisterUserRequest(user.username, user.firstName, user.lastName,
     "password", "password")
+
+  protected val editUserRequest =
+    EditUserRequest(user.username, user.firstName, user.lastName, user.bio, user.visible, token)
 }

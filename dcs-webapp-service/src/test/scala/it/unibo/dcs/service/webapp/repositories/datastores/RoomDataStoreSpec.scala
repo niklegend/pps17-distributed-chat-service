@@ -1,5 +1,7 @@
 package it.unibo.dcs.service.webapp.repositories.datastores
 
+import java.util.Date
+
 import it.unibo.dcs.service.webapp.interaction.Requests._
 import it.unibo.dcs.service.webapp.model.{Participation, Room}
 import it.unibo.dcs.service.webapp.repositories.datastores.api.RoomApi

@@ -18,6 +18,8 @@ object Results {
 
   final case class RegisterResult(user: User, token: String) extends DcsResult
 
+  final case class UserEditingResult(user: User) extends DcsResult
+
   final case class RoomCreationResult(room: Room) extends DcsResult
 
   final case class RoomJoinResult(participation: Participation) extends DcsResult
@@ -39,6 +41,9 @@ object Results {
     implicit def loginResultToJsonString(result: LoginResult): String =
       resultToJsonString(result.user, _.put(tokenLabel, result.token))
 
+    implicit def editUserResultToJsonString(result: UserEditingResult): String =
+      resultToJsonString(result.user, identity)
+
     implicit def roomCreationResultToJsonString(result: RoomCreationResult): String = resultToJsonString(result.room)
 
     implicit def roomJoinResultToJsonString(result: RoomJoinResult): String = resultToJsonString(result.participation)
@@ -54,6 +59,10 @@ object Results {
 
     implicit def loginResultToJsonObject(result: LoginResult): JsonObject = {
       Json.fromObjectString(gson.toJson(result.user)).put(tokenLabel, result.token)
+    }
+
+    implicit def editUserResultToJsonObject(result: UserEditingResult): JsonObject = {
+      Json.fromObjectString(gson.toJson(result.user))
     }
 
     implicit def roomCreationResultToJsonObject(result: RoomCreationResult): JsonObject = {
@@ -81,7 +90,7 @@ object Results {
       result.participations
         .map(x => Json.fromObjectString(gson.toJson(x)))
         .foldLeft(Json.emptyArr())(_ add _)
-        
+
     implicit def getUserParticipationsToJsonArray(result: GetUserParticipationsResult): JsonArray =
       gson toJsonArray result.rooms
 

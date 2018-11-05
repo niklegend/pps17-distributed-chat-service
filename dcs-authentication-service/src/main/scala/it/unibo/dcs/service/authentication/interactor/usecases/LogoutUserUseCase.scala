@@ -4,7 +4,7 @@ import java.util.Date
 
 import it.unibo.dcs.commons.interactor.UseCase
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
-import it.unibo.dcs.service.authentication.business_logic.JwtTokenDecoder
+import it.unibo.dcs.service.authentication.interactor.usecases.helpers.ValidationHandler.validateAndContinue
 import it.unibo.dcs.service.authentication.interactor.validations.LogoutUserValidation
 import it.unibo.dcs.service.authentication.repository.AuthenticationRepository
 import it.unibo.dcs.service.authentication.request.Requests.LogoutUserRequest
@@ -23,10 +23,9 @@ final class LogoutUserUseCase(private[this] val threadExecutor: ThreadExecutor,
                               private[this] val logoutUserValidation: LogoutUserValidation)
   extends UseCase[Unit, LogoutUserRequest](threadExecutor, postExecutionThread) {
 
-  val tokenDecoder = JwtTokenDecoder()
-
   override protected[this] def createObservable(request: LogoutUserRequest): Observable[Unit] =
-    logoutUserValidation(request).flatMap(_ => authRepository.invalidToken(request.token, new Date()))
+    validateAndContinue(logoutUserValidation, request, _ => authRepository.invalidToken(request.token, new Date()))
+
 }
 
 object LogoutUserUseCase {

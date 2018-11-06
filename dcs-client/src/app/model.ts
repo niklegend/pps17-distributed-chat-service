@@ -4,7 +4,9 @@ export interface Message {
 
     timestamp: Date;
 
-    participation: Participation;
+    username: string;
+
+    room: Room;
 
 }
 
@@ -14,17 +16,13 @@ export interface Participation {
 
     room: Room;
 
-    user: User;
-
-    messages?: Message[];
+    username: string;
 
 }
 
 export interface Room {
 
     name: string;
-
-    participations?: Participation[];
 
 }
 
@@ -43,9 +41,5 @@ export interface User {
     lastSeen: Date;
 
     token: string;
-
-    rooms?: Room[];
-
-    participaitons?: Participation[];
 
 }

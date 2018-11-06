@@ -1,29 +1,44 @@
 package it.unibo.dcs.service.room.interactor
 
-import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
+import java.util.Date
+
+import it.unibo.dcs.service.room.Mocks._
 import it.unibo.dcs.service.room.interactor.usecases.CreateRoomUseCase
-import it.unibo.dcs.service.room.model.Room
-import it.unibo.dcs.service.room.repository.RoomRepository
-import it.unibo.dcs.service.room.request.CreateRoomRequest
+import it.unibo.dcs.service.room.interactor.validations.CreateRoomValidation
+import it.unibo.dcs.service.room.model.{Participation, Room}
+import it.unibo.dcs.service.room.request.{CreateRoomRequest, JoinRoomRequest}
+import it.unibo.dcs.service.room.validator.CreateRoomValidator
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, OneInstancePerTest}
 import rx.lang.scala.{Observable, Subscriber}
 
+import scala.language.postfixOps
+
 final class CreateRoomUseCaseSpec extends FlatSpec with MockFactory with OneInstancePerTest {
-  val threadExecutor = mock[ThreadExecutor]
-  val postExecutionThread = mock[PostExecutionThread]
-  val roomRepository = mock[RoomRepository]
-  val createRoomUseCase = new CreateRoomUseCase(threadExecutor, postExecutionThread, roomRepository)
 
-  val request = CreateRoomRequest("Aula Magna", "aulamagna")
+  private val createRoomUseCase = {
+    val validation = new CreateRoomValidation(threadExecutor, postExecutionThread, CreateRoomValidator())
+    new CreateRoomUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
+  }
 
-  val subscriber = stub[Subscriber[Room]]
+  private val request = CreateRoomRequest("Test room", "martynha")
+  private val joinRequest = JoinRoomRequest(request.name, request.username)
+  private val expectedRoom = Room(request.name)
+  private val expectedParticipation = Participation(expectedRoom, request.username, new Date())
+
+  private val subscriber = stub[Subscriber[Room]]
 
   it should "Create a room when the CreateRoomUseCase is execute" in {
-    (roomRepository createRoom _) expects request returns Observable.just()
+    //Given
+    (roomRepository createRoom _) expects request returns (Observable just expectedRoom)
+    (roomRepository joinRoom _) expects joinRequest returns (Observable just expectedParticipation)
 
+    //When
     createRoomUseCase(request).subscribe(subscriber)
 
-    (subscriber.onCompleted: () => Unit) verify() once()
+    //Then
+    (subscriber onNext _) verify expectedRoom once()
+    (() => subscriber onCompleted) verify() once()
   }
+
 }

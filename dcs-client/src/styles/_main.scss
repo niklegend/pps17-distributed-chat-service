@@ -5,6 +5,12 @@ body {
   height: 100%;
   margin: 0;
   font-family: "Fontil Sans";
+  color: black !important;
+  background: white !important;
+}
+
+footer {
+  margin-left: 0;
 }
 
 .main-container {
@@ -33,4 +39,9 @@ body {
   position: fixed;
   bottom: 0;
   width: calc(100% - #{$left});
+}
+
+.flex-pull-right {
+  display: flex;
+  justify-content: flex-end;
 }

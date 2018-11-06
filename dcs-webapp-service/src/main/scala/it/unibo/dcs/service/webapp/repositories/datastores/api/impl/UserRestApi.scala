@@ -1,9 +1,14 @@
 package it.unibo.dcs.service.webapp.repositories.datastores.api.impl
 
+import io.vertx.core.buffer.Buffer
+import io.vertx.lang.scala.json.JsonObject
+import io.vertx.scala.ext.web.client.HttpResponse
+import it.unibo.dcs.commons.RxHelper.Implicits.RichObservable
 import it.unibo.dcs.commons.service.{AbstractApi, HttpEndpointDiscovery}
 import it.unibo.dcs.exceptions.{InternalException, UserServiceErrorException, bodyAsJsonObject}
+import it.unibo.dcs.service.webapp.interaction.Labels.JsonLabels
 import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
-import it.unibo.dcs.service.webapp.interaction.Requests.{Implicits, RegisterUserRequest}
+import it.unibo.dcs.service.webapp.interaction.Requests.{EditUserRequest, RegisterUserRequest}
 import it.unibo.dcs.service.webapp.model.User
 import it.unibo.dcs.service.webapp.repositories.datastores.api.UserApi
 import it.unibo.dcs.service.webapp.repositories.datastores.api.impl.UserRestApi._
@@ -16,31 +21,72 @@ class UserRestApi(private[this] val discovery: HttpEndpointDiscovery)
 
   override def createUser(registrationRequest: RegisterUserRequest): Observable[User] = {
     makeRequest(client =>
-      Observable.from(client.post(createUserURI).sendJsonObjectFuture(registrationRequest)))
-      .map(bodyAsJsonObject(throw InternalException("User service returned an empty body")))
-      .map(jsonObjectToUser)
-      .onErrorResumeNext(cause => Observable.error(UserServiceErrorException(cause)))
+      Observable.from(client.post(createUserURI)
+        .sendJsonObjectFuture(toUserServiceRegistrationRequest(registrationRequest))))
+      .mapToJson
+      .handleError
+      .mapImplicitly
   }
 
   override def getUserByUsername(username: String): Observable[User] =
     makeRequest(client =>
       Observable.from(client.get(getUserURI(username)).sendFuture()))
-      .map(bodyAsJsonObject(throw InternalException("User service returned an empty body")))
-      .map(jsonObjectToUser)
+      .mapToJson
+      .mapImplicitly
 
-  override def deleteUser(username: String): Observable[String] = makeRequest(client =>
-    Observable.from(client.get(deleteUserURI(username)).sendFuture()))
-    .map(bodyAsJsonObject(throw InternalException("User service returned an empty body")))
-    .map(_.getString("username"))
-    .onErrorResumeNext(cause => Observable.error(UserServiceErrorException(cause)))
+  override def deleteUser(username: String): Observable[String] =
+    makeRequest(client =>
+      Observable.from(client.get(deleteUserURI(username)).sendFuture()))
+      .mapToJson
+      .handleError
+      .map(_.getString(JsonLabels.usernameLabel))
+
+  override def editUser(request: EditUserRequest): Observable[User] = {
+    makeRequest(client =>
+      Observable.from(client.put(editUserURI(request.username))
+        .sendJsonObjectFuture(request)))
+      .mapToJson
+      .handleError
+      .mapImplicitly
+  }
+
+  private implicit class CustomBufferObservable(observable: Observable[HttpResponse[Buffer]]) {
+
+    def mapToJson: Observable[JsonObject] =
+      observable.map(bodyAsJsonObject(throw InternalException(emptyBodyErrorMessage)))
+
+  }
+
+  private implicit class CustomJsonObservable(observable: Observable[JsonObject]) {
+
+    def handleError: Observable[JsonObject] =
+      observable.onErrorResumeNext(cause => {
+        cause.printStackTrace()
+        Observable.error(UserServiceErrorException(cause))
+      })
+
+  }
 }
 
 private[impl] object UserRestApi {
 
-  val createUserURI = "/createUser"
-  val validateRegistration = "/validateRegistration"
+  private val emptyBodyErrorMessage = "User service returned an empty body"
 
-  def deleteUserURI(username: String) = s"/deleteUser/$username"
+  private val createUserURI = "/users"
 
-  def getUserURI(username: String) = s"/getUser/$username"
+  private def deleteUserURI(username: String) = userURI(username)
+
+  private def getUserURI(username: String) = userURI(username)
+
+  private def editUserURI(username: String) = userURI(username)
+
+  private def userURI(username: String) = s"/users/$username"
+
+  private def toUserServiceRegistrationRequest(registerUserRequest: RegisterUserRequest): JsonObject = {
+    val regRequest: JsonObject = registerUserRequest
+    regRequest.remove(JsonLabels.passwordLabel)
+    regRequest.remove(JsonLabels.passwordConfirmLabel)
+    regRequest
+  }
+
 }

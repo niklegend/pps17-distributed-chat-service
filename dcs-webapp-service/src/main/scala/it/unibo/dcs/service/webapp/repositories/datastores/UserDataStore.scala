@@ -1,7 +1,7 @@
 package it.unibo.dcs.service.webapp.repositories.datastores
 
 
-import it.unibo.dcs.service.webapp.interaction.Requests.RegisterUserRequest
+import it.unibo.dcs.service.webapp.interaction.Requests.{EditUserRequest, RegisterUserRequest}
 import it.unibo.dcs.service.webapp.model.User
 import it.unibo.dcs.service.webapp.repositories.datastores.api.UserApi
 import it.unibo.dcs.service.webapp.repositories.datastores.impl.UserDataStoreNetwork
@@ -10,8 +10,19 @@ import rx.lang.scala.Observable
 /** Structure that allows access to user data by different means (e.g. network, file, database, ecc) */
 trait UserDataStore {
 
+  /** Delete a user given its username
+    *
+    * @param username username of the user to delete
+    * @return an observable stream of the deleted user
+    */
   def deleteUser(username: String): Observable[String]
 
+  /** Edit a user given its username
+    *
+    * @param request the user editing request
+    * @return an observable stream of the edited user
+    */
+  def editUser(request: EditUserRequest): Observable[User]
 
   /** Fetch the user with the given username
     *
@@ -22,7 +33,6 @@ trait UserDataStore {
   /** Create a new user with the info passed in the request
     *
     * @param request the user registration request
-    * @param token   token previously obtained by the Authentication service
     * @return an observable stream of just the user created */
   def createUser(request: RegisterUserRequest): Observable[User]
 

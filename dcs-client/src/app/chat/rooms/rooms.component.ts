@@ -1,7 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { ChatService } from "../../service/chat.service";
+import { ChatService } from '../../service/chat.service';
 import { Router } from '@angular/router';
 import { remove } from 'lodash';
+
+import { Room, Participation } from '../../model';
+import { AuthService } from '../../service/auth.service';
+
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-rooms',
@@ -9,47 +14,54 @@ import { remove } from 'lodash';
   styleUrls: ['./rooms.component.scss']
 })
 export class RoomsComponent implements OnInit {
-  showMenu = '';
 
-  rooms = [
-    {
-      name: 'Room1'
-    },
-    {
-      name: 'Room2'
-    },
-    {
-      name: 'Room3'
-    },
-    {
-      name: 'Room4'
-    }
-  ];
+  rooms: Room[] = [];
 
-  constructor(private chat: ChatService, private router: Router) {}
+  constructor(
+    private chat: ChatService,
+    private auth: AuthService,
+    private router: Router
+  ) { }
 
   ngOnInit() {
-    this.chat.onRoomCreated().subscribe(room => this.rooms.unshift(room));
-    this.chat.onRoomDeleted().subscribe(name => remove(this.rooms, room => room.name === name))
+    console.log('Getting user rooms...');
+    /*
+    const participationFilter = filter<Participation>(p => p.username === this.auth.user.username);
+
+    this.chat.onRoomJoined()
+      .pipe(participationFilter)
+      .subscribe(participation => {
+        console.log("received participation for room: " + participation.room.name);
+        this.rooms.unshift(participation.room);
+      });
+
+    this.chat.onRoomLeft()
+      .pipe(participationFilter)
+      .subscribe(participation => {
+        this.removeRoom(participation.room.name);
+      });
+    */
+    this.chat.getUserParticipations()
+      .subscribe(rooms => this.rooms = rooms);
+
+    this.chat.onRoomDeleted()
+      .subscribe(name => this.removeRoom(name));
   }
 
-  addExpandClass(element) {
-    if (element === this.showMenu) {
-      this.showMenu = '0';
-    } else {
-      this.showMenu = element;
-    }
-  }
-
-  selectRoom(room) {
+  selectRoom(room: Room) {
     this.chat.selectRoom(room);
     this.router.navigate(['/rooms', room.name]);
   }
 
-  deleteRoom(room) {
+  deleteRoom(room: Room) {
     console.log(room);
     this.chat.deleteRoom(room.name)
-      .subscribe(() => {}, err => console.error(err)
-    );
+      .subscribe(() => { },
+        err => console.error(err));
   }
+
+  private removeRoom(name: String) {
+    remove(this.rooms, room => room.name === name);
+  }
+
 }

@@ -3,47 +3,43 @@ package it.unibo.dcs.service.authentication.server
 import java.net.InetAddress
 
 import io.vertx.lang.scala.VertxExecutionContext
-import io.vertx.lang.scala.json.JsonObject
+import io.vertx.lang.scala.json.Json
 import io.vertx.scala.core.{DeploymentOptions, Vertx, VertxOptions}
 import io.vertx.scala.ext.jdbc.JDBCClient
 import io.vertx.scala.ext.sql.SQLConnection
 import io.vertx.servicediscovery.{Record, ServiceDiscovery}
-import it.unibo.dcs.service.authentication.data.AuthenticationDataStoreDatabase
-import it.unibo.dcs.service.authentication.repository.AuthenticationRepositoryImpl
 import it.unibo.dcs.commons.IoHelper
 import it.unibo.dcs.commons.VertxHelper.Implicits._
+import it.unibo.dcs.commons.logging.Logging
 import it.unibo.dcs.commons.service.HttpEndpointPublisherImpl
 import it.unibo.dcs.commons.service.codecs.RecordMessageCodec
+import it.unibo.dcs.service.authentication.data.AuthenticationDataStoreDatabase
+import it.unibo.dcs.service.authentication.repository.AuthenticationRepositoryImpl
 
 import scala.util.{Failure, Success}
 
-object Launcher extends App {
+/** Entry point of the application.
+  * It launches the verticle associated with Authentication Service in clustered mode. */
+object Launcher extends App with Logging {
 
   Vertx.clusteredVertx(VertxOptions(), ar => {
     if (ar.succeeded) {
       val vertx = ar.result()
-      implicit val executionContext: VertxExecutionContext = VertxExecutionContext(vertx.getOrCreateContext())
-      val config = IoHelper.readJsonObject("/db_config.json")
-      val jdbcClient = JDBCClient.createNonShared(vertx, config)
+      val jdbcClient = JDBCClient.createNonShared(vertx, IoHelper.readJsonObject("/db_config.json"))
       jdbcClient.getConnectionFuture().onComplete {
         case Success(connection: SQLConnection) => deployVerticle(vertx, connection)
-        case Failure(cause) => println(s"$cause")
-      }
+        case Failure(cause) => log.error("", cause)
+      }(VertxExecutionContext(vertx.getOrCreateContext()))
     }
   })
 
   private def deployVerticle(vertx: Vertx, sqlConnection: SQLConnection): Unit = {
-    val authDataStore = new AuthenticationDataStoreDatabase(sqlConnection)
-    val authRepository = new AuthenticationRepositoryImpl(authDataStore)
-
     vertx.eventBus.registerDefaultCodec[Record](new RecordMessageCodec())
 
+    val authRepository = new AuthenticationRepositoryImpl(new AuthenticationDataStoreDatabase(sqlConnection))
     val discovery = ServiceDiscovery.create(vertx)
     val publisher = new HttpEndpointPublisherImpl(discovery, vertx.eventBus)
-
-    val config = new JsonObject()
-      .put("host", InetAddress.getLocalHost.getHostAddress)
-      .put("port", args(0).toInt)
+    val config = Json.obj(("host", InetAddress.getLocalHost.getHostAddress), ("port", args(0).toInt))
     vertx deployVerticle(new AuthenticationVerticle(authRepository, publisher), DeploymentOptions().setConfig(config))
   }
 

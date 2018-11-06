@@ -1,21 +1,27 @@
 package it.unibo.dcs.service.authentication.interactor
 
-import io.vertx.lang.scala.json.JsonObject
-import it.unibo.dcs.service.MocksForUseCases._
-import _root_.it.unibo.dcs.service.authentication.request.LoginUserRequest
-import io.vertx.scala.ext.auth.jwt.JWTOptions
 import _root_.it.unibo.dcs.service.authentication.interactor.usecases.LoginUserUseCase
+import _root_.it.unibo.dcs.service.authentication.request.Requests.LoginUserRequest
+import io.vertx.lang.scala.json.JsonObject
+import io.vertx.scala.ext.auth.jwt.JWTOptions
+import it.unibo.dcs.service.MocksForUseCases._
+import _root_.it.unibo.dcs.service.authentication.interactor.validations.LoginUserValidation
+import _root_.it.unibo.dcs.service.authentication.validator.LoginUserValidator
 import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
 import rx.lang.scala.{Observable, Subscriber}
 
+import scala.language.postfixOps
+
 class LoginUserUseCaseTest extends FlatSpec with MockFactory {
 
-  val request = LoginUserRequest("ale", "123456")
-  val expectedResult = "token"
+  private val request = LoginUserRequest("ale", "123456")
+  private val expectedResult = "token"
 
-  val subscriber: Subscriber[String] = stub[Subscriber[String]]
-  val loginUserUseCase = new LoginUserUseCase(threadExecutor, postExecutionThread, authRepository, jwtAuth)
+  private val subscriber: Subscriber[String] = stub[Subscriber[String]]
+  private val validation = LoginUserValidation(threadExecutor, postExecutionThread, LoginUserValidator())
+  private val loginUserUseCase =
+    new LoginUserUseCase(threadExecutor, postExecutionThread, authRepository, jwtAuth, validation)
 
   it should "login the user when the use case is executed" in {
     (jwtAuth generateToken(_: JsonObject, _: JWTOptions)) expects(*, *) returns expectedResult

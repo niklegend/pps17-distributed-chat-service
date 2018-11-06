@@ -9,8 +9,12 @@ import it.unibo.dcs.commons.VertxHelper.Implicits.handlerToFunction
 import rx.lang.scala.Observable
 
 import scala.collection.mutable
+import scala.language.implicitConversions
 import scala.reflect.ClassTag
 import scala.util.{Failure, Success, Try}
+import ReflectionHelper.asClassOf
+
+import scala.language.implicitConversions
 
 object VertxHelper {
 
@@ -76,7 +80,7 @@ object VertxHelper {
         if (addresses contains name) {
           addresses(name)
         } else {
-          val address = new Address(eventBus, name)
+          val address = Address(eventBus, name)
           addresses(name) = address
           address
         }
@@ -84,7 +88,5 @@ object VertxHelper {
     }
 
   }
-
-  private def asClassOf[T](ct: ClassTag[T]): Class[T] = ct.runtimeClass.asInstanceOf[Class[T]]
 
 }

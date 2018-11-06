@@ -1,56 +1,57 @@
 package it.unibo.dcs.service.authentication
 
 import it.unibo.dcs.commons.validation.{Conditions, Validator}
-import it.unibo.dcs.exceptions.{PasswordRequiredException, TokenRequiredException, UserNotFoundException, UsernameRequiredException}
-import it.unibo.dcs.service.authentication.repository.AuthenticationRepository
-import it.unibo.dcs.service.authentication.request.{CheckTokenRequest, LoginUserRequest, LogoutUserRequest, RegisterUserRequest}
+import it.unibo.dcs.exceptions._
+import it.unibo.dcs.service.authentication.business_logic.JwtTokenDecoder
+import it.unibo.dcs.service.authentication.request.Requests._
 
 package object validator {
 
+  val jwtTokenDecoder = JwtTokenDecoder()
+
   object LogoutUserValidator {
-    def apply(authRepository: AuthenticationRepository): Validator[LogoutUserRequest] = Validator[LogoutUserRequest] {
-      builder => builder.addRule(request =>
-          Conditions.stringNotEmpty(request.token), TokenRequiredException
-        )
+    def apply(): Validator[LogoutUserRequest] = Validator[LogoutUserRequest] {
+      _
+        .addRule(request => Conditions.stringNotEmpty(request.token), TokenRequiredException)
+        .addRule(request => checkUsernameInToken(request.token, request.username), InvalidTokenException)
     }
   }
 
-  object RegistrationValidator {
+  object DeleteUserValidator {
+    def apply(): Validator[DeleteUserRequest] = Validator[DeleteUserRequest] {
+      _
+        .addRule(request => Conditions.stringNotEmpty(request.username), UsernameRequiredException)
+        .addRule(request => checkUsernameInToken(request.token, request.username), InvalidTokenException)
+    }
+  }
+
+  object RegisterUserValidator {
     def apply(): Validator[RegisterUserRequest] = Validator[RegisterUserRequest] {
-      builder => builder
-          .addRule(
-            request => Conditions.stringNotEmpty(request.username),
-            UsernameRequiredException
-          )
-          .addRule(
-            request => Conditions.stringNotEmpty(request.password),
-            PasswordRequiredException
-          )
+      _
+        .addRule(request => Conditions.stringNotEmpty(request.username), UsernameRequiredException)
+        .addRule(request => Conditions.stringNotEmpty(request.password), PasswordRequiredException)
     }
   }
 
-  object LoginValidator {
-    def apply(authRepository: AuthenticationRepository): Validator[LoginUserRequest] = Validator[LoginUserRequest] {
-      builder => builder
-          .addRule(
-            request => Conditions.stringNotEmpty(request.username),
-            UsernameRequiredException
-          )
-          .addRule(
-            request => Conditions.stringNotEmpty(request.password),
-            PasswordRequiredException
-          )
-          .addRule(request => authRepository.checkUserExistence(request.username))
+  object LoginUserValidator {
+    def apply(): Validator[LoginUserRequest] = Validator[LoginUserRequest] {
+      _
+        .addRule(request => Conditions.stringNotEmpty(request.username), UsernameRequiredException)
+        .addRule(request => Conditions.stringNotEmpty(request.password), PasswordRequiredException)
     }
   }
 
   object CheckTokenValidator {
     def apply: Validator[CheckTokenRequest] = Validator[CheckTokenRequest] {
-      builder => builder
-          .addRule(
-            request => Conditions.stringNotEmpty(request.token), TokenRequiredException)
+      _
+        .addRule(request => Conditions.stringNotEmpty(request.token), TokenRequiredException)
+        .addRule(request => checkUsernameInToken(request.token, request.username),
+          InvalidTokenException)
     }
   }
+
+  private def checkUsernameInToken(token: String, username: String): Boolean =
+    jwtTokenDecoder.getUsernameFromToken(token) equals username
 
 }
 

@@ -1,30 +1,17 @@
 package it.unibo.dcs.commons.validation
 
 import org.scalatest.FlatSpec
-import rx.lang.scala.Observable
 
 final class ValidatorTest extends FlatSpec {
 
-  val validator: Validator[String] = Validator[String] {
-    _
-      .addRule({
-        Observable.just(_).filter(_ != null)
-          .singleOption
-          .map(opt => opt.getOrElse(throw new NullPointerException("string is null")))
-      })
-      .addRule({
-        Observable.just(_).filter(_.length > 0)
-          .singleOption
-          .map(opt => opt.getOrElse(throw new IllegalArgumentException("String is empty")))
-      })
-      .addRule({
-        Observable.just(_).filter(_.length < 15)
-          .singleOption
-          .map(opt => opt.getOrElse(throw new IllegalArgumentException("Length is greater than 15")))
-      })
+  val validator: Validator[String] = Validator[String] { _
+    .addRule(_ != null, new NullPointerException("string is null"))
+    .addRule(_.length > 0, new IllegalArgumentException("String is empty"))
+    .addRule(_.length < 15, new IllegalArgumentException("Length is greater than 15"))
   }
 
   it should "throw a NullPointerException" in {
+    //noinspection ScalaStyle
     validator.validate(null).subscribe(_ => (), ex => assert(ex.isInstanceOf[NullPointerException]))
   }
 
@@ -51,7 +38,7 @@ final class ValidatorTest extends FlatSpec {
     val thrown = intercept[IllegalStateException] {
       builder.build
     }
-    assert(thrown.getMessage == "builder has already been built")
+    assert(thrown.getMessage == "ValidatorBuilder has already been built")
   }
 
 }

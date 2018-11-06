@@ -7,13 +7,15 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
 import rx.lang.scala.Subscriber
 
+import scala.language.postfixOps
+
 class AuthenticationDataStoreTest extends FlatSpec with MockFactory {
 
-  val username = "ale"
-  val password = "123"
-  val token = "token"
-  val sqlConnection: SQLConnection = mock[SQLConnection]
-  val authDataStore: AuthenticationDataStore = new AuthenticationDataStoreDatabase(sqlConnection)
+  private val username = "ale"
+  private val password = "123"
+  private val token = "token"
+  private val sqlConnection: SQLConnection = mock[SQLConnection]
+  private val authDataStore: AuthenticationDataStore = new AuthenticationDataStoreDatabase(sqlConnection)
 
   it should "call sqlConnection and return a result when checkUserExistence is called" in {
     val loginSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
@@ -37,6 +39,14 @@ class AuthenticationDataStoreTest extends FlatSpec with MockFactory {
     authDataStore createUser(username, password) subscribe registerSubscriber
 
     assertSubscriber(registerSubscriber)
+  }
+
+  it should "call sqlConnection and return a result when deleteUser is called" in {
+    val deleteSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
+    specifyUpdateExpectation()
+    authDataStore deleteUser(username, password) subscribe deleteSubscriber
+
+    assertSubscriber(deleteSubscriber)
   }
 
   it should "call sqlConnection and return a result when isTokenInvalid is called" in {

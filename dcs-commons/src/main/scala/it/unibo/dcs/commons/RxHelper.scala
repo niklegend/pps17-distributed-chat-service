@@ -6,6 +6,8 @@ import it.unibo.dcs.commons.RxHelper.Implicits._
 import it.unibo.dcs.commons.VertxHelper.Implicits._
 import rx.lang.scala.{Observable, Scheduler}
 
+import scala.language.implicitConversions
+
 object RxHelper {
 
   def scheduler(context: Context): Scheduler = JRxHelper.scheduler(context)
@@ -22,9 +24,13 @@ object RxHelper {
 
     private[commons] implicit final class RxObservable[T](val asJavaObservable: rx.Observable[T]) extends Observable[T]
 
-    implicit def map[A, B](observable: Observable[A])(implicit f: A => B): Observable[B] = observable.map(f)
+    implicit class RichObservable[+A](observable: Observable[A]) {
 
-    implicit def mapToUnit[T](observable: Observable[T]): Observable[Unit] = observable.map(_ => ())
+      def mapImplicitly[B](implicit f: A => B): Observable[B] = observable.map(f)
+
+      def toCompletable: Observable[Unit] = observable.toList.map(_ =>())
+
+    }
 
   }
 

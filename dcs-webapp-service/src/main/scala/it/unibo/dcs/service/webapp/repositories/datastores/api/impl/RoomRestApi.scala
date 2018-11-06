@@ -1,55 +1,158 @@
 package it.unibo.dcs.service.webapp.repositories.datastores.api.impl
 
-import io.vertx.lang.scala.json.JsonObject
+import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
+import it.unibo.dcs.commons.RxHelper.Implicits.RichObservable
 import it.unibo.dcs.commons.service.{AbstractApi, HttpEndpointDiscovery}
-import it.unibo.dcs.exceptions.{InternalException, RoomServiceErrorException, bodyAsJsonObject}
-import it.unibo.dcs.service.webapp.interaction.Requests
+import it.unibo.dcs.exceptions.{InternalException, RoomServiceErrorException, bodyAsJsonArray, bodyAsJsonObject}
+import it.unibo.dcs.service.webapp.gson
+import it.unibo.dcs.service.webapp.interaction.Labels.JsonLabels
 import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
 import it.unibo.dcs.service.webapp.interaction.Requests._
-import it.unibo.dcs.service.webapp.model.Room
+import it.unibo.dcs.service.webapp.model.{Message, Participation, Room}
 import it.unibo.dcs.service.webapp.repositories.datastores.api.RoomApi
-import it.unibo.dcs.service.webapp.repositories.datastores.api.impl.RoomRestApi.getRoom
+import it.unibo.dcs.service.webapp.repositories.datastores.api.impl.RoomRestApi.Implicits._
+import it.unibo.dcs.service.webapp.repositories.datastores.api.impl.RoomRestApi._
 import rx.lang.scala.Observable
+import it.unibo.dcs.commons.JsonHelper.Implicits.RichGson
 
 import scala.concurrent.ExecutionContext.Implicits.global
+
+import scala.language.implicitConversions
 
 class RoomRestApi(private[this] val discovery: HttpEndpointDiscovery)
   extends AbstractApi(discovery, "room-service") with RoomApi {
 
   override def createRoom(createRoomRequest: CreateRoomRequest): Observable[Room] = {
     makeRequest(client =>
-      Observable.from(client.post(RoomRestApi.createRoomURI).sendJsonObjectFuture(createRoomRequest)))
-        .map(bodyAsJsonObject(throw InternalException("Room service returned an empty body")))
-        .map(getRoom)
+      Observable.from(client.post(roomsURI).sendJsonObjectFuture(createRoomRequest)))
+      .map(bodyAsJsonObject(throw InternalException(emptyBodyErrorMessage)))
+      .mapImplicitly
   }
 
   override def deleteRoom(deletionRequest: DeleteRoomRequest): Observable[String] = {
     makeRequest(client =>
-      Observable.from(client.post(RoomRestApi.deleteRoomURI).sendJsonObjectFuture(deletionRequest)))
-      .map(bodyAsJsonObject(throw InternalException("Room service returned an empty body")))
-      .map(_.getString("name"))
+      Observable.from(client.delete(deleteRoomURI(deletionRequest.name))
+        .sendJsonObjectFuture(toDeleteRoomRequest(deletionRequest))))
+      .map(bodyAsJsonObject(throw InternalException(emptyBodyErrorMessage)))
+      .map(_.getString(JsonLabels.roomNameLabel))
   }
 
-  override def registerUser(userRegistrationRequest: Requests.RegisterUserRequest): Observable[Unit] = {
+  override def registerUser(userRegistrationRequest: RegisterUserRequest): Observable[Unit] = {
     makeRequest(client =>
-        Observable.from(client.post(RoomRestApi.createUser).sendJsonObjectFuture(userRegistrationRequest)))
+      Observable.from(client.post(usersURI).sendJsonObjectFuture(toCreateUserRequest(userRegistrationRequest))))
       .map(bodyAsJsonObject())
-      .map(_ => {})
       .onErrorResumeNext(cause => Observable.error(RoomServiceErrorException(cause)))
+      .toCompletable
   }
 
+  override def joinRoom(request: RoomJoinRequest): Observable[Participation] = {
+    makeRequest(client =>
+      Observable.from(client.post(joinRoomURI(request.name))
+        .sendJsonObjectFuture(toJoinRoomRequest(request))))
+      .map(bodyAsJsonObject(throw InternalException(emptyBodyErrorMessage)))
+      .mapImplicitly
+  }
+
+  override def leaveRoom(request: RoomLeaveRequest): Observable[Participation] = {
+    makeRequest(client =>
+      Observable.from(client.delete(leaveRoomURI(request.name, request.username))
+        .sendFuture()))
+      .map(bodyAsJsonObject(throw InternalException(emptyBodyErrorMessage)))
+      .mapImplicitly
+  }
+
+  override def getRooms(request: GetRoomsRequest): Observable[List[Room]] = {
+    makeRequest(client =>
+      Observable.from(client.get(s"${RoomRestApi.roomsURI}?user=${request.username}").sendFuture()))
+      .map(bodyAsJsonArray(throw InternalException(emptyBodyErrorMessage)))
+      .mapImplicitly
+  }
+
+  override def sendMessage(request: SendMessageRequest): Observable[Message] = {
+    makeRequest(client =>
+      Observable.from(client.post(sendMessageURI(request.name))
+      .sendJsonObjectFuture(toSendMessageRequest(request))))
+      .map(bodyAsJsonObject(throw InternalException(emptyBodyErrorMessage)))
+      .mapImplicitly
+  }
+  
+  override def getRoomParticipations(request: GetRoomParticipationsRequest): Observable[Set[Participation]] = {
+    makeRequest(client =>
+      Observable.from(client.get(RoomRestApi.roomParticipationsURI(request.name)).sendFuture()))
+      .map(bodyAsJsonArray(throw InternalException(emptyBodyErrorMessage)))
+      .mapImplicitly
+  }
+  
+  override def getUserParticipations(request: GetUserParticipationsRequest): Observable[List[Room]] =
+    makeRequest(client =>
+      Observable.from(client.get(userParticipationsURI(request.username)).sendFuture()))
+      .map(bodyAsJsonArray(throw InternalException(emptyBodyErrorMessage)))
+      .mapImplicitly
 }
 
 private[impl] object RoomRestApi {
 
-  val createRoomURI = "/createRoom"
+  private val uriSeparator = "/"
 
-  val deleteRoomURI = "/deleteRoom"
+  private val roomsURI = "/rooms"
 
-  val createUser = "/createUser"
+  private val usersURI = "/users"
 
-  private[impl] def getRoom(json: JsonObject) = {
-    Room(json.getString("name"))
+  private def userParticipationsURI(username: String): String = s"$usersURI/$username/participations"
+
+  private val emptyBodyErrorMessage = "Room service returned an empty body"
+
+  private def roomParticipationsURI(roomName: String) = roomsURI + uriSeparator + roomName + "/participations"
+
+  private def joinRoomURI(roomName: String) = s"$roomsURI/$roomName/participations"
+
+  private def leaveRoomURI(roomName: String, username: String) = {
+    joinRoomURI(roomName) + "/" + username
+  }
+
+  private def deleteRoomURI(roomName: String) = roomsURI + uriSeparator + roomName
+
+  private def getRoomsURI(username: String) = s"$roomsURI?user=$username"
+
+  private def sendMessageURI(roomName: String) = s"$roomsURI/$roomName/messages"
+
+  private def toDeleteRoomRequest(deleteRoomRequest: DeleteRoomRequest): JsonObject = {
+    Json.obj((JsonLabels.usernameLabel, deleteRoomRequest.username))
+  }
+
+  private def toCreateUserRequest(registerUserRequest: RegisterUserRequest): JsonObject = {
+    Json.obj((JsonLabels.usernameLabel, registerUserRequest.username))
+  }
+
+  private def toJoinRoomRequest(joinRoomRequest: RoomJoinRequest): JsonObject = {
+    Json.obj((JsonLabels.usernameLabel, joinRoomRequest.username))
+  }
+
+  private def toSendMessageRequest(sendMessageRequest: SendMessageRequest): JsonObject = {
+      Json.obj((JsonLabels.usernameLabel, sendMessageRequest.username),
+        (JsonLabels.messageContentLabel, sendMessageRequest.content))
+  }
+
+  object Implicits {
+
+    implicit def jsonObjectToParticipation(json: JsonObject): Participation = {
+      println(json)
+      gson fromJsonObject[Participation] json
+    }
+
+    implicit def jsonObjectToMessage(json: JsonObject): Message = {
+      println(json)
+      gson fromJsonObject[Message] json
+    }
+
+    implicit def jsonArrayToRooms(json: JsonArray): List[Room] = {
+      Stream.range(0, json.size)
+        .map(json.getJsonObject)
+        .map(_.getString("name"))
+        .map(Room)
+        .toList
+    }
+
   }
 
 }

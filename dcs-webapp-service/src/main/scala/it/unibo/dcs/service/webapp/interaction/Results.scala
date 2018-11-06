@@ -18,6 +18,8 @@ object Results {
 
   final case class RegisterResult(user: User, token: String) extends DcsResult
 
+  final case class LogoutResult(user: User) extends DcsResult
+
   final case class UserEditingResult(user: User) extends DcsResult
 
   final case class RoomCreationResult(room: Room) extends DcsResult
@@ -62,6 +64,9 @@ object Results {
     implicit def loginResultToJsonObject(result: LoginResult): JsonObject = {
       Json.fromObjectString(gson.toJson(result.user)).put(tokenLabel, result.token)
     }
+
+    implicit def logoutResultToJsonObject(result: LogoutResult): JsonObject =
+      gson toJsonObject result.user
 
     implicit def editUserResultToJsonObject(result: UserEditingResult): JsonObject = {
       Json.fromObjectString(gson.toJson(result.user))

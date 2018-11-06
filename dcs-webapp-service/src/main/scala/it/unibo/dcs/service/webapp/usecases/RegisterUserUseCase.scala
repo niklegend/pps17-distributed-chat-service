@@ -1,10 +1,10 @@
 package it.unibo.dcs.service.webapp.usecases
 
-import io.vertx.lang.scala.ScalaLogger
 import io.vertx.scala.core.Context
 import it.unibo.dcs.commons.RxHelper
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
 import it.unibo.dcs.commons.interactor.{ThreadExecutorExecutionContext, UseCase}
+import it.unibo.dcs.commons.logging.Logging
 import it.unibo.dcs.exceptions.{RoomServiceErrorException, UserServiceErrorException}
 import it.unibo.dcs.service.webapp.interaction.Requests.{DeleteUserRequest, RegisterUserRequest}
 import it.unibo.dcs.service.webapp.interaction.Results.RegisterResult
@@ -28,9 +28,7 @@ final class RegisterUserUseCase(private[this] val threadExecutor: ThreadExecutor
                                 private[this] val authRepository: AuthenticationRepository,
                                 private[this] val userRepository: UserRepository,
                                 private[this] val roomRepository: RoomRepository)
-  extends UseCase[RegisterResult, RegisterUserRequest](threadExecutor, postExecutionThread) {
-
-  private lazy val log = ScalaLogger.getLogger(getClass.getName)
+  extends UseCase[RegisterResult, RegisterUserRequest](threadExecutor, postExecutionThread) with Logging {
 
   override protected[this] def createObservable(request: RegisterUserRequest): Observable[RegisterResult] =
     for {
@@ -42,15 +40,11 @@ final class RegisterUserUseCase(private[this] val threadExecutor: ThreadExecutor
       }
       _ <- roomRepository.registerUser(request).onErrorResumeNext {
         case RoomServiceErrorException(error) =>
-          log.info("Rolling back room repository...")
+          log.info("Rolling back auth and room it.unibo.dcs.service.webapp.repositories...")
           rollbackAuthRepository(request.username, token, error)
           rollbackUserRepository(request.username, error)
       }
-    } yield {
-      val result = RegisterResult(user, token)
-      println(result)
-      result
-    }
+    } yield RegisterResult(user, token)
 
   /* Rollback changes previously performed in Authentication service */
   private def rollbackAuthRepository(username: String, token: String, error: Throwable): Observable[User] = {

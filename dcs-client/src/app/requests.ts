@@ -22,21 +22,43 @@ export class RegisterRequest {
 
 export class LogoutRequest {
 
-  constructor(public token: string) {
+  constructor(public username: string) {
   }
 
 }
 
 export class CreateRoomRequest {
 
-    constructor(public name: string, public username: string, public token: string) {
-    }
+  constructor(public name: string, public username: string) {
+  }
 
 }
 
 export class DeleteRoomRequest {
 
-  constructor(public name: string, public username: string, public token: string) {
+  constructor(public name: string, public username: string) {
   }
 
 }
+
+export class JoinRoomRequest {
+
+  constructor(public username: string) {
+  }
+
+}
+
+export class SendMessageRequest {
+
+  constructor(public username: string, public content: string) {
+
+  }
+}
+
+export class GetRoomParticipationsRequest {
+
+  constructor(public username: string) {
+  }
+
+}
+

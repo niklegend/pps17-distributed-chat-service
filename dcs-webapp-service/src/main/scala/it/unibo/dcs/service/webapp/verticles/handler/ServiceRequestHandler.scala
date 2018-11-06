@@ -17,6 +17,29 @@ import it.unibo.dcs.service.webapp.verticles.handler.impl.ServiceRequestHandlerI
   * It handles all the incoming request to the service APIs. */
 trait ServiceRequestHandler {
 
+  def handleSendMessage(context: RoutingContext)(implicit ctx: Context): Unit
+
+  /** It retrieves to the client all the participations for a given room
+    *
+    * @param context Vertx routing context
+    * @param ctx     Vertx context passed implicitly
+    */
+  def handleGetRoomParticipations(context: RoutingContext)(implicit ctx: Context): Unit
+
+  /** Join a user in a specified room
+    *
+    * @param context Vertx routing context
+    * @param ctx     Vertx context passed implicitly
+    */
+  def handleJoinRoom(context: RoutingContext)(implicit ctx: Context): Unit
+
+  /** User leaves the specified room
+    *
+    * @param context Vertx routing context
+    * @param ctx     Vertx context passed implicitly
+    */
+  def handleLeaveRoom(context: RoutingContext)(implicit ctx: Context): Unit
+
   /** Login request handler
     *
     * @param context Vertx routing context
@@ -35,6 +58,12 @@ trait ServiceRequestHandler {
     * @param ctx     Vertx context passed implicitly */
   def handleLogout(context: RoutingContext)(implicit ctx: Context): Unit
 
+  /** Login request handler
+    *
+    * @param context Vertx routing context
+    * @param ctx     Vertx context passed implicitly */
+  def handleUserEditing(context: RoutingContext)(implicit ctx: Context): Unit
+
   def handleRoomDeletion(context: RoutingContext)(implicit ctx: Context): Unit
 
   /** Room creation request handler
@@ -42,6 +71,19 @@ trait ServiceRequestHandler {
     * @param context Vertx routing context
     * @param ctx     Vertx context passed implicitly */
   def handleRoomCreation(context: RoutingContext)(implicit ctx: Context): Unit
+
+  /** Get rooms request handler
+    *
+    * @param context Vertx routing context
+    * @param ctx     Vertx context passed implicitly */
+  def handleGetRooms(context: RoutingContext)(implicit ctx: Context): Unit
+
+  /** Get user participations request handler
+    *
+    * @param context Vertx routing context
+    * @param ctx     Vertx context passed implicitly */
+  def handleGetUserParticipations(context: RoutingContext)(implicit ctx: Context): Unit
+
 }
 
 /** Companion object */
@@ -62,6 +104,7 @@ object ServiceRequestHandler {
     val userRepository = UserRepository(userDataStore)
     val authRepository = AuthenticationRepository(authDataStore)
     val roomRepository = RoomRepository(roomDataStore)
-    new ServiceRequestHandlerImpl(userRepository, authRepository, roomRepository)
+    new ServiceRequestHandlerImpl(eventBus, userRepository, authRepository, roomRepository)
   }
+
 }

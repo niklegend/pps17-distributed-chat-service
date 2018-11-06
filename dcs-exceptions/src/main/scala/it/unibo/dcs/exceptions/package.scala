@@ -6,6 +6,8 @@ import io.vertx.scala.ext.web.client.HttpResponse
 import it.unibo.dcs.exceptions.ErrorType._
 import it.unibo.dcs.exceptions.Implicits.jsonObjectToDcsException
 
+import scala.language.implicitConversions
+
 /** It contains all the exceptions used by the APIs */
 package object exceptions {
 
@@ -51,6 +53,13 @@ package object exceptions {
 
     val RoomNameRequired = "ROOM_NAME_REQUIRED"
 
+    val ParticipationNotFound = "PARTICIPATION_NOT_FOUND"
+
+    val ParticipationsNotFound = "PARTICIPATIONS_NOT_FOUND"
+
+    val ParticipationAlreadyExists = "PARTICIPATION_ALREADY_EXISTS"
+
+    val MessageContentRequired = "MESSAGE_CONTENT_REQUIRED"
   }
 
   /** Sum type representing all the specific exceptions for Distributed Chat Service application */
@@ -60,7 +69,8 @@ package object exceptions {
 
   final case object KeyRequiredException {
 
-    def apply(key: String, error: String) = InternalException(s"Key '$key' is required in $error error")
+    def apply(key: String, error: String): InternalException =
+      InternalException(s"Key '$key' is required in $error error")
 
   }
 
@@ -79,6 +89,12 @@ package object exceptions {
   final case class RoomAlreadyExistsException(name: String) extends DcsException(RoomAlreadyExists)
 
   final case class RoomNotFoundException(name: String) extends DcsException(RoomNotFound)
+
+  final case class ParticipationAlreadyExistsException(username: String, name: String) extends DcsException(ParticipationAlreadyExists)
+
+  final case class ParticipationNotFoundException(username: String, name: String) extends DcsException(ParticipationNotFound)
+
+  final case class ParticipationsNotFoundException(name: String) extends DcsException(ParticipationsNotFound)
 
   final case object InvalidTokenException extends DcsException(InvalidToken)
 
@@ -99,10 +115,11 @@ package object exceptions {
 
   final case object RoomNameRequiredException extends DcsException(RoomNameRequired)
 
+  final case object MessageContentRequiredExpection extends DcsException(MessageContentRequired)
+
   object Implicits {
 
     implicit def throwableToJsonObject(cause: Throwable): JsonObject = {
-      println(cause.getClass)
       val error = new JsonObject()
       cause match {
         case e: DcsException =>
@@ -156,7 +173,6 @@ package object exceptions {
                   throw UserNotFoundException(username)
                 }
                 throw InternalException(s"Missing key '$KEY_USERNAME' in $UserNotFound error")
-                throw KeyRequiredException(KEY_USERNAME, UserNotFound)
               }
               throw KeyRequiredException(KEY_NAME, UserNotFound)
             case UserAlreadyExists =>
@@ -189,6 +205,48 @@ package object exceptions {
                 throw KeyRequiredException(KEY_NAME, RoomAlreadyExists)
               }
               throw KeyRequiredException(KEY_EXTRAS, RoomAlreadyExists)
+            case ParticipationNotFound =>
+              if (error.containsKey(KEY_EXTRAS)) {
+                val extras = error.getJsonObject(KEY_EXTRAS)
+                if (extras.containsKey(KEY_NAME)) {
+                  val name = extras.getString(KEY_NAME)
+                  if (extras.containsKey(KEY_USERNAME)) {
+                    val username = extras.getString(KEY_USERNAME)
+                    throw ParticipationNotFoundException(username, name)
+                  }
+                  throw KeyRequiredException(KEY_USERNAME, ParticipationNotFound)
+                }
+                throw KeyRequiredException(KEY_NAME, ParticipationNotFound)
+              }
+              throw KeyRequiredException(KEY_EXTRAS, ParticipationNotFound)
+            case ParticipationsNotFound =>
+              if (error.containsKey(KEY_EXTRAS)) {
+                val extras = error.getJsonObject(KEY_EXTRAS)
+                if (extras.containsKey(KEY_NAME)) {
+                  val name = extras.getString(KEY_NAME)
+                  if (extras.containsKey(KEY_USERNAME)) {
+                    val username = extras.getString(KEY_USERNAME)
+                    throw ParticipationNotFoundException(username, name)
+                  }
+                  throw KeyRequiredException(KEY_USERNAME, ParticipationsNotFound)
+                }
+                throw KeyRequiredException(KEY_NAME, ParticipationsNotFound)
+              }
+              throw KeyRequiredException(KEY_EXTRAS, ParticipationsNotFound)
+            case ParticipationAlreadyExists =>
+              if (error.containsKey(KEY_EXTRAS)) {
+                val extras = error.getJsonObject(KEY_EXTRAS)
+                if (extras.containsKey(KEY_NAME)) {
+                  val name = extras.getString(KEY_NAME)
+                  if (extras.containsKey(KEY_USERNAME)) {
+                    val username = extras.getString(KEY_USERNAME)
+                    throw ParticipationAlreadyExistsException(username, name)
+                  }
+                  throw KeyRequiredException(KEY_USERNAME, ParticipationAlreadyExists)
+                }
+                throw KeyRequiredException(KEY_NAME, ParticipationAlreadyExists)
+              }
+              throw KeyRequiredException(KEY_EXTRAS, ParticipationAlreadyExists)
             case WrongUsernameOrPassword =>
               throw WrongUsernameOrPasswordException
             case UsernameRequired =>
@@ -205,6 +263,8 @@ package object exceptions {
               throw TokenRequiredException
             case RoomNameRequired =>
               throw RoomNameRequiredException
+            case MessageContentRequired =>
+              throw MessageContentRequiredExpection
             case Internal =>
               if (error.containsKey(KEY_EXTRAS)) {
                 val extras = error.getJsonObject(KEY_EXTRAS)
@@ -225,10 +285,12 @@ package object exceptions {
       case ServiceUnavailableException(_) =>
         HttpResponseStatus.SERVICE_UNAVAILABLE
       case UserNotFoundException(_)
-           | RoomNotFoundException(_) =>
+           | RoomNotFoundException(_)
+           | ParticipationNotFoundException(_, _) =>
         HttpResponseStatus.NOT_FOUND
       case UserAlreadyExistsException(_)
-           | RoomAlreadyExistsException(_) =>
+           | RoomAlreadyExistsException(_)
+           | ParticipationAlreadyExistsException(_, _) =>
         HttpResponseStatus.CONFLICT
       case UsernameRequiredException
            | FirstNameRequiredException
@@ -238,6 +300,7 @@ package object exceptions {
            | TokenRequiredException
            | RoomNameRequiredException =>
         HttpResponseStatus.PRECONDITION_FAILED
+      // HttpResponseStatus.UNPROCESSABLE_ENTITY
       case InvalidTokenException
            | WrongUsernameOrPasswordException =>
         HttpResponseStatus.UNAUTHORIZED
@@ -248,7 +311,20 @@ package object exceptions {
   def bodyAsJsonObject[T](default: => JsonObject = Json.emptyObj()): HttpResponse[T] => JsonObject = response =>
     jsonObjectToDcsException(response.bodyAsJsonObject().getOrElse(default))
 
-  def bodyAsJsonArray[T](default: => JsonArray = Json.emptyArr()): HttpResponse[T] => JsonArray = response => response.bodyAsJsonArray()
-    .getOrElse(default)
+  def bodyAsJsonArray[T](default: => JsonArray = Json.emptyArr()): HttpResponse[T] => JsonArray = response => {
+    if (isJsonArray(response)) {
+      response.bodyAsJsonArray().getOrElse(default)
+    }
+    else {
+      jsonObjectToDcsException(response.bodyAsJsonObject().head)
+      default
+    }
+  }
+
+  private def isJsonArray[T](response: HttpResponse[T]): Boolean = {
+    response.bodyAsString().fold(false) { s =>
+      if (s.startsWith("[")) true else false
+    }
+  }
 
 }

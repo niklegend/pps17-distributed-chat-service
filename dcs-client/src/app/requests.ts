@@ -51,8 +51,8 @@ export class JoinRoomRequest {
 export class SendMessageRequest {
 
   constructor(public username: string, public content: string) {
-
   }
+
 }
 
 export class GetRoomParticipationsRequest {
@@ -61,4 +61,3 @@ export class GetRoomParticipationsRequest {
   }
 
 }
-

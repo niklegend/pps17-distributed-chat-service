@@ -3,7 +3,8 @@ package it.unibo.dcs.service.webapp.repositories.datastores
 import java.util.Date
 
 import it.unibo.dcs.service.webapp.interaction.Requests._
-import it.unibo.dcs.service.webapp.model.{Participation, Room}
+import it.unibo.dcs.service.webapp.model.{Message, Participation, Room}
+import it.unibo.dcs.service.webapp.repositories.datastores.RoomDataStore
 import it.unibo.dcs.service.webapp.repositories.datastores.api.RoomApi
 import it.unibo.dcs.service.webapp.repositories.datastores.commons.DataStoreSpec
 import it.unibo.dcs.service.webapp.repositories.datastores.impl.RoomDataStoreNetwork
@@ -16,16 +17,15 @@ class RoomDataStoreSpec extends DataStoreSpec {
   private val roomApi: RoomApi = mock[RoomApi]
   private val dataStore: RoomDataStore = new RoomDataStoreNetwork(roomApi)
 
-  private val room = Room("Room 1")
-  private val rooms: List[Room] = List(room, room, room)
-  private val token = "token"
-  private val participation = Participation(new Date(), room, user.username)
-  private val participations = Set(participation)
+  private val messageContent = "Message content"
+  private val messageTimestamp = new Date
+  private val message = Message(room, user.username, messageContent, messageTimestamp)
 
   private val roomCreationRequest = CreateRoomRequest("Room 1", user.username, token)
   private val roomDeletionRequest = DeleteRoomRequest(room.name, user.username, token)
   private val getRoomsRequest = GetRoomsRequest("martynha", token)
   private val joinRoomRequest = RoomJoinRequest(room.name, user.username, token)
+  private val sendMessageRequest = SendMessageRequest(room.name, user.username, messageContent, messageTimestamp, token)
   private val leaveRoomRequest = RoomLeaveRequest(room.name, user.username, token)
   private val getRoomParticipationsRequest = GetRoomParticipationsRequest(room.name, user.username, token)
 
@@ -34,6 +34,7 @@ class RoomDataStoreSpec extends DataStoreSpec {
   private val registrationSubscriber = stub[Subscriber[Unit]]
   private val getRoomsSubscriber: Subscriber[List[Room]] = stub[Subscriber[List[Room]]]
   private val joinRoomSubscriber = stub[Subscriber[Participation]]
+  private val sendMessageSubscriber = stub[Subscriber[Message]]
   private val leaveRoomSubscriber = stub[Subscriber[Participation]]
   private val getRoomParticipationsSubscriber: Subscriber[Set[Participation]] = stub[Subscriber[Set[Participation]]]
 
@@ -133,6 +134,21 @@ class RoomDataStoreSpec extends DataStoreSpec {
     (getRoomsSubscriber onNext _) verify rooms once()
     // Verify that `subscriber.onCompleted` has been called once
     (() => getRoomsSubscriber onCompleted) verify() once()
+    //
+  }
+
+  it should "save a new message" in {
+    //Given
+    (roomApi sendMessage _) expects sendMessageRequest returns Observable.just(message)
+
+    //When
+    dataStore sendMessage sendMessageRequest subscribe sendMessageSubscriber
+
+    //Then
+    //Verify that 'suscriber.onNext' has been callen once
+    (sendMessageSubscriber onNext _) verify message once()
+    // Verify that `subscriber.onCompleted` has been called once
+    (() => sendMessageSubscriber onCompleted) verify() once()
     //
   }
 }

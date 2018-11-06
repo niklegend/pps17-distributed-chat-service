@@ -14,6 +14,8 @@ import it.unibo.dcs.service.room.model._
 import it.unibo.dcs.service.room.request._
 import rx.lang.scala.Observable
 
+import it.unibo.dcs.commons.dataaccess.Implicits.{dateToString}
+
 import scala.language.implicitConversions
 
 final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDatabase(connection) with RoomDataStore {
@@ -64,6 +66,9 @@ final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
         }
       }
 
+  override def sendMessage(request: SendMessageRequest): Observable[Message] = execute(insertMessageQuery, request)
+    .flatMap(_ => Observable.just(request))
+    
   override def getRoomParticipations(request: GetRoomParticipationsRequest): Observable[Set[Participation]] = {
     query(selectParticipationsByRoomName, request)
       .map { resultSet =>
@@ -79,6 +84,7 @@ final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
         }
       }
   }
+  
   override def getParticipationsByUsername(request: GetUserParticipationsRequest): Observable[List[Room]] =
     query(selectParticipationsByUsername, request)
       .map { resultSet =>
@@ -99,6 +105,8 @@ private[impl] object RoomDataStoreDatabase {
 
   val insertParticipationQuery = "INSERT INTO `participations` (`username`, `name`) VALUES (?, ?)"
 
+  val insertMessageQuery = "INSERT INTO `messages` (`name`, `username`, `content`, `timestamp`) VALUES (?, ?, ?, ?)"
+  
   val removeParticipationQuery = "DELETE FROM `participations` WHERE `username` = ? AND `name` = ? "
 
   val deleteRoomQuery = "DELETE FROM `rooms` WHERE `name` = ? AND `owner_username` = ?"
@@ -136,6 +144,12 @@ private[impl] object RoomDataStoreDatabase {
     implicit def requestToParams(request: JoinOrLeaveRoomRequest): JsonArray =
       new JsonArray().add(request.username).add(request.name)
 
+    implicit def requestToParams(request: SendMessageRequest): JsonArray = {
+      val timestamp: String = request.timestamp
+      new JsonArray().add(request.name).add(request.username)
+        .add(request.content).add(timestamp)
+    }
+    
     implicit def requestToParams(request: GetRoomParticipationsRequest): JsonArray =
       Json.arr(request.name)
 
@@ -151,6 +165,9 @@ private[impl] object RoomDataStoreDatabase {
       Participation(room, username, date)
     }
 
+    implicit def jsonObjectToMessage(json: JsonObject): Message = gson fromJsonObject[Message] json
+
+    implicit def requestToMessage(request: SendMessageRequest): Message = Message(Room(request.name), request.username, request.content, request.timestamp)
   }
 
 }

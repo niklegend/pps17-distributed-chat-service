@@ -1,7 +1,9 @@
 package it.unibo.dcs.service.webapp.interaction
 
+import java.util.Date
+
 import com.google.gson.Gson
-import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
+import io.vertx.lang.scala.json.JsonArray
 import io.vertx.lang.scala.json.{Json, JsonObject}
 
 import it.unibo.dcs.commons.JsonHelper.Implicits.RichGson
@@ -12,7 +14,8 @@ import net.liftweb.json._
 
 import scala.language.implicitConversions
 
-/** It wraps all requests used by request handler, use cases, it.unibo.dcs.service.webapp.repositories, datastores and APIs */
+/** It wraps all requests used by request handler, use cases, it.unibo.dcs.service.webapp.repositories,
+  * datastores and APIs */
 object Requests {
 
   /** Sum type representing all the specific requests for Distributed Chat Service application */
@@ -25,6 +28,9 @@ object Requests {
   final case class RegisterUserRequest(username: String, firstName: String,
                                        lastName: String, password: String,
                                        passwordConfirm: String) extends DcsRequest
+
+  final case class EditUserRequest(username: String, firstName: String, lastName: String, bio: String,
+                                   visible: Boolean, token: String) extends DcsRequest
 
   final case class LogoutUserRequest(username: String, token: String) extends DcsRequest
 
@@ -42,6 +48,8 @@ object Requests {
 
   final case class CheckTokenRequest(token: String, username: String) extends DcsRequest
 
+  final case class SendMessageRequest(name: String, username: String, content: String, timestamp: Date, token: String) extends DcsRequest
+  
   final case class GetUserParticipationsRequest(username: String, token: String) extends DcsRequest
 
   /** It enables implicit conversions in order to clean code that deals with requests. */
@@ -62,6 +70,11 @@ object Requests {
     implicit def jsonObjectToRegisterUserRequest(json: JsonObject): RegisterUserRequest = {
       RegisterUserRequest(json.getString(usernameLabel), json.getString(firstNameLabel),
         json.getString(lastNameLabel), json.getString(passwordLabel), json.getString(passwordConfirmLabel))
+    }
+
+    implicit def jsonObjectToEditUserRequest(json: JsonObject): EditUserRequest = {
+      EditUserRequest(json.getString(usernameLabel), json.getString(firstNameLabel), json.getString(lastNameLabel),
+        json.getString(bioLabel), json.getBoolean(visibleLabel), json.getString(tokenLabel))
     }
 
     implicit def jsonObjectToUsername(json: JsonObject): String = {
@@ -88,7 +101,7 @@ object Requests {
 
     implicit def jsonArrayToParticipationSet(array: JsonArray): Set[Participation] = {
       implicit val formats: DefaultFormats.type = DefaultFormats
-      val participations = parse(array.encode()).children
+      val participations = parse(array.encode()).children.head.children
       participations.map(_.extract[Participation]).toSet
     }
 
@@ -106,7 +119,12 @@ object Requests {
     }
 
     implicit def jsonObjectToGetRoomsRequest(json: JsonObject): GetRoomsRequest = {
-      GetRoomsRequest(json.getString("username"), json.getString("token"))
+      GetRoomsRequest(json.getString(usernameLabel), json.getString(tokenLabel))
+    }
+
+    implicit def jsonObjectToSendMessageRequest(jsonObject: JsonObject): SendMessageRequest = {
+      SendMessageRequest(jsonObject.getString(roomNameLabel), jsonObject.getString(usernameLabel),
+        jsonObject.getString(messageContentLabel), jsonObject.getString(messageTimestampLabel), jsonObject.getString(tokenLabel))
     }
 
     implicit def jsonObjectToGetUserParticipationsRequest(json: JsonObject): GetUserParticipationsRequest = {

@@ -13,8 +13,6 @@ class AuthenticationRepositorySpec extends RepositorySpec {
   private val dataStore: AuthenticationDataStore = mock[AuthenticationDataStore]
   private val repository: AuthenticationRepository = new AuthenticationRepositoryImpl(dataStore)
 
-  private val token = "token"
-
   private val roomCreationRequest = CheckTokenRequest(token, user.username)
   private val loginUserRequest = LoginUserRequest(user.username, "password")
   private val logoutUserRequest = LogoutUserRequest(user.username, token)

@@ -1,0 +1,10 @@
+<div class="wrap">
+    <div id="chatWindow" class="container">
+        <mat-nav-list>
+            <div mat-list-item *ngFor="let message of messages" class="bubble" [ngClass]="isUserMessage(message)? 'right' : 'left'">
+                <p>{{message.content}}</p>
+            </div>
+        </mat-nav-list>
+    </div>
+</div>
+

@@ -7,7 +7,7 @@ import it.unibo.dcs.commons.JsonHelper.Implicits.RichGson
 import it.unibo.dcs.commons.VertxWebHelper.Implicits.RichHttpServerResponse
 import it.unibo.dcs.commons.logging.Logging
 import it.unibo.dcs.exceptions.ErrorSubscriber
-import it.unibo.dcs.service.room.model.{Participation, Room}
+import it.unibo.dcs.service.room.model.{Message, Participation, Room}
 import it.unibo.dcs.service.room.subscriber.Implicits._
 import rx.lang.scala.Subscriber
 
@@ -75,8 +75,20 @@ package object subscriber {
 
   }
 
+  class SendMessageSubscriber(protected override val response: HttpServerResponse) extends Subscriber[Message]
+    with ErrorSubscriber with Logging {
+
+    override def onNext(message: Message): Unit = {
+      val result: JsonObject = message
+      log.info(s"Answering with room: $result")
+      response.setStatus(HttpResponseStatus.CREATED).endWith(result)
+
+    }
+
+  }
+
   class GetUserParticipationsSubscriber(protected override val response: HttpServerResponse) extends Subscriber[List[Room]]
-    with ErrorSubscriber {
+    with ErrorSubscriber with Logging {
 
     override def onNext(rooms: List[Room]): Unit = response endWith rooms
 
@@ -89,6 +101,8 @@ package object subscriber {
     implicit def roomsToJsonObject(rooms: Iterable[Room]): JsonArray = gson toJsonArray rooms
 
     implicit def participationToJsonObject(participation: Participation): JsonObject = gson toJsonObject participation
+
+    implicit def messageToJsonObject(message: Message): JsonObject = gson toJsonObject message
 
   }
 

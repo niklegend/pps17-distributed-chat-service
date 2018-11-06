@@ -12,6 +12,7 @@ import { filter } from 'rxjs/operators';
 export class RoomComponent implements OnInit {
 
   name: string;
+  message: string = '';
 
   constructor(
     private chat: ChatService,
@@ -30,6 +31,15 @@ export class RoomComponent implements OnInit {
       .subscribe(name => this.router.navigateByUrl('/'));
   }
 
+  sendMessage() {
+    console.log("Room name: " + this.name + " Message content: " + this.message);
+    this.chat.sendMessage(this.name, this.message)
+    .subscribe (
+      _ => this.message = '',
+      err => console.error(err)
+    );
+  }
+  
   leaveRoom(){
     this.chat.leaveRoom(this.name)
       .subscribe(() => {

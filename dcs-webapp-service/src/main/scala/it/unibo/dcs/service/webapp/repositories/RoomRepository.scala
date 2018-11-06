@@ -1,7 +1,7 @@
 package it.unibo.dcs.service.webapp.repositories
 
 import it.unibo.dcs.service.webapp.interaction.Requests.{CreateRoomRequest, DeleteRoomRequest, RegisterUserRequest, RoomJoinRequest, _}
-import it.unibo.dcs.service.webapp.model.{Participation, Room}
+import it.unibo.dcs.service.webapp.model.{Message, Participation, Room}
 import it.unibo.dcs.service.webapp.repositories.datastores.RoomDataStore
 import it.unibo.dcs.service.webapp.repositories.impl.RoomRepositoryImpl
 import rx.lang.scala.Observable
@@ -9,6 +9,8 @@ import rx.lang.scala.Observable
 /** Structure that handles Rooms data access and storage. */
 trait RoomRepository {
 
+  def sendMessage(request: SendMessageRequest) : Observable[Message]
+  
   /** It retrieves all the participations for a given room
     *
     * @param request needed data to retrieve all the participations for a given room

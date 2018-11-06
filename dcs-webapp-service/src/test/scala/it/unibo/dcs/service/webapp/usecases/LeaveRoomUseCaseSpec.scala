@@ -1,18 +1,14 @@
 package it.unibo.dcs.service.webapp.usecases
 
-import java.util.Date
-
 import it.unibo.dcs.service.webapp.interaction.Requests.{CheckTokenRequest, RoomLeaveRequest}
 import it.unibo.dcs.service.webapp.interaction.Results.RoomLeaveResult
-import it.unibo.dcs.service.webapp.model.{Participation, Room}
-import it.unibo.dcs.service.webapp.usecases.commons.UseCaseSpec
 import it.unibo.dcs.service.webapp.usecases.commons.Mocks._
+import it.unibo.dcs.service.webapp.usecases.commons.UseCaseSpec
 import rx.lang.scala.{Observable, Subscriber}
 
-class LeaveRoomUseCaseSpec extends UseCaseSpec {
+import scala.language.postfixOps
 
-  private val room = Room("Room 1")
-  private val participation = Participation(new Date(), room, user.username)
+class LeaveRoomUseCaseSpec extends UseCaseSpec {
 
   private val leaveRoomRequest = RoomLeaveRequest(room.name, user.username, token)
 

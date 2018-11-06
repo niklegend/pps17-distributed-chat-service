@@ -14,7 +14,7 @@ import it.unibo.dcs.commons.logging.Logging
 
 import scala.language.postfixOps
 
-object WebappServiceSuite extends App with Logging {
+object WebappVerticleSuite extends App with Logging {
 
   val deploymentOptions = DeploymentOptions().setConfig(new JsonObject()
     .put("host", InetAddress.getLocalHost.getHostAddress))

@@ -31,13 +31,17 @@
     {{ selectedRoom }}
   </div>
   <span class="nav-spacer"></span>
+  <button id="leave-room-button" type="button" title="Leave the Room" *ngIf="selectedRoom != undefined"
+          mat-icon-button (click)="leaveRoom();">
+    <mat-icon>remove_circle</mat-icon>
+  </button>
   <button *ngIf="infoButtonCondition" mat-icon-button (click)="roomInfo()">
     <mat-icon>info</mat-icon>
   </button>
   <button *ngIf="roomInfoOpened" mat-icon-button (click)="roomInfo()">
     <mat-icon>arrow_back</mat-icon>
   </button>
-  <button *ngIf="editProfileOpened" mat-icon-button (click)="goBack()">
+  <button *ngIf="inProfileEditPage()" mat-icon-button (click)="goBack()">
     <mat-icon>arrow_back</mat-icon>
   </button>
   <!-- <button mat-icon-button (click)="logout()">

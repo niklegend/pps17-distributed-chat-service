@@ -17,17 +17,14 @@ export class TopnavComponent implements OnInit {
 
   roomInfoOpened: boolean;
 
-  editProfileOpened: boolean;
-
  constructor(
     private router: Router,
     private auth: AuthService,
     private chat: ChatService,
     private translate: TranslateService
   ) {
-    this.roomInfoOpened = false;
-    this.editProfileOpened = false;
-  }
+   this.roomInfoOpened = false;
+ }
 
   ngOnInit() {
     this.router.events.subscribe(val => {
@@ -70,7 +67,6 @@ export class TopnavComponent implements OnInit {
 
   editProfile(){
     this.router.navigate(['/users', this.auth.user.username, 'edit']);
-    this.editProfileOpened = true;
   }
 
   changeLang(language: string) {
@@ -93,10 +89,21 @@ export class TopnavComponent implements OnInit {
 
   get infoButtonCondition(): boolean {
     return this.selectedRoom != undefined && this.selectedRoom != '' &&
-      !this.roomInfoOpened && !this.editProfileOpened
+      !this.roomInfoOpened && !this.inProfileEditPage()
   }
 
   goBack(): void {
-    this.router.navigate(['/rooms']);
+    this.router.navigate(['/rooms', this.selectedRoom]);
+  }
+
+  leaveRoom(){
+    this.chat.leaveRoom(this.selectedRoom)
+      .subscribe(() => {
+        this.router.navigate(['/']);
+      }, err => console.error(err));
+  }
+
+  inProfileEditPage(): boolean {
+   return this.router.url.match('.*\\/users\\/.*\\/edit') != null
   }
 }

@@ -31,7 +31,7 @@
     {{ selectedRoom }}
   </div>
   <span class="nav-spacer"></span>
-  <button id="leave-room-button" type="button" title="Leave the Room" *ngIf="selectedRoom != undefined"
+  <button id="leave-room-button" type="button" title="Leave the Room" *ngIf="leaveRoomButtonVisible()"
           mat-icon-button (click)="leaveRoom();">
     <mat-icon>remove_circle</mat-icon>
   </button>

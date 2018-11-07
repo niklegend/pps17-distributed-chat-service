@@ -93,7 +93,11 @@ export class TopnavComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/rooms', this.selectedRoom]);
+   if(this.selectedRoom == undefined){
+     this.router.navigate(['/']);
+   } else {
+     this.router.navigate(['/rooms', this.selectedRoom]);
+   }
   }
 
   leaveRoom(){
@@ -105,5 +109,9 @@ export class TopnavComponent implements OnInit {
 
   inProfileEditPage(): boolean {
    return this.router.url.match('.*\\/users\\/.*\\/edit') != null
+  }
+
+  leaveRoomButtonVisible(): boolean {
+   return this.selectedRoom != undefined && (!this.inProfileEditPage()) && !this.roomInfoOpened
   }
 }

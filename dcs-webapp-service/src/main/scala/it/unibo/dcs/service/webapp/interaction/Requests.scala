@@ -52,6 +52,8 @@ object Requests {
   
   final case class GetUserParticipationsRequest(username: String, token: String) extends DcsRequest
 
+  final case class WritingUser(username: String, roomName: String) extends DcsRequest
+
   /** It enables implicit conversions in order to clean code that deals with requests. */
   object Implicits {
 

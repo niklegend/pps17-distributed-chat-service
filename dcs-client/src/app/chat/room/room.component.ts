@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ChatService } from 'src/app/service/chat.service';
-import { filter } from 'rxjs/operators';
+import {filter, throttle} from 'rxjs/operators';
 
 @Component({
   selector: 'app-room',
@@ -12,12 +12,13 @@ export class RoomComponent implements OnInit {
 
   name: string;
   message: string = '';
+  writingUsers = [];
 
   constructor(
     private chat: ChatService,
     private route: ActivatedRoute,
     private router: Router
-  ) {}
+  ) { }
 
   ngOnInit() {
     this.route.params.subscribe(params => {
@@ -28,6 +29,12 @@ export class RoomComponent implements OnInit {
       .onRoomDeleted()
       .pipe(filter(name => this.name === name))
       .subscribe(name => this.router.navigateByUrl('/'));
+  }
+
+  ngAfterViewInit(){
+    const input:HTMLInputElement = document.querySelector('#message');
+    this.chat.registerRooomInputListener(input, this.name);
+    this.chat.registerUsersWritingListener(this.name, this.writingUsers)
   }
 
   sendMessage() {

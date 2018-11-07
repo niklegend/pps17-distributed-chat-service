@@ -1,11 +1,11 @@
 import {Injectable} from '@angular/core';
-import {Observable, Subject} from 'rxjs';
+import {fromEvent, interval, Observable, Subject, timer} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {EventBusService} from './event-bus.service';
 import {Participation, Room, Message} from '../model';
 import {CreateRoomRequest, DeleteRoomRequest, JoinRoomRequest, SendMessageRequest} from '../requests';
 import {AuthService} from './auth.service';
-import {map, tap} from 'rxjs/operators';
+import {map, tap, throttle} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -151,5 +151,29 @@ export class ChatService {
 
   onMessageSent() : Observable<Message> {
     return this.messageSent.asObservable();
+  }
+
+  registerRooomInputListener(inputElement: HTMLInputElement, roomName: string){
+    const username = this.auth.user.username;
+    const inputSource = fromEvent(inputElement, 'input');
+    inputSource.pipe(throttle(() => interval(500)))
+      .subscribe(() => this.informOfUserWriting(username, roomName))
+  }
+
+  private informOfUserWriting(username: string, room: string) {
+    console.log('publishing writing event');
+    this.eventBus.publish(this.userWritingAddress(room), username)
+  }
+
+  private userWritingAddress(room: string): string {
+    return "users.wrote."+room
+  }
+
+  registerUsersWritingListener(room: string, writingUsers: string[]){
+    this.eventBus.registerHandler(this.userWritingAddress(room), (err, msg) => {
+      writingUsers.push(msg);
+      timer(600).subscribe(() => writingUsers.shift());
+    });
+
   }
 }

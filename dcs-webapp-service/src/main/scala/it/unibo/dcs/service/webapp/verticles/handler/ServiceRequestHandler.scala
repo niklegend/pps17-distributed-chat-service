@@ -2,7 +2,7 @@ package it.unibo.dcs.service.webapp.verticles.handler
 
 import io.vertx.core.Vertx
 import io.vertx.scala.core.Context
-import io.vertx.scala.core.eventbus.EventBus
+import io.vertx.scala.core.eventbus.{EventBus, Message}
 import io.vertx.scala.ext.web.RoutingContext
 import it.unibo.dcs.service.webapp.repositories.datastores.AuthenticationDataStore.authDataStoreNetwork
 import it.unibo.dcs.service.webapp.repositories.datastores.RoomDataStore.roomDataStoreNetwork
@@ -16,6 +16,8 @@ import it.unibo.dcs.service.webapp.verticles.handler.impl.ServiceRequestHandlerI
 /** It encapsulates the business logic of the service.
   * It handles all the incoming request to the service APIs. */
 trait ServiceRequestHandler {
+
+  def handleWritingUser(message: Message[String])(implicit ctx: Context): Unit
 
   def handleSendMessage(context: RoutingContext)(implicit ctx: Context): Unit
 

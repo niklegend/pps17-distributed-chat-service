@@ -11,7 +11,7 @@ import io.vertx.servicediscovery.ServiceDiscovery
 import it.unibo.dcs.commons.VertxWebHelper.Implicits.contentTypeToString
 import it.unibo.dcs.commons.service.{HttpEndpointPublisher, HttpEndpointPublisherImpl, ServiceVerticle}
 import it.unibo.dcs.service.webapp.interaction.Labels._
-import it.unibo.dcs.service.webapp.verticles.Addresses.{Messages, Rooms}
+import it.unibo.dcs.service.webapp.verticles.Addresses.{Messages, Rooms, Users}
 import it.unibo.dcs.service.webapp.verticles.handler.ServiceRequestHandler
 import org.apache.http.entity.ContentType._
 
@@ -126,6 +126,9 @@ final class WebAppVerticle extends ServiceVerticle {
     apiRouter.get(s"/users/:${ParamLabels.usernameLabel}/participations")
       .produces(APPLICATION_JSON)
       .handler(context => requestHandler handleGetUserParticipations context)
+
+    eventBus.consumer[String](Users.wrote)
+      .handler(msg => requestHandler.handleWritingUser(msg))
   }
     
   private def disableCors(router: Router) = {
@@ -159,6 +162,7 @@ final class WebAppVerticle extends ServiceVerticle {
       .addOutboundPermitted(PermittedOptions().setAddress(Messages.sent))
       .addOutboundPermitted(PermittedOptions().setAddress(Rooms.left))
       .addOutboundPermitted(PermittedOptions().setAddress(Rooms.created))
+      .addOutboundPermitted(PermittedOptions().setAddressRegex(Users.wrote))
 
     SockJSHandler.create(vertx).bridge(options)
   }

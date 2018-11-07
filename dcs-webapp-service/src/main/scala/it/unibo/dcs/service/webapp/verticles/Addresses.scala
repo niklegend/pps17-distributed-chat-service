@@ -16,6 +16,14 @@ private[verticles] object Addresses {
 
   }
 
+  object Users {
+
+    private val prefix = "users"
+
+    val wrote = s"$prefix.wrote.*"
+
+  }
+
   object Messages {
     private val prefix = "messages"
 

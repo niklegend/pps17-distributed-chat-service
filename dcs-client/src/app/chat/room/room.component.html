@@ -1,7 +1,8 @@
-<div class="leave-room-button">
-  <button type="button" mat-icon-button (click)="leaveRoom();">
+<div class="leave-room-button-div">
+  <button id="leave-room-button" type="button" mat-icon-button (click)="leaveRoom();">
     <mat-icon>remove_circle</mat-icon>
   </button>
+  <label id="leave-room-label" for="leave-room-button">Leave</label>
 </div>
 <div class="main-content">
   <app-messages></app-messages>

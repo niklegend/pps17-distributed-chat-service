@@ -17,6 +17,8 @@ import { SidebarComponent } from './sidebar/sidebar.component';
 import { SearchRoomsComponent } from './search-rooms/search-rooms.component';
 import { FilterPipe } from './filter.pipe';
 import { MessagesComponent } from './messages/messages.component';
+import { EditProfileComponent } from './edit-profile/edit-profile.component';
+import {MatCheckboxModule} from "@angular/material/checkbox";
 
 @NgModule({
   imports: [
@@ -24,7 +26,8 @@ import { MessagesComponent } from './messages/messages.component';
     FormsModule,
     ChatRoutingModule,
     MaterialModule,
-    TranslateModule
+    TranslateModule,
+    MatCheckboxModule
   ],
   declarations: [
     ChatComponent,
@@ -37,7 +40,8 @@ import { MessagesComponent } from './messages/messages.component';
     SidebarComponent,
     SearchRoomsComponent,
     FilterPipe,
-    MessagesComponent
+    MessagesComponent,
+    EditProfileComponent
   ],
 })
 export class ChatModule {}

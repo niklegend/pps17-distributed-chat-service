@@ -17,6 +17,8 @@ export class TopnavComponent implements OnInit {
 
   roomInfoOpened: boolean;
 
+  editProfileOpened: boolean;
+
  constructor(
     private router: Router,
     private auth: AuthService,
@@ -24,6 +26,7 @@ export class TopnavComponent implements OnInit {
     private translate: TranslateService
   ) {
     this.roomInfoOpened = false;
+    this.editProfileOpened = false;
   }
 
   ngOnInit() {
@@ -65,6 +68,11 @@ export class TopnavComponent implements OnInit {
       () => this.router.navigateByUrl('/login'));
   }
 
+  editProfile(){
+    this.router.navigate(['/users', this.auth.user.username, 'edit']);
+    this.editProfileOpened = true;
+  }
+
   changeLang(language: string) {
     this.translate.use(language);
   }
@@ -84,6 +92,11 @@ export class TopnavComponent implements OnInit {
   }
 
   get infoButtonCondition(): boolean {
-    return this.selectedRoom != undefined && this.selectedRoom != '' && !this.roomInfoOpened
+    return this.selectedRoom != undefined && this.selectedRoom != '' &&
+      !this.roomInfoOpened && !this.editProfileOpened
+  }
+
+  goBack(): void {
+    this.router.navigate(['/rooms']);
   }
 }

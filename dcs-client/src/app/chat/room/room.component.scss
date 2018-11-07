@@ -1,3 +1,23 @@
-.leave-room-button{
-  margin: 20px 10px 0 16px;
+.leave-room-button-div{
+  float: right;
+  margin-top: 20px;
+  margin-right: 10px;
+  width: 50px;
+}
+
+#leave-room-button{
+  width: 100%;
+}
+
+#leave-room-label{
+  font-size: smaller;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  text-align: center;
+  visibility: hidden;
+}
+
+#leave-room-button:hover~#leave-room-label{
+  visibility: visible;
 }

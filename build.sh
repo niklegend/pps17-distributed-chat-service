@@ -49,16 +49,13 @@ if [ ! -z ${CLEAN+x} ]; then
 fi
 
 if [ ! -z ${CHECK+x} ]; then
-    echo "Checking sources"
     ./gradlew check
 fi
 
 if [ ! -z ${TEST+x} ]; then
-    echo "Executing tests"
     ./gradlew test
 fi
 
 if [ ! -z ${STAGE+x} ]; then
-    echo "Staging"
     ./gradlew stage
 fi

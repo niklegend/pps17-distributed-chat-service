@@ -25,6 +25,7 @@ private[verticles] object Addresses {
   }
 
   object users {
+
     private val prefix = "users"
 
     val offline = s"$users.offline"
@@ -40,6 +41,14 @@ private[verticles] object Addresses {
       val response = s"$prefix.response"
 
     }
+
+  }
+
+  object internal {
+
+    private val prefix = "internal"
+
+    val userOffline = s"$prefix.userOffline"
 
   }
 

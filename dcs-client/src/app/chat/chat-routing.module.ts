@@ -6,6 +6,7 @@ import { RoomComponent } from './room/room.component';
 import { BlankComponent } from './blank/blank.component';
 import { AddRoomComponent } from './add-room/add-room.component';
 import { RoomInfoComponent } from './room-info/room-info.component';
+import {EditProfileComponent} from "./edit-profile/edit-profile.component";
 
 const routes: Routes = [{
     path: '',
@@ -26,6 +27,10 @@ const routes: Routes = [{
       {
         path: 'rooms/:name/info',
         component: RoomInfoComponent
+      },
+      {
+        path: 'users/:username/edit',
+        component: EditProfileComponent
       }
     ]
   }];

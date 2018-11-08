@@ -11,7 +11,7 @@ import it.unibo.dcs.commons.VertxHelper.Implicits.RichEventBus
 import it.unibo.dcs.exceptions.InternalException
 import it.unibo.dcs.service.webapp.interaction.Labels.JsonLabels._
 import it.unibo.dcs.service.webapp.interaction.Labels.{JsonLabels, ParamLabels}
-import it.unibo.dcs.service.webapp.interaction.Requests.{GetRoomParticipationsRequest, RoomLeaveRequest, WritingUser}
+import it.unibo.dcs.service.webapp.interaction.Requests.{GetRoomParticipationsRequest, NotifyWritingUserRequest, RoomLeaveRequest}
 import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
 import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, RoomRepository, UserRepository}
 import it.unibo.dcs.service.webapp.usecases._
@@ -32,6 +32,7 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
   private[this] lazy val messageSent = eventBus.address(Messages.sent)
   private[this] lazy val roomLeaved = eventBus.address(Rooms.left)
   private[this] lazy val roomCreated = eventBus.address(Rooms.created)
+  private[this] def userWrote(room: String) = eventBus.address(Users.wrote.dropRight(1) + room)
 
   override def handleRegistration(context: RoutingContext)(implicit ctx: Context): Unit =
     handleRequestBody(context) {
@@ -179,10 +180,10 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
     }
   }
 
-  override def handleWritingUser(message: Message[String])(implicit ctx: Context): Unit = {
-    val writingUser = WritingUser(message.body, message.address().split(".").last)
-    val useCase = NotifyRoomAboutWritingUser(eventBus)
-    useCase(writingUser)
+  override def handleWritingUser(message: Message[JsonObject])(implicit ctx: Context): Unit = {
+    val writingUserRequest: NotifyWritingUserRequest = message.body()
+    val useCase = NotifyWritingInRoomUseCase(authRepository)
+    useCase(writingUserRequest, NotifyWritingInRoomSubscriber(userWrote(writingUserRequest.name)))
   }
 
   private[this] def handleRequestBody(context: RoutingContext)(handler: JsonObject => Unit): Unit =

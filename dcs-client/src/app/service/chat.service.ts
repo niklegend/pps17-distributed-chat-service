@@ -3,7 +3,13 @@ import {fromEvent, interval, Observable, Subject, timer} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {EventBusService} from './event-bus.service';
 import {Participation, Room, Message} from '../model';
-import {CreateRoomRequest, DeleteRoomRequest, JoinRoomRequest, SendMessageRequest} from '../requests';
+import {
+  CreateRoomRequest,
+  DeleteRoomRequest,
+  JoinRoomRequest,
+  NotifyWritingUserRequest,
+  SendMessageRequest
+} from '../requests';
 import {AuthService} from './auth.service';
 import {map, tap, throttle} from 'rxjs/operators';
 
@@ -24,6 +30,10 @@ export class ChatService {
   private static ROOM_JOINED = 'rooms.joined';
   private static MESSAGE_SENT = 'messages.sent';
   private static ROOM_CREATED = 'rooms.created';
+  private static USER_WROTE = 'users.wrote';
+  private static userWritingAddress(room: string) {
+    return ChatService.USER_WROTE + "." + room
+  }
 
   private roomCreated = new Subject<Room>();
   private roomDeleted = new Subject<string>();
@@ -153,7 +163,7 @@ export class ChatService {
     return this.messageSent.asObservable();
   }
 
-  registerRooomInputListener(inputElement: HTMLInputElement, roomName: string){
+  registerRoomInputListener(inputElement: HTMLInputElement, roomName: string){
     const username = this.auth.user.username;
     const inputSource = fromEvent(inputElement, 'input');
     inputSource.pipe(throttle(() => interval(500)))
@@ -162,18 +172,17 @@ export class ChatService {
 
   private informOfUserWriting(username: string, room: string) {
     console.log('publishing writing event');
-    this.eventBus.publish(this.userWritingAddress(room), username)
-  }
-
-  private userWritingAddress(room: string): string {
-    return "users.wrote."+room
+    const writingUser = new NotifyWritingUserRequest(username, room);
+    this.eventBus.publish(ChatService.USER_WROTE, writingUser)
   }
 
   registerUsersWritingListener(room: string, writingUsers: string[]){
-    this.eventBus.registerHandler(this.userWritingAddress(room), (err, msg) => {
+    this.eventBus.registerHandler(ChatService.userWritingAddress(room), (err, msg) => {
+      console.log('received writing event');
       writingUsers.push(msg);
-      timer(600).subscribe(() => writingUsers.shift());
+      timer(600).subscribe(() => writingUsers.shift(), err => console.log(err));
     });
 
   }
+
 }

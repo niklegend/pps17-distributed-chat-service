@@ -20,7 +20,9 @@ private[verticles] object Addresses {
 
     private val prefix = "users"
 
-    val wrote = s"$prefix.wrote.*"
+    val wrote = s"$prefix.wrote"
+
+    val wroteInRoom = s"$prefix.wrote.*"
 
   }
 

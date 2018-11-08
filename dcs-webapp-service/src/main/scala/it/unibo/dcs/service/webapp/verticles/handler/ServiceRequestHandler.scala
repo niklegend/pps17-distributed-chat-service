@@ -1,6 +1,7 @@
 package it.unibo.dcs.service.webapp.verticles.handler
 
 import io.vertx.core.Vertx
+import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.core.Context
 import io.vertx.scala.core.eventbus.{EventBus, Message}
 import io.vertx.scala.ext.web.RoutingContext
@@ -17,7 +18,7 @@ import it.unibo.dcs.service.webapp.verticles.handler.impl.ServiceRequestHandlerI
   * It handles all the incoming request to the service APIs. */
 trait ServiceRequestHandler {
 
-  def handleWritingUser(message: Message[String])(implicit ctx: Context): Unit
+  def handleWritingUser(message: Message[JsonObject])(implicit ctx: Context): Unit
 
   def handleSendMessage(context: RoutingContext)(implicit ctx: Context): Unit
 

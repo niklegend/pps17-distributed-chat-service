@@ -52,7 +52,7 @@ object Requests {
   
   final case class GetUserParticipationsRequest(username: String, token: String) extends DcsRequest
 
-  final case class WritingUser(username: String, roomName: String) extends DcsRequest
+  final case class NotifyWritingUserRequest(name: String, username: String, token: String) extends DcsRequest
 
   /** It enables implicit conversions in order to clean code that deals with requests. */
   object Implicits {
@@ -60,6 +60,11 @@ object Requests {
     private val gson = new Gson()
 
     implicit def requestToJsonObject(request: DcsRequest): JsonObject = Json.fromObjectString(gson.toJson(request))
+
+    implicit def jsonToNotifyWritingUserRequest(json: JsonObject): NotifyWritingUserRequest = {
+      NotifyWritingUserRequest(json.getString(roomNameLabel), json.getString(usernameLabel),
+        json.getString(tokenLabel))
+    }
 
     implicit def jsonToDeleteRoomRequest(json: JsonObject): DeleteRoomRequest = {
       DeleteRoomRequest(json.getString(roomNameLabel), json.getString(usernameLabel), json.getString(tokenLabel))

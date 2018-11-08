@@ -33,7 +33,7 @@ export class RoomComponent implements OnInit {
 
   ngAfterViewInit(){
     const input:HTMLInputElement = document.querySelector('#message');
-    this.chat.registerRooomInputListener(input, this.name);
+    this.chat.registerRoomInputListener(input, this.name);
     this.chat.registerUsersWritingListener(this.name, this.writingUsers)
   }
 

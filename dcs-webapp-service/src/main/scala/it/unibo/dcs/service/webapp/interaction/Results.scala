@@ -34,6 +34,8 @@ object Results {
   
   final case class GetUserParticipationsResult(rooms: List[Room]) extends DcsResult
 
+  final case class NotifyWritingUserResult(username: String) extends DcsResult
+
   /** It enables implicit conversions in order to clean code that deals with results. */
   object Implicits {
 

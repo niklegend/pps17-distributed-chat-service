@@ -3,7 +3,7 @@ import {EditProfileRequest} from "../../requests";
 import {Router} from "@angular/router";
 import {UserService} from "../../service/user.service";
 import {AuthService} from "../../service/auth.service";
-
+import {Location} from '@angular/common';
 @Component({
   selector: 'app-edit-profile',
   templateUrl: './edit-profile.component.html',
@@ -13,7 +13,7 @@ export class EditProfileComponent implements OnInit {
 
   request = new EditProfileRequest();
 
-  constructor(private router: Router, private auth: AuthService, private userService: UserService) {
+  constructor(private _location: Location, private router: Router, private auth: AuthService, private userService: UserService) {
   }
 
   ngOnInit() {
@@ -40,7 +40,7 @@ export class EditProfileComponent implements OnInit {
       err => console.error(err),
       () => {
         alert("The user profile has been successfully edited");
-        this.router.navigateByUrl("/")
+        this._location.back()
       }
     );
   }

@@ -8,18 +8,17 @@ import io.vertx.scala.core.Context
 import io.vertx.scala.core.eventbus.{EventBus, Message}
 import io.vertx.scala.ext.web.RoutingContext
 import it.unibo.dcs.commons.VertxHelper.Implicits.RichEventBus
+import it.unibo.dcs.commons.dataaccess.Implicits.dateToString
 import it.unibo.dcs.exceptions.InternalException
 import it.unibo.dcs.service.webapp.interaction.Labels.JsonLabels._
 import it.unibo.dcs.service.webapp.interaction.Labels.{JsonLabels, ParamLabels}
-import it.unibo.dcs.service.webapp.interaction.Requests.GetRoomParticipationsRequest
 import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
-import it.unibo.dcs.service.webapp.interaction.Requests.RoomLeaveRequest
+import it.unibo.dcs.service.webapp.interaction.Requests.{GetRoomParticipationsRequest, RoomLeaveRequest}
 import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, RoomRepository, UserRepository}
 import it.unibo.dcs.service.webapp.usecases._
 import it.unibo.dcs.service.webapp.verticles.Addresses._
 import it.unibo.dcs.service.webapp.verticles.handler.ServiceRequestHandler
 import it.unibo.dcs.service.webapp.verticles.handler.impl.subscribers._
-import it.unibo.dcs.commons.dataaccess.Implicits.dateToString
 
 import scala.language.postfixOps
 
@@ -182,7 +181,11 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
     }
   }
 
-  override def handleUserOffline(message: Message[JsonObject])(implicit ctx: Context): Unit = ???
+  override def handleUserOffline(message: Message[JsonObject])(implicit ctx: Context): Unit = {
+    val json = message.body
+    val useCase = UserOfflineUseCase(userRepository)
+    useCase(json, UserOfflineSubscriber(userOffline))
+  }
 
   private[this] def handleRequestBody(context: RoutingContext)(handler: JsonObject => Unit): Unit =
     context.getBodyAsJson().fold(throw InternalException("Request body required"))(handler)
@@ -196,7 +199,5 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
   private[this] def handleRequestToken(context: RoutingContext)(handler: String => Unit): Unit = {
     handleRequestHeader(context, HttpHeaders.AUTHORIZATION.toString)(handler)
   }
-
-  private[this] def handleMessage(message: Message[JsonObject])(handler: JsonObject => Unit): Unit = ???
 
 }

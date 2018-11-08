@@ -73,7 +73,8 @@ final class WebAppVerticle extends ServiceVerticle {
   private def defineServiceApi(apiRouter: Router): Unit = {
     implicit val ctx: core.Context = this.ctx
 
-    eventBus.address(internal.userOffline).handle[JsonObject](requestHandler handleUserOffline _)
+    eventBus.address(internal.userOffline)
+      .handle[JsonObject](requestHandler handleUserOffline _)
 
     apiRouter.post("/register")
       .consumes(APPLICATION_JSON)

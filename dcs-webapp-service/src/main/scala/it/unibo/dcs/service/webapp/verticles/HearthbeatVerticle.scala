@@ -8,7 +8,7 @@ import it.unibo.dcs.commons.VertxHelper.Implicits.RichEventBus
 import it.unibo.dcs.commons.service.ServiceVerticle
 import it.unibo.dcs.exceptions.UsernameRequiredException
 import it.unibo.dcs.service.webapp.verticles.Addresses.users
-import it.unibo.dcs.service.webapp.verticles.HearthbeatVerticle.{KEY_USERNAME, getUsername}
+import it.unibo.dcs.service.webapp.verticles.HearthbeatVerticle.{TIMEOUT, KEY_USERNAME, getUsername}
 
 final class HearthbeatVerticle extends ServiceVerticle {
 
@@ -36,7 +36,7 @@ final class HearthbeatVerticle extends ServiceVerticle {
     })
 
     val userOffline: Publisher = eventBus.address(users.offline)
-    vertx.setPeriodic(0L, _ => {
+    vertx.setPeriodic(TIMEOUT, _ => {
       val diff = activeUsers diff responses
       responses = Set[String]()
 
@@ -56,6 +56,8 @@ final class HearthbeatVerticle extends ServiceVerticle {
 }
 
 object HearthbeatVerticle {
+
+  private val TIMEOUT = 1000L
 
   val KEY_USERNAME = "username"
 

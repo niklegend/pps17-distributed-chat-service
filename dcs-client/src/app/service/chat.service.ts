@@ -5,14 +5,14 @@ import {EventBusService} from './event-bus.service';
 import {Participation, Room, Message} from '../model';
 import {CreateRoomRequest, DeleteRoomRequest, JoinRoomRequest, SendMessageRequest} from '../requests';
 import {AuthService} from './auth.service';
-import {map, tap} from 'rxjs/operators';
+import {map} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
 
-  private static API_PREFIX = '/api';
+  private static API_PREFIX = 'http://192.168.1.70:8080/api';
 
   private static EVENTS = ChatService.API_PREFIX + '/events';
 
@@ -50,7 +50,7 @@ export class ChatService {
       console.log(msg.body);
       this.messageSent.next(msg.body);
     });
-    
+
     eventBus.registerHandler(ChatService.ROOM_CREATED, (err, msg) => {
       this.roomCreated.next(msg.body);
     });
@@ -87,7 +87,6 @@ export class ChatService {
       .post<Room>(ChatService.ROOMS, new CreateRoomRequest(name, user.username), {
         headers: this.auth.authOptions
       })
-      // .pipe(tap(room => this.roomCreated.next(room)))
       .pipe(map(room => room.name));
   }
 
@@ -134,7 +133,6 @@ export class ChatService {
 
   onRoomCreated(): Observable<Room> {
     return this.roomCreated.asObservable();
-      // .pipe(tap(room => this.selectRoom(room)));
   }
 
   onRoomDeleted(): Observable<string> {

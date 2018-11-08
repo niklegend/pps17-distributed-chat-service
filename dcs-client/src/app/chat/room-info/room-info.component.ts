@@ -1,7 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {Participation} from "../../model";
 import {ChatService} from "../../service/chat.service";
+import {UserService} from "../../service/user.service";
+import {AuthService} from "../../service/auth.service";
 
 @Component({
   selector: 'app-room-info',
@@ -14,7 +16,9 @@ export class RoomInfoComponent implements OnInit {
 
   participations: Participation[] = [];
 
-  constructor(private route: ActivatedRoute, private service: ChatService) {
+  constructor(private route: ActivatedRoute, private router: Router,
+              private service: ChatService, private userService: UserService,
+              private authService: AuthService) {
   }
 
   ngOnInit() {
@@ -33,5 +37,16 @@ export class RoomInfoComponent implements OnInit {
   getRoomParticipations() {
     this.service.getRoomParticipations(this.name)
       .subscribe(participations => this.participations = participations)
+  }
+
+  openUserProfile(username: string) {
+    this.userService.getProfile(username).subscribe(user => {
+      if (user.visible || user.username === this.authService.user.username) {
+        this.router.navigate(['/users', username, 'profile']);
+      } else {
+        alert("This user profile can't be shown");
+      }
+    })
+
   }
 }

@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {EditProfileRequest} from "../../requests";
 import {Router} from "@angular/router";
 import {UserService} from "../../service/user.service";
 import {AuthService} from "../../service/auth.service";
-
+import {Location} from '@angular/common';
 @Component({
   selector: 'app-edit-profile',
   templateUrl: './edit-profile.component.html',
@@ -13,7 +13,8 @@ export class EditProfileComponent implements OnInit {
 
   request = new EditProfileRequest();
 
-  constructor(private router: Router, private auth: AuthService, private userService: UserService) {}
+  constructor(private _location: Location, private router: Router, private auth: AuthService, private userService: UserService) {
+  }
 
   ngOnInit() {
     const username = this.auth.user.username;
@@ -34,9 +35,16 @@ export class EditProfileComponent implements OnInit {
 
   editProfile() {
     this.userService.editProfile(this.request).subscribe(
-      () => {},
-      err => console.error(err),
-      () => this.router.navigateByUrl('/')
+      () => {
+      },
+      err => {
+        console.error(err)
+        alert("Profile edit failed! " + err.error.error.type);
+      },
+      () => {
+        alert("The user profile has been successfully edited");
+        this._location.back()
+      }
     );
   }
 

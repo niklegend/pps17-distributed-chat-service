@@ -23,8 +23,8 @@ export class TopnavComponent implements OnInit {
     private chat: ChatService,
     private translate: TranslateService
   ) {
-    this.roomInfoOpened = false;
-  }
+   this.roomInfoOpened = false;
+ }
 
   ngOnInit() {
     this.router.events.subscribe(val => {
@@ -65,6 +65,10 @@ export class TopnavComponent implements OnInit {
       () => this.router.navigateByUrl('/login'));
   }
 
+  editProfile(){
+    this.router.navigate(['/users', this.auth.user.username, 'edit']);
+  }
+
   changeLang(language: string) {
     this.translate.use(language);
   }
@@ -84,6 +88,30 @@ export class TopnavComponent implements OnInit {
   }
 
   get infoButtonCondition(): boolean {
-    return this.selectedRoom != undefined && this.selectedRoom != '' && !this.roomInfoOpened
+    return this.selectedRoom != undefined && this.selectedRoom != '' &&
+      !this.roomInfoOpened && !this.inProfileEditPage()
+  }
+
+  goBack(): void {
+   if(this.selectedRoom == undefined){
+     this.router.navigate(['/']);
+   } else {
+     this.router.navigate(['/rooms', this.selectedRoom]);
+   }
+  }
+
+  leaveRoom(){
+    this.chat.leaveRoom(this.selectedRoom)
+      .subscribe(() => {
+        this.router.navigate(['/']);
+      }, err => console.error(err));
+  }
+
+  inProfileEditPage(): boolean {
+   return this.router.url.match('.*\\/users\\/.*\\/edit') != null
+  }
+
+  leaveRoomButtonVisible(): boolean {
+   return this.selectedRoom != undefined && (!this.inProfileEditPage()) && !this.roomInfoOpened
   }
 }

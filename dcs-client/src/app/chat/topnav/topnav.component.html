@@ -27,7 +27,7 @@
       </button>
     </div>
   </div>
-  <div class="hidden-sm chat-name" style="margin-left: 25px; margin-top: 5px;">
+  <div *ngIf="!inProfileEditPage()" class="hidden-sm chat-name" style="margin-left: 25px; margin-top: 5px;">
     {{ selectedRoom }}
   </div>
   <span class="nav-spacer"></span>

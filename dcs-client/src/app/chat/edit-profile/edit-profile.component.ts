@@ -37,7 +37,10 @@ export class EditProfileComponent implements OnInit {
     this.userService.editProfile(this.request).subscribe(
       () => {
       },
-      err => console.error(err),
+      err => {
+        console.error(err)
+        alert("Profile edit failed! " + err.error.error.type);
+      },
       () => {
         alert("The user profile has been successfully edited");
         this._location.back()

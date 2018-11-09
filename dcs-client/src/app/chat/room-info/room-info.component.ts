@@ -4,6 +4,7 @@ import {Participation} from "../../model";
 import {ChatService} from "../../service/chat.service";
 import {UserService} from "../../service/user.service";
 import {AuthService} from "../../service/auth.service";
+import {remove} from 'lodash'
 
 @Component({
   selector: 'app-room-info',
@@ -31,7 +32,13 @@ export class RoomInfoComponent implements OnInit {
     this.service.onRoomJoined()
       .subscribe(participation => {
         if (participation.room.name === this.name) this.participations.push(participation)
-      })
+      });
+
+    this.service.onRoomLeft()
+      .subscribe(participation => {
+        if (participation.room.name === this.name) remove(this.participations,
+            participation => participation.room.name === this.name)
+      });
   }
 
   getRoomParticipations() {

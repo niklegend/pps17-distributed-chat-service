@@ -12,7 +12,7 @@ import {map} from 'rxjs/operators';
 })
 export class ChatService {
 
-  private static API_PREFIX = 'http://192.168.1.70:8080/api';
+  private static API_PREFIX = '/api';
 
   private static EVENTS = ChatService.API_PREFIX + '/events';
 
@@ -24,11 +24,13 @@ export class ChatService {
   private static ROOM_JOINED = 'rooms.joined';
   private static MESSAGE_SENT = 'messages.sent';
   private static ROOM_CREATED = 'rooms.created';
+  private static ROOM_LEFT = 'rooms.leaved';
 
   private roomCreated = new Subject<Room>();
   private roomDeleted = new Subject<string>();
   private roomSelected = new Subject<Room>();
   private roomJoined = new Subject<Participation>();
+  private roomLeft = new Subject<Participation>();
   private messageSent = new Subject<Message>();
 
   constructor(
@@ -44,6 +46,10 @@ export class ChatService {
 
     eventBus.registerHandler(ChatService.ROOM_JOINED, (err, msg) => {
       this.roomJoined.next(msg.body);
+    });
+
+    eventBus.registerHandler(ChatService.ROOM_LEFT, (err, msg) => {
+      this.roomLeft.next(msg.body);
     });
 
     eventBus.registerHandler(ChatService.MESSAGE_SENT, (err, msg) => {
@@ -144,7 +150,7 @@ export class ChatService {
   }
 
   onRoomLeft(): Observable<Participation> {
-    return null;
+    return this.roomLeft.asObservable();
   }
 
   onMessageSent() : Observable<Message> {

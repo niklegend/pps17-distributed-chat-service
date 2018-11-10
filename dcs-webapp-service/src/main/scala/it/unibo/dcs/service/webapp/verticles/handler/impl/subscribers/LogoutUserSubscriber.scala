@@ -21,10 +21,6 @@ final class LogoutUserSubscriber(protected override val response: HttpServerResp
     publisher publish[JsonObject] json
   }
 
-  override def onCompleted(): Unit = {
-    response.end()
-  }
-
 }
 
 object LogoutUserSubscriber {

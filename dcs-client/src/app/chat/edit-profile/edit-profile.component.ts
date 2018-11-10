@@ -44,12 +44,12 @@ export class EditProfileComponent implements OnInit {
       () => {
       },
       err => {
-        console.error(err)
+        console.error(err);
         alert('Profile edit failed! ' + err.error.error.type);
       },
       () => {
         alert('The user profile has been successfully edited');
-        this._location.back()
+        this._location.back();
       }
     );
   }

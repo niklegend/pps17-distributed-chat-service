@@ -24,10 +24,13 @@ final class LogoutUserUseCase(private[this] val threadExecutor: ThreadExecutor,
   extends UseCase[LogoutResult, LogoutUserRequest](threadExecutor, postExecutionThread) {
 
   override protected[this] def createObservable(request: LogoutUserRequest): Observable[LogoutResult] = {
-    authRepository.logoutUser(request)
-      .flatMap(_ => userRepository.getUserByUsername(request.username))
-      .map(LogoutResult(_))
+    for {
+      _ <- authRepository.logoutUser(request)
+      _ <- userRepository.updateAccess(request.username)
+      user <- userRepository.getUserByUsername(request.username)
+    } yield LogoutResult(user)
   }
+
 }
 
 /** Companion object */

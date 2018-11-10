@@ -13,7 +13,7 @@ import it.unibo.dcs.exceptions.InternalException
 import it.unibo.dcs.service.webapp.interaction.Labels.JsonLabels._
 import it.unibo.dcs.service.webapp.interaction.Labels.{JsonLabels, ParamLabels}
 import it.unibo.dcs.service.webapp.interaction.Requests.Implicits._
-import it.unibo.dcs.service.webapp.interaction.Requests.{GetRoomParticipationsRequest, RoomLeaveRequest}
+import it.unibo.dcs.service.webapp.interaction.Requests.{GetRoomParticipationsRequest, GetUserRequest, RoomLeaveRequest}
 import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, RoomRepository, UserRepository}
 import it.unibo.dcs.service.webapp.usecases._
 import it.unibo.dcs.service.webapp.verticles.Addresses._
@@ -60,17 +60,17 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
   override def handleUserEditing(context: RoutingContext)(implicit ctx: Context): Unit =
     handleRequestToken(context) {
       token =>
-      handleRequestBody(context) {
-        request =>
-          handleRequestParam(context, ParamLabels.userLabel){
-            userName => {
-              val useCase = EditUserUseCase.create(authRepository, userRepository)
-              useCase(request.put(authenticationLabel, token).put(usernameLabel, userName),
-                EditUserSubscriber(context.response()))
+        handleRequestBody(context) {
+          request =>
+            handleRequestParam(context, ParamLabels.userLabel) {
+              userName => {
+                val useCase = EditUserUseCase.create(authRepository, userRepository)
+                useCase(request.put(authenticationLabel, token).put(usernameLabel, userName),
+                  EditUserSubscriber(context.response()))
+              }
             }
-          }
-      }
-  }
+        }
+    }
 
   override def handleRoomCreation(context: RoutingContext)(implicit ctx: Context): Unit =
     handleRequestToken(context) {
@@ -124,7 +124,7 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
         }
     }
 
-  override def handleGetRooms(context: RoutingContext)(implicit ctx: Context): Unit = {
+  override def handleGetRooms(context: RoutingContext)(implicit ctx: Context): Unit =
     handleRequestParam(context, ParamLabels.userLabel) {
       username => {
         handleRequestToken(context) {
@@ -135,7 +135,7 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
         }
       }
     }
-  }
+
 
   override def handleSendMessage(context: RoutingContext)(implicit ctx: Context): Unit =
     handleRequestToken(context) {
@@ -168,18 +168,30 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
       }
     }
 
-  override def handleGetUserParticipations(context: RoutingContext)(implicit ctx: Context): Unit = {
+  override def handleGetUserParticipations(context: RoutingContext)(implicit ctx: Context): Unit =
     handleRequestParam(context, ParamLabels.usernameLabel) {
       username => {
         handleRequestToken(context) {
           token => {
             val useCase = GetUserParticipationsUseCase(authRepository, roomRepository)
-            useCase(Json.obj((usernameLabel, username), (tokenLabel, token)), GetUserParticipationsSubscriber(context.response))
+            useCase(Json.obj((usernameLabel, username), (tokenLabel, token)),
+              GetUserParticipationsSubscriber(context.response))
           }
         }
       }
     }
-  }
+
+  override def handleGetUser(context: RoutingContext)(implicit ctx: Context): Unit =
+    handleRequestParam(context, ParamLabels.usernameLabel) {
+      username => {
+        handleRequestToken(context) {
+          token => {
+            val useCase = GetUserUseCase(authRepository, userRepository)
+            useCase(GetUserRequest(username), GetUserSubscriber(context.response()))
+          }
+        }
+      }
+    }
 
   override def handleUserOffline(message: Message[JsonObject])(implicit ctx: Context): Unit = {
     val json = message.body

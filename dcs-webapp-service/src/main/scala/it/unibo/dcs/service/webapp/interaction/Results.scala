@@ -31,9 +31,9 @@ object Results {
   final case class GetRoomsResult(rooms: List[Room]) extends DcsResult
 
   final case class SendMessageResult(message: Message) extends DcsResult
-  
+
   final case class GetRoomParticipationsResult(participations: Set[Participation]) extends DcsResult
-  
+
   final case class GetUserParticipationsResult(rooms: List[Room]) extends DcsResult
 
   final case class GetUserResult(user: User) extends DcsResult

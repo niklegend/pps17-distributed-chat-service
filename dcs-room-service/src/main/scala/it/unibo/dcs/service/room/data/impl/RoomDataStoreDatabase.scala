@@ -3,18 +3,17 @@ package it.unibo.dcs.service.room.data.impl
 import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
 import io.vertx.scala.ext.sql.SQLConnection
 import it.unibo.dcs.commons.JsonHelper.Implicits.RichGson
-import it.unibo.dcs.commons.dataaccess.Implicits.stringToDate
+import it.unibo.dcs.commons.dataaccess.Implicits.dateToString
 import it.unibo.dcs.commons.dataaccess.{DataStoreDatabase, ResultSetHelper}
 import it.unibo.dcs.exceptions.{ParticipationNotFoundException, ParticipationsNotFoundException, RoomNotFoundException}
 import it.unibo.dcs.service.room.data.RoomDataStore
+import it.unibo.dcs.service.room.data.impl.Implicits.participationDtoToParticipation
 import it.unibo.dcs.service.room.data.impl.RoomDataStoreDatabase.Implicits._
 import it.unibo.dcs.service.room.data.impl.RoomDataStoreDatabase._
 import it.unibo.dcs.service.room.gson
 import it.unibo.dcs.service.room.model._
 import it.unibo.dcs.service.room.request._
 import rx.lang.scala.Observable
-
-import it.unibo.dcs.commons.dataaccess.Implicits.{dateToString}
 
 import scala.language.implicitConversions
 
@@ -158,16 +157,13 @@ private[impl] object RoomDataStoreDatabase {
 
     implicit def jsonObjectToRoom(json: JsonObject): Room = gson fromJsonObject[Room] json
 
-    implicit def jsonObjectToParticipation(json: JsonObject): Participation = {
-      val room = Room(json.getString("name"))
-      val date = json.getString("join_date")
-      val username = json.getString("username")
-      Participation(room, username, date)
-    }
+    implicit def jsonObjectToParticipation(json: JsonObject): Participation =
+      gson.fromJsonObject[ParticipationDto](json)
 
     implicit def jsonObjectToMessage(json: JsonObject): Message = gson fromJsonObject[Message] json
 
     implicit def requestToMessage(request: SendMessageRequest): Message = Message(Room(request.name), request.username, request.content, request.timestamp)
+
   }
 
 }

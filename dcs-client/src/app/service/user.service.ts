@@ -11,7 +11,7 @@ import { EventBusService } from './event-bus.service';
 })
 export class UserService {
 
-  private static API_PREFIX = 'http://192.168.1.70:8080/api';
+  private static API_PREFIX = '/api';
 
   private static EVENTS = UserService.API_PREFIX + '/events';
 

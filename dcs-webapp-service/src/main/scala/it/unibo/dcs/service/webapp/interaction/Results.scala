@@ -99,9 +99,7 @@ object Results {
     }
 
     implicit def roomParticipationsToJsonArray(result: GetRoomParticipationsResult): JsonArray =
-      result.participations
-        .map(x => Json.fromObjectString(gson.toJson(x)))
-        .foldLeft(Json.emptyArr())(_ add _)
+      gson toJsonArray result.participations
 
     implicit def getUserParticipationsToJsonArray(result: GetUserParticipationsResult): JsonArray =
       gson toJsonArray result.rooms

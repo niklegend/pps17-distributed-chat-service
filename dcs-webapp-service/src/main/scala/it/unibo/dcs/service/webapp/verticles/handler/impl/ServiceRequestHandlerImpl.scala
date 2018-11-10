@@ -5,7 +5,7 @@ import java.util.Date
 import io.vertx.core.http.HttpHeaders
 import io.vertx.lang.scala.json.{Json, JsonObject}
 import io.vertx.scala.core.Context
-import io.vertx.scala.core.eventbus.EventBus
+import io.vertx.scala.core.eventbus.{EventBus, Message}
 import io.vertx.scala.ext.web.RoutingContext
 import it.unibo.dcs.commons.VertxHelper.Implicits.RichEventBus
 import it.unibo.dcs.commons.dataaccess.Implicits.dateToString
@@ -27,16 +27,18 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
                                       private[this] val authRepository: AuthenticationRepository,
                                       private[this] val roomRepository: RoomRepository) extends ServiceRequestHandler {
 
-  private[this] lazy val roomDeleted = eventBus.address(Rooms.deleted)
-  private[this] lazy val roomJoined = eventBus.address(Rooms.joined)
-  private[this] lazy val messageSent = eventBus.address(Messages.sent)
-  private[this] lazy val roomLeaved = eventBus.address(Rooms.left)
-  private[this] lazy val roomCreated = eventBus.address(Rooms.created)
+  private[this] lazy val roomDeleted = eventBus.address(rooms.deleted)
+  private[this] lazy val roomJoined = eventBus.address(rooms.joined)
+  private[this] lazy val messageSent = eventBus.address(messages.sent)
+  private[this] lazy val roomLeaved = eventBus.address(rooms.left)
+  private[this] lazy val roomCreated = eventBus.address(rooms.created)
+  private[this] lazy val userOnline = eventBus.address(users.online)
+  private[this] lazy val userOffline = eventBus.address(users.offline)
 
   override def handleRegistration(context: RoutingContext)(implicit ctx: Context): Unit =
     handleRequestBody(context) {
       val useCase = RegisterUserUseCase.create(authRepository, userRepository, roomRepository)
-      useCase(_, RegisterUserSubscriber(context.response()))
+      useCase(_, RegisterUserSubscriber(context.response(), userOnline))
     }
 
   override def handleLogout(context: RoutingContext)(implicit ctx: Context): Unit =
@@ -45,14 +47,14 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
         handleRequestBody(context) {
           request =>
             val useCase = LogoutUserUseCase.create(authRepository, userRepository)
-            useCase(request.put(authenticationLabel, token), LogoutUserSubscriber(context.response()))
+            useCase(request.put(authenticationLabel, token), LogoutUserSubscriber(context.response(), userOffline))
         }
     }
 
   override def handleLogin(context: RoutingContext)(implicit ctx: Context): Unit =
     handleRequestBody(context) {
       val useCase = LoginUserUseCase.create(authRepository, userRepository)
-      useCase(_, LoginUserSubscriber(context.response))
+      useCase(_, LoginUserSubscriber(context.response, userOnline))
     }
 
   override def handleUserEditing(context: RoutingContext)(implicit ctx: Context): Unit =
@@ -185,11 +187,17 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
         handleRequestToken(context) {
           token => {
             val useCase = GetUserUseCase(authRepository, userRepository)
-            useCase(GetUserRequest(username, token), GetUserSubscriber(context.response()))
+            useCase(GetUserRequest(username), GetUserSubscriber(context.response()))
           }
         }
       }
     }
+
+  override def handleUserOffline(message: Message[JsonObject])(implicit ctx: Context): Unit = {
+    val json = message.body
+    val useCase = UserOfflineUseCase(userRepository)
+    useCase(json, UserOfflineSubscriber(userOffline))
+  }
 
   private[this] def handleRequestBody(context: RoutingContext)(handler: JsonObject => Unit): Unit =
     context.getBodyAsJson().fold(throw InternalException("Request body required"))(handler)

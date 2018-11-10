@@ -5,6 +5,7 @@ import it.unibo.dcs.commons.RxHelper
 import it.unibo.dcs.commons.interactor.executor.{PostExecutionThread, ThreadExecutor}
 import it.unibo.dcs.commons.interactor.{ThreadExecutorExecutionContext, UseCase}
 import it.unibo.dcs.service.webapp.interaction.Requests.LogoutUserRequest
+import it.unibo.dcs.service.webapp.interaction.Results.LogoutResult
 import it.unibo.dcs.service.webapp.repositories.{AuthenticationRepository, UserRepository}
 import rx.lang.scala.Observable
 
@@ -19,14 +20,16 @@ final class LogoutUserUseCase(private[this] val threadExecutor: ThreadExecutor,
                               private[this] val postExecutionThread: PostExecutionThread,
                               private[this] val authRepository: AuthenticationRepository,
                               private[this] val userRepository: UserRepository)
-  extends UseCase[Unit, LogoutUserRequest](threadExecutor, postExecutionThread) {
+  extends UseCase[LogoutResult, LogoutUserRequest](threadExecutor, postExecutionThread) {
 
-  override protected[this] def createObservable(logoutRequest: LogoutUserRequest): Observable[Unit] = {
+  override protected[this] def createObservable(request: LogoutUserRequest): Observable[LogoutResult] = {
     for {
-      _ <- authRepository.logoutUser(logoutRequest)
-      _ <- userRepository.updateAccess(logoutRequest.username)
-    } yield Unit
+      _ <- authRepository.logoutUser(request)
+      _ <- userRepository.updateAccess(request.username)
+      user <- userRepository.getUserByUsername(request.username)
+    } yield LogoutResult(user)
   }
+
 }
 
 /** Companion object */
@@ -37,10 +40,10 @@ object LogoutUserUseCase {
     * @param authRepository authentication repository reference
     * @param ctx            Vertx context
     * @return the use case object */
-  def create(authRepository: AuthenticationRepository,
-             userRepository: UserRepository)(implicit ctx: Context): LogoutUserUseCase = {
+  def create(authRepository: AuthenticationRepository, userRepository: UserRepository)(implicit ctx: Context): LogoutUserUseCase = {
     val threadExecutor: ThreadExecutor = ThreadExecutorExecutionContext(ctx.owner())
     val postExecutionThread: PostExecutionThread = PostExecutionThread(RxHelper.scheduler(ctx))
     new LogoutUserUseCase(threadExecutor, postExecutionThread, authRepository, userRepository)
   }
+
 }

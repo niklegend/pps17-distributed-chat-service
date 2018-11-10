@@ -167,4 +167,22 @@ class RoomRepositorySpec extends RepositorySpec {
     (() => subscriber onCompleted) verify() once()
   }
 
+  it should "retrieve all the participations for the given user" in {
+    val request = GetUserParticipationsRequest(user.username, token)
+
+    val subscriber = stub[Subscriber[List[Room]]]
+
+    //Given
+    (roomDataStore getUserParticipations  _) expects request returns Observable.just(rooms)
+
+    //When
+    repository getUserParticipations  request subscribe subscriber
+
+    //Then
+    //Verify that 'suscriber.onNext' has been callen once
+    (subscriber onNext _) verify rooms once()
+    // Verify that `subscriber.onCompleted` has been called once
+    (() => subscriber onCompleted) verify() once()
+  }
+
 }

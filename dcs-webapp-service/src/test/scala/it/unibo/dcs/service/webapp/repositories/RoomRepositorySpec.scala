@@ -146,7 +146,7 @@ class RoomRepositorySpec extends RepositorySpec {
     //Verify that 'suscriber.onNext' has been callen once
     (sendMessageSubscriber onNext _) verify message once()
     // Verify that `subscriber.onCompleted` has been called once
-    (() => sendMessageSubscriber onCompleted) verify() once()  
+    (() => sendMessageSubscriber onCompleted) verify() once()
   }
 
   it should "retrieve all the participations for the given user" in {

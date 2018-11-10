@@ -120,6 +120,10 @@ export class TopnavComponent implements OnInit {
     return this.router.url.match('.*\\/users\\/.*\\/edit') != null
   }
 
+  inRoomSelectedPage(): boolean {
+    return this.router.url.match('.*\\/rooms\\/.*') != null
+  }
+
   leaveRoomButtonVisible(): boolean {
     return this.selectedRoom != undefined && this.selectedRoom != ''
       && (!this.inProfileEditPage()) && !this.roomInfoOpened

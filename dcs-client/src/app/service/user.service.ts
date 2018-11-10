@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import {HttpClient} from '@angular/common/http';
-import {AuthService} from './auth.service';
-import {Observable, Subject} from 'rxjs';
-import {User} from '../model';
-import {EditProfileRequest} from '../requests';
+import { HttpClient } from '@angular/common/http';
+import { AuthService } from './auth.service';
+import { Observable, Subject } from 'rxjs';
+import { User } from '../model';
+import { EditProfileRequest } from '../requests';
 import { EventBusService } from './event-bus.service';
 
 @Injectable({
@@ -41,21 +41,14 @@ export class UserService {
       this.userOffline.next(msg.body);
     });
 
-    eventBus.registerHandler(UserService.USER_OFFLINE, (err, msg) => {
-      this.userOffline.next(msg.body);
-    });
-
-    eventBus.registerHandler(
-      UserService.USER_HEARTHBEAT_REQUEST,
-      (err, msg) => {
-        if (this.auth.isAuthenticated) {
-          const username = this.auth.user.username;
-          eventBus.send(UserService.USER_HEARTHBEAT_RESPONSE, {
-            username
-          });
-        }
+    eventBus.registerHandler(UserService.USER_HEARTHBEAT_REQUEST, (err, msg) => {
+      if (auth.isAuthenticated) {
+        const username = auth.user.username;
+        eventBus.send(UserService.USER_HEARTHBEAT_RESPONSE, {
+          username
+        });
       }
-    );
+    });
   }
 
   editProfile(request: EditProfileRequest): Observable<User> {

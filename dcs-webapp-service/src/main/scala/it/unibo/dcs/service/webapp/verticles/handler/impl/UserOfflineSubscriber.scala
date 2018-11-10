@@ -9,8 +9,7 @@ import it.unibo.dcs.service.webapp.interaction.Results.Implicits.getUserToJsonOb
 
 final class UserOfflineSubscriber(private[this] val publisher: Publisher) extends Subscriber[GetUserResult] {
 
-  override def onNext(result: GetUserResult): Unit =
-    publisher.publish[JsonObject](result)
+  override def onNext(result: GetUserResult): Unit = publisher.publish[JsonObject](result)
 
 }
 

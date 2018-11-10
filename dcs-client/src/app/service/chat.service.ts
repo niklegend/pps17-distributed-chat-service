@@ -149,7 +149,8 @@ export class ChatService {
     return null;
   }
 
-  onMessageSent() : Observable<Message> {
+  onMessageSent(): Observable<Message> {
     return this.messageSent.asObservable();
   }
+
 }

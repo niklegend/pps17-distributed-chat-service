@@ -7,8 +7,8 @@ import it.unibo.dcs.commons.Publisher
 import it.unibo.dcs.commons.VertxHelper.Implicits.RichEventBus
 import it.unibo.dcs.commons.service.ServiceVerticle
 import it.unibo.dcs.exceptions.UsernameRequiredException
-import it.unibo.dcs.service.webapp.verticles.Addresses.users
-import it.unibo.dcs.service.webapp.verticles.HearthbeatVerticle.{TIMEOUT, KEY_USERNAME, getUsername}
+import it.unibo.dcs.service.webapp.verticles.Addresses.{internal, users}
+import it.unibo.dcs.service.webapp.verticles.HearthbeatVerticle.{KEY_USERNAME, KEY_ONLINE, TIMEOUT, usernameHandler}
 
 final class HearthbeatVerticle extends ServiceVerticle {
 
@@ -25,6 +25,13 @@ final class HearthbeatVerticle extends ServiceVerticle {
       activeUsers = activeUsers filterNot { _ == username }
     })
 
+    val isUserOnlineResponse = eventBus.address(internal.isUserOnline.response)
+
+    eventBus.address(internal.isUserOnline.request).handle[JsonObject](usernameHandler { username =>
+      val online = activeUsers(username)
+      isUserOnlineResponse.publish(Json.obj((KEY_ONLINE, online)))
+    })
+
     val hearthbeatRequest: Publisher = eventBus.address(users.hearthbeat.request)
 
     hearthbeatRequest.publish(Json.emptyObj())
@@ -35,39 +42,42 @@ final class HearthbeatVerticle extends ServiceVerticle {
       responses = responses + username
     })
 
-    val userOffline: Publisher = eventBus.address(users.offline)
+    val userOffline: Publisher = eventBus.address(internal.userOffline)
     vertx.setPeriodic(TIMEOUT, _ => {
-      val diff = activeUsers diff responses
+      val inactiveUser = activeUsers diff responses
       responses = Set[String]()
 
-      diff foreach { username =>
+      inactiveUser foreach { username =>
         userOffline.publish(Json.obj((KEY_USERNAME, username)))
       }
 
-      activeUsers = activeUsers diff diff
+      activeUsers = activeUsers diff inactiveUser
 
       hearthbeatRequest.publish(Json.emptyObj())
     })
   }
 
-  private[this] def usernameHandler(f: String => Unit): Message[JsonObject] => Unit =
-    getUsername(_).fold(throw UsernameRequiredException)(f)
-
 }
 
 object HearthbeatVerticle {
 
-  private val TIMEOUT = 1000L
+  private val TIMEOUT = 5000L
 
-  val KEY_USERNAME = "username"
+  private val KEY_ONLINE = "online"
 
-  private def getUsername(message: Message[JsonObject]): Option[String] = {
-    val json = message.body
+  private val KEY_USERNAME = "username"
 
-    if (json containsKey KEY_USERNAME)
-      Some(json getString KEY_USERNAME)
-    else
-      None
+  private def usernameHandler(f: String => Unit): Message[JsonObject] => Unit = {
+    def getUsername(message: Message[JsonObject]): Option[String] = {
+      val json = message.body
+
+      if (json containsKey KEY_USERNAME)
+        Some(json getString KEY_USERNAME)
+      else
+        None
+    }
+
+    getUsername(_).fold(throw UsernameRequiredException)(f)
   }
 
 }

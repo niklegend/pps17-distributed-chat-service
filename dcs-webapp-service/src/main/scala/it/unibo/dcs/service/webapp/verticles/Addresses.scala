@@ -50,7 +50,15 @@ private[verticles] object Addresses {
 
     val userOffline = s"$prefix.userOffline"
 
-    val isUserOnline = s"$prefix.isUserOnline"
+    object isUserOnline {
+
+      val prefix = s"${internal.prefix}.isUserOnline"
+
+      val request = s"$prefix.request"
+
+      val response = s"$prefix.response"
+
+    }
 
   }
 

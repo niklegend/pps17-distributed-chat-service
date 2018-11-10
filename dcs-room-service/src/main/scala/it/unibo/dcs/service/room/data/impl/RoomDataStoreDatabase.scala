@@ -4,7 +4,8 @@ import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
 import io.vertx.scala.ext.sql.SQLConnection
 import it.unibo.dcs.commons.JsonHelper.Implicits.RichGson
 import it.unibo.dcs.commons.dataaccess.Implicits.dateToString
-import it.unibo.dcs.commons.dataaccess.{DataStoreDatabase, ResultSetHelper}
+import it.unibo.dcs.commons.dataaccess.{DataStoreDatabase}
+import it.unibo.dcs.commons.dataaccess.ResultSetHelper.Implicits.RichResultSet
 import it.unibo.dcs.exceptions.{ParticipationNotFoundException, ParticipationsNotFoundException, RoomNotFoundException}
 import it.unibo.dcs.service.room.data.RoomDataStore
 import it.unibo.dcs.service.room.data.impl.Implicits.participationDtoToParticipation
@@ -33,14 +34,14 @@ final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
         if (resultSet.getResults.isEmpty) {
           throw RoomNotFoundException(request.name)
         } else {
-          ResultSetHelper.getRows(resultSet).head
+          resultSet.getRows.head
         }
       }
 
   override def getRooms(request: GetRoomsRequest): Observable[List[Room]] =
     query(selectAllRooms, request)
     .map { resultSet =>
-      ResultSetHelper.getRows(resultSet).map(jsonObjectToRoom).toList
+      resultSet.getRows.map(jsonObjectToRoom).toList
     }
 
   override def joinRoom(request: JoinRoomRequest): Observable[Participation] =
@@ -60,8 +61,7 @@ final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
         if (resultSet.getResults.isEmpty) {
           throw ParticipationNotFoundException(request.username, request.name)
         } else {
-          println(ResultSetHelper.getRows(resultSet).head.encodePrettily())
-          ResultSetHelper.getRows(resultSet).head
+          resultSet.getRows.head
         }
       }
 
@@ -74,10 +74,7 @@ final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
         if (resultSet.getResults.isEmpty) {
           throw ParticipationsNotFoundException(request.name)
         } else {
-          // Debug
-          ResultSetHelper.getRows(resultSet).foreach(row => println(row.encodePrettily()))
-
-          ResultSetHelper.getRows(resultSet)
+          resultSet.getRows
             .map(json => jsonObjectToParticipation(json))
             .toList
         }
@@ -90,7 +87,7 @@ final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
         if (resultSet.getResults.isEmpty) {
           List()
         } else {
-          ResultSetHelper.getRows(resultSet).map(jsonObjectToRoom).toList
+          resultSet.getRows.map(jsonObjectToRoom).toList
         }
       }
 

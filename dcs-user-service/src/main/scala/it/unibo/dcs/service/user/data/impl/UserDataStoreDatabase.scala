@@ -1,8 +1,12 @@
 package it.unibo.dcs.service.user.data.impl
 
+import java.util.Date
+
 import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
 import io.vertx.scala.ext.sql.SQLConnection
 import it.unibo.dcs.commons.JsonHelper.Implicits.RichGson
+import it.unibo.dcs.commons.RxHelper.Implicits.RichObservable
+import it.unibo.dcs.commons.dataaccess.Implicits.dateToString
 import it.unibo.dcs.commons.dataaccess.{DataStoreDatabase, ResultSetHelper}
 import it.unibo.dcs.exceptions.{UserAlreadyExistsException, UserNotFoundException}
 import it.unibo.dcs.service.user.data.UserDataStore
@@ -20,11 +24,11 @@ final class UserDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
 
   override def checkIfUserExists(request: GetUserRequest): Observable[Unit] =
     query(selectUserByUsername, request)
-    .map {resultSet =>
-      if (resultSet.getResults.nonEmpty) {
-        throw UserAlreadyExistsException(request.username)
+      .map { resultSet =>
+        if (resultSet.getResults.nonEmpty) {
+          throw UserAlreadyExistsException(request.username)
+        }
       }
-    }
 
   override def getUserByUsername(request: GetUserRequest): Observable[User] =
     query(selectUserByUsername, request)
@@ -42,7 +46,13 @@ final class UserDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
 
   override def editUser(request: EditUserRequest): Observable[User] =
     update(updateUser, request)
-    .flatMap(_ => getUserByUsername(GetUserRequest(request.username)))
+      .flatMap(_ => getUserByUsername(GetUserRequest(request.username)))
+
+  override def updateAccess(username: String): Observable[Unit] = {
+    update(updateAccessSql, Json.arr(dateToString(new Date()), username))
+      .toCompletable
+  }
+
 }
 
 private[impl] object UserDataStoreDatabase {
@@ -53,6 +63,8 @@ private[impl] object UserDataStoreDatabase {
 
   val updateUser: String = "UPDATE `users` SET `first_name` = ?, `last_name` = ?, `bio` = ?, `visible` = ?" +
     " WHERE (`username` = ?)"
+
+  val updateAccessSql: String = "UPDATE `users` SET `last_seen` = ? WHERE (`username` = ?)"
 
   object Implicits {
 

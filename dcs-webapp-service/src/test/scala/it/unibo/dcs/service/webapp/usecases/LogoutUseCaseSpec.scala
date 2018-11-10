@@ -13,7 +13,7 @@ class LogoutUseCaseSpec extends UseCaseSpec {
 
   private val logoutSubscriber: Subscriber[Unit] = stub[Subscriber[Unit]]
 
-  private val logoutUseCase = new LogoutUserUseCase(threadExecutor, postExecutionThread, authRepository)
+  private val logoutUseCase = new LogoutUserUseCase(threadExecutor, postExecutionThread, authRepository, userRepository)
 
 
   it should "logout the user when the use case is executed" in {

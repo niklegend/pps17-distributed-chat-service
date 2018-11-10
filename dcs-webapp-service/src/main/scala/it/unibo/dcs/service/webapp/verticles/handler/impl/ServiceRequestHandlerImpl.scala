@@ -44,7 +44,7 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
       token =>
         handleRequestBody(context) {
           request =>
-            val useCase = LogoutUserUseCase.create(authRepository)
+            val useCase = LogoutUserUseCase.create(authRepository, userRepository)
             useCase(request.put(authenticationLabel, token), LogoutUserSubscriber(context.response()))
         }
     }

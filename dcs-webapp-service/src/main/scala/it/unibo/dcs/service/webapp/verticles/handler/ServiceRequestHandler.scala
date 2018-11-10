@@ -1,8 +1,9 @@
 package it.unibo.dcs.service.webapp.verticles.handler
 
 import io.vertx.core.Vertx
+import io.vertx.lang.scala.json.JsonObject
 import io.vertx.scala.core.Context
-import io.vertx.scala.core.eventbus.EventBus
+import io.vertx.scala.core.eventbus.{EventBus, Message}
 import io.vertx.scala.ext.web.RoutingContext
 import it.unibo.dcs.service.webapp.repositories.datastores.AuthenticationDataStore.authDataStoreNetwork
 import it.unibo.dcs.service.webapp.repositories.datastores.RoomDataStore.roomDataStoreNetwork
@@ -85,6 +86,11 @@ trait ServiceRequestHandler {
     * @param context Vertx routing context
     * @param ctx     Vertx context passed implicitly */
   def handleGetUserParticipations(context: RoutingContext)(implicit ctx: Context): Unit
+
+  /**
+    * @param message Vertx Event Bus message§
+    * @param ctx     Vertx context passed implicitly */
+  def handleUserOffline(message: Message[JsonObject])(implicit ctx: Context): Unit
 
 }
 

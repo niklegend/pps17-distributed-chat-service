@@ -3,7 +3,8 @@ package it.unibo.dcs.service.user.data.impl
 import io.vertx.lang.scala.json.{Json, JsonArray, JsonObject}
 import io.vertx.scala.ext.sql.SQLConnection
 import it.unibo.dcs.commons.JsonHelper.Implicits.RichGson
-import it.unibo.dcs.commons.dataaccess.{DataStoreDatabase, ResultSetHelper}
+import it.unibo.dcs.commons.dataaccess.DataStoreDatabase
+import it.unibo.dcs.commons.dataaccess.ResultSetHelper.Implicits.RichResultSet
 import it.unibo.dcs.exceptions.{UserAlreadyExistsException, UserNotFoundException}
 import it.unibo.dcs.service.user.data.UserDataStore
 import it.unibo.dcs.service.user.data.impl.Implicits.userDtoToUser
@@ -32,7 +33,7 @@ final class UserDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
         if (resultSet.getResults.isEmpty) {
           throw UserNotFoundException(request.username)
         } else {
-          ResultSetHelper.getRows(resultSet).head
+          resultSet.getRows.head
         }
       }
 

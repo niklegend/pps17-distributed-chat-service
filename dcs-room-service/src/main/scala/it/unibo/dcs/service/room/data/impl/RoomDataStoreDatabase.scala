@@ -68,7 +68,7 @@ final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
   override def sendMessage(request: SendMessageRequest): Observable[Message] = execute(insertMessageQuery, request)
     .flatMap(_ => Observable.just(request))
     
-  override def getRoomParticipations(request: GetRoomParticipationsRequest): Observable[Set[Participation]] = {
+  override def getRoomParticipations(request: GetRoomParticipationsRequest): Observable[List[Participation]] = {
     query(selectParticipationsByRoomName, request)
       .map { resultSet =>
         if (resultSet.getResults.isEmpty) {
@@ -79,7 +79,7 @@ final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
 
           ResultSetHelper.getRows(resultSet)
             .map(json => jsonObjectToParticipation(json))
-            .toSet
+            .toList
         }
       }
   }

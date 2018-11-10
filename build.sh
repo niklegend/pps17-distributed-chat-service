@@ -3,8 +3,7 @@
 set -e
 
 while [[ $# -gt 0 ]]; do
-    key="$1"
-    case $key in
+    case $1 in
         angular)
             ANGULAR=1
             shift # past argument

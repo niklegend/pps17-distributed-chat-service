@@ -13,7 +13,6 @@ import it.unibo.dcs.commons.VertxHelper.Implicits.RichEventBus
 import it.unibo.dcs.commons.VertxWebHelper.Implicits.contentTypeToString
 import it.unibo.dcs.commons.service.{HttpEndpointPublisher, HttpEndpointPublisherImpl, ServiceVerticle}
 import it.unibo.dcs.service.webapp.interaction.Labels._
-import it.unibo.dcs.service.webapp.interaction.Requests.NotifyTypingUserRequest
 import it.unibo.dcs.service.webapp.verticles.Addresses.{internal, messages, rooms, users}
 import it.unibo.dcs.service.webapp.verticles.WebAppVerticle.{pathParamSeparator, roomsURI}
 import it.unibo.dcs.service.webapp.verticles.handler.ServiceRequestHandler

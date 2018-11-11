@@ -66,9 +66,10 @@ export class RoomComponent implements OnInit {
   }
 
   typingUsersWithoutDuplicates(): string {
-    return this.typingUsers.filter((elem, index, self) => {
-      return index === self.indexOf(elem);
-    }).join(', ');
+    return this.typingUsers
+      .filter((elem, index, self) => index === self.indexOf(elem))
+      .sort((userA, userB) => (userA < userB) ? -1 : (userA > userB) ? 1 : 0)
+      .join(', ');
   }
 
 }

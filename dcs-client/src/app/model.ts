@@ -18,6 +18,7 @@ export interface Participation {
 
     username: string;
 
+    name?: string;
 }
 
 export interface Room {
@@ -42,4 +43,5 @@ export interface User {
 
     token: string;
 
+    status: boolean;
 }

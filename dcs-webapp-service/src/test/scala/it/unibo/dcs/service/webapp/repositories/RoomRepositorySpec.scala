@@ -47,7 +47,7 @@ class RoomRepositorySpec extends RepositorySpec {
     repository getRoomParticipations getRoomParticipationsRequest subscribe getRoomParticipationsSubscriber
 
     //Then
-    //Verify that 'suscriber.onNext' has been callen once
+    //Verify that 'subscriber.onNext' has been called once
     (getRoomParticipationsSubscriber onNext _) verify participations once()
     // Verify that `subscriber.onCompleted` has been called once
     (() => getRoomParticipationsSubscriber onCompleted) verify() once()
@@ -129,7 +129,7 @@ class RoomRepositorySpec extends RepositorySpec {
     repository getRooms getRoomsRequest subscribe getRoomsSubscriber
 
     //Then
-    //Verify that 'suscriber.onNext' has been callen once
+    //Verify that 'subscriber.onNext' has been called once
     (getRoomsSubscriber onNext _) verify rooms once()
     // Verify that `subscriber.onCompleted` has been called once
     (() => getRoomsSubscriber onCompleted) verify() once()
@@ -143,10 +143,10 @@ class RoomRepositorySpec extends RepositorySpec {
     repository sendMessage sendMessageRequest subscribe sendMessageSubscriber
 
     //Then
-    //Verify that 'suscriber.onNext' has been callen once
+    //Verify that 'subscriber.onNext' has been called once
     (sendMessageSubscriber onNext _) verify message once()
     // Verify that `subscriber.onCompleted` has been called once
-    (() => sendMessageSubscriber onCompleted) verify() once()  
+    (() => sendMessageSubscriber onCompleted) verify() once()
   }
 
   it should "retrieve all the participations for the given user" in {
@@ -161,7 +161,7 @@ class RoomRepositorySpec extends RepositorySpec {
     repository getUserParticipations request subscribe subscriber
 
     //Then
-    //Verify that 'suscriber.onNext' has been callen once
+    //Verify that 'subscriber.onNext' has been called once
     (subscriber onNext _) verify rooms once()
     // Verify that `subscriber.onCompleted` has been called once
     (() => subscriber onCompleted) verify() once()

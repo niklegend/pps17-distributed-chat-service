@@ -19,6 +19,15 @@ import { FilterPipe } from './filter.pipe';
 import { MessagesComponent } from './messages/messages.component';
 import { EditProfileComponent } from './edit-profile/edit-profile.component';
 import {MatCheckboxModule} from "@angular/material/checkbox";
+import { UserProfileComponent } from './user-profile/user-profile.component';
+import {
+  MatButtonModule, MatCardModule,
+  MatIconModule,
+  MatInputModule,
+  MatListModule,
+  MatMenuModule,
+  MatSidenavModule, MatToolbarModule
+} from "@angular/material";
 
 @NgModule({
   imports: [
@@ -27,7 +36,16 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
     ChatRoutingModule,
     MaterialModule,
     TranslateModule,
-    MatCheckboxModule
+    MatCheckboxModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatSidenavModule,
+    MatIconModule,
+    MatInputModule,
+    MatMenuModule,
+    MatListModule,
+    TranslateModule,
+    MatCardModule
   ],
   declarations: [
     ChatComponent,
@@ -41,7 +59,8 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
     SearchRoomsComponent,
     FilterPipe,
     MessagesComponent,
-    EditProfileComponent
+    EditProfileComponent,
+    UserProfileComponent
   ],
 })
 export class ChatModule {}

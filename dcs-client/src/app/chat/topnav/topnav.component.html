@@ -8,13 +8,13 @@
         <mat-icon>settings</mat-icon>
       </button>
       <mat-menu #settings="matMenu">
-        <button mat-menu-item (click)="logout()">
-          <mat-icon>exit_to_app</mat-icon>
-          <span>{{ 'Log out' | translate }}</span>
-        </button>
         <button mat-menu-item (click)="editProfile()">
           <mat-icon>edit</mat-icon>
           <span>{{ 'Edit Profile' | translate }}</span>
+        </button>
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>exit_to_app</mat-icon>
+          <span>{{ 'Log out' | translate }}</span>
         </button>
       </mat-menu>
     </div>
@@ -27,7 +27,7 @@
       </button>
     </div>
   </div>
-  <div class="hidden-sm chat-name" style="margin-left: 25px; margin-top: 5px;">
+  <div *ngIf="!inProfileEditPage()" class="hidden-sm chat-name" style="font-weight:bold; margin-left: 25px; margin-top: 5px;">
     {{ selectedRoom }}
   </div>
   <span class="nav-spacer"></span>

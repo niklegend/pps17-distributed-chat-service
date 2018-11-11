@@ -17,10 +17,12 @@ class LogoutUseCaseSpec extends UseCaseSpec {
   private val logoutUseCase = new LogoutUserUseCase(threadExecutor, postExecutionThread, authRepository, userRepository)
 
   private val expectedResult = LogoutResult(user)
+
   it should "logout the user when the use case is executed" in {
     // Given
     (authRepository logoutUser _) expects logoutUserRequest returns Observable.just(Unit)
     (userRepository getUserByUsername  _) expects logoutUserRequest.username returns Observable.just(user)
+    (userRepository updateAccess  _) expects logoutUserRequest.username returns Observable.just(Unit)
 
     // When
     logoutUseCase(logoutUserRequest) subscribe logoutSubscriber

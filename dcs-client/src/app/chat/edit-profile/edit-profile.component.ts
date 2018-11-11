@@ -4,7 +4,7 @@ import {Router} from '@angular/router';
 import {UserService} from '../../service/user.service';
 import {AuthService} from '../../service/auth.service';
 import {Location} from '@angular/common';
-import { User } from '../../model';
+
 @Component({
   selector: 'app-edit-profile',
   templateUrl: './edit-profile.component.html',
@@ -20,13 +20,8 @@ export class EditProfileComponent implements OnInit {
   ngOnInit() {
     const user = this.auth.user;
     this.request.username = user.username;
-    this.request.bio = user.bio;
-    this.request.firstName = user.firstName;
-    this.request.lastName = user.lastName;
-    this.request.visible = user.visible;
 
-    /*
-    this.userService.getProfile(username).subscribe(
+    this.userService.getProfile(user.username).subscribe(
       user => {
         this.request.bio = user.bio;
         this.request.firstName = user.firstName;
@@ -34,9 +29,9 @@ export class EditProfileComponent implements OnInit {
         this.request.visible = user.visible;
       },
       err => console.error(err),
-      () => {}
+      () => {
+      }
     );
-    */
   }
 
   editProfile() {
@@ -44,7 +39,7 @@ export class EditProfileComponent implements OnInit {
       () => {
       },
       err => {
-        console.error(err)
+        console.error(err);
         alert('Profile edit failed! ' + err.error.error.type);
       },
       () => {

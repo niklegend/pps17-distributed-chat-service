@@ -1,9 +1,15 @@
 import {Injectable} from '@angular/core';
-import {Observable, Subject} from 'rxjs';
+import {Observable, Subject, timer} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {EventBusService} from './event-bus.service';
 import {Participation, Room, Message} from '../model';
-import {CreateRoomRequest, DeleteRoomRequest, JoinRoomRequest, SendMessageRequest} from '../requests';
+import {
+  CreateRoomRequest,
+  DeleteRoomRequest,
+  JoinRoomRequest,
+  NotifyWritingUserRequest,
+  SendMessageRequest
+} from '../requests';
 import {AuthService} from './auth.service';
 import {map} from 'rxjs/operators';
 
@@ -24,7 +30,11 @@ export class ChatService {
   private static ROOM_JOINED = 'rooms.joined';
   private static MESSAGE_SENT = 'messages.sent';
   private static ROOM_CREATED = 'rooms.created';
-  private static ROOM_LEFT = 'rooms.leaved';
+  private static USER_TYPING = 'users.typing';
+  private static ROOM_LEFT = 'rooms.left';
+  private static userTypingAddress(room: string) {
+    return ChatService.USER_TYPING + "." + room
+  }
 
   private roomCreated = new Subject<Room>();
   private roomDeleted = new Subject<string>();
@@ -135,6 +145,24 @@ export class ChatService {
       body, {
       headers: this.auth.authOptions
     });
+  }
+
+  notifyTyping(username: string, room: string) {
+    const writingUser = new NotifyWritingUserRequest(username, room);
+    this.eventBus.publish(ChatService.USER_TYPING, writingUser)
+  }
+
+  registerUsersTypingListener(room: string, writingUsers: string[]){
+    this.eventBus.registerHandler(ChatService.userTypingAddress(room), (err, msg) => {
+      if(msg.body !== this.auth.user.username){
+        writingUsers.push(msg.body);
+        timer(1500).subscribe(() => writingUsers.shift(), err => console.log(err));
+      }
+    });
+  }
+
+  unregisterUsersTypingListener(room: string){
+    this.eventBus.unregister(ChatService.userTypingAddress(room))
   }
 
   onRoomCreated(): Observable<Room> {

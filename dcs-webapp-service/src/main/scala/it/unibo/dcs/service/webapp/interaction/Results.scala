@@ -36,6 +36,8 @@ object Results {
 
   final case class GetUserParticipationsResult(rooms: List[Room]) extends DcsResult
 
+  final case class NotifyTypingUserResult(username: String) extends DcsResult
+  
   final case class GetUserResult(user: User) extends DcsResult
 
   /** It enables implicit conversions in order to clean code that deals with results. */

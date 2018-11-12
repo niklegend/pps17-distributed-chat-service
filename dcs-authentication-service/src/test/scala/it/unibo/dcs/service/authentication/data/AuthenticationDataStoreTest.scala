@@ -50,7 +50,7 @@ class AuthenticationDataStoreTest extends FlatSpec with MockFactory {
   }
 
   private def specifyQueryExpectation(): Unit = {
-    (sqlConnection query(_, _)) expects(*, *) returns sqlConnection
+    (sqlConnection queryWithParams (_, _, _)) expects(*, *, *) returns sqlConnection
   }
 
   private def specifyUpdateExpectation(): Unit = {

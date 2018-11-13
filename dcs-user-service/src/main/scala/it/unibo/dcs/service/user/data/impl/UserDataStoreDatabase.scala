@@ -37,7 +37,9 @@ final class UserDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
         if (resultSet.getResults.isEmpty) {
           throw UserNotFoundException(request.username)
         } else {
-          resultSet.getRows.head
+          val user = resultSet.getRows.head
+          println(user)
+          user
         }
       }
 

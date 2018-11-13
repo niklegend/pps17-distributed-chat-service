@@ -47,7 +47,7 @@ export class EditProfileComponent implements OnInit {
       },
       () => {
         alert('The user profile has been successfully edited');
-        this._location.back()
+        this._location.back();
       }
     );
   }

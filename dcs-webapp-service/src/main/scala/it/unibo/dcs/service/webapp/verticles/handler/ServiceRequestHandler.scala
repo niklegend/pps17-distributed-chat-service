@@ -18,6 +18,8 @@ import it.unibo.dcs.service.webapp.verticles.handler.impl.ServiceRequestHandlerI
   * It handles all the incoming request to the service APIs. */
 trait ServiceRequestHandler {
 
+  def handleTypingUser(message: Message[JsonObject])(implicit ctx: Context): Unit
+  
   def handleGetUser(context: RoutingContext)(implicit ctx: Context): Unit
 
   def handleSendMessage(context: RoutingContext)(implicit ctx: Context): Unit

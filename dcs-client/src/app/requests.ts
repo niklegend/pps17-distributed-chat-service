@@ -69,6 +69,13 @@ export class SendMessageRequest {
 
 }
 
+export class NotifyWritingUserRequest {
+
+  constructor(public username: string, public name: string) {
+  }
+
+}
+
 export class GetRoomParticipationsRequest {
 
   constructor(public username: string) {

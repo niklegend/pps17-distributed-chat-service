@@ -14,7 +14,10 @@ export class EditProfileComponent implements OnInit {
 
   request = new EditProfileRequest();
 
-  constructor(private _location: Location, private router: Router, private auth: AuthService, private userService: UserService) {
+  constructor(private _location: Location,
+              private router: Router,
+              private auth: AuthService,
+              private userService: UserService) {
   }
 
   ngOnInit() {

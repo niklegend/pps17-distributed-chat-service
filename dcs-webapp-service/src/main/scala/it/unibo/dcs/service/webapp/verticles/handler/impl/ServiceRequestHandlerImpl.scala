@@ -194,6 +194,17 @@ final class ServiceRequestHandlerImpl(private[this] val eventBus: EventBus,
       }
     }
 
+  override def handleGetMessages(context: RoutingContext)(implicit ctx: Context): Unit =
+    handleRequestParam(context, ParamLabels.roomNameLabel) {
+      roomName => {
+        handleRequestToken(context) {
+          token => {
+            val useCase = GetMessagesUseCase(authRepository, roomRepository)
+            useCase(Json.obj((roomNameLabel, roomName)), GetMessagesSubscriber(context.response()))
+          }
+        }
+      }
+    }
   override def handleUserOffline(message: Message[JsonObject])(implicit ctx: Context): Unit = {
     val json = message.body
     val useCase = UserOfflineUseCase(userRepository)

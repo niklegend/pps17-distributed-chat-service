@@ -53,6 +53,8 @@ object Requests {
   
   final case class GetUserRequest(username: String) extends DcsRequest
 
+  final case class GetMessagesRequest(username: String, name: String, token: String) extends DcsRequest
+
   /** It enables implicit conversions in order to clean code that deals with requests. */
   object Implicits {
 
@@ -112,6 +114,11 @@ object Requests {
 
     implicit def jsonObjectToGetUserParticipationsRequest(json: JsonObject): GetUserParticipationsRequest =
       gson fromJsonObject[GetUserParticipationsRequest] json
+
+
+    implicit def jsonObjectToGetMessagesRequest(json: JsonObject): GetMessagesRequest =
+      gson fromJsonObject[GetMessagesRequest] json
+
 
     implicit def jsonObjectToGetUserRequest(json: JsonObject): GetUserRequest =
       gson fromJsonObject[GetUserRequest] json

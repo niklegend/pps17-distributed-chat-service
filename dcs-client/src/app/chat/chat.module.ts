@@ -16,7 +16,17 @@ import { FormsModule } from '@angular/forms';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { SearchRoomsComponent } from './search-rooms/search-rooms.component';
 import { FilterPipe } from './filter.pipe';
-import { MessagesComponent } from './messages/messages.component';
+import { EditProfileComponent } from './edit-profile/edit-profile.component';
+import {MatCheckboxModule} from "@angular/material/checkbox";
+import { UserProfileComponent } from './user-profile/user-profile.component';
+import {
+  MatButtonModule, MatCardModule,
+  MatIconModule,
+  MatInputModule,
+  MatListModule,
+  MatMenuModule,
+  MatSidenavModule, MatToolbarModule
+} from "@angular/material";
 
 @NgModule({
   imports: [
@@ -24,7 +34,17 @@ import { MessagesComponent } from './messages/messages.component';
     FormsModule,
     ChatRoutingModule,
     MaterialModule,
-    TranslateModule
+    TranslateModule,
+    MatCheckboxModule,
+    MatToolbarModule,
+    MatButtonModule,
+    MatSidenavModule,
+    MatIconModule,
+    MatInputModule,
+    MatMenuModule,
+    MatListModule,
+    TranslateModule,
+    MatCardModule
   ],
   declarations: [
     ChatComponent,
@@ -37,7 +57,8 @@ import { MessagesComponent } from './messages/messages.component';
     SidebarComponent,
     SearchRoomsComponent,
     FilterPipe,
-    MessagesComponent
+    EditProfileComponent,
+    UserProfileComponent
   ],
 })
 export class ChatModule {}

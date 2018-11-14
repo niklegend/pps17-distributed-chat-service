@@ -9,7 +9,7 @@ import rx.lang.scala.{Observable, Subscriber}
 
 import scala.language.postfixOps
 
-class AuthenticationRepositoryTest extends FlatSpec with MockFactory {
+class AuthenticationRepositorySpec extends FlatSpec with MockFactory {
 
   val username = "ale"
   val password = "123"

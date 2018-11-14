@@ -127,7 +127,7 @@ private[impl] object RoomDataStoreDatabase {
 
   val selectParticipationsByRoomName = "SELECT * FROM `participations` WHERE `name` = ?"
 
-  val selectMessagesByRoomName = "SELECT * FROM `messages` WHERE `name` = ?"
+  val selectMessagesByRoomName = "SELECT * FROM `messages` WHERE `name` = ? ORDER BY `timestamp`"
 
   object Implicits {
 

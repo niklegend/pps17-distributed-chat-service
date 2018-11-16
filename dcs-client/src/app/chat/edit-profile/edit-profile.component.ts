@@ -46,6 +46,19 @@ export class EditProfileComponent implements OnInit {
         alert('Profile edit failed! ' + err.error.error.type);
       },
       () => {
+        // update of the current user locally saved
+        const user = {
+          username: this.request.username,
+          firstName: this.request.firstName,
+          lastName: this.request.lastName,
+          visible: this.request.visible,
+          bio: this.request.bio,
+          lastSeen: this.auth.user.lastSeen,
+          token: this.auth.user.token,
+          status: this.auth.user.status
+        };
+        this.auth.setUser(user);
+
         alert('The user profile has been successfully edited');
         this._location.back();
       }

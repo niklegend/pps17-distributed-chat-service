@@ -5,6 +5,7 @@ import {ChatService} from "../../service/chat.service";
 import {UserService} from "../../service/user.service";
 import {AuthService} from "../../service/auth.service";
 import {remove} from 'lodash'
+import {Toast} from "../../toast-notify";
 
 @Component({
   selector: 'app-room-info',
@@ -50,11 +51,11 @@ export class RoomInfoComponent implements OnInit {
   openUserProfile(username: string) {
     this.userService.getProfile(username).subscribe(user => {
       if (!this.authService.user.visible && !this.isCurrentUser(user)){
-        alert("You are invisible so you can't visualize the profile of other users");
+        Toast.toast("You are invisible so you can't visualize the profile of other users");
       } else if (user.visible || this.isCurrentUser(user)) {
         this.router.navigate(['/users', username, 'profile']);
       } else {
-        alert("This user profile is invisible");
+        Toast.toast("This user profile is invisible");
       }
     })
   }

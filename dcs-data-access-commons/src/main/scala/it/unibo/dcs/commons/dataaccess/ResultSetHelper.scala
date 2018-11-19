@@ -7,12 +7,19 @@ import scala.collection.mutable
 
 object ResultSetHelper {
 
+  def foldResult[T](whenEmpty: => T)(f: ResultSet => T): ResultSet => T = resultSet =>
+    if (resultSet.getResults.isEmpty) {
+      whenEmpty
+    } else {
+      f(resultSet)
+    }
+
   object Implicits {
 
     implicit class RichResultSet(resultSet: ResultSet) {
 
-      def getRows: mutable.Buffer[JsonObject] =
-        resultSet.getResults
+      def getRows: Stream[JsonObject] =
+        resultSet.getResults.toStream
           .map(result => Stream.range(0, result.size)
             .map(i => (resultSet.getColumnNames(i), result.getValue(i)))
             .foldLeft(new JsonObject()) {

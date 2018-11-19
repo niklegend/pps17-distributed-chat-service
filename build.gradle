@@ -9,7 +9,7 @@ allprojects {
 }
 
 subprojects {
-    version = '0.8'
+    version = '1.0'
     apply plugin: 'scala'
 
     dependencies {

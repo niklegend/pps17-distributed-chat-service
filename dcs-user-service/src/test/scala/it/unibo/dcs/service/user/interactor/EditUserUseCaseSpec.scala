@@ -12,6 +12,8 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.FlatSpec
 import rx.lang.scala.{Observable, Subscriber}
 
+import scala.language.postfixOps
+
 class EditUserUseCaseSpec extends FlatSpec with MockFactory {
 
   private val request = EditUserRequest("martynha", "Martina", "Magnani", "bio", visible = true)

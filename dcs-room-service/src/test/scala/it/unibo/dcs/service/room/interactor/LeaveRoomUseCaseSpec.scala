@@ -12,6 +12,8 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, OneInstancePerTest}
 import rx.lang.scala.{Observable, Subscriber}
 
+import scala.language.postfixOps
+
 final class LeaveRoomUseCaseSpec extends FlatSpec with MockFactory with OneInstancePerTest {
 
   private val leaveRoomUseCase = {

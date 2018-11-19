@@ -15,8 +15,8 @@ import rx.lang.scala.{Observable, Subscriber}
 import scala.language.postfixOps
 
 class GetMessagesUseCaseSpec  extends FlatSpec with MockFactory with OneInstancePerTest {
-  val validation = new GetMessagesValidation(threadExecutor, postExecutionThread, GetMessagesValidator())
-  private val getMessagesUseCase = new GetMessagesUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
+  val validation = GetMessagesValidation(threadExecutor, postExecutionThread, GetMessagesValidator())
+  private val getMessagesUseCase = GetMessagesUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
 
   private val roomName = "Test room"
   private val username = "martynha"

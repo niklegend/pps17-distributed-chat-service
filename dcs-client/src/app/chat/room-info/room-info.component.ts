@@ -49,12 +49,17 @@ export class RoomInfoComponent implements OnInit {
 
   openUserProfile(username: string) {
     this.userService.getProfile(username).subscribe(user => {
-      if (user.visible || user.username === this.authService.user.username) {
+      if (!this.authService.user.visible && !this.isCurrentUser(user)){
+        alert("You are invisible so you can't visualize the profile of other users");
+      } else if (user.visible || this.isCurrentUser(user)) {
         this.router.navigate(['/users', username, 'profile']);
       } else {
-        alert("This user profile can't be shown");
+        alert("This user profile is invisible");
       }
     })
+  }
 
+  private isCurrentUser(user) {
+    return user.username === this.authService.user.username;
   }
 }

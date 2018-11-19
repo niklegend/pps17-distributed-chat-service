@@ -73,8 +73,8 @@ final class WebAppVerticle extends ServiceVerticle {
   private def defineServiceApi(apiRouter: Router): Unit = {
     implicit val ctx: core.Context = this.ctx
 
-    eventBus.address(internal.userOffline)
-      .handle[JsonObject](requestHandler handleUserOffline _)
+    eventBus.address(internal.userOffline).handle[JsonObject](requestHandler handleUserOffline _)
+    eventBus.consumer[JsonObject](users.typing).handler(requestHandler.handleTypingUser(_))
 
     userRegistrationRoute(apiRouter)
     loginRoute(apiRouter)
@@ -89,6 +89,13 @@ final class WebAppVerticle extends ServiceVerticle {
     getRoomParticipationsRoute(apiRouter)
     getUserParticipationsRoute(apiRouter)
     getUserRoute(apiRouter)
+    getMessagesRoute(apiRouter)
+  }
+
+  private def getMessagesRoute(apiRouter: Router)(implicit ctx: core.Context) = {
+    apiRouter.get(roomsURI + pathParamSeparator + ParamLabels.roomNameLabel + "/messages")
+      .produces(APPLICATION_JSON)
+      .handler(context => requestHandler handleGetMessages context)
   }
 
   private def getUserRoute(apiRouter: Router)(implicit ctx: core.Context) = {
@@ -212,6 +219,8 @@ final class WebAppVerticle extends ServiceVerticle {
       .addOutboundPermitted(PermittedOptions().setAddress(users.offline))
       .addOutboundPermitted(PermittedOptions().setAddress(users.hearthbeat.request))
       .addInboundPermitted(PermittedOptions().setAddress(users.hearthbeat.response))
+      .addOutboundPermitted(PermittedOptions().setAddressRegex(users.typingInRoom))
+      .addInboundPermitted(PermittedOptions().setAddress(users.typing))
 
     SockJSHandler.create(vertx).bridge(options)
   }

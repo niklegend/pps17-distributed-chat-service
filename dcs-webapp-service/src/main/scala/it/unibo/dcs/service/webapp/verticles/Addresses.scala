@@ -28,9 +28,13 @@ private[verticles] object Addresses {
 
     private val prefix = "users"
 
-    val offline = s"$users.offline"
+    val offline = s"$prefix.offline"
 
-    val online = s"$users.online"
+    val online = s"$prefix.online"
+
+    val typing = s"$prefix.typing"
+
+    val typingInRoom = s"$prefix.typing.*"
 
     object hearthbeat {
 

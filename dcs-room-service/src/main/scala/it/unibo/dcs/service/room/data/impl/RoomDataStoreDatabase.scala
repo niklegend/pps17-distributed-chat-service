@@ -6,6 +6,7 @@ import it.unibo.dcs.commons.JsonHelper.Implicits.RichGson
 import it.unibo.dcs.commons.dataaccess.DataStoreDatabase
 import it.unibo.dcs.commons.dataaccess.Implicits.dateToString
 import it.unibo.dcs.commons.dataaccess.ResultSetHelper.foldResult
+import it.unibo.dcs.commons.dataaccess.{DataStoreDatabase, ResultSetHelper}
 import it.unibo.dcs.commons.dataaccess.ResultSetHelper.Implicits.RichResultSet
 import it.unibo.dcs.exceptions.{ParticipationNotFoundException, ParticipationsNotFoundException, RoomNotFoundException}
 import it.unibo.dcs.service.room.data.RoomDataStore
@@ -68,6 +69,16 @@ final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
     query(selectParticipationsByUsername, request)
       .map(foldResult[List[Room]](List())(_.getRows.map(jsonObjectToRoom).toList))
 
+  override def getMessages(request: GetMessagesRequest): Observable[List[Message]] =
+    query(selectMessagesByRoomName, request)
+    .map { resultSet =>
+      if (resultSet.getResults.isEmpty) {
+        List()
+      } else {
+        resultSet.getRows.foreach(row => println(row.encodePrettily()))
+        resultSet.getRows.map(jsonObjectToMessage).toList
+      }
+    }
 }
 
 private[impl] object RoomDataStoreDatabase {
@@ -93,6 +104,8 @@ private[impl] object RoomDataStoreDatabase {
   val selectParticipationByKey = "SELECT * FROM `participations` WHERE `username` = ? AND `name` = ?"
 
   val selectParticipationsByRoomName = "SELECT * FROM `participations` WHERE `name` = ?"
+
+  val selectMessagesByRoomName = "SELECT * FROM `messages` WHERE `name` = ? ORDER BY `timestamp`"
 
   object Implicits {
 
@@ -128,6 +141,9 @@ private[impl] object RoomDataStoreDatabase {
 
     implicit def requestToParams(request: GetUserParticipationsRequest): JsonArray =
       new JsonArray().add(request.username)
+
+    implicit def requestToParams(request: GetMessagesRequest): JsonArray =
+      new JsonArray().add(request.name)
 
     implicit def jsonObjectToRoom(json: JsonObject): Room = gson fromJsonObject[Room] json
 

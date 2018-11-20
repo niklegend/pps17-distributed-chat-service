@@ -12,6 +12,8 @@ import org.scalamock.scalatest.MockFactory
 import org.scalatest.{FlatSpec, OneInstancePerTest}
 import rx.lang.scala.{Observable, Subscriber}
 
+import scala.language.postfixOps
+
 class SendMessageUseCaseSpec extends FlatSpec with MockFactory with OneInstancePerTest {
 
   private val username = "martynha"

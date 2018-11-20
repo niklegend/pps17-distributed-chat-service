@@ -8,6 +8,7 @@ import it.unibo.dcs.commons.dataaccess.Implicits.dateToString
 import it.unibo.dcs.commons.dataaccess.ResultSetHelper.foldResult
 import it.unibo.dcs.commons.dataaccess.{DataStoreDatabase, ResultSetHelper}
 import it.unibo.dcs.commons.dataaccess.ResultSetHelper.Implicits.RichResultSet
+import it.unibo.dcs.commons.dataaccess.ResultSetHelper.foldResult
 import it.unibo.dcs.exceptions.{ParticipationNotFoundException, ParticipationsNotFoundException, RoomNotFoundException}
 import it.unibo.dcs.service.room.data.RoomDataStore
 import it.unibo.dcs.service.room.data.impl.Implicits.participationDtoToParticipation
@@ -71,14 +72,9 @@ final class RoomDataStoreDatabase(connection: SQLConnection) extends DataStoreDa
 
   override def getMessages(request: GetMessagesRequest): Observable[List[Message]] =
     query(selectMessagesByRoomName, request)
-    .map { resultSet =>
-      if (resultSet.getResults.isEmpty) {
-        List()
-      } else {
-        resultSet.getRows.foreach(row => println(row.encodePrettily()))
-        resultSet.getRows.map(jsonObjectToMessage).toList
-      }
-    }
+    .map(foldResult[List[Message]](List())(_.getRows
+      .map(jsonObjectToMessage)
+      .toList))
 }
 
 private[impl] object RoomDataStoreDatabase {

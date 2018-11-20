@@ -17,8 +17,8 @@ import scala.language.postfixOps
 final class LeaveRoomUseCaseSpec extends FlatSpec with MockFactory with OneInstancePerTest {
 
   private val leaveRoomUseCase = {
-    val validation = new LeaveRoomValidation(threadExecutor, postExecutionThread, LeaveRoomValidator())
-    new LeaveRoomUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
+    val validation = LeaveRoomValidation(threadExecutor, postExecutionThread, LeaveRoomValidator())
+    LeaveRoomUseCase(threadExecutor, postExecutionThread, roomRepository, validation)
   }
 
   private val request = LeaveRoomRequest("Test room", "martynha")

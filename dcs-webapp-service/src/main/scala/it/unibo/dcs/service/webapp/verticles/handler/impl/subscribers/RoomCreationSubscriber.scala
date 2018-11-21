@@ -17,8 +17,8 @@ final class RoomCreationSubscriber(protected override val response: HttpServerRe
   extends Subscriber[RoomCreationResult] with ErrorSubscriber with Logging {
 
   override def onNext(result: RoomCreationResult): Unit = {
-    response setStatus HttpResponseStatus.CREATED endWith result
-    roomCreatedPublisher publish[JsonObject] result
+    response setStatus HttpResponseStatus.CREATED endWith result.participation.room
+    roomCreatedPublisher publish[JsonObject] result.participation.room
     roomJoinedPublisher publish[JsonObject] result
   }
 

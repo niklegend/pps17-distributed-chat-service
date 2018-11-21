@@ -37,7 +37,7 @@ export class RoomsComponent implements OnInit {
       .pipe(participationFilter)
       .subscribe(participation => {
         console.log("on room joined called! Room: " + participation.room.name);
-        this.rooms.unshift(participation.room)
+        this.rooms.push(participation.room)
       }
     );
 

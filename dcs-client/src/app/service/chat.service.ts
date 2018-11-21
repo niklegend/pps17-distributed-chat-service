@@ -55,6 +55,7 @@ export class ChatService {
     });
 
     eventBus.registerHandler(ChatService.ROOM_JOINED, (err, msg) => {
+      console.log("room joined");
       this.roomJoined.next(msg.body);
     });
 
